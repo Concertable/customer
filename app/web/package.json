@@ -1,5 +1,5 @@
 {
-  "name": "@concertable/customer",
+  "name": "@concertable/web/customer",
   "private": true,
   "version": "0.0.0",
   "type": "module",
