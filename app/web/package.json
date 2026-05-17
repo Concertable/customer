@@ -1,5 +1,5 @@
 {
-  "name": "@concertable/web/customer",
+  "name": "@concertable/web-customer",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,12 +12,12 @@
     "@concertable/shared": "*"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.2.1",
+    "@tailwindcss/vite": "^4.3.0",
     "@tanstack/router-vite-plugin": "^1.166.13",
     "@types/node": "^24.12.0",
     "@vitejs/plugin-basic-ssl": "^2.3.0",
     "@vitejs/plugin-react": "^6.0.0",
-    "tailwindcss": "^4.2.1",
+    "tailwindcss": "^4.3.0",
     "typescript": "~5.9.3",
     "vite": "^8.0.0"
   }
