@@ -3,14 +3,19 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@/*": ["../shared/src/*"],
-      "shared/*": ["../shared/src/*"]
+      "@/*": [
+        "../shared/src/*"
+      ],
+      "shared/*": [
+        "../shared/src/*"
+      ]
     }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     "../shared/nativewind-env.d.ts",
-    "../shared/src/**/*"
+    "../shared/src/**/*",
+    "nativewind-env.d.ts"
   ]
 }
