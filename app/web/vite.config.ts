@@ -10,6 +10,7 @@ export default defineConfig({
   server: {
     port: 5174,
   },
+  envDir: '../',
   define: {
     'import.meta.env.VITE_OIDC_CLIENT_ID': JSON.stringify('customer-web'),
   },
