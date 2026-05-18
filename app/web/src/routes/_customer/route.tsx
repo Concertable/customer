@@ -5,6 +5,7 @@ import { AppLayout } from "@/components/AppLayout";
 const links = [
   { label: "Home", to: "/" },
   { label: "Find", to: "/find" },
+  { label: "For Artists & Venues", href: import.meta.env.VITE_BUSINESS_URL as string },
 ];
 
 function CustomerLayout() {
