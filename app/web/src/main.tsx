@@ -9,15 +9,13 @@ import { APIProvider as MapsProvider } from "@vis.gl/react-google-maps";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "react-oidc-context";
 import { userManager, onSigninCallback } from "shared/features/auth";
-import { getQueryClient } from "shared/lib/queryClient";
+import { queryClient } from "shared/lib/queryClient";
 import { routeTree } from "./routeTree.gen";
 import { ThemeProvider } from "shared/providers/ThemeProvider";
 import { TooltipProvider } from "shared/components/ui/tooltip";
 import "shared/lib/axios";
 import "shared/lib/geocoding";
 import "shared/index.css";
-
-const queryClient = getQueryClient();
 
 const router = createRouter({
   routeTree,
