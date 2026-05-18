@@ -6,26 +6,16 @@ import {
   deserializeSearch,
 } from "shared/features/search";
 import { APIProvider as MapsProvider } from "@vis.gl/react-google-maps";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "react-oidc-context";
 import { userManager, onSigninCallback } from "shared/features/auth";
-import { shouldRetry } from "shared/lib/queryRetry";
+import { queryClient } from "shared/lib/queryClient";
 import { routeTree } from "./routeTree.gen";
 import { ThemeProvider } from "shared/providers/ThemeProvider";
 import { TooltipProvider } from "shared/components/ui/tooltip";
 import "shared/lib/axios";
 import "shared/lib/geocoding";
 import "shared/index.css";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 60 * 1000 * 5,
-      refetchOnWindowFocus: false,
-      retry: shouldRetry,
-    },
-  },
-});
 
 const router = createRouter({
   routeTree,
