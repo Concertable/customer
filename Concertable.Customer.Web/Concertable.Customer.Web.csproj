@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Concertable.ServiceDefaults\Concertable.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Modules\Concert\Concertable.Customer.Concert.Api\Concertable.Customer.Concert.Api.csproj" />
+    <ProjectReference Include="..\Modules\Concert\Concertable.Customer.Concert.Infrastructure\Concertable.Customer.Concert.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Ticket\Concertable.Customer.Ticket.Api\Concertable.Customer.Ticket.Api.csproj" />
+    <ProjectReference Include="..\Modules\Ticket\Concertable.Customer.Ticket.Infrastructure\Concertable.Customer.Ticket.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Review\Concertable.Customer.Review.Api\Concertable.Customer.Review.Api.csproj" />
+    <ProjectReference Include="..\Modules\Review\Concertable.Customer.Review.Infrastructure\Concertable.Customer.Review.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Profile\Concertable.Customer.Profile.Api\Concertable.Customer.Profile.Api.csproj" />
+    <ProjectReference Include="..\Modules\Profile\Concertable.Customer.Profile.Infrastructure\Concertable.Customer.Profile.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
