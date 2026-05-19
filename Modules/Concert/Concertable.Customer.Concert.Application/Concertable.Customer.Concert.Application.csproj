@@ -8,6 +8,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Concertable.Customer.Concert.Domain\Concertable.Customer.Concert.Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\Shared\Concertable.Shared.Application\Concertable.Shared.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentResults" Version="4.0.0" />
   </ItemGroup>
 
 </Project>

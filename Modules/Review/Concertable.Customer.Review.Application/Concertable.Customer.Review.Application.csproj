@@ -8,6 +8,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Concertable.Customer.Review.Domain\Concertable.Customer.Review.Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\Shared\Concertable.Shared.Application\Concertable.Shared.Application.csproj" />
+    <ProjectReference Include="..\..\..\..\Shared\Concertable.Shared.Contracts\Concertable.Shared.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
   </ItemGroup>
 
 </Project>

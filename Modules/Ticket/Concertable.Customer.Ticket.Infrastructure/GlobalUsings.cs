@@ -1,0 +1,14 @@
+global using Concertable.Shared;
+global using Concertable.Shared.Infrastructure;
+global using Concertable.Application.Interfaces;
+global using Concertable.Authorization.Contracts;
+global using Concertable.User.Contracts;
+global using Concertable.Contract.Contracts;
+global using Concertable.Notification.Contracts;
+global using Concertable.Concert.Domain;
+global using Concertable.Customer.Ticket.Domain;
+global using Concertable.Customer.Ticket.Application.Interfaces;
+global using Concertable.Customer.Ticket.Application.DTOs;
+global using Concertable.Customer.Ticket.Application.Mappers;
+global using Concertable.Data.Infrastructure;
+global using Concertable.Data.Infrastructure.Data;
