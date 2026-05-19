@@ -14,7 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Concertable.Customer.Concert.Domain\Concertable.Customer.Concert.Domain.csproj" />
     <ProjectReference Include="..\Concertable.Customer.Concert.Application\Concertable.Customer.Concert.Application.csproj" />
-    <ProjectReference Include="..\..\..\..\Data\Concertable.Data.Infrastructure\Concertable.Data.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\Concertable.DataAccess\Concertable.DataAccess.Infrastructure\Concertable.DataAccess.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\..\Modules\Concert\Concertable.Concert.Contracts\Concertable.Concert.Contracts.csproj" />
     <ProjectReference Include="..\..\..\..\Shared\Concertable.Kernel\Concertable.Kernel.csproj" />
     <ProjectReference Include="..\..\..\..\Concertable.Messaging\Concertable.Messaging.Contracts\Concertable.Messaging.Contracts.csproj" />
