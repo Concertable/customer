@@ -60,9 +60,6 @@ internal class TicketService : ITicketService
 
     public async Task<Result<TicketPaymentResponse>> PurchaseAsync(TicketPurchaseParams purchaseParams)
     {
-        if (currentUser.GetRole() != Role.Customer)
-            throw new ForbiddenException("Only Customers can buy tickets");
-
         var customerConcert = await customerConcertRepository.GetByIdAsync(purchaseParams.ConcertId)
             ?? throw new NotFoundException("Concert not found");
 
@@ -153,9 +150,6 @@ internal class TicketService : ITicketService
 
     public async Task<Result<TicketCheckout>> CheckoutAsync(int concertId, int quantity)
     {
-        if (currentUser.GetRole() != Role.Customer)
-            throw new ForbiddenException("Only Customers can buy tickets");
-
         var customerConcert = await customerConcertRepository.GetByIdAsync(concertId)
             ?? throw new NotFoundException("Concert not found");
 

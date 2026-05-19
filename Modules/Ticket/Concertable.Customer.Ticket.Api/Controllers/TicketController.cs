@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Concertable.Customer.Ticket.Api.Controllers;
 
-[Authorize(Roles = "Customer")]
+[Authorize(Policy = "Customer")]
 [ApiController]
 [Route("api/[controller]")]
 internal class TicketController : ControllerBase
