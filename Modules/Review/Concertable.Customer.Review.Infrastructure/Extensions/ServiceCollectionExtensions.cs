@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddCustomerReviewModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ReviewDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+            opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
                     sp.GetRequiredService<DomainEventDispatchInterceptor>()));
