@@ -8,11 +8,15 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Concertable.Customer.Profile.Domain\Concertable.Customer.Profile.Domain.csproj" />
     <ProjectReference Include="..\Concertable.Customer.Profile.Application\Concertable.Customer.Profile.Application.csproj" />
+    <ProjectReference Include="..\..\..\..\Data\Concertable.Data.Infrastructure\Concertable.Data.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\Shared\Concertable.Kernel\Concertable.Kernel.csproj" />
+    <ProjectReference Include="..\..\..\..\Modules\User\Concertable.User.Contracts\Concertable.User.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
