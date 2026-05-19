@@ -1,4 +1,5 @@
 global using Concertable.Shared;
+global using Concertable.Messaging;
 global using Concertable.Shared.Infrastructure;
 global using Concertable.Application.Interfaces;
 global using Concertable.Authorization.Contracts;

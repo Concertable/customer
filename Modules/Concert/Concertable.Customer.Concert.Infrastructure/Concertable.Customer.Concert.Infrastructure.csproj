@@ -17,6 +17,7 @@
     <ProjectReference Include="..\..\..\..\Data\Concertable.Data.Infrastructure\Concertable.Data.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\..\Modules\Concert\Concertable.Concert.Contracts\Concertable.Concert.Contracts.csproj" />
     <ProjectReference Include="..\..\..\..\Shared\Concertable.Kernel\Concertable.Kernel.csproj" />
+    <ProjectReference Include="..\..\..\..\Concertable.Messaging\Concertable.Messaging.Contracts\Concertable.Messaging.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

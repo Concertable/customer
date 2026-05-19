@@ -3,7 +3,7 @@ using Concertable.Customer.Review.Domain.Events;
 
 namespace Concertable.Customer.Review.Infrastructure.Events;
 
-internal class ReviewCreatedDomainEventHandler(IIntegrationEventBus bus)
+internal class ReviewCreatedDomainEventHandler(IBus bus)
     : IDomainEventHandler<ReviewCreatedDomainEvent>
 {
     public Task HandleAsync(ReviewCreatedDomainEvent e, CancellationToken ct = default) =>
