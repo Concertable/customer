@@ -1,4 +1,4 @@
-using Concertable.Payment.Domain;
+using Concertable.Customer.Ticket.Application.Requests;
 using FluentValidation;
 
 namespace Concertable.Customer.Ticket.Application.Validators;

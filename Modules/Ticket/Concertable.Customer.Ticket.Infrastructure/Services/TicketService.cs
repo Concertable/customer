@@ -1,17 +1,13 @@
 using Concertable.Customer.Concert.Application.Interfaces;
+using Concertable.Customer.Concert.Domain;
 using Concertable.Customer.Contracts;
-using Concertable.Concert.Application.Interfaces;
-using Concertable.Payment.Application.DTOs;
-using Concertable.Payment.Application.Responses;
+using Concertable.Customer.Ticket.Application.DTOs;
+using Concertable.Customer.Ticket.Application.Requests;
+using Concertable.Customer.Ticket.Application.Responses;
 using Concertable.Payment.Contracts;
-using Concertable.Payment.Domain;
 using Concertable.Shared.Exceptions;
 using FluentResults;
 using Microsoft.Extensions.Logging;
-using B2BConcertEntity = Concertable.Concert.Domain.ConcertEntity;
-using CustomerConcertEntity = Concertable.Customer.Concert.Domain.ConcertEntity;
-using IB2BConcertRepository = Concertable.Concert.Application.Interfaces.IConcertRepository;
-using ICustomerConcertRepository = Concertable.Customer.Concert.Application.Interfaces.IConcertRepository;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Services;
 
@@ -22,10 +18,7 @@ internal class TicketService : ITicketService
     private readonly IEmailService emailService;
     private readonly IQrCodeService qrCodeService;
     private readonly ICurrentUser currentUser;
-    private readonly IB2BConcertRepository b2bConcertRepository;
-    private readonly ICustomerConcertRepository customerConcertRepository;
-    private readonly IContractLoader contractLoader;
-    private readonly ITicketPayee ticketPayee;
+    private readonly IConcertRepository concertRepository;
     private readonly ICustomerPaymentModule customerPaymentModule;
     private readonly TimeProvider timeProvider;
     private readonly ILogger<TicketService> logger;
@@ -36,10 +29,7 @@ internal class TicketService : ITicketService
         IEmailService emailService,
         IQrCodeService qrCodeService,
         ICurrentUser currentUser,
-        IB2BConcertRepository b2bConcertRepository,
-        ICustomerConcertRepository customerConcertRepository,
-        IContractLoader contractLoader,
-        ITicketPayee ticketPayee,
+        IConcertRepository concertRepository,
         ICustomerPaymentModule customerPaymentModule,
         TimeProvider timeProvider,
         ILogger<TicketService> logger)
@@ -49,10 +39,7 @@ internal class TicketService : ITicketService
         this.emailService = emailService;
         this.qrCodeService = qrCodeService;
         this.currentUser = currentUser;
-        this.b2bConcertRepository = b2bConcertRepository;
-        this.customerConcertRepository = customerConcertRepository;
-        this.contractLoader = contractLoader;
-        this.ticketPayee = ticketPayee;
+        this.concertRepository = concertRepository;
         this.customerPaymentModule = customerPaymentModule;
         this.timeProvider = timeProvider;
         this.logger = logger;
@@ -60,33 +47,27 @@ internal class TicketService : ITicketService
 
     public async Task<Result<TicketPaymentResponse>> PurchaseAsync(TicketPurchaseParams purchaseParams)
     {
-        var customerConcert = await customerConcertRepository.GetByIdAsync(purchaseParams.ConcertId)
+        var concert = await concertRepository.GetByIdAsync(purchaseParams.ConcertId)
             ?? throw new NotFoundException("Concert not found");
 
-        var validationResult = ticketValidator.CanPurchaseTickets(customerConcert, purchaseParams.Quantity);
+        var validationResult = ticketValidator.CanPurchaseTickets(concert, purchaseParams.Quantity);
         if (validationResult.IsFailed)
             throw new BadRequestException(validationResult.Errors);
 
-        // Payee routing still needs B2B's contract + concert navs — Phase 1 cross-ref.
-        var b2bConcert = await b2bConcertRepository.GetFullByIdAsync(purchaseParams.ConcertId)
-            ?? throw new NotFoundException("Concert not found");
-        var contract = await contractLoader.LoadByConcertIdAsync(purchaseParams.ConcertId);
-        var payeeUserId = ticketPayee.Resolve(b2bConcert, contract);
-
         logger.LogInformation(
             "Routing ticket revenue for concert {ConcertId} ({ContractType}) to {PayeeUserId}: {Quantity} x {Price} {Currency}",
-            purchaseParams.ConcertId, contract.ContractType, payeeUserId, purchaseParams.Quantity, customerConcert.Price, "GBP");
+            concert.Id, concert.ContractType, concert.PayeeUserId, purchaseParams.Quantity, concert.Price, "GBP");
 
         var metadata = new Dictionary<string, string>
         {
             ["type"] = TransactionTypes.Ticket,
-            ["concertId"] = purchaseParams.ConcertId.ToString(),
+            ["concertId"] = concert.Id.ToString(),
             ["quantity"] = purchaseParams.Quantity.ToString()
         };
 
         var paymentResult = await customerPaymentModule.PayAsync(
-            currentUser.GetId(), payeeUserId,
-            customerConcert.Price * purchaseParams.Quantity,
+            currentUser.GetId(), concert.PayeeUserId,
+            concert.Price * purchaseParams.Quantity,
             metadata,
             purchaseParams.PaymentMethodId);
 
@@ -104,13 +85,8 @@ internal class TicketService : ITicketService
 
     public async Task<Result<TicketPaymentResponse>> CompleteAsync(PurchaseCompleteDto purchaseCompleteDto)
     {
-        var customerConcert = await customerConcertRepository.GetByIdAsync(purchaseCompleteDto.EntityId);
-        if (customerConcert is null)
-            return Result.Fail("Concert not found");
-
-        // Snapshot fields (Name/Venue/Artist) sourced from B2B nav chain — Phase 1 cross-ref.
-        var b2bConcert = await b2bConcertRepository.GetFullByIdAsync(purchaseCompleteDto.EntityId);
-        if (b2bConcert is null)
+        var concert = await concertRepository.GetByIdAsync(purchaseCompleteDto.EntityId);
+        if (concert is null)
             return Result.Fail("Concert not found");
 
         int quantity = purchaseCompleteDto.Quantity ?? 1;
@@ -120,13 +96,13 @@ internal class TicketService : ITicketService
         {
             for (int i = 0; i < quantity; i++)
             {
-                var ticket = BuildTicket(purchaseCompleteDto.FromUserId, b2bConcert, customerConcert);
+                var ticket = BuildTicket(purchaseCompleteDto.FromUserId, concert);
                 await ticketRepository.AddAsync(ticket);
                 tickets.Add(ticket);
             }
 
-            customerConcert.DecrementAvailability(quantity);
-            await customerConcertRepository.SaveChangesAsync();
+            concert.DecrementAvailability(quantity);
+            await concertRepository.SaveChangesAsync();
             await ticketRepository.SaveChangesAsync();
         }
         catch (Exception)
@@ -142,7 +118,7 @@ internal class TicketService : ITicketService
             TicketIds = ticketIds,
             ConcertId = purchaseCompleteDto.EntityId,
             PurchaseDate = tickets[0].PurchaseDate,
-            Amount = customerConcert.Price,
+            Amount = concert.Price,
             Currency = "GBP",
             UserEmail = purchaseCompleteDto.FromEmail
         });
@@ -150,31 +126,26 @@ internal class TicketService : ITicketService
 
     public async Task<Result<TicketCheckout>> CheckoutAsync(int concertId, int quantity)
     {
-        var customerConcert = await customerConcertRepository.GetByIdAsync(concertId)
+        var concert = await concertRepository.GetByIdAsync(concertId)
             ?? throw new NotFoundException("Concert not found");
 
-        var validationResult = ticketValidator.CanPurchaseTickets(customerConcert, quantity);
+        var validationResult = ticketValidator.CanPurchaseTickets(concert, quantity);
         if (validationResult.IsFailed)
             return Result.Fail(validationResult.Errors);
-
-        var b2bConcert = await b2bConcertRepository.GetFullByIdAsync(concertId)
-            ?? throw new NotFoundException("Concert not found");
-        var contract = await contractLoader.LoadByConcertIdAsync(concertId);
-        var payeeUserId = ticketPayee.Resolve(b2bConcert, contract);
 
         var metadata = new Dictionary<string, string>
         {
             ["type"] = TransactionTypes.Ticket,
-            ["concertId"] = concertId.ToString(),
-            ["toUserId"] = payeeUserId.ToString(),
+            ["concertId"] = concert.Id.ToString(),
+            ["toUserId"] = concert.PayeeUserId.ToString(),
             ["quantity"] = quantity.ToString(),
-            ["amount"] = ((long)(customerConcert.Price * quantity * 100)).ToString(),
+            ["amount"] = ((long)(concert.Price * quantity * 100)).ToString(),
             ["currency"] = "gbp"
         };
 
         var session = await customerPaymentModule.CreatePaymentSessionAsync(currentUser.GetId(), metadata);
 
-        return Result.Ok(new TicketCheckout(session, customerConcert.Price, concertId, quantity));
+        return Result.Ok(new TicketCheckout(session, concert.Price, concert.Id, quantity));
     }
 
     public async Task<IEnumerable<TicketDto>> GetUserUpcomingAsync()
@@ -189,20 +160,20 @@ internal class TicketService : ITicketService
         return tickets.ToDtos(currentUser.Email ?? string.Empty);
     }
 
-    private TicketEntity BuildTicket(Guid userId, B2BConcertEntity b2bConcert, CustomerConcertEntity customerConcert)
+    private TicketEntity BuildTicket(Guid userId, ConcertEntity concert)
     {
         var ticketId = Guid.CreateVersion7();
         var qrCode = qrCodeService.GenerateFromTicketId(ticketId);
         return TicketEntity.Create(
             ticketId,
             userId,
-            customerConcert.Id,
+            concert.Id,
             qrCode,
             timeProvider.GetUtcNow().DateTime,
-            b2bConcert.Name,
-            customerConcert.Price,
-            customerConcert.Period,
-            b2bConcert.Booking.Application.Opportunity.Venue.Name,
-            b2bConcert.Booking.Application.Artist.Name);
+            concert.Name,
+            concert.Price,
+            concert.Period,
+            concert.VenueName,
+            concert.ArtistName);
     }
 }

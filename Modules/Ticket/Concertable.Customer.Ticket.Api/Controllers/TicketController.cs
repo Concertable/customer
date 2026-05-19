@@ -1,5 +1,5 @@
-using Concertable.Payment.Application.Responses;
-using Concertable.Payment.Domain;
+using Concertable.Customer.Ticket.Application.Requests;
+using Concertable.Customer.Ticket.Application.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
