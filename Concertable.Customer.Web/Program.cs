@@ -11,7 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddCustomerConcertModule(builder.Configuration);
 builder.Services.AddCustomerTicketModule(builder.Configuration);
 builder.Services.AddCustomerReviewModule(builder.Configuration);
-builder.Services.AddCustomerProfileModule();
+builder.Services.AddCustomerProfileModule(builder.Configuration);
 
 var app = builder.Build();
 
