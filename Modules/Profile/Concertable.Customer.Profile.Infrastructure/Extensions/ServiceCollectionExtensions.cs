@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddCustomerProfileModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ProfileDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+            opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
                     sp.GetRequiredService<DomainEventDispatchInterceptor>()));

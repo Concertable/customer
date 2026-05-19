@@ -13,7 +13,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddCustomerConcertModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ConcertDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+            opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
                     sp.GetRequiredService<DomainEventDispatchInterceptor>()));
