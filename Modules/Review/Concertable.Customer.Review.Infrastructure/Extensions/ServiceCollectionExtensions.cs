@@ -27,6 +27,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUnitOfWorkBehavior, UnitOfWorkBehavior>();
 
         services.AddScoped<IConcertReviewService, ConcertReviewService>();
+        services.AddScoped<IArtistReviewService, ArtistReviewService>();
+        services.AddScoped<IVenueReviewService, VenueReviewService>();
         services.AddScoped<IReviewValidator, ReviewValidator>();
         services.AddScoped<IConcertReviewRepository, ConcertReviewRepository>();
         services.AddScoped<IArtistReviewRepository, ArtistReviewRepository>();
