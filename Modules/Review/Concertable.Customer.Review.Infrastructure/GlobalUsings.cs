@@ -1,0 +1,10 @@
+global using Concertable.Shared;
+global using Concertable.Shared.Infrastructure;
+global using Concertable.Application.Interfaces;
+global using Concertable.Authorization.Contracts;
+global using Concertable.Customer.Review.Domain;
+global using Concertable.Customer.Review.Application.Interfaces;
+global using Concertable.Customer.Review.Application.Mappers;
+global using Concertable.Customer.Review.Application.Requests;
+global using Concertable.Data.Infrastructure;
+global using Concertable.Data.Infrastructure.Data;

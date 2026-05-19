@@ -8,9 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.Services.AddControllers();
 
-builder.Services.AddCustomerConcertModule();
-builder.Services.AddCustomerTicketModule();
-builder.Services.AddCustomerReviewModule();
+builder.Services.AddCustomerConcertModule(builder.Configuration);
+builder.Services.AddCustomerTicketModule(builder.Configuration);
+builder.Services.AddCustomerReviewModule(builder.Configuration);
 builder.Services.AddCustomerProfileModule();
 
 var app = builder.Build();

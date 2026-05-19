@@ -7,12 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Concertable.Customer.Review.Domain\Concertable.Customer.Review.Domain.csproj" />
     <ProjectReference Include="..\Concertable.Customer.Review.Application\Concertable.Customer.Review.Application.csproj" />
+    <ProjectReference Include="..\Concertable.Customer.Review.Contracts\Concertable.Customer.Review.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\..\Shared\Concertable.Shared.Infrastructure\Concertable.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\Data\Concertable.Data.Infrastructure\Concertable.Data.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\Modules\Authorization\Concertable.Authorization.Contracts\Concertable.Authorization.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\..\Modules\Concert\Concertable.Concert.Contracts\Concertable.Concert.Contracts.csproj" />
+    <ProjectReference Include="..\..\Ticket\Concertable.Customer.Ticket.Application\Concertable.Customer.Ticket.Application.csproj" />
   </ItemGroup>
 
 </Project>

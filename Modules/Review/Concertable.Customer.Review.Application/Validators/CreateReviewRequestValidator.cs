@@ -1,0 +1,13 @@
+using Concertable.Customer.Review.Application.Requests;
+using FluentValidation;
+
+namespace Concertable.Customer.Review.Application.Validators;
+
+internal class CreateReviewRequestValidator : AbstractValidator<CreateReviewRequest>
+{
+    public CreateReviewRequestValidator()
+    {
+        RuleFor(x => x.ConcertId).GreaterThan(0);
+        RuleFor(x => x.Stars).InclusiveBetween((byte)1, (byte)5);
+    }
+}
