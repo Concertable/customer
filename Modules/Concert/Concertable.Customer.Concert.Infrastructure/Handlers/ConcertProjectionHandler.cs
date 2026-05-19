@@ -11,12 +11,35 @@ internal class ConcertProjectionHandler(IConcertRepository repository)
 
         if (concert is null)
         {
-            concert = ConcertEntity.Create(e.ConcertId, e.TotalTickets, e.Price, e.Period, e.DatePosted);
+            concert = ConcertEntity.Create(
+                e.ConcertId,
+                e.Name,
+                e.TotalTickets,
+                e.Price,
+                e.Period,
+                e.DatePosted,
+                e.ArtistId,
+                e.ArtistName,
+                e.VenueId,
+                e.VenueName,
+                e.PayeeUserId,
+                e.ContractType);
             await repository.AddAsync(concert);
         }
         else
         {
-            concert.Update(e.TotalTickets, e.Price, e.Period, e.DatePosted);
+            concert.Update(
+                e.Name,
+                e.TotalTickets,
+                e.Price,
+                e.Period,
+                e.DatePosted,
+                e.ArtistId,
+                e.ArtistName,
+                e.VenueId,
+                e.VenueName,
+                e.PayeeUserId,
+                e.ContractType);
         }
 
         await repository.SaveChangesAsync();

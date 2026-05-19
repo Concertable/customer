@@ -3,9 +3,7 @@ using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.Customer.Ticket.Infrastructure.Repositories;
 using Concertable.Customer.Ticket.Infrastructure.Services;
 using Concertable.Customer.Ticket.Infrastructure.Services.Payment;
-using Concertable.Customer.Ticket.Infrastructure.Services.Workflow;
 using Concertable.Customer.Ticket.Infrastructure.Validators;
-using Concertable.Payment.Contracts;
 using Concertable.Payment.Contracts.Events;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -36,11 +34,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IQrCodeService, QrCodeService>();
         services.AddScoped<IPdfService, PdfService>();
 
-        services.AddSingleton<ArtistTicketPayee>();
-        services.AddSingleton<VenueTicketPayee>();
-        services.AddSingleton<ITicketPayee, TicketPayeeResolver>();
-
-        services.AddKeyedScoped<Concertable.Concert.Application.Interfaces.IPaymentSucceededProcessor, TicketPaymentProcessor>(TransactionTypes.Ticket);
+        services.AddScoped<IIntegrationEventHandler<PaymentSucceededEvent>, TicketPaymentProcessor>();
 
         services.AddSingleton<TicketConfigurationProvider>();
         services.AddSingleton<IEntityTypeConfigurationProvider>(sp => sp.GetRequiredService<TicketConfigurationProvider>());

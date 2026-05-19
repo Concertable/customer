@@ -9,10 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Concertable.Customer.Ticket.Domain\Concertable.Customer.Ticket.Domain.csproj" />
     <ProjectReference Include="..\..\..\..\Modules\Payment\Concertable.Payment.Contracts\Concertable.Payment.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\..\Modules\Payment\Concertable.Payment.Domain\Concertable.Payment.Domain.csproj" />
-    <ProjectReference Include="..\..\..\..\Modules\Payment\Concertable.Payment.Application\Concertable.Payment.Application.csproj" />
-    <ProjectReference Include="..\..\..\..\Modules\Concert\Concertable.Concert.Domain\Concertable.Concert.Domain.csproj" />
-    <ProjectReference Include="..\..\..\..\Modules\Contract\Concertable.Contract.Contracts\Concertable.Contract.Contracts.csproj" />
     <ProjectReference Include="..\..\Concert\Concertable.Customer.Concert.Domain\Concertable.Customer.Concert.Domain.csproj" />
     <ProjectReference Include="..\..\..\..\Shared\Concertable.Kernel\Concertable.Kernel.csproj" />
   </ItemGroup>

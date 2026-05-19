@@ -1,7 +1,6 @@
 using Concertable.Customer.Ticket.Application.DTOs;
-using Concertable.Payment.Application.DTOs;
-using Concertable.Payment.Application.Responses;
-using Concertable.Payment.Domain;
+using Concertable.Customer.Ticket.Application.Requests;
+using Concertable.Customer.Ticket.Application.Responses;
 using FluentResults;
 
 namespace Concertable.Customer.Ticket.Application.Interfaces;
