@@ -1,5 +1,6 @@
 using Concertable.Customer.Ticket.Application.Validators;
 using Concertable.Customer.Ticket.Infrastructure.Data;
+using Concertable.Customer.Ticket.Infrastructure.Pdf;
 using Concertable.Customer.Ticket.Infrastructure.Repositories;
 using Concertable.Customer.Ticket.Infrastructure.Services;
 using Concertable.Customer.Ticket.Infrastructure.Services.Payment;
@@ -32,7 +33,8 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<QRCoder.QRCodeGenerator>();
         services.AddScoped<IQrCodeService, QrCodeService>();
-        services.AddScoped<IPdfService, PdfService>();
+        services.AddScoped<ITicketPdfService, TicketPdfService>();
+        services.AddScoped<ITicketEmailSender, TicketEmailSender>();
 
         services.AddScoped<IIntegrationEventHandler<PaymentSucceededEvent>, TicketPaymentProcessor>();
 
