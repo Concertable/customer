@@ -19,6 +19,7 @@
     <ProjectReference Include="..\..\Concertable.DataAccess\Concertable.DataAccess.Infrastructure\Concertable.DataAccess.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Shared\Concertable.Kernel\Concertable.Kernel.csproj" />
     <ProjectReference Include="..\..\Shared\Concertable.Shared.Blob\Concertable.Shared.Blob.Infrastructure\Concertable.Shared.Blob.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Shared\Concertable.Shared.Email\Concertable.Shared.Email.Infrastructure\Concertable.Shared.Email.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\Authorization\Concertable.Authorization.Infrastructure\Concertable.Authorization.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\Notification\Concertable.Notification.Infrastructure\Concertable.Notification.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\Payment\Concertable.Payment.Infrastructure\Concertable.Payment.Infrastructure.csproj" />
