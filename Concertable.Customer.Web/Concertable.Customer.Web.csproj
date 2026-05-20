@@ -25,7 +25,7 @@
     <ProjectReference Include="..\..\Shared\Concertable.Shared.Pdf\Concertable.Shared.Pdf.Infrastructure\Concertable.Shared.Pdf.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\Authorization\Concertable.Authorization.Infrastructure\Concertable.Authorization.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\Notification\Concertable.Notification.Infrastructure\Concertable.Notification.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Modules\Payment\Concertable.Payment.Infrastructure\Concertable.Payment.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Concertable.Payment\Concertable.Payment.Infrastructure\Concertable.Payment.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Concert\Concertable.Customer.Concert.Api\Concertable.Customer.Concert.Api.csproj" />
     <ProjectReference Include="..\Modules\Concert\Concertable.Customer.Concert.Infrastructure\Concertable.Customer.Concert.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Ticket\Concertable.Customer.Ticket.Api\Concertable.Customer.Ticket.Api.csproj" />
@@ -34,6 +34,7 @@
     <ProjectReference Include="..\Modules\Review\Concertable.Customer.Review.Infrastructure\Concertable.Customer.Review.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Profile\Concertable.Customer.Profile.Api\Concertable.Customer.Profile.Api.csproj" />
     <ProjectReference Include="..\Modules\Profile\Concertable.Customer.Profile.Infrastructure\Concertable.Customer.Profile.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Concertable.Messaging\Concertable.Messaging.AzureServiceBus\Concertable.Messaging.AzureServiceBus.csproj" />
     <ProjectReference Include="..\..\Concertable.Messaging\Concertable.Messaging.Infrastructure\Concertable.Messaging.Infrastructure.csproj" />
   </ItemGroup>
 

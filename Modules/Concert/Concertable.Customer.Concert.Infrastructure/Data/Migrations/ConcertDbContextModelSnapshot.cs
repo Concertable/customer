@@ -70,6 +70,30 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                     b.ToTable("Concerts", "concert");
                 });
 
+            modelBuilder.Entity("Concertable.Messaging.Domain.InboxMessageEntity", b =>
+                {
+                    b.Property<Guid>("MessageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ConsumerName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("MessageType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTimeOffset>("ReceivedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("MessageId", "ConsumerName");
+
+                    b.ToTable("Inbox", "messaging", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
             modelBuilder.Entity("Concertable.Customer.Concert.Domain.ConcertEntity", b =>
                 {
                     b.OwnsOne("Concertable.Shared.DateRange", "Period", b1 =>
