@@ -5,7 +5,6 @@ using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Application.Requests;
 using Concertable.Customer.Ticket.Application.Responses;
 using Concertable.Payment.Contracts;
-using Concertable.Shared.Email;
 using Concertable.Shared.Exceptions;
 using FluentResults;
 using Microsoft.Extensions.Logging;
@@ -16,7 +15,7 @@ internal class TicketService : ITicketService
 {
     private readonly ITicketRepository ticketRepository;
     private readonly ITicketValidator ticketValidator;
-    private readonly IEmailService emailService;
+    private readonly ITicketEmailSender ticketEmailSender;
     private readonly IQrCodeService qrCodeService;
     private readonly ICurrentUser currentUser;
     private readonly IConcertRepository concertRepository;
@@ -27,7 +26,7 @@ internal class TicketService : ITicketService
     public TicketService(
         ITicketRepository ticketRepository,
         ITicketValidator ticketValidator,
-        IEmailService emailService,
+        ITicketEmailSender ticketEmailSender,
         IQrCodeService qrCodeService,
         ICurrentUser currentUser,
         IConcertRepository concertRepository,
@@ -37,7 +36,7 @@ internal class TicketService : ITicketService
     {
         this.ticketRepository = ticketRepository;
         this.ticketValidator = ticketValidator;
-        this.emailService = emailService;
+        this.ticketEmailSender = ticketEmailSender;
         this.qrCodeService = qrCodeService;
         this.currentUser = currentUser;
         this.concertRepository = concertRepository;
@@ -112,7 +111,7 @@ internal class TicketService : ITicketService
         }
 
         var ticketIds = tickets.Select(t => t.Id).ToList();
-        await emailService.SendTicketsToEmailAsync(purchaseCompleteDto.FromEmail, ticketIds);
+        await ticketEmailSender.SendTicketsAsync(purchaseCompleteDto.FromEmail, ticketIds);
 
         return Result.Ok(new TicketPaymentResponse
         {
