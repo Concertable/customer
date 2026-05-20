@@ -1,15 +1,14 @@
-using Concertable.DataAccess;
 using Concertable.Authorization.Infrastructure.Extensions;
 using Concertable.Customer.Concert.Infrastructure.Extensions;
 using Concertable.Customer.Profile.Infrastructure.Extensions;
 using Concertable.Customer.Review.Infrastructure.Extensions;
 using Concertable.Customer.Ticket.Infrastructure.Extensions;
-using Concertable.Customer.Web.Services;
 using Concertable.DataAccess.Infrastructure;
 using Concertable.Messaging.Infrastructure.Extensions;
 using Concertable.Notification.Infrastructure.Extensions;
 using Concertable.Payment.Infrastructure.Extensions;
 using Concertable.Shared.Blob.Infrastructure.Extensions;
+using Concertable.Shared.Email.Infrastructure.Extensions;
 using Concertable.Shared.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -27,10 +26,10 @@ services.AddScoped<IKeyedServiceProvider>(sp => (IKeyedServiceProvider)sp);
 services.AddSingleton(TimeProvider.System);
 services.AddSharedInfrastructure(builder.Configuration);
 services.AddSharedBlob(builder.Configuration);
+services.AddSharedEmail(builder.Configuration);
 services.AddMessaging();
 services.AddScoped<AuditInterceptor>();
 services.AddScoped<DomainEventDispatchInterceptor>();
-services.AddScoped<IEmailService, FakeEmailService>();
 
 services.AddCustomerConcertModule(builder.Configuration);
 services.AddCustomerTicketModule(builder.Configuration);
