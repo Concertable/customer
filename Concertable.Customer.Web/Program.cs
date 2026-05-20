@@ -1,9 +1,11 @@
 using Concertable.Authorization.Infrastructure.Extensions;
+using Concertable.Concert.Contracts.Events;
 using Concertable.Customer.Concert.Infrastructure.Extensions;
 using Concertable.Customer.Profile.Infrastructure.Extensions;
 using Concertable.Customer.Review.Infrastructure.Extensions;
 using Concertable.Customer.Ticket.Infrastructure.Extensions;
 using Concertable.DataAccess.Infrastructure;
+using Concertable.Messaging.Application;
 using Concertable.Messaging.Infrastructure.Extensions;
 using Concertable.Notification.Infrastructure.Extensions;
 using Concertable.Payment.Infrastructure.Extensions;
@@ -14,6 +16,7 @@ using Concertable.Shared.Imaging.Infrastructure.Extensions;
 using Concertable.Shared.Pdf.Infrastructure.Extensions;
 using Concertable.Shared.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,7 +36,13 @@ services.AddSharedEmail(builder.Configuration);
 services.AddSharedGeocoding();
 services.AddSharedImaging();
 services.AddSharedPdf();
-services.AddMessaging();
+services.AddInMemoryTransport();
+services.AddDirectBusKeyed("webhook");
+
+var customerRegistry = new MessageTypeRegistry();
+customerRegistry.SubscribeTo<ReviewSubmittedEvent>();
+services.AddSingleton(customerRegistry);
+services.AddOutbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 services.AddScoped<AuditInterceptor>();
 services.AddScoped<DomainEventDispatchInterceptor>();
 
