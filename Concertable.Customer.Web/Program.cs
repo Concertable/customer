@@ -1,11 +1,12 @@
 using Concertable.Authorization.Infrastructure.Extensions;
 using Concertable.Concert.Contracts.Events;
 using Concertable.Customer.Concert.Infrastructure.Extensions;
+using Concertable.Messaging.Application;
+using Concertable.Messaging.AzureServiceBus;
 using Concertable.Customer.Profile.Infrastructure.Extensions;
 using Concertable.Customer.Review.Infrastructure.Extensions;
 using Concertable.Customer.Ticket.Infrastructure.Extensions;
 using Concertable.DataAccess.Infrastructure;
-using Concertable.Messaging.Application;
 using Concertable.Messaging.Infrastructure.Extensions;
 using Concertable.Notification.Infrastructure.Extensions;
 using Concertable.Payment.Infrastructure.Extensions;
@@ -31,18 +32,27 @@ var services = builder.Services;
 services.AddScoped<IKeyedServiceProvider>(sp => (IKeyedServiceProvider)sp);
 services.AddSingleton(TimeProvider.System);
 services.AddSharedInfrastructure(builder.Configuration);
+services.AddClientCredentials(opts =>
+{
+    opts.Authority = builder.Configuration["Auth:Authority"] ?? builder.Configuration["services__auth__https__0"] ?? "";
+    opts.ClientId = builder.Configuration["ServiceAuth:ClientId"] ?? "";
+    opts.ClientSecret = builder.Configuration["ServiceAuth:ClientSecret"] ?? "";
+});
 services.AddSharedBlob(builder.Configuration);
 services.AddSharedEmail(builder.Configuration);
 services.AddSharedGeocoding();
 services.AddSharedImaging();
 services.AddSharedPdf();
-services.AddInMemoryTransport();
+services.AddAzureServiceBusTransport(
+    opts =>
+    {
+        opts.ConnectionString = builder.Configuration.GetConnectionString("asb") ?? "";
+        opts.ServiceName = "concertable-customer";
+    },
+    reg => reg.SubscribeTo<ReviewSubmittedEvent>());
 services.AddDirectBusKeyed("webhook");
-
-var customerRegistry = new MessageTypeRegistry();
-customerRegistry.SubscribeTo<ReviewSubmittedEvent>();
-services.AddSingleton(customerRegistry);
 services.AddOutbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+services.AddInbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 services.AddScoped<AuditInterceptor>();
 services.AddScoped<DomainEventDispatchInterceptor>();
 
@@ -53,7 +63,7 @@ services.AddCustomerProfileModule(builder.Configuration);
 
 services.AddNotificationModule();
 services.AddAuthorizationModule();
-services.AddPaymentModule(builder.Configuration);
+services.AddPaymentInfrastructure(builder.Configuration);
 
 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opts =>

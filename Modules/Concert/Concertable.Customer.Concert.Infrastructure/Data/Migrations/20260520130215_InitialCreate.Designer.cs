@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ConcertDbContext))]
-    [Migration("20260520110829_InitialCreate")]
+    [Migration("20260520130215_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -71,6 +71,30 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Concerts", "concert");
+                });
+
+            modelBuilder.Entity("Concertable.Messaging.Domain.InboxMessageEntity", b =>
+                {
+                    b.Property<Guid>("MessageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ConsumerName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("MessageType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTimeOffset>("ReceivedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("MessageId", "ConsumerName");
+
+                    b.ToTable("Inbox", "messaging", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
                 });
 
             modelBuilder.Entity("Concertable.Customer.Concert.Domain.ConcertEntity", b =>

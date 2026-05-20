@@ -18,7 +18,7 @@ internal class TicketPaymentProcessor : IIntegrationEventHandler<PaymentSucceede
         this.logger = logger;
     }
 
-    public async Task HandleAsync(PaymentSucceededEvent @event, CancellationToken ct = default)
+    public async Task HandleAsync(PaymentSucceededEvent @event, MessageEnvelope envelope, CancellationToken ct = default)
     {
         if (@event.Metadata.GetValueOrDefault("type") != TransactionTypes.Ticket)
             return;
