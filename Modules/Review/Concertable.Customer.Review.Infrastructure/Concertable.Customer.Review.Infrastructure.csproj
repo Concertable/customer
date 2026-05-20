@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\Ticket\Concertable.Customer.Ticket.Application\Concertable.Customer.Ticket.Application.csproj" />
     <ProjectReference Include="..\..\..\..\Shared\Concertable.Kernel\Concertable.Kernel.csproj" />
     <ProjectReference Include="..\..\..\..\Concertable.Messaging\Concertable.Messaging.Contracts\Concertable.Messaging.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\..\Concertable.Messaging\Concertable.Messaging.Domain\Concertable.Messaging.Domain.csproj" />
   </ItemGroup>
 
 </Project>
