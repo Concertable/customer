@@ -54,6 +54,7 @@ services.AddAzureServiceBusTransport(
     {
         reg.SubscribeTo<ReviewSubmittedEvent>();
         reg.SubscribeTo<PaymentSucceededEvent>();
+        reg.SubscribeTo<PaymentFailedEvent>();
     });
 services.AddDirectBusKeyed("webhook");
 services.AddOutbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
