@@ -11,4 +11,7 @@ internal class TicketNotifier : ITicketNotifier
 
     public Task TicketPurchasedAsync(string userId, object payload) =>
         notifications.SendAsync(userId, "TicketPurchased", payload);
+
+    public Task TicketPurchaseFailedAsync(string userId, object payload) =>
+        notifications.SendAsync(userId, "TicketPurchaseFailed", payload);
 }
