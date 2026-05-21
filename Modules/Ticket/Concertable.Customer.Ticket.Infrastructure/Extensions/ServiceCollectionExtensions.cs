@@ -36,6 +36,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITicketEmailSender, TicketEmailSender>();
 
         services.AddScoped<IIntegrationEventHandler<PaymentSucceededEvent>, TicketPaymentProcessor>();
+        services.AddScoped<IIntegrationEventHandler<PaymentFailedEvent>, TicketPaymentFailedProcessor>();
 
         services.AddSingleton<TicketConfigurationProvider>();
         services.AddSingleton<IEntityTypeConfigurationProvider>(sp => sp.GetRequiredService<TicketConfigurationProvider>());
