@@ -8,6 +8,8 @@ using Concertable.Customer.Review.Infrastructure.Extensions;
 using Concertable.Customer.Ticket.Infrastructure.Extensions;
 using Concertable.DataAccess.Infrastructure;
 using Concertable.Messaging.Infrastructure.Extensions;
+using Concertable.Messaging.Infrastructure.Inbox;
+using Concertable.Messaging.Infrastructure.Outbox;
 using Concertable.Notification.Infrastructure.Extensions;
 using Concertable.Payment.Client.Extensions;
 using Concertable.Payment.Domain.Events;
@@ -88,6 +90,13 @@ services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 services.AddAuthorization();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var sp = scope.ServiceProvider;
+    await sp.GetRequiredService<OutboxDbContext>().Database.MigrateAsync();
+    await sp.GetRequiredService<InboxDbContext>().Database.MigrateAsync();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
