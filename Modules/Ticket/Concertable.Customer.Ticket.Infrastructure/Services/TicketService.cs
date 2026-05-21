@@ -4,7 +4,6 @@ using Concertable.Customer.Contracts;
 using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Application.Requests;
 using Concertable.Customer.Ticket.Application.Responses;
-using Concertable.Payment.Contracts;
 using Concertable.Shared.Exceptions;
 using FluentResults;
 using Microsoft.Extensions.Logging;
@@ -19,7 +18,7 @@ internal class TicketService : ITicketService
     private readonly IQrCodeService qrCodeService;
     private readonly ICurrentUser currentUser;
     private readonly IConcertRepository concertRepository;
-    private readonly ICustomerPaymentModule customerPaymentModule;
+    private readonly ICustomerPaymentClient customerPaymentClient;
     private readonly TimeProvider timeProvider;
     private readonly ILogger<TicketService> logger;
 
@@ -30,7 +29,7 @@ internal class TicketService : ITicketService
         IQrCodeService qrCodeService,
         ICurrentUser currentUser,
         IConcertRepository concertRepository,
-        ICustomerPaymentModule customerPaymentModule,
+        ICustomerPaymentClient customerPaymentClient,
         TimeProvider timeProvider,
         ILogger<TicketService> logger)
     {
@@ -40,7 +39,7 @@ internal class TicketService : ITicketService
         this.qrCodeService = qrCodeService;
         this.currentUser = currentUser;
         this.concertRepository = concertRepository;
-        this.customerPaymentModule = customerPaymentModule;
+        this.customerPaymentClient = customerPaymentClient;
         this.timeProvider = timeProvider;
         this.logger = logger;
     }
@@ -65,7 +64,7 @@ internal class TicketService : ITicketService
             ["quantity"] = purchaseParams.Quantity.ToString()
         };
 
-        var paymentResult = await customerPaymentModule.PayAsync(
+        var paymentResult = await customerPaymentClient.PayAsync(
             currentUser.GetId(), concert.PayeeUserId,
             concert.Price * purchaseParams.Quantity,
             metadata,
@@ -143,7 +142,7 @@ internal class TicketService : ITicketService
             ["currency"] = "gbp"
         };
 
-        var session = await customerPaymentModule.CreatePaymentSessionAsync(currentUser.GetId(), metadata);
+        var session = await customerPaymentClient.CreatePaymentSessionAsync(currentUser.GetId(), metadata);
 
         return Result.Ok(new TicketCheckout(session, concert.Price, concert.Id, quantity));
     }

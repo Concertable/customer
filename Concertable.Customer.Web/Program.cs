@@ -9,7 +9,8 @@ using Concertable.Customer.Ticket.Infrastructure.Extensions;
 using Concertable.DataAccess.Infrastructure;
 using Concertable.Messaging.Infrastructure.Extensions;
 using Concertable.Notification.Infrastructure.Extensions;
-using Concertable.Payment.Infrastructure.Extensions;
+using Concertable.Payment.Client.Extensions;
+using Concertable.Payment.Domain.Events;
 using Concertable.Shared.Blob.Infrastructure.Extensions;
 using Concertable.Shared.Email.Infrastructure.Extensions;
 using Concertable.Shared.Geocoding.Infrastructure.Extensions;
@@ -49,7 +50,11 @@ services.AddAzureServiceBusTransport(
         opts.ConnectionString = builder.Configuration.GetConnectionString("asb") ?? "";
         opts.ServiceName = "concertable-customer";
     },
-    reg => reg.SubscribeTo<ReviewSubmittedEvent>());
+    reg =>
+    {
+        reg.SubscribeTo<ReviewSubmittedEvent>();
+        reg.SubscribeTo<PaymentSucceededEvent>();
+    });
 services.AddDirectBusKeyed("webhook");
 services.AddOutbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 services.AddInbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -63,7 +68,7 @@ services.AddCustomerProfileModule(builder.Configuration);
 
 services.AddNotificationModule();
 services.AddAuthorizationModule();
-services.AddPaymentInfrastructure(builder.Configuration);
+services.AddPaymentClient(builder.Configuration);
 
 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opts =>
