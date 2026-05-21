@@ -57,8 +57,8 @@ services.AddAzureServiceBusTransport(
         reg.SubscribeTo<PaymentFailedEvent>();
     });
 services.AddDirectBusKeyed("webhook");
-services.AddOutbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-services.AddInbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+services.AddOutbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("CustomerDb")));
+services.AddInbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("CustomerDb")));
 services.AddScoped<AuditInterceptor>();
 services.AddScoped<DomainEventDispatchInterceptor>();
 
