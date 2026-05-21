@@ -11,6 +11,7 @@ using Concertable.Messaging.Infrastructure.Extensions;
 using Concertable.Notification.Infrastructure.Extensions;
 using Concertable.Payment.Client.Extensions;
 using Concertable.Payment.Domain.Events;
+using Concertable.User.Contracts.Events;
 using Concertable.Shared.Blob.Infrastructure.Extensions;
 using Concertable.Shared.Email.Infrastructure.Extensions;
 using Concertable.Shared.Geocoding.Infrastructure.Extensions;
@@ -52,7 +53,8 @@ services.AddAzureServiceBusTransport(
     },
     reg =>
     {
-        reg.SubscribeTo<ReviewSubmittedEvent>();
+        reg.SubscribeTo<ConcertChangedEvent>();
+        reg.SubscribeTo<CustomerRegisteredEvent>();
         reg.SubscribeTo<PaymentSucceededEvent>();
         reg.SubscribeTo<PaymentFailedEvent>();
     });
