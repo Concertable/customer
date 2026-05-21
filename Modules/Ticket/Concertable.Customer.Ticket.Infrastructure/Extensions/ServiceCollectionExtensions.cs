@@ -5,7 +5,6 @@ using Concertable.Customer.Ticket.Infrastructure.Repositories;
 using Concertable.Customer.Ticket.Infrastructure.Services;
 using Concertable.Customer.Ticket.Infrastructure.Services.Payment;
 using Concertable.Customer.Ticket.Infrastructure.Validators;
-using Concertable.Payment.Contracts.Events;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

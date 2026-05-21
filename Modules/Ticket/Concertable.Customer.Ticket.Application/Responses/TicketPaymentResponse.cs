@@ -1,4 +1,4 @@
-using Concertable.Payment.Contracts;
+using Concertable.Payment.Client;
 
 namespace Concertable.Customer.Ticket.Application.Responses;
 

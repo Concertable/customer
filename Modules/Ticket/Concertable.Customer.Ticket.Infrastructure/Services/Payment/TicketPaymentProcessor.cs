@@ -1,5 +1,3 @@
-using Concertable.Payment.Contracts;
-using Concertable.Payment.Contracts.Events;
 using Concertable.Shared.Exceptions;
 using Microsoft.Extensions.Logging;
 
