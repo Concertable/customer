@@ -2,16 +2,16 @@ namespace Concertable.Customer.Ticket.Infrastructure.Services;
 
 internal class TicketNotifier : ITicketNotifier
 {
-    private readonly INotificationModule notification;
+    private readonly INotificationClient notificationClient;
 
-    public TicketNotifier(INotificationModule notification)
+    public TicketNotifier(INotificationClient notificationClient)
     {
-        this.notification = notification;
+        this.notificationClient = notificationClient;
     }
 
     public Task TicketPurchasedAsync(string userId, object payload) =>
-        notification.SendAsync(userId, "TicketPurchased", payload);
+        notificationClient.SendAsync(userId, "TicketPurchased", payload);
 
     public Task TicketPurchaseFailedAsync(string userId, object payload) =>
-        notification.SendAsync(userId, "TicketPurchaseFailed", payload);
+        notificationClient.SendAsync(userId, "TicketPurchaseFailed", payload);
 }
