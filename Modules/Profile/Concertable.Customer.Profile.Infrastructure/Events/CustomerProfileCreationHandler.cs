@@ -1,11 +1,12 @@
+using Concertable.Auth.Contracts;
+using Concertable.Auth.Contracts.Events;
 using Concertable.Customer.Profile.Infrastructure.Data;
 using Concertable.Messaging.Domain;
-using Concertable.User.Contracts.Events;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Profile.Infrastructure.Events;
 
-internal class CustomerProfileCreationHandler : IIntegrationEventHandler<CustomerRegisteredEvent>
+internal class CustomerProfileCreationHandler : IIntegrationEventHandler<CredentialRegisteredEvent>
 {
     private readonly ProfileDbContext context;
 
@@ -14,8 +15,11 @@ internal class CustomerProfileCreationHandler : IIntegrationEventHandler<Custome
         this.context = context;
     }
 
-    public async Task HandleAsync(CustomerRegisteredEvent e, MessageEnvelope envelope, CancellationToken ct = default)
+    public async Task HandleAsync(CredentialRegisteredEvent e, MessageEnvelope envelope, CancellationToken ct = default)
     {
+        if (e.ClientId is not ClientIds.CustomerWeb and not ClientIds.CustomerMobile)
+            return;
+
         if (await context.Set<InboxMessageEntity>().AnyAsync(
             m => m.MessageId == envelope.MessageId && m.ConsumerName == nameof(CustomerProfileCreationHandler), ct))
             return;
