@@ -1,4 +1,5 @@
 using Concertable.Customer.Ticket.Infrastructure.Data;
+using Concertable.DataAccess.Infrastructure.Extensions;
 using Concertable.Messaging.Domain;
 using Concertable.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
@@ -41,17 +42,24 @@ internal class TicketPaymentProcessor : IIntegrationEventHandler<PaymentSucceede
         context.Set<InboxMessageEntity>().Add(
             InboxMessageEntity.Create(envelope.MessageId, nameof(TicketPaymentProcessor), envelope.MessageType, DateTimeOffset.UtcNow));
 
-        var result = await ticketService.CompleteAsync(new()
+        try
         {
-            EntityId = int.Parse(meta["concertId"]),
-            FromUserId = Guid.Parse(meta["fromUserId"]),
-            FromEmail = meta.GetValueOrDefault("fromUserEmail", string.Empty),
-            Quantity = meta.TryGetValue("quantity", out var q) ? int.Parse(q) : null
-        });
+            var result = await ticketService.CompleteAsync(new()
+            {
+                EntityId = int.Parse(meta["concertId"]),
+                FromUserId = Guid.Parse(meta["fromUserId"]),
+                FromEmail = meta.GetValueOrDefault("fromUserEmail", string.Empty),
+                Quantity = meta.TryGetValue("quantity", out var q) ? int.Parse(q) : null
+            });
 
-        if (result.IsFailed)
-            throw new BadRequestException(result.Errors);
+            if (result.IsFailed)
+                throw new BadRequestException(result.Errors);
 
-        await notifier.TicketPurchasedAsync(meta["fromUserId"], result.Value);
+            await notifier.TicketPurchasedAsync(meta["fromUserId"], result.Value);
+        }
+        catch (DbUpdateException ex) when (ex.IsDuplicateKey())
+        {
+            logger.LogDebug("Duplicate inbox message {MessageId}; skipping", envelope.MessageId);
+        }
     }
 }
