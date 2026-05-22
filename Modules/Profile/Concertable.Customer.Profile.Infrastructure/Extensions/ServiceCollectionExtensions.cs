@@ -1,7 +1,7 @@
 using Concertable.Customer.Profile.Infrastructure.Authorization;
 using Concertable.Customer.Profile.Infrastructure.Data;
 using Concertable.Customer.Profile.Infrastructure.Events;
-using Concertable.User.Contracts.Events;
+using Concertable.Auth.Contracts.Events;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,7 +19,7 @@ public static class ServiceCollectionExtensions
                     sp.GetRequiredService<AuditInterceptor>(),
                     sp.GetRequiredService<DomainEventDispatchInterceptor>()));
 
-        services.AddScoped<IIntegrationEventHandler<CustomerRegisteredEvent>, CustomerProfileCreationHandler>();
+        services.AddScoped<IIntegrationEventHandler<CredentialRegisteredEvent>, CustomerProfileCreationHandler>();
 
         services.AddSingleton<ProfileConfigurationProvider>();
         services.AddSingleton<IEntityTypeConfigurationProvider>(sp => sp.GetRequiredService<ProfileConfigurationProvider>());
