@@ -47,6 +47,8 @@
     <Project Path="Modules/Preference/Concertable.Customer.Preference.Domain/Concertable.Customer.Preference.Domain.csproj" />
     <Project Path="Modules/Preference/Concertable.Customer.Preference.Infrastructure/Concertable.Customer.Preference.Infrastructure.csproj" />
   </Folder>
+  <Project Path="Concertable.Customer.AppHost/Concertable.Customer.AppHost.csproj" />
   <Project Path="../Concertable.ServiceDefaults/Concertable.ServiceDefaults.csproj" />
   <Project Path="Concertable.Customer.Web/Concertable.Customer.Web.csproj" />
+  <Project Path="../Concertable.AppHost.Shared/Concertable.AppHost.Shared.csproj" />
 </Solution>
