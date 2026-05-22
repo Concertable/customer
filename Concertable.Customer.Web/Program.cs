@@ -73,7 +73,7 @@ services.AddCustomerTicketModule(builder.Configuration);
 services.AddCustomerReviewModule(builder.Configuration);
 services.AddCustomerProfileModule(builder.Configuration);
 
-services.AddNotificationModule();
+services.AddNotificationClient();
 services.AddAuthorizationModule();
 services.AddPaymentClient(builder.Configuration);
 
