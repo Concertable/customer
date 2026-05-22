@@ -1,0 +1,13 @@
+global using Concertable.Shared;
+global using Concertable.Shared.Infrastructure.Identity;
+global using Concertable.Messaging;
+global using Concertable.Messaging.Domain;
+global using Concertable.Notification.Contracts;
+global using Concertable.DataAccess;
+global using Concertable.DataAccess.Infrastructure;
+global using Concertable.Customer.Preference.Application.DTOs;
+global using Concertable.Customer.Preference.Application.Interfaces;
+global using Concertable.Customer.Preference.Application.Mappers;
+global using Concertable.Customer.Preference.Application.Requests;
+global using Concertable.Customer.Preference.Domain;
+global using Concertable.Customer.User.Contracts;

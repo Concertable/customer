@@ -2,7 +2,9 @@ using Concertable.Concert.Contracts.Events;
 using Concertable.Customer.Concert.Infrastructure.Extensions;
 using Concertable.Messaging.Application;
 using Concertable.Messaging.AzureServiceBus;
-using Concertable.Customer.Profile.Infrastructure.Extensions;
+using Concertable.Customer.Preference.Api.Extensions;
+using Concertable.Customer.Preference.Infrastructure.Extensions;
+using Concertable.Customer.User.Infrastructure.Extensions;
 using Concertable.Customer.Review.Infrastructure.Extensions;
 using Concertable.Customer.Ticket.Infrastructure.Extensions;
 using Concertable.DataAccess.Infrastructure;
@@ -35,6 +37,7 @@ var services = builder.Services;
 services.AddScoped<IKeyedServiceProvider>(sp => (IKeyedServiceProvider)sp);
 services.AddSingleton(TimeProvider.System);
 services.AddSharedInfrastructure(builder.Configuration);
+services.AddGeometry();
 services.AddClientCredentials(opts =>
 {
     opts.Authority = builder.Configuration["Auth:Authority"] ?? builder.Configuration["services__auth__https__0"] ?? "";
@@ -57,6 +60,7 @@ services.AddAzureServiceBusTransport(
         reg.Publishes<ReviewSubmittedEvent>();
 
         reg.SubscribeTo<ConcertChangedEvent>();
+        reg.SubscribeTo<ConcertPostedEvent>();
         reg.SubscribeTo<CredentialRegisteredEvent>();
         reg.SubscribeTo<PaymentSucceededEvent>();
         reg.SubscribeTo<PaymentFailedEvent>();
@@ -70,7 +74,9 @@ services.AddScoped<DomainEventDispatchInterceptor>();
 services.AddCustomerConcertModule(builder.Configuration);
 services.AddCustomerTicketModule(builder.Configuration);
 services.AddCustomerReviewModule(builder.Configuration);
-services.AddCustomerProfileModule(builder.Configuration);
+services.AddCustomerUserModule(builder.Configuration);
+services.AddCustomerPreferenceModule(builder.Configuration);
+services.AddCustomerPreferenceApi();
 
 services.AddNotificationClient();
 services.AddCurrentUser();
