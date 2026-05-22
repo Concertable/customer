@@ -1,4 +1,3 @@
-using Concertable.Authorization.Infrastructure.Extensions;
 using Concertable.Concert.Contracts.Events;
 using Concertable.Customer.Concert.Infrastructure.Extensions;
 using Concertable.Messaging.Application;
@@ -74,7 +73,7 @@ services.AddCustomerReviewModule(builder.Configuration);
 services.AddCustomerProfileModule(builder.Configuration);
 
 services.AddNotificationClient();
-services.AddAuthorizationModule();
+services.AddCurrentUser();
 services.AddPaymentClient(builder.Configuration);
 
 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

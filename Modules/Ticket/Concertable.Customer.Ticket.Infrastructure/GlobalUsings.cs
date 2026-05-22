@@ -2,7 +2,7 @@ global using Concertable.Shared;
 global using Concertable.Messaging;
 global using Concertable.DataAccess.Infrastructure;
 global using Concertable.DataAccess;
-global using Concertable.Authorization.Contracts;
+global using Concertable.Shared.Infrastructure.Identity;
 global using Concertable.Payment.Client;
 global using Concertable.Payment.Domain;
 global using Concertable.Payment.Domain.Events;
