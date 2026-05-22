@@ -24,7 +24,6 @@
     <ProjectReference Include="..\..\Shared\Concertable.Shared.Geocoding\Concertable.Shared.Geocoding.Infrastructure\Concertable.Shared.Geocoding.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Shared\Concertable.Shared.Imaging\Concertable.Shared.Imaging.Infrastructure\Concertable.Shared.Imaging.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Shared\Concertable.Shared.Pdf\Concertable.Shared.Pdf.Infrastructure\Concertable.Shared.Pdf.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Concertable.B2B\Modules\Authorization\Concertable.Authorization.Infrastructure\Concertable.Authorization.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Concertable.B2B\Modules\Notification\Concertable.Notification.Infrastructure\Concertable.Notification.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Concertable.Payment\Concertable.Payment.Client\Concertable.Payment.Client.csproj" />
     <ProjectReference Include="..\Modules\Concert\Concertable.Customer.Concert.Api\Concertable.Customer.Concert.Api.csproj" />
