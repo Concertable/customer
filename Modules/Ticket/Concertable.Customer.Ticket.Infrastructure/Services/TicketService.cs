@@ -1,6 +1,5 @@
 using Concertable.Customer.Concert.Application.Interfaces;
 using Concertable.Customer.Concert.Domain;
-using Concertable.Customer.Contracts;
 using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Application.Requests;
 using Concertable.Customer.Ticket.Application.Responses;
