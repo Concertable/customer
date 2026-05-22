@@ -55,6 +55,8 @@ services.AddAzureServiceBusTransport(
     },
     reg =>
     {
+        reg.Publishes<ReviewSubmittedEvent>();
+
         reg.SubscribeTo<ConcertChangedEvent>();
         reg.SubscribeTo<CustomerRegisteredEvent>();
         reg.SubscribeTo<PaymentSucceededEvent>();
