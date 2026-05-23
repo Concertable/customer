@@ -1,3 +1,4 @@
+using Concertable.Customer.Ticket.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Data;

@@ -1,4 +1,4 @@
-using Concertable.Shared.Exceptions;
+using Concertable.Kernel.Exceptions;
 using QRCoder;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Services;

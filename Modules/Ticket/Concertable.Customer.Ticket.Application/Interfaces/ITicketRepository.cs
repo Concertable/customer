@@ -1,3 +1,6 @@
+using Concertable.Customer.Ticket.Domain.Entities;
+using Concertable.DataAccess.Application;
+
 namespace Concertable.Customer.Ticket.Application.Interfaces;
 
 internal interface ITicketRepository : IGuidRepository<TicketEntity>

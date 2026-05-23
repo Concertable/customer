@@ -1,6 +1,6 @@
 using System.Net;
+using Concertable.Contracts;
 using Concertable.Customer.Review.Application.Requests;
-using Concertable.Shared;
 
 namespace Concertable.Customer.Review.IntegrationTests;
 

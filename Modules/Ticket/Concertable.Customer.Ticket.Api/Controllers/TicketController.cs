@@ -1,5 +1,6 @@
 using Concertable.Customer.Ticket.Application.Requests;
 using Concertable.Customer.Ticket.Application.Responses;
+using Concertable.Kernel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -23,7 +23,7 @@ namespace Concertable.Customer.Review.Infrastructure.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Concertable.Customer.Review.Domain.ReviewEntity", b =>
+            modelBuilder.Entity("Concertable.Customer.Review.Domain.Entities.ReviewEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

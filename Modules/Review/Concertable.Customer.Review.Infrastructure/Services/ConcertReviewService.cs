@@ -1,5 +1,8 @@
+using Concertable.Contracts;
+using Concertable.Customer.Review.Domain.Entities;
 using Concertable.Customer.Ticket.Application.Interfaces;
-using Concertable.Shared.Exceptions;
+using Concertable.Kernel.Identity;
+using Concertable.Kernel.Exceptions;
 
 namespace Concertable.Customer.Review.Infrastructure.Services;
 

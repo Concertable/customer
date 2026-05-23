@@ -1,4 +1,6 @@
-namespace Concertable.Customer.Ticket.Domain;
+using Concertable.Kernel;
+
+namespace Concertable.Customer.Ticket.Domain.Entities;
 
 public class TicketEntity : IGuidEntity
 {

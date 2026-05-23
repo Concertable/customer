@@ -1,3 +1,5 @@
+using Concertable.Contracts;
+
 namespace Concertable.Customer.Concert.Application.Dtos;
 
 public record ConcertDetailDto(

@@ -1,3 +1,5 @@
+using Concertable.Kernel;
+
 namespace Concertable.Customer.Review.Domain.Events;
 
 public record ReviewCreatedDomainEvent(

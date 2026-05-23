@@ -28,8 +28,11 @@ namespace Concertable.Customer.Ticket.Infrastructure.Data.Migrations
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Period_Start = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Period_End = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ArtistId = table.Column<int>(type: "int", nullable: false),
+                    ArtistName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VenueId = table.Column<int>(type: "int", nullable: false),
                     VenueName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ArtistName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    HasReview = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

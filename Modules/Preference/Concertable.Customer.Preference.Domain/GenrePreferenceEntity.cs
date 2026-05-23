@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using Concertable.Shared;
 
 namespace Concertable.Customer.Preference.Domain;
 

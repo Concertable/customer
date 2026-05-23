@@ -23,11 +23,14 @@ namespace Concertable.Customer.Ticket.Infrastructure.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Concertable.Customer.Ticket.Domain.TicketEntity", b =>
+            modelBuilder.Entity("Concertable.Customer.Ticket.Domain.Entities.TicketEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ArtistId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ArtistName")
                         .IsRequired()
@@ -39,6 +42,9 @@ namespace Concertable.Customer.Ticket.Infrastructure.Data.Migrations
                     b.Property<string>("ConcertName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasReview")
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -52,6 +58,9 @@ namespace Concertable.Customer.Ticket.Infrastructure.Data.Migrations
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("VenueId")
+                        .HasColumnType("int");
 
                     b.Property<string>("VenueName")
                         .IsRequired()
@@ -128,9 +137,9 @@ namespace Concertable.Customer.Ticket.Infrastructure.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Concertable.Customer.Ticket.Domain.TicketEntity", b =>
+            modelBuilder.Entity("Concertable.Customer.Ticket.Domain.Entities.TicketEntity", b =>
                 {
-                    b.OwnsOne("Concertable.Shared.DateRange", "Period", b1 =>
+                    b.OwnsOne("Concertable.Kernel.DateRange", "Period", b1 =>
                         {
                             b1.Property<Guid>("TicketEntityId")
                                 .HasColumnType("uniqueidentifier");

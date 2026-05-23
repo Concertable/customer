@@ -1,3 +1,4 @@
+using Concertable.Contracts;
 using Concertable.Customer.Review.Infrastructure.Data;
 using Concertable.Customer.Review.Infrastructure.Mappers;
 using Concertable.Customer.Ticket.Application.Interfaces;

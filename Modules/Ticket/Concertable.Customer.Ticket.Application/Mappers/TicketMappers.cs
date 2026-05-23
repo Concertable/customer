@@ -1,4 +1,5 @@
 using Concertable.Customer.Ticket.Application.DTOs;
+using Concertable.Customer.Ticket.Domain.Entities;
 
 namespace Concertable.Customer.Ticket.Application.Mappers;
 

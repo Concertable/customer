@@ -1,4 +1,5 @@
 using Concertable.Customer.Ticket.Infrastructure.Data;
+using Concertable.Kernel;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Repositories;
 

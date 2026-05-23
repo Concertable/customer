@@ -1,7 +1,7 @@
 using Concertable.Customer.Concert.Application.Interfaces;
-using Concertable.Shared.Exceptions;
+using Concertable.Kernel.Exceptions;
 using FluentResults;
-using ConcertReadModel = Concertable.Customer.Concert.Domain.ConcertReadModel;
+using ConcertReadModel = Concertable.Customer.Concert.Domain.Entities.ConcertReadModel;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Validators;
 

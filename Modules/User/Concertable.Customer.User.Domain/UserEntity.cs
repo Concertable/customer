@@ -1,3 +1,4 @@
+using Concertable.Kernel;
 using NetTopologySuite.Geometries;
 
 namespace Concertable.Customer.User.Domain;

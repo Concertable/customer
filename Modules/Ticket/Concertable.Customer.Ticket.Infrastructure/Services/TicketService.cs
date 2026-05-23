@@ -1,9 +1,11 @@
 using Concertable.Customer.Concert.Application.Interfaces;
-using Concertable.Customer.Concert.Domain;
+using Concertable.Customer.Concert.Domain.Entities;
 using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Application.Requests;
 using Concertable.Customer.Ticket.Application.Responses;
-using Concertable.Shared.Exceptions;
+using Concertable.Customer.Ticket.Domain.Entities;
+using Concertable.Kernel.Identity;
+using Concertable.Kernel.Exceptions;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 

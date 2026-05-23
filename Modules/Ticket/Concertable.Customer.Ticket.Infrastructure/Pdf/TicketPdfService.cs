@@ -1,4 +1,4 @@
-using Concertable.Shared.Pdf;
+using Concertable.Shared.Pdf.Application;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Pdf;
 

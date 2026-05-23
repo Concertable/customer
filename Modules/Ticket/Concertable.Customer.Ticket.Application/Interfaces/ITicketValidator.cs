@@ -1,4 +1,4 @@
-using Concertable.Customer.Concert.Domain;
+using Concertable.Customer.Concert.Domain.Entities;
 using FluentResults;
 
 namespace Concertable.Customer.Ticket.Application.Interfaces;

@@ -1,3 +1,4 @@
+using Concertable.Customer.Concert.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

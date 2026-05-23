@@ -1,4 +1,4 @@
-using Concertable.Shared.Email;
+using Concertable.Shared.Email.Application;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Pdf;
 

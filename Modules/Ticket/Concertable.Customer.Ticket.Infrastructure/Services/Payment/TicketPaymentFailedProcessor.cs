@@ -1,5 +1,6 @@
 using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.DataAccess.Infrastructure.Extensions;
+using Concertable.Messaging.Contracts;
 using Concertable.Messaging.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

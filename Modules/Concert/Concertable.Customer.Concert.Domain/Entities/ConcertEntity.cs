@@ -1,4 +1,6 @@
-namespace Concertable.Customer.Concert.Domain;
+using Concertable.Kernel;
+
+namespace Concertable.Customer.Concert.Domain.Entities;
 
 public class ConcertReadModel : IIdEntity
 {
