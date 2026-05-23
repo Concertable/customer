@@ -171,7 +171,9 @@ internal class TicketService : ITicketService
             concert.Name,
             concert.Price,
             concert.Period,
-            concert.VenueName,
-            concert.ArtistName);
+            concert.ArtistId,
+            concert.ArtistName,
+            concert.VenueId,
+            concert.VenueName);
     }
 }

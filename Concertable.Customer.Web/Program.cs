@@ -1,7 +1,14 @@
 using Concertable.Artist.Contracts.Events;
-using Concertable.Concert.Contracts.Events;
+using Concertable.Customer.Review.Contracts.Events;
+using Concertable.Customer.Artist.Infrastructure.Data;
 using Concertable.Customer.Artist.Infrastructure.Extensions;
+using Concertable.Customer.Concert.Infrastructure.Data;
 using Concertable.Customer.Concert.Infrastructure.Extensions;
+using Concertable.Customer.Preference.Infrastructure.Data;
+using Concertable.Customer.Review.Infrastructure.Data;
+using Concertable.Customer.Ticket.Infrastructure.Data;
+using Concertable.Customer.User.Infrastructure.Data;
+using Concertable.Customer.Venue.Infrastructure.Data;
 using Concertable.Customer.Venue.Infrastructure.Extensions;
 using Concertable.Messaging.Application;
 using Concertable.Messaging.AzureServiceBus;
@@ -61,7 +68,8 @@ services.AddAzureServiceBusTransport(
     },
     reg =>
     {
-        reg.Publishes<ReviewSubmittedEvent>();
+        reg.Publishes<CustomerReviewSubmittedEvent>();
+        reg.SubscribeTo<CustomerReviewSubmittedEvent>();
 
         reg.SubscribeTo<ConcertChangedEvent>();
         reg.SubscribeTo<ConcertPostedEvent>();
@@ -93,6 +101,9 @@ services.AddNotificationClient();
 services.AddCurrentUser();
 services.AddPaymentClient(builder.Configuration);
 
+services.AddExceptionHandler<GlobalExceptionHandler>();
+services.AddProblemDetails();
+
 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opts =>
     {
@@ -109,15 +120,22 @@ services.AddAuthorization();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+if (!app.Environment.IsProduction())
 {
+    using var scope = app.Services.CreateScope();
     var sp = scope.ServiceProvider;
     await sp.GetRequiredService<OutboxDbContext>().Database.MigrateAsync();
     await sp.GetRequiredService<InboxDbContext>().Database.MigrateAsync();
-    await sp.GetRequiredService<Concertable.Customer.Venue.Infrastructure.Data.VenueDbContext>().Database.MigrateAsync();
-    await sp.GetRequiredService<Concertable.Customer.Artist.Infrastructure.Data.ArtistDbContext>().Database.MigrateAsync();
+    await sp.GetRequiredService<ArtistDbContext>().Database.MigrateAsync();
+    await sp.GetRequiredService<ConcertDbContext>().Database.MigrateAsync();
+    await sp.GetRequiredService<PreferenceDbContext>().Database.MigrateAsync();
+    await sp.GetRequiredService<ReviewDbContext>().Database.MigrateAsync();
+    await sp.GetRequiredService<TicketDbContext>().Database.MigrateAsync();
+    await sp.GetRequiredService<UserDbContext>().Database.MigrateAsync();
+    await sp.GetRequiredService<VenueDbContext>().Database.MigrateAsync();
 }
 
+app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 
