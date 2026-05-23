@@ -2,7 +2,6 @@ using Concertable.Customer.Ticket.Infrastructure;
 using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.DataAccess.Infrastructure.Extensions;
 using Concertable.Messaging.Contracts;
-using Concertable.Messaging.Domain;
 using Concertable.Kernel.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -33,16 +32,14 @@ internal class TicketPaymentProcessor : IIntegrationEventHandler<PaymentSucceede
         if (@event.Metadata.GetValueOrDefault("type") != TransactionTypes.Ticket)
             return;
 
-        if (await context.Set<InboxMessageEntity>().AnyAsync(
-            m => m.MessageId == envelope.MessageId && m.ConsumerName == nameof(TicketPaymentProcessor), ct))
+        if (await context.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(TicketPaymentProcessor), ct))
             return;
 
         var meta = @event.Metadata;
 
         logger.TicketPaymentProcessing(meta["fromUserId"]);
 
-        context.Set<InboxMessageEntity>().Add(
-            InboxMessageEntity.Create(envelope.MessageId, nameof(TicketPaymentProcessor), envelope.MessageType, DateTimeOffset.UtcNow));
+        context.AddInboxMessage(envelope, nameof(TicketPaymentProcessor));
 
         try
         {
