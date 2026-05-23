@@ -2,8 +2,6 @@ using Concertable.Auth.Contracts;
 using Concertable.Auth.Contracts.Events;
 using Concertable.Customer.User.Infrastructure.Data;
 using Concertable.Messaging.Contracts;
-using Concertable.Messaging.Domain;
-using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.User.Infrastructure.Events;
 
@@ -21,12 +19,10 @@ internal class UserCreationHandler : IIntegrationEventHandler<CredentialRegister
         if (e.ClientId is not ClientIds.CustomerWeb and not ClientIds.CustomerMobile)
             return;
 
-        if (await context.Set<InboxMessageEntity>().AnyAsync(
-            m => m.MessageId == envelope.MessageId && m.ConsumerName == nameof(UserCreationHandler), ct))
+        if (await context.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(UserCreationHandler), ct))
             return;
 
-        context.Set<InboxMessageEntity>().Add(
-            InboxMessageEntity.Create(envelope.MessageId, nameof(UserCreationHandler), envelope.MessageType, DateTimeOffset.UtcNow));
+        context.AddInboxMessage(envelope, nameof(UserCreationHandler));
 
         context.Users.Add(UserEntity.FromRegistration(e.UserId, e.Email));
         await context.SaveChangesAsync(ct);

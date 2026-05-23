@@ -1,8 +1,6 @@
 using Concertable.B2B.Concert.Contracts.Events;
 using Concertable.Customer.Preference.Infrastructure.Data;
 using Concertable.Customer.Preference.Infrastructure.Notifications;
-using Concertable.Messaging.Domain;
-using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Preference.Infrastructure.Events;
 
@@ -24,12 +22,10 @@ internal class ConcertPostedNotificationHandler : IIntegrationEventHandler<Conce
 
     public async Task HandleAsync(ConcertPostedEvent e, MessageEnvelope envelope, CancellationToken ct = default)
     {
-        if (await context.Set<InboxMessageEntity>().AnyAsync(
-            m => m.MessageId == envelope.MessageId && m.ConsumerName == nameof(ConcertPostedNotificationHandler), ct))
+        if (await context.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(ConcertPostedNotificationHandler), ct))
             return;
 
-        context.Set<InboxMessageEntity>().Add(
-            InboxMessageEntity.Create(envelope.MessageId, nameof(ConcertPostedNotificationHandler), envelope.MessageType, DateTimeOffset.UtcNow));
+        context.AddInboxMessage(envelope, nameof(ConcertPostedNotificationHandler));
 
         await context.SaveChangesAsync(ct);
 

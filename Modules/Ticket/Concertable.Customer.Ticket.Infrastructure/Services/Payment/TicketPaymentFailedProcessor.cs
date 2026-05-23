@@ -2,7 +2,6 @@ using Concertable.Customer.Ticket.Infrastructure;
 using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.DataAccess.Infrastructure.Extensions;
 using Concertable.Messaging.Contracts;
-using Concertable.Messaging.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -29,8 +28,7 @@ internal class TicketPaymentFailedProcessor : IIntegrationEventHandler<PaymentFa
         if (@event.Metadata.GetValueOrDefault("type") != TransactionTypes.Ticket)
             return;
 
-        if (await context.Set<InboxMessageEntity>().AnyAsync(
-            m => m.MessageId == envelope.MessageId && m.ConsumerName == nameof(TicketPaymentFailedProcessor), ct))
+        if (await context.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(TicketPaymentFailedProcessor), ct))
             return;
 
         var fromUserId = @event.Metadata["fromUserId"];
@@ -38,8 +36,7 @@ internal class TicketPaymentFailedProcessor : IIntegrationEventHandler<PaymentFa
 
         await notifier.TicketPurchaseFailedAsync(fromUserId, new { @event.FailureCode, @event.FailureMessage });
 
-        context.Set<InboxMessageEntity>().Add(
-            InboxMessageEntity.Create(envelope.MessageId, nameof(TicketPaymentFailedProcessor), envelope.MessageType, DateTimeOffset.UtcNow));
+        context.AddInboxMessage(envelope, nameof(TicketPaymentFailedProcessor));
         try
         {
             await context.SaveChangesAsync(ct);

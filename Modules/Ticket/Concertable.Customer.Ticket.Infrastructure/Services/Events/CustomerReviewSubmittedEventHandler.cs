@@ -3,7 +3,6 @@ using Concertable.Customer.Ticket.Infrastructure;
 using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.DataAccess.Infrastructure.Extensions;
 using Concertable.Messaging.Contracts;
-using Concertable.Messaging.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -27,12 +26,10 @@ internal class CustomerReviewSubmittedEventHandler : IIntegrationEventHandler<Cu
 
     public async Task HandleAsync(CustomerReviewSubmittedEvent @event, MessageEnvelope envelope, CancellationToken ct = default)
     {
-        if (await context.Set<InboxMessageEntity>().AnyAsync(
-            m => m.MessageId == envelope.MessageId && m.ConsumerName == nameof(CustomerReviewSubmittedEventHandler), ct))
+        if (await context.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(CustomerReviewSubmittedEventHandler), ct))
             return;
 
-        context.Set<InboxMessageEntity>().Add(
-            InboxMessageEntity.Create(envelope.MessageId, nameof(CustomerReviewSubmittedEventHandler), envelope.MessageType, DateTimeOffset.UtcNow));
+        context.AddInboxMessage(envelope, nameof(CustomerReviewSubmittedEventHandler));
 
         var ticket = await ticketRepository.GetByIdForReviewAsync(@event.TicketId);
         if (ticket is not null)
