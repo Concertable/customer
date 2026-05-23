@@ -23,7 +23,7 @@ namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Concertable.Customer.Artist.Domain.ArtistGenreReadModel", b =>
+            modelBuilder.Entity("Concertable.Customer.Artist.Domain.Entities.ArtistGenreReadModel", b =>
                 {
                     b.Property<int>("ArtistId")
                         .HasColumnType("int");
@@ -36,7 +36,7 @@ namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
                     b.ToTable("ArtistGenres", "artist");
                 });
 
-            modelBuilder.Entity("Concertable.Customer.Artist.Domain.ArtistReadModel", b =>
+            modelBuilder.Entity("Concertable.Customer.Artist.Domain.Entities.ArtistReadModel", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -155,9 +155,9 @@ namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Concertable.Customer.Artist.Domain.ArtistGenreReadModel", b =>
+            modelBuilder.Entity("Concertable.Customer.Artist.Domain.Entities.ArtistGenreReadModel", b =>
                 {
-                    b.HasOne("Concertable.Customer.Artist.Domain.ArtistReadModel", "Artist")
+                    b.HasOne("Concertable.Customer.Artist.Domain.Entities.ArtistReadModel", "Artist")
                         .WithMany("Genres")
                         .HasForeignKey("ArtistId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -166,7 +166,7 @@ namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
                     b.Navigation("Artist");
                 });
 
-            modelBuilder.Entity("Concertable.Customer.Artist.Domain.ArtistReadModel", b =>
+            modelBuilder.Entity("Concertable.Customer.Artist.Domain.Entities.ArtistReadModel", b =>
                 {
                     b.Navigation("Genres");
                 });
