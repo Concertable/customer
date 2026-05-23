@@ -1,5 +1,7 @@
 using Concertable.Artist.Contracts.Events;
+using Concertable.Concert.Contracts.Events;
 using Concertable.Customer.Review.Contracts.Events;
+using Concertable.Customer.Web;
 using Concertable.Customer.Artist.Infrastructure.Data;
 using Concertable.Customer.Artist.Infrastructure.Extensions;
 using Concertable.Customer.Concert.Infrastructure.Data;
