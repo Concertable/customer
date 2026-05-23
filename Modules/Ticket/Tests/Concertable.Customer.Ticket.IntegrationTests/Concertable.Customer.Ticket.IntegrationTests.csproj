@@ -17,7 +17,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Tests\Concertable.Testing.Integration.Customer\Concertable.Testing.Integration.Customer.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Tests\Concertable.Testing\Concertable.Testing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
+    <Using Include="Concertable.Testing.Integration.Customer" />
+    <Using Include="Concertable.Testing" />
   </ItemGroup>
 
 </Project>
