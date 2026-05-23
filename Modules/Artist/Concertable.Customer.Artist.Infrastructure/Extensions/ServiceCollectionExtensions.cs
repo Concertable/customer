@@ -1,4 +1,4 @@
-using Concertable.Artist.Contracts.Events;
+using Concertable.B2B.Artist.Contracts.Events;
 using Concertable.Customer.Artist.Contracts;
 using Concertable.Customer.Artist.Infrastructure.Data;
 using Concertable.Customer.Artist.Infrastructure.Handlers;

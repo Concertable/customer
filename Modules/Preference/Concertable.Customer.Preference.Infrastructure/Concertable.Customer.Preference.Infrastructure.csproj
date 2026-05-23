@@ -16,8 +16,8 @@
     <ProjectReference Include="..\Concertable.Customer.Preference.Application\Concertable.Customer.Preference.Application.csproj" />
     <ProjectReference Include="..\..\..\..\Concertable.DataAccess\Concertable.DataAccess.Infrastructure\Concertable.DataAccess.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\..\Shared\Concertable.Kernel\Concertable.Kernel.csproj" />
-    <ProjectReference Include="..\..\..\..\Concertable.B2B\Modules\Notification\Concertable.Notification.Contracts\Concertable.Notification.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\..\Concertable.B2B\Modules\Concert\Concertable.Concert.Contracts\Concertable.Concert.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\..\Concertable.B2B\Modules\Notification\Concertable.B2B.Notification.Contracts\Concertable.B2B.Notification.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\..\Concertable.B2B\Modules\Concert\Concertable.B2B.Concert.Contracts\Concertable.B2B.Concert.Contracts.csproj" />
     <ProjectReference Include="..\..\..\..\Concertable.Messaging\Concertable.Messaging.Contracts\Concertable.Messaging.Contracts.csproj" />
     <ProjectReference Include="..\..\..\..\Concertable.Messaging\Concertable.Messaging.Domain\Concertable.Messaging.Domain.csproj" />
     <ProjectReference Include="..\..\User\Concertable.Customer.User.Contracts\Concertable.Customer.User.Contracts.csproj" />
