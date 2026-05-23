@@ -4,6 +4,7 @@ using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Application.Requests;
 using Concertable.Customer.Ticket.Application.Responses;
 using Concertable.Customer.Ticket.Domain.Entities;
+using Concertable.Customer.Ticket.Infrastructure;
 using Concertable.Kernel.Identity;
 using Concertable.Kernel.Exceptions;
 using FluentResults;
@@ -54,9 +55,7 @@ internal class TicketService : ITicketService
         if (validationResult.IsFailed)
             throw new BadRequestException(validationResult.Errors);
 
-        logger.LogInformation(
-            "Routing ticket revenue for concert {ConcertId} ({ContractType}) to {PayeeUserId}: {Quantity} x {Price} {Currency}",
-            concert.Id, concert.ContractType, concert.PayeeUserId, purchaseParams.Quantity, concert.Price, "GBP");
+        logger.RoutingTicketRevenue(concert.Id, concert.ContractType, concert.PayeeUserId, purchaseParams.Quantity, concert.Price, "GBP");
 
         var metadata = new Dictionary<string, string>
         {
