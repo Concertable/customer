@@ -1,3 +1,4 @@
+using Concertable.Customer.Venue.Domain.Entities;
 using Concertable.Customer.Venue.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

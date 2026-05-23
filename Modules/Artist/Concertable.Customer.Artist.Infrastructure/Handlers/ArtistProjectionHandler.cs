@@ -1,4 +1,5 @@
 using Concertable.B2B.Artist.Contracts.Events;
+using Concertable.Customer.Artist.Domain.Entities;
 using Concertable.Customer.Artist.Infrastructure.Data;
 using Concertable.Messaging.Domain;
 using Microsoft.EntityFrameworkCore;
