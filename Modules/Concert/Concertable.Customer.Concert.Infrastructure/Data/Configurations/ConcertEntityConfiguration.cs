@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Concertable.Customer.Concert.Infrastructure.Data.Configurations;
 
-internal class ConcertEntityConfiguration : IEntityTypeConfiguration<ConcertEntity>
+internal class ConcertReadModelConfiguration : IEntityTypeConfiguration<ConcertReadModel>
 {
-    public void Configure(EntityTypeBuilder<ConcertEntity> builder)
+    public void Configure(EntityTypeBuilder<ConcertReadModel> builder)
     {
         builder.ToTable("Concerts", Schema.Name);
         builder.Property(c => c.Id).ValueGeneratedNever();
@@ -22,9 +22,9 @@ internal class ConcertEntityConfiguration : IEntityTypeConfiguration<ConcertEnti
     }
 }
 
-internal class ConcertGenreEntityConfiguration : IEntityTypeConfiguration<ConcertGenreEntity>
+internal class ConcertGenreReadModelConfiguration : IEntityTypeConfiguration<ConcertGenreReadModel>
 {
-    public void Configure(EntityTypeBuilder<ConcertGenreEntity> builder)
+    public void Configure(EntityTypeBuilder<ConcertGenreReadModel> builder)
     {
         builder.ToTable("ConcertGenres", Schema.Name);
         builder.HasKey(x => new { x.ConcertId, x.Genre });

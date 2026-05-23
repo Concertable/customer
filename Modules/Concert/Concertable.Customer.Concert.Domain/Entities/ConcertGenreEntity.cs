@@ -1,8 +1,8 @@
 namespace Concertable.Customer.Concert.Domain;
 
-public sealed class ConcertGenreEntity
+public sealed class ConcertGenreReadModel
 {
     public int ConcertId { get; set; }
     public Genre Genre { get; set; }
-    public ConcertEntity Concert { get; set; } = null!;
+    public ConcertReadModel Concert { get; set; } = null!;
 }

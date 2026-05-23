@@ -27,7 +27,7 @@ internal class VenueProjectionHandler : IIntegrationEventHandler<VenueChangedEve
 
         if (venue is null)
         {
-            venue = VenueEntity.Create(
+            venue = VenueReadModel.Create(
                 e.VenueId,
                 e.UserId,
                 e.Name,

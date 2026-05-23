@@ -3,20 +3,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Venue.Infrastructure.Repositories;
 
-internal class VenueRepository : IVenueRepository
+internal class VenueReadRepository : IVenueReadRepository
 {
     private readonly VenueDbContext context;
 
-    public VenueRepository(VenueDbContext context)
+    public VenueReadRepository(VenueDbContext context)
     {
         this.context = context;
     }
 
-    public Task<VenueEntity?> GetByIdAsync(int venueId) =>
+    public Task<VenueReadModel?> GetByIdAsync(int venueId) =>
         context.Venues.FirstOrDefaultAsync(v => v.Id == venueId);
-
-    public async Task AddAsync(VenueEntity venue) =>
-        await context.Venues.AddAsync(venue);
-
-    public Task SaveChangesAsync() => context.SaveChangesAsync();
 }

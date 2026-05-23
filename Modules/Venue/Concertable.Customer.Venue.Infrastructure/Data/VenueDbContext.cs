@@ -12,7 +12,7 @@ internal class VenueDbContext : DbContextBase
         this.provider = provider;
     }
 
-    public DbSet<VenueEntity> Venues => Set<VenueEntity>();
+    public DbSet<VenueReadModel> Venues => Set<VenueReadModel>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -26,7 +26,7 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ConcertEntity", b =>
+            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ConcertReadModel", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -89,7 +89,7 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                     b.ToTable("Concerts", "concert");
                 });
 
-            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ConcertGenreEntity", b =>
+            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ConcertGenreReadModel", b =>
                 {
                     b.Property<int>("ConcertId")
                         .HasColumnType("int");
@@ -168,11 +168,11 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ConcertEntity", b =>
+            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ConcertReadModel", b =>
                 {
                     b.OwnsOne("Concertable.Shared.DateRange", "Period", b1 =>
                         {
-                            b1.Property<int>("ConcertEntityId")
+                            b1.Property<int>("ConcertReadModelId")
                                 .HasColumnType("int");
 
                             b1.Property<DateTime>("End")
@@ -183,21 +183,21 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                                 .HasColumnType("datetime2")
                                 .HasColumnName("Period_Start");
 
-                            b1.HasKey("ConcertEntityId");
+                            b1.HasKey("ConcertReadModelId");
 
                             b1.ToTable("Concerts", "concert");
 
                             b1.WithOwner()
-                                .HasForeignKey("ConcertEntityId");
+                                .HasForeignKey("ConcertReadModelId");
                         });
 
                     b.Navigation("Period")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ConcertGenreEntity", b =>
+            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ConcertGenreReadModel", b =>
                 {
-                    b.HasOne("Concertable.Customer.Concert.Domain.ConcertEntity", "Concert")
+                    b.HasOne("Concertable.Customer.Concert.Domain.ConcertReadModel", "Concert")
                         .WithMany("Genres")
                         .HasForeignKey("ConcertId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -206,7 +206,7 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                     b.Navigation("Concert");
                 });
 
-            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ConcertEntity", b =>
+            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ConcertReadModel", b =>
                 {
                     b.Navigation("Genres");
                 });

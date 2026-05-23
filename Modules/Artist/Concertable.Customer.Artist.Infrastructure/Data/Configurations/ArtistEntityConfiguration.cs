@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Concertable.Customer.Artist.Infrastructure.Data.Configurations;
 
-internal class ArtistEntityConfiguration : IEntityTypeConfiguration<ArtistEntity>
+internal class ArtistReadModelConfiguration : IEntityTypeConfiguration<ArtistReadModel>
 {
-    public void Configure(EntityTypeBuilder<ArtistEntity> builder)
+    public void Configure(EntityTypeBuilder<ArtistReadModel> builder)
     {
         builder.ToTable("Artists", Schema.Name);
         builder.Property(a => a.Id).ValueGeneratedNever();
@@ -16,9 +16,9 @@ internal class ArtistEntityConfiguration : IEntityTypeConfiguration<ArtistEntity
     }
 }
 
-internal class ArtistGenreEntityConfiguration : IEntityTypeConfiguration<ArtistGenreEntity>
+internal class ArtistGenreReadModelConfiguration : IEntityTypeConfiguration<ArtistGenreReadModel>
 {
-    public void Configure(EntityTypeBuilder<ArtistGenreEntity> builder)
+    public void Configure(EntityTypeBuilder<ArtistGenreReadModel> builder)
     {
         builder.ToTable("ArtistGenres", Schema.Name);
         builder.HasKey(x => new { x.ArtistId, x.Genre });

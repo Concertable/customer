@@ -6,12 +6,12 @@ namespace Concertable.Customer.Concert.Infrastructure.Services;
 
 internal class ConcertService : IConcertService
 {
-    private readonly IConcertRepository concertRepository;
+    private readonly IConcertReadRepository concertRepository;
     private readonly ICustomerVenueModule venueModule;
     private readonly ICustomerArtistModule artistModule;
 
     public ConcertService(
-        IConcertRepository concertRepository,
+        IConcertReadRepository concertRepository,
         ICustomerVenueModule venueModule,
         ICustomerArtistModule artistModule)
     {

@@ -1,22 +1,22 @@
 using Concertable.Customer.Concert.Application.Interfaces;
 using Concertable.Shared.Exceptions;
 using FluentResults;
-using ConcertEntity = Concertable.Customer.Concert.Domain.ConcertEntity;
+using ConcertReadModel = Concertable.Customer.Concert.Domain.ConcertReadModel;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Validators;
 
 internal class TicketValidator : ITicketValidator
 {
-    private readonly IConcertRepository concertRepository;
+    private readonly IConcertReadRepository concertRepository;
     private readonly TimeProvider timeProvider;
 
-    public TicketValidator(IConcertRepository concertRepository, TimeProvider timeProvider)
+    public TicketValidator(IConcertReadRepository concertRepository, TimeProvider timeProvider)
     {
         this.concertRepository = concertRepository;
         this.timeProvider = timeProvider;
     }
 
-    public Result CanBePurchased(ConcertEntity concert)
+    public Result CanBePurchased(ConcertReadModel concert)
     {
         var errors = new List<string>();
 
@@ -40,7 +40,7 @@ internal class TicketValidator : ITicketValidator
         return CanBePurchased(concert);
     }
 
-    public Result CanPurchaseTickets(ConcertEntity concert, int quantity)
+    public Result CanPurchaseTickets(ConcertReadModel concert, int quantity)
     {
         var baseResult = CanBePurchased(concert);
         if (baseResult.IsFailed)
