@@ -1,4 +1,5 @@
 using Concertable.Customer.Artist.Application.Dtos;
+using Concertable.Customer.Artist.Domain.Entities;
 
 namespace Concertable.Customer.Artist.Application.Mappers;
 

@@ -1,4 +1,5 @@
 using Concertable.Customer.Venue.Application.Dtos;
+using Concertable.Customer.Venue.Domain.Entities;
 
 namespace Concertable.Customer.Venue.Application.Mappers;
 

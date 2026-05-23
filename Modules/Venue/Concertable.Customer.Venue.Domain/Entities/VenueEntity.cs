@@ -1,4 +1,4 @@
-namespace Concertable.Customer.Venue.Domain;
+namespace Concertable.Customer.Venue.Domain.Entities;
 
 public class VenueReadModel : IIdEntity
 {
