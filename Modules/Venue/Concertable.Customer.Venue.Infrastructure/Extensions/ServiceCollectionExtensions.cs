@@ -3,7 +3,7 @@ using Concertable.Customer.Venue.Infrastructure.Data;
 using Concertable.Customer.Venue.Infrastructure.Handlers;
 using Concertable.Customer.Venue.Infrastructure.Repositories;
 using Concertable.Customer.Venue.Infrastructure.Services;
-using Concertable.Venue.Contracts.Events;
+using Concertable.B2B.Venue.Contracts.Events;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
