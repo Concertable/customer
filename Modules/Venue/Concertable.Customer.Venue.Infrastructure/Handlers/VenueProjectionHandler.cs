@@ -1,5 +1,4 @@
 using Concertable.Customer.Venue.Infrastructure.Data;
-using Concertable.Messaging.Domain;
 using Concertable.B2B.Venue.Contracts.Events;
 using Microsoft.EntityFrameworkCore;
 using Concertable.Customer.Venue.Domain.Entities;
@@ -17,12 +16,10 @@ internal class VenueProjectionHandler : IIntegrationEventHandler<VenueChangedEve
 
     public async Task HandleAsync(VenueChangedEvent e, MessageEnvelope envelope, CancellationToken ct = default)
     {
-        if (await context.Set<InboxMessageEntity>().AnyAsync(
-            m => m.MessageId == envelope.MessageId && m.ConsumerName == nameof(VenueProjectionHandler), ct))
+        if (await context.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(VenueProjectionHandler), ct))
             return;
 
-        context.Set<InboxMessageEntity>().Add(
-            InboxMessageEntity.Create(envelope.MessageId, nameof(VenueProjectionHandler), envelope.MessageType, DateTimeOffset.UtcNow));
+        context.AddInboxMessage(envelope, nameof(VenueProjectionHandler));
 
         var venue = await context.Venues.FirstOrDefaultAsync(v => v.Id == e.VenueId, ct);
 
