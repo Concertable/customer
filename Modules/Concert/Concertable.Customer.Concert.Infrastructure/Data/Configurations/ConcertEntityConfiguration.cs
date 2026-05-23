@@ -15,5 +15,18 @@ internal class ConcertEntityConfiguration : IEntityTypeConfiguration<ConcertEnti
             p.Property(x => x.Start).HasColumnName("Period_Start");
             p.Property(x => x.End).HasColumnName("Period_End");
         });
+
+        builder.HasMany(c => c.Genres)
+            .WithOne(g => g.Concert)
+            .HasForeignKey(g => g.ConcertId);
+    }
+}
+
+internal class ConcertGenreEntityConfiguration : IEntityTypeConfiguration<ConcertGenreEntity>
+{
+    public void Configure(EntityTypeBuilder<ConcertGenreEntity> builder)
+    {
+        builder.ToTable("ConcertGenres", Schema.Name);
+        builder.HasKey(x => new { x.ConcertId, x.Genre });
     }
 }

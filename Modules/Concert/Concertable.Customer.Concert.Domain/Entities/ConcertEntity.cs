@@ -4,6 +4,9 @@ public class ConcertEntity : IIdEntity
 {
     public int Id { get; private set; }
     public string Name { get; private set; } = null!;
+    public string About { get; private set; } = null!;
+    public string? BannerUrl { get; private set; }
+    public string? Avatar { get; private set; }
     public int TotalTickets { get; private set; }
     public int AvailableTickets { get; private set; }
     public decimal Price { get; private set; }
@@ -15,12 +18,18 @@ public class ConcertEntity : IIdEntity
     public string VenueName { get; private set; } = null!;
     public Guid PayeeUserId { get; private set; }
     public string ContractType { get; private set; } = null!;
+    public double AverageRating { get; private set; }
+    public int ReviewCount { get; private set; }
+    public ICollection<ConcertGenreEntity> Genres { get; private set; } = [];
 
     private ConcertEntity() { }
 
     public static ConcertEntity Create(
         int concertId,
         string name,
+        string about,
+        string? bannerUrl,
+        string? avatar,
         int totalTickets,
         decimal price,
         DateRange period,
@@ -34,6 +43,9 @@ public class ConcertEntity : IIdEntity
     {
         Id = concertId,
         Name = name,
+        About = about,
+        BannerUrl = bannerUrl,
+        Avatar = avatar,
         TotalTickets = totalTickets,
         AvailableTickets = totalTickets,
         Price = price,
@@ -49,6 +61,9 @@ public class ConcertEntity : IIdEntity
 
     public void Update(
         string name,
+        string about,
+        string? bannerUrl,
+        string? avatar,
         int totalTickets,
         decimal price,
         DateRange period,
@@ -62,6 +77,9 @@ public class ConcertEntity : IIdEntity
     {
         var sold = TotalTickets - AvailableTickets;
         Name = name;
+        About = about;
+        BannerUrl = bannerUrl;
+        Avatar = avatar;
         TotalTickets = totalTickets;
         AvailableTickets = Math.Max(0, totalTickets - sold);
         Price = price;
@@ -73,6 +91,12 @@ public class ConcertEntity : IIdEntity
         VenueName = venueName;
         PayeeUserId = payeeUserId;
         ContractType = contractType;
+    }
+
+    public void UpdateRating(double averageRating, int reviewCount)
+    {
+        AverageRating = averageRating;
+        ReviewCount = reviewCount;
     }
 
     public void DecrementAvailability(int quantity)

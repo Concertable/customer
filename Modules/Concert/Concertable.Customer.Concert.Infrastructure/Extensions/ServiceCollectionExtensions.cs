@@ -2,6 +2,7 @@ using Concertable.Concert.Contracts.Events;
 using Concertable.Customer.Concert.Infrastructure.Data;
 using Concertable.Customer.Concert.Infrastructure.Handlers;
 using Concertable.Customer.Concert.Infrastructure.Repositories;
+using Concertable.Customer.Concert.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +23,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUnitOfWorkBehavior, UnitOfWorkBehavior>();
 
         services.AddScoped<IConcertRepository, ConcertRepository>();
+        services.AddScoped<IConcertService, ConcertService>();
         services.AddScoped<IIntegrationEventHandler<ConcertChangedEvent>, ConcertProjectionHandler>();
+        services.AddScoped<IIntegrationEventHandler<ConcertRatingUpdatedEvent>, ConcertRatingProjectionHandler>();
 
         services.AddSingleton<ConcertConfigurationProvider>();
         services.AddSingleton<IEntityTypeConfigurationProvider>(sp => sp.GetRequiredService<ConcertConfigurationProvider>());

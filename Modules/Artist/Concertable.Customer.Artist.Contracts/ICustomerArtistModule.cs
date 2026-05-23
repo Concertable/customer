@@ -1,0 +1,17 @@
+using Concertable.Shared;
+
+namespace Concertable.Customer.Artist.Contracts;
+
+public interface ICustomerArtistModule
+{
+    Task<ArtistSummary?> GetSummaryAsync(int artistId, CancellationToken ct = default);
+}
+
+public record ArtistSummary(
+    int Id,
+    string Name,
+    string? Avatar,
+    double Rating,
+    string County,
+    string Town,
+    IReadOnlyCollection<Genre> Genres);

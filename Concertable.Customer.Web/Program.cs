@@ -1,5 +1,8 @@
+using Concertable.Artist.Contracts.Events;
 using Concertable.Concert.Contracts.Events;
+using Concertable.Customer.Artist.Infrastructure.Extensions;
 using Concertable.Customer.Concert.Infrastructure.Extensions;
+using Concertable.Customer.Venue.Infrastructure.Extensions;
 using Concertable.Messaging.Application;
 using Concertable.Messaging.AzureServiceBus;
 using Concertable.Customer.Preference.Api.Extensions;
@@ -7,6 +10,7 @@ using Concertable.Customer.Preference.Infrastructure.Extensions;
 using Concertable.Customer.User.Infrastructure.Extensions;
 using Concertable.Customer.Review.Infrastructure.Extensions;
 using Concertable.Customer.Ticket.Infrastructure.Extensions;
+using Concertable.Venue.Contracts.Events;
 using Concertable.DataAccess.Infrastructure;
 using Concertable.Messaging.Infrastructure.Extensions;
 using Concertable.Messaging.Infrastructure.Inbox;
@@ -61,6 +65,11 @@ services.AddAzureServiceBusTransport(
 
         reg.SubscribeTo<ConcertChangedEvent>();
         reg.SubscribeTo<ConcertPostedEvent>();
+        reg.SubscribeTo<VenueChangedEvent>();
+        reg.SubscribeTo<ArtistChangedEvent>();
+        reg.SubscribeTo<VenueRatingUpdatedEvent>();
+        reg.SubscribeTo<ArtistRatingUpdatedEvent>();
+        reg.SubscribeTo<ConcertRatingUpdatedEvent>();
         reg.SubscribeTo<CredentialRegisteredEvent>();
         reg.SubscribeTo<PaymentSucceededEvent>();
         reg.SubscribeTo<PaymentFailedEvent>();
@@ -77,6 +86,8 @@ services.AddCustomerReviewModule(builder.Configuration);
 services.AddCustomerUserModule(builder.Configuration);
 services.AddCustomerPreferenceModule(builder.Configuration);
 services.AddCustomerPreferenceApi();
+services.AddCustomerVenueModule(builder.Configuration);
+services.AddCustomerArtistModule(builder.Configuration);
 
 services.AddNotificationClient();
 services.AddCurrentUser();
@@ -103,6 +114,8 @@ using (var scope = app.Services.CreateScope())
     var sp = scope.ServiceProvider;
     await sp.GetRequiredService<OutboxDbContext>().Database.MigrateAsync();
     await sp.GetRequiredService<InboxDbContext>().Database.MigrateAsync();
+    await sp.GetRequiredService<Concertable.Customer.Venue.Infrastructure.Data.VenueDbContext>().Database.MigrateAsync();
+    await sp.GetRequiredService<Concertable.Customer.Artist.Infrastructure.Data.ArtistDbContext>().Database.MigrateAsync();
 }
 
 app.UseAuthentication();
