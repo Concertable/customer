@@ -1,3 +1,4 @@
+using Concertable.Customer.Ticket.Infrastructure;
 using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.DataAccess.Infrastructure.Extensions;
 using Concertable.Messaging.Contracts;
@@ -38,7 +39,7 @@ internal class TicketPaymentProcessor : IIntegrationEventHandler<PaymentSucceede
 
         var meta = @event.Metadata;
 
-        logger.LogInformation("[TicketPaymentProcessor] fromUserId={FromUserId}", meta["fromUserId"]);
+        logger.TicketPaymentProcessing(meta["fromUserId"]);
 
         context.Set<InboxMessageEntity>().Add(
             InboxMessageEntity.Create(envelope.MessageId, nameof(TicketPaymentProcessor), envelope.MessageType, DateTimeOffset.UtcNow));
@@ -60,7 +61,7 @@ internal class TicketPaymentProcessor : IIntegrationEventHandler<PaymentSucceede
         }
         catch (DbUpdateException ex) when (ex.IsDuplicateKey())
         {
-            logger.LogDebug("Duplicate inbox message {MessageId}; skipping", envelope.MessageId);
+            logger.DuplicateInboxMessage(envelope.MessageId);
         }
     }
 }

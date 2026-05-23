@@ -1,3 +1,4 @@
+using Concertable.Customer.Ticket.Infrastructure;
 using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.DataAccess.Infrastructure.Extensions;
 using Concertable.Messaging.Contracts;
@@ -33,9 +34,7 @@ internal class TicketPaymentFailedProcessor : IIntegrationEventHandler<PaymentFa
             return;
 
         var fromUserId = @event.Metadata["fromUserId"];
-        logger.LogWarning(
-            "Ticket payment failed for user {UserId}: [{FailureCode}] {FailureMessage}",
-            fromUserId, @event.FailureCode, @event.FailureMessage);
+        logger.TicketPaymentFailed(fromUserId, @event.FailureCode, @event.FailureMessage);
 
         await notifier.TicketPurchaseFailedAsync(fromUserId, new { @event.FailureCode, @event.FailureMessage });
 
@@ -47,7 +46,7 @@ internal class TicketPaymentFailedProcessor : IIntegrationEventHandler<PaymentFa
         }
         catch (DbUpdateException ex) when (ex.IsDuplicateKey())
         {
-            logger.LogDebug("Duplicate inbox message {MessageId}; skipping", envelope.MessageId);
+            logger.DuplicateInboxMessage(envelope.MessageId);
         }
     }
 }

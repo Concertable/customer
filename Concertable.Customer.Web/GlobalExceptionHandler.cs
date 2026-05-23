@@ -77,10 +77,11 @@ public class GlobalExceptionHandler : IExceptionHandler
             }
         }
 
-        logger.LogError(exception, "Unhandled exception occurred");
+        logger.UnhandledException(exception);
 
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken).ConfigureAwait(false);
 
         return true;
     }
 }
+
