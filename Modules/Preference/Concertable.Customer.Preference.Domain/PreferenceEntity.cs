@@ -1,4 +1,3 @@
-using Concertable.Shared;
 
 namespace Concertable.Customer.Preference.Domain;
 

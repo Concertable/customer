@@ -1,7 +1,8 @@
-using Concertable.Application.Interfaces.Geometry;
 using Concertable.Customer.User.Contracts;
-using Concertable.Shared.Geocoding;
-using Concertable.Shared.Infrastructure.Services.Geometry;
+using Concertable.Kernel.Geometry;
+using Concertable.Kernel.Identity;
+using Concertable.Kernel.Services.Geometry;
+using Concertable.Shared.Geocoding.Application;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Concertable.Customer.User.Infrastructure.Services;

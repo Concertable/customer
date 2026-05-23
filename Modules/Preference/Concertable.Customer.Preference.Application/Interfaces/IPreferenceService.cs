@@ -1,6 +1,5 @@
 using Concertable.Customer.Preference.Application.DTOs;
 using Concertable.Customer.Preference.Application.Requests;
-using Concertable.Shared;
 
 namespace Concertable.Customer.Preference.Application.Interfaces;
 

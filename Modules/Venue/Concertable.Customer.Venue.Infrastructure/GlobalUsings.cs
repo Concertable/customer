@@ -1,6 +1,10 @@
-global using Concertable.Shared;
+global using Concertable.Kernel;
+global using Concertable.Contracts;
 global using Concertable.Messaging;
+global using Concertable.Messaging.Contracts;
 global using Concertable.DataAccess;
+global using Concertable.DataAccess.Application;
+global using Concertable.DataAccess.Infrastructure;
+global using Concertable.DataAccess.Infrastructure.Data;
 global using Concertable.Customer.Venue.Domain;
 global using Concertable.Customer.Venue.Application.Interfaces;
-global using Concertable.DataAccess.Infrastructure;

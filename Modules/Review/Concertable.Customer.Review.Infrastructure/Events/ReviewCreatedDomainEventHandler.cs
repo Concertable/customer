@@ -1,5 +1,7 @@
 using Concertable.Customer.Review.Contracts.Events;
 using Concertable.Customer.Review.Domain.Events;
+using Concertable.Kernel;
+using Concertable.Messaging.Contracts;
 
 namespace Concertable.Customer.Review.Infrastructure.Events;
 

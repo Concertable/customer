@@ -1,5 +1,5 @@
-using Concertable.Application.Interfaces.Geometry;
-using Concertable.Shared.Exceptions;
+using Concertable.Kernel.Geometry;
+using Concertable.Kernel.Exceptions;
 
 namespace Concertable.Customer.Preference.Infrastructure.Services;
 

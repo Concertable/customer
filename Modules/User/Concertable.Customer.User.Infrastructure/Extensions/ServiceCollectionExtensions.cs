@@ -5,6 +5,8 @@ using Concertable.Customer.User.Infrastructure.Data;
 using Concertable.Customer.User.Infrastructure.Events;
 using Concertable.Customer.User.Infrastructure.Repositories;
 using Concertable.Customer.User.Infrastructure.Services;
+using Concertable.DataAccess.Infrastructure.Data;
+using Concertable.Messaging.Contracts;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;

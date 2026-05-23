@@ -23,6 +23,19 @@ namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Concertable.Customer.Artist.Domain.ArtistGenreReadModel", b =>
+                {
+                    b.Property<int>("ArtistId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Genre")
+                        .HasColumnType("int");
+
+                    b.HasKey("ArtistId", "Genre");
+
+                    b.ToTable("ArtistGenres", "artist");
+                });
+
             modelBuilder.Entity("Concertable.Customer.Artist.Domain.ArtistReadModel", b =>
                 {
                     b.Property<int>("Id")
@@ -74,19 +87,6 @@ namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Artists", "artist");
-                });
-
-            modelBuilder.Entity("Concertable.Customer.Artist.Domain.ArtistGenreReadModel", b =>
-                {
-                    b.Property<int>("ArtistId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Genre")
-                        .HasColumnType("int");
-
-                    b.HasKey("ArtistId", "Genre");
-
-                    b.ToTable("ArtistGenres", "artist");
                 });
 
             modelBuilder.Entity("Concertable.Messaging.Domain.InboxMessageEntity", b =>

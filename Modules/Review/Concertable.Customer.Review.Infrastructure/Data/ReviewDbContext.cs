@@ -1,3 +1,4 @@
+using Concertable.Customer.Review.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Review.Infrastructure.Data;

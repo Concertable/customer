@@ -1,3 +1,6 @@
+using Concertable.Contracts;
+using Concertable.Customer.Review.Domain.Entities;
+
 namespace Concertable.Customer.Review.Application.Mappers;
 
 internal static class ReviewMappers

@@ -1,4 +1,5 @@
 using Concertable.Customer.Concert.Infrastructure.Data;
+using Concertable.DataAccess.Application;
 
 namespace Concertable.Customer.Concert.Infrastructure;
 

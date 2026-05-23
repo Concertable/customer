@@ -1,3 +1,4 @@
+using Concertable.Contracts;
 using Concertable.Customer.Review.Contracts;
 
 namespace Concertable.Customer.Review.Infrastructure;

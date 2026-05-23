@@ -11,6 +11,9 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Concertable.DataAccess.Application;
+using Concertable.DataAccess.Infrastructure.Data;
+using Concertable.Messaging.Contracts;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Extensions;
 

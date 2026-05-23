@@ -1,4 +1,5 @@
 using Concertable.Customer.Review.Infrastructure.Data;
+using Concertable.DataAccess.Application;
 
 namespace Concertable.Customer.Review.Infrastructure;
 

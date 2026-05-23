@@ -1,4 +1,6 @@
-namespace Concertable.Customer.Concert.Domain;
+using Concertable.Contracts;
+
+namespace Concertable.Customer.Concert.Domain.Entities;
 
 public sealed class ConcertGenreReadModel
 {

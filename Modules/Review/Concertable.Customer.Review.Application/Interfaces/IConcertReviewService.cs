@@ -1,3 +1,4 @@
+using Concertable.Contracts;
 using Concertable.Customer.Review.Application.Requests;
 
 namespace Concertable.Customer.Review.Application.Interfaces;

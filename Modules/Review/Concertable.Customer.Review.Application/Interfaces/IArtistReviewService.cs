@@ -1,3 +1,5 @@
+using Concertable.Contracts;
+
 namespace Concertable.Customer.Review.Application.Interfaces;
 
 internal interface IArtistReviewService

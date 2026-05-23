@@ -1,3 +1,6 @@
+using Concertable.Contracts;
+using Concertable.Kernel.Identity;
+
 namespace Concertable.Customer.Review.Infrastructure.Services;
 
 internal class VenueReviewService(

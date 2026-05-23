@@ -1,4 +1,5 @@
 using Concertable.Customer.Review.Infrastructure.Data.Configurations;
+using Concertable.DataAccess.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Review.Infrastructure.Data;

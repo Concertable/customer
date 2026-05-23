@@ -1,4 +1,5 @@
 using Concertable.Customer.Concert.Infrastructure.Data.Configurations;
+using Concertable.DataAccess.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Concert.Infrastructure.Data;

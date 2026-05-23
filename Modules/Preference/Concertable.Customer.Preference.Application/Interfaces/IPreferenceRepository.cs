@@ -1,6 +1,5 @@
 using Concertable.Customer.Preference.Domain;
 using Concertable.DataAccess;
-using Concertable.Shared;
 
 namespace Concertable.Customer.Preference.Application.Interfaces;
 
