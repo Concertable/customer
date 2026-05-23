@@ -23,7 +23,7 @@ namespace Concertable.Customer.Venue.Infrastructure.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Concertable.Customer.Venue.Domain.VenueReadModel", b =>
+            modelBuilder.Entity("Concertable.Customer.Venue.Domain.Entities.VenueReadModel", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
