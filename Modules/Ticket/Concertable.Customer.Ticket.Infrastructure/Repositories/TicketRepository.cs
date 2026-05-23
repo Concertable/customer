@@ -36,9 +36,29 @@ internal class TicketRepository : GuidRepository<TicketEntity>, ITicketRepositor
             .ToListAsync();
     }
 
-    public Task<TicketEntity?> GetByUserIdAndConcertIdAsync(Guid userId, int concertId)
+    public Task<TicketEntity?> GetByUserIdAndConcertIdAsync(Guid userId, int concertId) =>
+        context.Tickets.FirstOrDefaultAsync(t => t.UserId == userId && t.ConcertId == concertId);
+
+    public Task<TicketEntity?> GetByIdForReviewAsync(Guid ticketId) =>
+        context.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId);
+
+    public Task<bool> CanReviewArtistAsync(Guid userId, int artistId)
     {
-        return context.Tickets
-            .FirstOrDefaultAsync(t => t.UserId == userId && t.ConcertId == concertId);
+        var now = timeProvider.GetUtcNow().UtcDateTime;
+        return context.Tickets.AnyAsync(t =>
+            t.UserId == userId &&
+            t.ArtistId == artistId &&
+            !t.HasReview &&
+            t.Period.Start <= now);
+    }
+
+    public Task<bool> CanReviewVenueAsync(Guid userId, int venueId)
+    {
+        var now = timeProvider.GetUtcNow().UtcDateTime;
+        return context.Tickets.AnyAsync(t =>
+            t.UserId == userId &&
+            t.VenueId == venueId &&
+            !t.HasReview &&
+            t.Period.Start <= now);
     }
 }
