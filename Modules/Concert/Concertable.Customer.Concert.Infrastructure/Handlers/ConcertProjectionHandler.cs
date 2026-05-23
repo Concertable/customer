@@ -7,12 +7,10 @@ namespace Concertable.Customer.Concert.Infrastructure.Handlers;
 
 internal class ConcertProjectionHandler : IIntegrationEventHandler<ConcertChangedEvent>
 {
-    private readonly IConcertRepository repository;
     private readonly ConcertDbContext context;
 
-    public ConcertProjectionHandler(IConcertRepository repository, ConcertDbContext context)
+    public ConcertProjectionHandler(ConcertDbContext context)
     {
-        this.repository = repository;
         this.context = context;
     }
 
@@ -25,13 +23,18 @@ internal class ConcertProjectionHandler : IIntegrationEventHandler<ConcertChange
         context.Set<InboxMessageEntity>().Add(
             InboxMessageEntity.Create(envelope.MessageId, nameof(ConcertProjectionHandler), envelope.MessageType, DateTimeOffset.UtcNow));
 
-        var concert = await repository.GetByIdAsync(e.ConcertId);
+        var concert = await context.Concerts
+            .Include(c => c.Genres)
+            .FirstOrDefaultAsync(c => c.Id == e.ConcertId, ct);
 
         if (concert is null)
         {
             concert = ConcertEntity.Create(
                 e.ConcertId,
                 e.Name,
+                e.About,
+                e.BannerUrl,
+                e.Avatar,
                 e.TotalTickets,
                 e.Price,
                 e.Period,
@@ -42,12 +45,19 @@ internal class ConcertProjectionHandler : IIntegrationEventHandler<ConcertChange
                 e.VenueName,
                 e.PayeeUserId,
                 e.ContractType);
-            await repository.AddAsync(concert);
+
+            foreach (var g in e.Genres)
+                concert.Genres.Add(new ConcertGenreEntity { ConcertId = e.ConcertId, Genre = g });
+
+            context.Concerts.Add(concert);
         }
         else
         {
             concert.Update(
                 e.Name,
+                e.About,
+                e.BannerUrl,
+                e.Avatar,
                 e.TotalTickets,
                 e.Price,
                 e.Period,
@@ -58,8 +68,16 @@ internal class ConcertProjectionHandler : IIntegrationEventHandler<ConcertChange
                 e.VenueName,
                 e.PayeeUserId,
                 e.ContractType);
+
+            var desired = e.Genres.ToHashSet();
+            var current = concert.Genres.Select(g => g.Genre).ToHashSet();
+
+            foreach (var g in concert.Genres.Where(g => !desired.Contains(g.Genre)).ToList())
+                concert.Genres.Remove(g);
+            foreach (var g in desired.Where(g => !current.Contains(g)))
+                concert.Genres.Add(new ConcertGenreEntity { ConcertId = e.ConcertId, Genre = g });
         }
 
-        await repository.SaveChangesAsync();
+        await context.SaveChangesAsync(ct);
     }
 }

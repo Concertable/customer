@@ -36,6 +36,10 @@
     <ProjectReference Include="..\Modules\User\Concertable.Customer.User.Infrastructure\Concertable.Customer.User.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Preference\Concertable.Customer.Preference.Api\Concertable.Customer.Preference.Api.csproj" />
     <ProjectReference Include="..\Modules\Preference\Concertable.Customer.Preference.Infrastructure\Concertable.Customer.Preference.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Venue\Concertable.Customer.Venue.Api\Concertable.Customer.Venue.Api.csproj" />
+    <ProjectReference Include="..\Modules\Venue\Concertable.Customer.Venue.Infrastructure\Concertable.Customer.Venue.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Artist\Concertable.Customer.Artist.Api\Concertable.Customer.Artist.Api.csproj" />
+    <ProjectReference Include="..\Modules\Artist\Concertable.Customer.Artist.Infrastructure\Concertable.Customer.Artist.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Concertable.Messaging\Concertable.Messaging.AzureServiceBus\Concertable.Messaging.AzureServiceBus.csproj" />
     <ProjectReference Include="..\..\Concertable.Messaging\Concertable.Messaging.Infrastructure\Concertable.Messaging.Infrastructure.csproj" />
   </ItemGroup>

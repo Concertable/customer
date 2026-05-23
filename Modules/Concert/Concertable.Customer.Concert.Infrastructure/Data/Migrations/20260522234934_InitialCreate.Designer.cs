@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ConcertDbContext))]
-    [Migration("20260522195940_InitialCreate")]
+    [Migration("20260522234934_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -31,6 +31,10 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
+                    b.Property<string>("About")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("ArtistId")
                         .HasColumnType("int");
 
@@ -40,6 +44,15 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
 
                     b.Property<int>("AvailableTickets")
                         .HasColumnType("int");
+
+                    b.Property<string>("Avatar")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("AverageRating")
+                        .HasColumnType("float");
+
+                    b.Property<string>("BannerUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ContractType")
                         .IsRequired()
@@ -58,6 +71,9 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("ReviewCount")
+                        .HasColumnType("int");
+
                     b.Property<int>("TotalTickets")
                         .HasColumnType("int");
 
@@ -71,6 +87,19 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Concerts", "concert");
+                });
+
+            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ConcertGenreEntity", b =>
+                {
+                    b.Property<int>("ConcertId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Genre")
+                        .HasColumnType("int");
+
+                    b.HasKey("ConcertId", "Genre");
+
+                    b.ToTable("ConcertGenres", "concert");
                 });
 
             modelBuilder.Entity("Concertable.Messaging.Domain.InboxMessageEntity", b =>
@@ -164,6 +193,22 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
 
                     b.Navigation("Period")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ConcertGenreEntity", b =>
+                {
+                    b.HasOne("Concertable.Customer.Concert.Domain.ConcertEntity", "Concert")
+                        .WithMany("Genres")
+                        .HasForeignKey("ConcertId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Concert");
+                });
+
+            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ConcertEntity", b =>
+                {
+                    b.Navigation("Genres");
                 });
 #pragma warning restore 612, 618
         }
