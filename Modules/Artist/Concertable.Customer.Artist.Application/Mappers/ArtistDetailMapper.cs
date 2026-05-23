@@ -4,7 +4,7 @@ namespace Concertable.Customer.Artist.Application.Mappers;
 
 internal static class ArtistDetailMapper
 {
-    public static ArtistDetailDto ToDetailDto(this ArtistEntity artist) => new(
+    public static ArtistDetailDto ToDetailDto(this ArtistReadModel artist) => new(
         artist.Id,
         artist.Name,
         artist.About,

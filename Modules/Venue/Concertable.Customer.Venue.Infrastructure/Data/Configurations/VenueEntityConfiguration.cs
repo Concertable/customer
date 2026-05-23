@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Concertable.Customer.Venue.Infrastructure.Data.Configurations;
 
-internal class VenueEntityConfiguration : IEntityTypeConfiguration<VenueEntity>
+internal class VenueReadModelConfiguration : IEntityTypeConfiguration<VenueReadModel>
 {
-    public void Configure(EntityTypeBuilder<VenueEntity> builder)
+    public void Configure(EntityTypeBuilder<VenueReadModel> builder)
     {
         builder.ToTable("Venues", Schema.Name);
         builder.Property(v => v.Id).ValueGeneratedNever();

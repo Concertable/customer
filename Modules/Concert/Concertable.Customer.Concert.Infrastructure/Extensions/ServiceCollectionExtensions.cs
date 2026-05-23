@@ -22,7 +22,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUnitOfWork<ConcertDbContext>, UnitOfWork<ConcertDbContext>>();
         services.AddScoped<IUnitOfWorkBehavior, UnitOfWorkBehavior>();
 
-        services.AddScoped<IConcertRepository, ConcertRepository>();
+        services.AddScoped<IConcertReadRepository, ConcertReadRepository>();
         services.AddScoped<IConcertService, ConcertService>();
         services.AddScoped<IIntegrationEventHandler<ConcertChangedEvent>, ConcertProjectionHandler>();
         services.AddScoped<IIntegrationEventHandler<ConcertRatingUpdatedEvent>, ConcertRatingProjectionHandler>();

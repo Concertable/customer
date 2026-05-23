@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUnitOfWork<VenueDbContext>, UnitOfWork<VenueDbContext>>();
         services.AddScoped<IUnitOfWorkBehavior, UnitOfWorkBehavior>();
 
-        services.AddScoped<IVenueRepository, VenueRepository>();
+        services.AddScoped<IVenueReadRepository, VenueReadRepository>();
         services.AddScoped<IVenueService, VenueService>();
         services.AddScoped<ICustomerVenueModule, CustomerVenueModule>();
         services.AddScoped<IIntegrationEventHandler<VenueChangedEvent>, VenueProjectionHandler>();

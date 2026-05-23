@@ -1,8 +1,6 @@
 namespace Concertable.Customer.Venue.Application.Interfaces;
 
-internal interface IVenueRepository
+internal interface IVenueReadRepository
 {
-    Task<VenueEntity?> GetByIdAsync(int venueId);
-    Task AddAsync(VenueEntity venue);
-    Task SaveChangesAsync();
+    Task<VenueReadModel?> GetByIdAsync(int venueId);
 }
