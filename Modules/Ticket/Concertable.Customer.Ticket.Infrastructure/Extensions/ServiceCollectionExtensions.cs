@@ -3,6 +3,8 @@ using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.Customer.Ticket.Infrastructure.Pdf;
 using Concertable.Customer.Ticket.Infrastructure.Repositories;
 using Concertable.Customer.Ticket.Infrastructure.Services;
+using Concertable.Customer.Review.Contracts.Events;
+using Concertable.Customer.Ticket.Infrastructure.Services.Events;
 using Concertable.Customer.Ticket.Infrastructure.Services.Payment;
 using Concertable.Customer.Ticket.Infrastructure.Validators;
 using FluentValidation;
@@ -37,6 +39,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IIntegrationEventHandler<PaymentSucceededEvent>, TicketPaymentProcessor>();
         services.AddScoped<IIntegrationEventHandler<PaymentFailedEvent>, TicketPaymentFailedProcessor>();
+        services.AddScoped<IIntegrationEventHandler<CustomerReviewSubmittedEvent>, CustomerReviewSubmittedEventHandler>();
 
         services.AddSingleton<TicketConfigurationProvider>();
         services.AddSingleton<IEntityTypeConfigurationProvider>(sp => sp.GetRequiredService<TicketConfigurationProvider>());

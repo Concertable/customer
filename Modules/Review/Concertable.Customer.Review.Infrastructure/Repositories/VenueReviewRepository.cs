@@ -1,11 +1,21 @@
 using Concertable.Customer.Review.Infrastructure.Data;
 using Concertable.Customer.Review.Infrastructure.Mappers;
+using Concertable.Customer.Ticket.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Review.Infrastructure.Repositories;
 
-internal class VenueReviewRepository(ReviewDbContext context) : IVenueReviewRepository
+internal class VenueReviewRepository : IVenueReviewRepository
 {
+    private readonly ReviewDbContext context;
+    private readonly ITicketRepository ticketRepository;
+
+    public VenueReviewRepository(ReviewDbContext context, ITicketRepository ticketRepository)
+    {
+        this.context = context;
+        this.ticketRepository = ticketRepository;
+    }
+
     public Task<IPagination<ReviewDto>> GetByVenueAsync(int venueId, IPageParams pageParams) =>
         context.Reviews
             .AsNoTracking()
@@ -14,8 +24,6 @@ internal class VenueReviewRepository(ReviewDbContext context) : IVenueReviewRepo
             .ToDto()
             .ToPaginationAsync(pageParams);
 
-    // BROKEN Phase 1: same shape as ArtistReviewRepository.CanUserReviewArtistAsync. Returns false until the
-    // ticket-by-venue read exists.
     public Task<bool> CanUserReviewVenueAsync(Guid userId, int venueId) =>
-        Task.FromResult(false);
+        ticketRepository.CanReviewVenueAsync(userId, venueId);
 }
