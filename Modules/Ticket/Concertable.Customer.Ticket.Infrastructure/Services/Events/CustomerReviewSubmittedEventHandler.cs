@@ -1,4 +1,5 @@
 using Concertable.Customer.Review.Contracts.Events;
+using Concertable.Customer.Ticket.Infrastructure;
 using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.DataAccess.Infrastructure.Extensions;
 using Concertable.Messaging.Contracts;
@@ -37,7 +38,7 @@ internal class CustomerReviewSubmittedEventHandler : IIntegrationEventHandler<Cu
         if (ticket is not null)
             ticket.MarkReviewed();
         else
-            logger.LogWarning("Ticket {TicketId} not found for review submitted event", @event.TicketId);
+            logger.TicketNotFoundForReviewEvent(@event.TicketId);
 
         try
         {
@@ -45,7 +46,7 @@ internal class CustomerReviewSubmittedEventHandler : IIntegrationEventHandler<Cu
         }
         catch (DbUpdateException ex) when (ex.IsDuplicateKey())
         {
-            logger.LogDebug("Duplicate inbox message {MessageId}; skipping", envelope.MessageId);
+            logger.DuplicateInboxMessage(envelope.MessageId);
         }
     }
 }
