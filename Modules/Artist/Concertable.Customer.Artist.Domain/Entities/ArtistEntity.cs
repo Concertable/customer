@@ -1,4 +1,4 @@
-namespace Concertable.Customer.Artist.Domain;
+namespace Concertable.Customer.Artist.Domain.Entities;
 
 public class ArtistReadModel : IIdEntity
 {

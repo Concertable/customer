@@ -1,3 +1,4 @@
+using Concertable.Customer.Artist.Domain.Entities;
 using Concertable.Customer.Artist.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
