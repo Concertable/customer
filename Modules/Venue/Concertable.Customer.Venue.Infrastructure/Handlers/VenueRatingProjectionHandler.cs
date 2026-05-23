@@ -1,6 +1,6 @@
 using Concertable.Customer.Venue.Infrastructure.Data;
 using Concertable.Messaging.Domain;
-using Concertable.Venue.Contracts.Events;
+using Concertable.B2B.Venue.Contracts.Events;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Venue.Infrastructure.Handlers;

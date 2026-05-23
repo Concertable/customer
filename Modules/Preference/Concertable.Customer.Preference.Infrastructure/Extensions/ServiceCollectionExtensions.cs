@@ -1,4 +1,4 @@
-using Concertable.Concert.Contracts.Events;
+using Concertable.B2B.Concert.Contracts.Events;
 using Concertable.Customer.Preference.Infrastructure.Data;
 using Concertable.Customer.Preference.Infrastructure.Data.Seeders;
 using Concertable.Customer.Preference.Infrastructure.Events;
