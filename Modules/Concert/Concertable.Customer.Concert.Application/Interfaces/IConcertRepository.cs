@@ -1,8 +1,7 @@
 namespace Concertable.Customer.Concert.Application.Interfaces;
 
-internal interface IConcertRepository
+internal interface IConcertReadRepository
 {
-    Task<ConcertEntity?> GetByIdAsync(int concertId);
-    Task AddAsync(ConcertEntity concert);
+    Task<ConcertReadModel?> GetByIdAsync(int concertId);
     Task SaveChangesAsync();
 }

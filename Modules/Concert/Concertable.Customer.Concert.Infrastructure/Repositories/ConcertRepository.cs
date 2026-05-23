@@ -3,13 +3,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Concert.Infrastructure.Repositories;
 
-internal class ConcertRepository(ConcertDbContext context) : IConcertRepository
+internal class ConcertReadRepository : IConcertReadRepository
 {
-    public Task<ConcertEntity?> GetByIdAsync(int concertId) =>
-        context.Concerts.Include(c => c.Genres).FirstOrDefaultAsync(c => c.Id == concertId);
+    private readonly ConcertDbContext context;
 
-    public async Task AddAsync(ConcertEntity concert) =>
-        await context.Concerts.AddAsync(concert);
+    public ConcertReadRepository(ConcertDbContext context)
+    {
+        this.context = context;
+    }
+
+    public Task<ConcertReadModel?> GetByIdAsync(int concertId) =>
+        context.Concerts.Include(c => c.Genres).FirstOrDefaultAsync(c => c.Id == concertId);
 
     public Task SaveChangesAsync() => context.SaveChangesAsync();
 }

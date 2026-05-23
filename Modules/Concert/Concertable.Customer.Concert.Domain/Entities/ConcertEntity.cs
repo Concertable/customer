@@ -1,6 +1,6 @@
 namespace Concertable.Customer.Concert.Domain;
 
-public class ConcertEntity : IIdEntity
+public class ConcertReadModel : IIdEntity
 {
     public int Id { get; private set; }
     public string Name { get; private set; } = null!;
@@ -20,11 +20,11 @@ public class ConcertEntity : IIdEntity
     public string ContractType { get; private set; } = null!;
     public double AverageRating { get; private set; }
     public int ReviewCount { get; private set; }
-    public ICollection<ConcertGenreEntity> Genres { get; private set; } = [];
+    public ICollection<ConcertGenreReadModel> Genres { get; private set; } = [];
 
-    private ConcertEntity() { }
+    private ConcertReadModel() { }
 
-    public static ConcertEntity Create(
+    public static ConcertReadModel Create(
         int concertId,
         string name,
         string about,

@@ -1,8 +1,6 @@
 namespace Concertable.Customer.Artist.Application.Interfaces;
 
-internal interface IArtistRepository
+internal interface IArtistReadRepository
 {
-    Task<ArtistEntity?> GetByIdAsync(int artistId);
-    Task AddAsync(ArtistEntity artist);
-    Task SaveChangesAsync();
+    Task<ArtistReadModel?> GetByIdAsync(int artistId);
 }

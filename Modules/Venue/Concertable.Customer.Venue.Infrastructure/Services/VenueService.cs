@@ -5,9 +5,9 @@ namespace Concertable.Customer.Venue.Infrastructure.Services;
 
 internal class VenueService : IVenueService
 {
-    private readonly IVenueRepository repository;
+    private readonly IVenueReadRepository repository;
 
-    public VenueService(IVenueRepository repository)
+    public VenueService(IVenueReadRepository repository)
     {
         this.repository = repository;
     }

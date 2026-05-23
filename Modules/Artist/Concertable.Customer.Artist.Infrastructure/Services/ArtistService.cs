@@ -5,9 +5,9 @@ namespace Concertable.Customer.Artist.Infrastructure.Services;
 
 internal class ArtistService : IArtistService
 {
-    private readonly IArtistRepository repository;
+    private readonly IArtistReadRepository repository;
 
-    public ArtistService(IArtistRepository repository)
+    public ArtistService(IArtistReadRepository repository)
     {
         this.repository = repository;
     }

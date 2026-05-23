@@ -16,7 +16,7 @@ internal class TicketService : ITicketService
     private readonly ITicketEmailSender ticketEmailSender;
     private readonly IQrCodeService qrCodeService;
     private readonly ICurrentUser currentUser;
-    private readonly IConcertRepository concertRepository;
+    private readonly IConcertReadRepository concertRepository;
     private readonly ICustomerPaymentClient customerPaymentClient;
     private readonly TimeProvider timeProvider;
     private readonly ILogger<TicketService> logger;
@@ -27,7 +27,7 @@ internal class TicketService : ITicketService
         ITicketEmailSender ticketEmailSender,
         IQrCodeService qrCodeService,
         ICurrentUser currentUser,
-        IConcertRepository concertRepository,
+        IConcertReadRepository concertRepository,
         ICustomerPaymentClient customerPaymentClient,
         TimeProvider timeProvider,
         ILogger<TicketService> logger)
@@ -158,7 +158,7 @@ internal class TicketService : ITicketService
         return tickets.ToDtos(currentUser.Email ?? string.Empty);
     }
 
-    private TicketEntity BuildTicket(Guid userId, ConcertEntity concert)
+    private TicketEntity BuildTicket(Guid userId, ConcertReadModel concert)
     {
         var ticketId = Guid.CreateVersion7();
         var qrCode = qrCodeService.GenerateFromTicketId(ticketId);

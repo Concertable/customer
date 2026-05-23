@@ -7,6 +7,6 @@ internal sealed class VenueConfigurationProvider : IEntityTypeConfigurationProvi
 {
     public void Configure(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new VenueEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new VenueReadModelConfiguration());
     }
 }

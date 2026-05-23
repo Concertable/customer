@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUnitOfWork<ArtistDbContext>, UnitOfWork<ArtistDbContext>>();
         services.AddScoped<IUnitOfWorkBehavior, UnitOfWorkBehavior>();
 
-        services.AddScoped<IArtistRepository, ArtistRepository>();
+        services.AddScoped<IArtistReadRepository, ArtistReadRepository>();
         services.AddScoped<IArtistService, ArtistService>();
         services.AddScoped<ICustomerArtistModule, CustomerArtistModule>();
         services.AddScoped<IIntegrationEventHandler<ArtistChangedEvent>, ArtistProjectionHandler>();

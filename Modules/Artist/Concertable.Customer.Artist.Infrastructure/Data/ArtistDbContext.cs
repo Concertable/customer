@@ -12,7 +12,7 @@ internal class ArtistDbContext : DbContextBase
         this.provider = provider;
     }
 
-    public DbSet<ArtistEntity> Artists => Set<ArtistEntity>();
+    public DbSet<ArtistReadModel> Artists => Set<ArtistReadModel>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

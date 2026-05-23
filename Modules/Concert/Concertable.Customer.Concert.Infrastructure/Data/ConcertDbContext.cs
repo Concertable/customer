@@ -7,7 +7,7 @@ internal class ConcertDbContext(
     ConcertConfigurationProvider provider)
     : DbContextBase(options)
 {
-    public DbSet<ConcertEntity> Concerts => Set<ConcertEntity>();
+    public DbSet<ConcertReadModel> Concerts => Set<ConcertReadModel>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -5,7 +5,7 @@ namespace Concertable.Customer.Ticket.Application.Interfaces;
 
 internal interface ITicketValidator
 {
-    Result CanBePurchased(ConcertEntity concert);
+    Result CanBePurchased(ConcertReadModel concert);
     Task<Result> CanBePurchasedAsync(int concertId);
-    Result CanPurchaseTickets(ConcertEntity concert, int quantity);
+    Result CanPurchaseTickets(ConcertReadModel concert, int quantity);
 }
