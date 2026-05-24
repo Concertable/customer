@@ -21,14 +21,11 @@ using Concertable.B2B.Venue.Contracts.Events;
 using Concertable.Messaging.Infrastructure.Extensions;
 using Concertable.Messaging.Infrastructure.Inbox;
 using Concertable.Messaging.Infrastructure.Outbox;
-using Concertable.B2B.Notification.Infrastructure.Extensions;
 using Concertable.Payment.Client.Extensions;
 using Concertable.Payment.Domain.Events;
 using Concertable.Auth.Contracts.Events;
-using Concertable.Shared.Blob.Infrastructure.Extensions;
 using Concertable.Shared.Email.Infrastructure.Extensions;
 using Concertable.Shared.Geocoding.Infrastructure.Extensions;
-using Concertable.Shared.Imaging.Infrastructure.Extensions;
 using Concertable.Shared.Pdf.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +35,8 @@ using Concertable.DataAccess.Infrastructure.Data;
 using Concertable.Messaging.Application.Extensions;
 using Concertable.Messaging.AzureServiceBus.Extensions;
 using Concertable.Kernel.Extensions;
+using Concertable.Shared.Notification.Infrastructure.Hubs;
+using Concertable.Shared.Notification.Infrastructure.Extensions;
 using Concertable.Seeding.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -71,10 +70,8 @@ services.AddClientCredentials(opts =>
     opts.ClientId = builder.Configuration["ServiceAuth:ClientId"] ?? "";
     opts.ClientSecret = builder.Configuration["ServiceAuth:ClientSecret"] ?? "";
 });
-services.AddSharedBlob(builder.Configuration);
 services.AddSharedEmail(builder.Configuration);
 services.AddSharedGeocoding();
-services.AddSharedImaging();
 services.AddSharedPdf();
 services.AddAzureServiceBusTransport(
     opts =>
@@ -137,6 +134,15 @@ services.AddAuthorization();
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
+app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapDefaultEndpoints();
+app.MapControllers();
+app.MapHub<NotificationHub>("/hub/notifications");
+
 if (!app.Environment.IsProduction())
 {
     using var scope = app.Services.CreateScope();
@@ -151,14 +157,6 @@ if (!app.Environment.IsProduction())
     await sp.GetRequiredService<UserDbContext>().Database.MigrateAsync();
     await sp.GetRequiredService<VenueDbContext>().Database.MigrateAsync();
 }
-
-app.UseExceptionHandler();
-app.UseCors();
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapDefaultEndpoints();
-app.MapControllers();
 
 app.Run();
 

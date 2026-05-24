@@ -21,6 +21,7 @@ internal class TicketService : ITicketService
     private readonly ICurrentUser currentUser;
     private readonly IConcertReadRepository concertRepository;
     private readonly ICustomerPaymentClient customerPaymentClient;
+    private readonly IUnitOfWork unitOfWork;
     private readonly TimeProvider timeProvider;
     private readonly ILogger<TicketService> logger;
 
@@ -32,6 +33,7 @@ internal class TicketService : ITicketService
         ICurrentUser currentUser,
         IConcertReadRepository concertRepository,
         ICustomerPaymentClient customerPaymentClient,
+        IUnitOfWork unitOfWork,
         TimeProvider timeProvider,
         ILogger<TicketService> logger)
     {
@@ -42,6 +44,7 @@ internal class TicketService : ITicketService
         this.currentUser = currentUser;
         this.concertRepository = concertRepository;
         this.customerPaymentClient = customerPaymentClient;
+        this.unitOfWork = unitOfWork;
         this.timeProvider = timeProvider;
         this.logger = logger;
     }
@@ -91,6 +94,7 @@ internal class TicketService : ITicketService
         int quantity = purchaseCompleteDto.Quantity ?? 1;
         var tickets = new List<TicketEntity>();
 
+        await using var tx = await unitOfWork.BeginTransactionAsync();
         try
         {
             for (int i = 0; i < quantity; i++)
@@ -102,10 +106,12 @@ internal class TicketService : ITicketService
 
             concert.DecrementAvailability(quantity);
             await concertRepository.SaveChangesAsync();
-            await ticketRepository.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync();
+            await tx.CommitAsync();
         }
         catch (Exception)
         {
+            await tx.RollbackAsync();
             return Result.Fail("Failed to create ticket. Please contact support.");
         }
 
