@@ -6,6 +6,7 @@ using Concertable.Customer.Preference.Infrastructure.Notifications;
 using Concertable.Customer.Preference.Infrastructure.Repositories;
 using Concertable.Customer.Preference.Infrastructure.Services;
 using Concertable.Seeding;
+using Concertable.Seeding.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +21,8 @@ public static class ServiceCollectionExtensions
             opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
-                    sp.GetRequiredService<DomainEventDispatchInterceptor>()));
+                    sp.GetRequiredService<DomainEventDispatchInterceptor>())
+                .UseSeedingSupport(sp));
 
         services.AddSingleton<PreferenceConfigurationProvider>();
         services.AddSingleton<IEntityTypeConfigurationProvider>(sp => sp.GetRequiredService<PreferenceConfigurationProvider>());

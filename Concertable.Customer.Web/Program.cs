@@ -38,6 +38,7 @@ using Concertable.DataAccess.Infrastructure.Data;
 using Concertable.Messaging.Application.Extensions;
 using Concertable.Messaging.AzureServiceBus.Extensions;
 using Concertable.Kernel.Extensions;
+using Concertable.Seeding.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -90,6 +91,7 @@ services.AddOutbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionSt
 services.AddInbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("CustomerDb")));
 services.AddScoped<AuditInterceptor>();
 services.AddScoped<DomainEventDispatchInterceptor>();
+services.AddSeedingInfrastructure();
 
 services.AddCustomerConcertModule(builder.Configuration);
 services.AddCustomerTicketModule(builder.Configuration);
