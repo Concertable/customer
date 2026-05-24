@@ -35,14 +35,6 @@ Cross-module access into these three modules is not behind an `IXModule` facade 
 
 ---
 
-### Cross-service project reference: Customer → B2B Notification
-
-`Concertable.Customer.Web/Program.cs` imports `Concertable.B2B.Notification.Infrastructure.Extensions` for `AddNotificationClient()`. This is a project reference from Customer into B2B's module infrastructure — a boundary violation.
-
-**Resolves when:** `AddNotificationClient()` moves into a shared csproj (e.g. `Concertable.Shared.Notification.Client` or similar) that neither B2B nor Customer own directly; both services reference the shared client instead.
-
----
-
 ### Missing test projects for Artist, Venue, Preference
 
 `Concertable.Customer.Artist`, `Concertable.Customer.Venue`, and `Concertable.Customer.Preference` have no Unit or Integration test projects.

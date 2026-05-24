@@ -3,7 +3,7 @@ global using Concertable.Contracts;
 global using Concertable.Kernel.Identity;
 global using Concertable.Messaging;
 global using Concertable.Messaging.Domain;
-global using Concertable.B2B.Notification.Contracts;
+global using Concertable.Kernel.Notifications;
 global using Concertable.DataAccess;
 global using Concertable.DataAccess.Infrastructure;
 global using Concertable.DataAccess.Infrastructure.Data;

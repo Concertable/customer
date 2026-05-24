@@ -18,7 +18,7 @@ auth.WithEnvironment("ServiceAuth__AuthClientId", "concertable-auth");
 builder.AddPaymentWorkers<Projects.Concertable_Payment_Workers>(paymentDb, asb);
 builder.AddSearchWeb<Projects.Concertable_Search_Web>(auth, searchDb);
 builder.AddSearchWorkers<Projects.Concertable_Search_Workers>(searchDb, asb);
-builder.AddCustomerSpa(customerWeb, auth);
+builder.AddCustomerSpa(customerWeb, customerWeb, auth);
 builder.AddMobileCustomer(customerWeb, auth);
 
 builder.Build().Run();

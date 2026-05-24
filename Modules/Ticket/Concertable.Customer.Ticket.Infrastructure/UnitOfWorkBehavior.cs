@@ -5,5 +5,5 @@ namespace Concertable.Customer.Ticket.Infrastructure;
 
 internal interface IUnitOfWorkBehavior : IUnitOfWorkBehavior<TicketDbContext>;
 
-internal class UnitOfWorkBehavior(IUnitOfWork<TicketDbContext> unitOfWork)
+internal class UnitOfWorkBehavior(IUnitOfWork unitOfWork)
     : UnitOfWorkBehavior<TicketDbContext>(unitOfWork), IUnitOfWorkBehavior;
