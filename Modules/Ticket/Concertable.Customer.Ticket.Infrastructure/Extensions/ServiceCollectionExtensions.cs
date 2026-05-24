@@ -27,7 +27,7 @@ public static class ServiceCollectionExtensions
                     sp.GetRequiredService<AuditInterceptor>(),
                     sp.GetRequiredService<DomainEventDispatchInterceptor>()));
 
-        services.AddScoped<IUnitOfWork<TicketDbContext>, UnitOfWork<TicketDbContext>>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUnitOfWorkBehavior, UnitOfWorkBehavior>();
 
         services.AddScoped<ITicketService, TicketService>();
