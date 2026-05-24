@@ -47,6 +47,18 @@ builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddControllers();
 
+var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials()
+              .WithOrigins(corsOrigins);
+    });
+});
+
 var services = builder.Services;
 
 services.AddScoped<IKeyedServiceProvider>(sp => (IKeyedServiceProvider)sp);
@@ -141,6 +153,7 @@ if (!app.Environment.IsProduction())
 }
 
 app.UseExceptionHandler();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
