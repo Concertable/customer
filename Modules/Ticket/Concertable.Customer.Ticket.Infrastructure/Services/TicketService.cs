@@ -116,7 +116,15 @@ internal class TicketService : ITicketService
         }
 
         var ticketIds = tickets.Select(t => t.Id).ToList();
-        await ticketEmailSender.SendTicketsAsync(purchaseCompleteDto.FromEmail, ticketIds);
+
+        try
+        {
+            await ticketEmailSender.SendTicketsAsync(purchaseCompleteDto.FromEmail, ticketIds);
+        }
+        catch (Exception ex)
+        {
+            logger.TicketEmailFailed(ex, purchaseCompleteDto.FromEmail, ticketIds);
+        }
 
         return Result.Ok(new TicketPaymentResponse
         {
