@@ -129,6 +129,17 @@ services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero,
             ValidateIssuer = !builder.Environment.IsDevelopment()
         };
+        opts.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hub"))
+                    context.Token = accessToken;
+                return Task.CompletedTask;
+            }
+        };
     });
 services.AddAuthorization();
 
