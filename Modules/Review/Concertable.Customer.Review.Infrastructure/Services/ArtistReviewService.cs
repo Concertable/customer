@@ -11,6 +11,9 @@ internal class ArtistReviewService(
     public Task<IPagination<ReviewDto>> GetAsync(int artistId, IPageParams pageParams) =>
         reviewRepository.GetByArtistAsync(artistId, pageParams);
 
+    public Task<ReviewSummaryDto> GetSummaryAsync(int artistId) =>
+        reviewRepository.GetSummaryByArtistAsync(artistId);
+
     public Task<bool> CanCurrentUserReviewAsync(int artistId) =>
         reviewValidator.CanUserReviewArtistAsync(currentUser.GetId(), artistId);
 }
