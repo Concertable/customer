@@ -18,4 +18,7 @@ internal static partial class Log
 
     [LoggerMessage(Level = LogLevel.Debug, Message = "Duplicate inbox message {MessageId}; skipping")]
     internal static partial void DuplicateInboxMessage(this ILogger logger, Guid messageId);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Failed to send ticket confirmation email to {Email} for tickets {TicketIds}")]
+    internal static partial void TicketEmailFailed(this ILogger logger, Exception ex, string email, IReadOnlyList<Guid> ticketIds);
 }
