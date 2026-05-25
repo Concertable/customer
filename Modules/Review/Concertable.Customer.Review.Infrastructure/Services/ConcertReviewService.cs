@@ -31,13 +31,14 @@ internal class ConcertReviewService(
             ticket.Id,
             request.Stars,
             request.Details,
-            artistId: 0,
-            venueId: 0,
+            currentUser.Email ?? string.Empty,
+            artistId: ticket.ArtistId,
+            venueId: ticket.VenueId,
             concertId: ticket.ConcertId);
 
         await reviewRepository.AddAsync(review);
         await reviewRepository.SaveChangesAsync();
 
-        return review.ToDto(currentUser.Email ?? string.Empty);
+        return review.ToDto();
     }
 }

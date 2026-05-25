@@ -7,4 +7,6 @@ public record ReviewCreatedDomainEvent(
     int ArtistId,
     int VenueId,
     int ConcertId,
-    double Stars) : IDomainEvent;
+    double Stars,
+    string Email,
+    string? Details) : IDomainEvent;

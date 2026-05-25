@@ -13,6 +13,7 @@ public class ReviewEntity : IIdEntity, IEventRaiser
     public int ArtistId { get; private set; }
     public int VenueId { get; private set; }
     public byte Stars { get; private set; }
+    public string Email { get; private set; } = null!;
     public string? Details { get; private set; }
 
     private readonly EventRaiser _events = new();
@@ -25,6 +26,7 @@ public class ReviewEntity : IIdEntity, IEventRaiser
         Guid ticketId,
         byte stars,
         string? details,
+        string email,
         int artistId,
         int venueId,
         int concertId)
@@ -35,11 +37,12 @@ public class ReviewEntity : IIdEntity, IEventRaiser
             TicketId = ticketId,
             Stars = stars,
             Details = details,
+            Email = email,
             ArtistId = artistId,
             VenueId = venueId,
             ConcertId = concertId
         };
-        review._events.Raise(new ReviewCreatedDomainEvent(ticketId, artistId, venueId, concertId, stars));
+        review._events.Raise(new ReviewCreatedDomainEvent(ticketId, artistId, venueId, concertId, stars, email, details));
         return review;
     }
 
