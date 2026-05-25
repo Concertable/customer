@@ -13,6 +13,7 @@ export default defineConfig({
   envDir: '../',
   define: {
     'import.meta.env.VITE_OIDC_CLIENT_ID': JSON.stringify('customer-web'),
+    'import.meta.env.VITE_OIDC_SCOPE': JSON.stringify('openid profile roles concertable.customer.api concertable.search.api offline_access'),
   },
   resolve: {
     alias: [

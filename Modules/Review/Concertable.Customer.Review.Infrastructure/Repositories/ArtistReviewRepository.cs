@@ -25,6 +25,20 @@ internal class ArtistReviewRepository : IArtistReviewRepository
             .ToDto()
             .ToPaginationAsync(pageParams);
 
+    public async Task<ReviewSummaryDto> GetSummaryByArtistAsync(int artistId)
+    {
+        var rows = await context.Reviews
+            .AsNoTracking()
+            .Where(r => r.ArtistId == artistId)
+            .Select(r => (double)r.Stars)
+            .ToListAsync();
+
+        if (rows.Count == 0)
+            return new ReviewSummaryDto(0, null);
+
+        return new ReviewSummaryDto(rows.Count, Math.Round(rows.Average(), 1));
+    }
+
     public Task<bool> CanUserReviewArtistAsync(Guid userId, int artistId) =>
         ticketRepository.CanReviewArtistAsync(userId, artistId);
 }
