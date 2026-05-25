@@ -26,6 +26,7 @@ namespace Concertable.Customer.Review.Infrastructure.Data.Migrations
                     ArtistId = table.Column<int>(type: "int", nullable: false),
                     VenueId = table.Column<int>(type: "int", nullable: false),
                     Stars = table.Column<byte>(type: "tinyint", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Details = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>

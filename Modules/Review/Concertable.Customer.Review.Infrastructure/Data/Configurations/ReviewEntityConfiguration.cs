@@ -13,5 +13,6 @@ internal class ReviewEntityConfiguration : IEntityTypeConfiguration<ReviewEntity
         builder.HasIndex(r => r.ConcertId);
         builder.HasIndex(r => r.ArtistId);
         builder.HasIndex(r => r.VenueId);
+        builder.Property(r => r.Email).HasMaxLength(256).IsRequired();
     }
 }

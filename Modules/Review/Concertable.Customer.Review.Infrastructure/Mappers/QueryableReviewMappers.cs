@@ -11,6 +11,6 @@ internal static class QueryableReviewMappers
             Id = r.Id,
             Stars = r.Stars,
             Details = r.Details,
-            Email = string.Empty
+            Email = r.Email
         });
 }

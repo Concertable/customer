@@ -40,6 +40,11 @@ namespace Concertable.Customer.Review.Infrastructure.Data.Migrations
                     b.Property<string>("Details")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<byte>("Stars")
                         .HasColumnType("tinyint");
 

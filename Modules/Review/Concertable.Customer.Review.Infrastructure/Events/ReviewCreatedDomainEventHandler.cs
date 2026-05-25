@@ -9,5 +9,5 @@ internal class ReviewCreatedDomainEventHandler(IBus bus)
     : IPreCommitDomainEventHandler<ReviewCreatedDomainEvent>
 {
     public Task HandleAsync(ReviewCreatedDomainEvent e, CancellationToken ct = default) =>
-        bus.PublishAsync(new CustomerReviewSubmittedEvent(e.TicketId, e.ArtistId, e.VenueId, e.ConcertId, e.Stars), ct);
+        bus.PublishAsync(new CustomerReviewSubmittedEvent(e.TicketId, e.ArtistId, e.VenueId, e.ConcertId, e.Stars, e.Email, e.Details), ct);
 }

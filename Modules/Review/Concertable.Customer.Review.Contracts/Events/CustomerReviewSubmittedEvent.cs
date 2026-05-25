@@ -7,4 +7,6 @@ public record CustomerReviewSubmittedEvent(
     int ArtistId,
     int VenueId,
     int ConcertId,
-    double Stars) : IIntegrationEvent;
+    double Stars,
+    string Email,
+    string? Details) : IIntegrationEvent;
