@@ -20,7 +20,8 @@
     <ProjectReference Include="..\..\..\..\Concertable.Messaging\Concertable.Messaging.Contracts\Concertable.Messaging.Contracts.csproj" />
     <ProjectReference Include="..\..\..\..\Concertable.Messaging\Concertable.Messaging.Domain\Concertable.Messaging.Domain.csproj" />
     <ProjectReference Include="..\..\User\Concertable.Customer.User.Contracts\Concertable.Customer.User.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\..\Seeding\Concertable.Seeding\Concertable.Seeding.csproj" />
+    <ProjectReference Include="..\..\..\..\Seeding\Concertable.Seeding.Shared\Concertable.Seeding.Shared.csproj" />
+    <ProjectReference Include="..\..\..\..\Seeding\Concertable.Customer.Seeding\Concertable.Customer.Seeding.csproj" />
   </ItemGroup>
 
 </Project>

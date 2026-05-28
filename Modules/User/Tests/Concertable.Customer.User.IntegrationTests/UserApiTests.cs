@@ -57,7 +57,7 @@ public class UserApiTests : IAsyncLifetime
 
         // Assert
         await response.ShouldBe(HttpStatusCode.OK);
-        var user = await response.Content.ReadAsync<UserDto>();
+        var user = await response.Content.ReadAsync<CustomerDto>();
         Assert.NotNull(user);
         Assert.Equal(fixture.Customer.Id, user.Id);
         Assert.Equal(fixture.Customer.Email, user.Email);
@@ -105,7 +105,7 @@ public class UserApiTests : IAsyncLifetime
 
         // Assert
         await response.ShouldBe(HttpStatusCode.OK);
-        var user = await response.Content.ReadAsync<UserDto>();
+        var user = await response.Content.ReadAsync<CustomerDto>();
         Assert.NotNull(user);
         Assert.Equal(51.5074, user.Latitude);
         Assert.Equal(-0.1278, user.Longitude);
