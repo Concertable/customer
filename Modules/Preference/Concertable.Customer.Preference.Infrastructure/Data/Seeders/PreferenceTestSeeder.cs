@@ -1,5 +1,6 @@
 using Concertable.Seeding;
 using Concertable.Seeding.Extensions;
+using Concertable.Customer.Seeding;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Preference.Infrastructure.Data.Seeders;

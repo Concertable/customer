@@ -1,3 +1,4 @@
+using Concertable.Customer.User.Application.Mappers;
 using Concertable.Customer.User.Contracts;
 using Concertable.Kernel.Geometry;
 using Concertable.Kernel.Identity;
@@ -26,7 +27,7 @@ internal class UserService : IUserService
         this.geometryProvider = geometryProvider;
     }
 
-    public async Task<UserDto> SaveLocationAsync(double latitude, double longitude)
+    public async Task<CustomerDto> SaveLocationAsync(double latitude, double longitude)
     {
         var user = await userRepository.GetByIdAsync(currentUser.GetId())
             ?? throw new UnauthorizedAccessException("User not found.");
@@ -39,20 +40,12 @@ internal class UserService : IUserService
         userRepository.Update(user);
         await userRepository.SaveChangesAsync();
 
-        return ToDto(user);
+        return user.ToDto();
     }
 
-    public async Task<UserDto?> GetMeAsync()
+    public async Task<CustomerDto?> GetMeAsync()
     {
         var user = await userRepository.GetByIdAsync(currentUser.GetId());
-        return user is not null ? ToDto(user) : null;
+        return user?.ToDto();
     }
-
-    private static UserDto ToDto(UserEntity user) => new(
-        user.Id,
-        user.Email,
-        user.Location?.Y,
-        user.Location?.X,
-        user.Address?.County,
-        user.Address?.Town);
 }

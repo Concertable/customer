@@ -7,7 +7,12 @@ var searchDb = sql.AddDatabase("SearchDb");
 var paymentDb = sql.AddDatabase("PaymentDb");
 var b2bDb = sql.AddDatabase("B2BDb");
 
-var asb = builder.AddServiceBus(customer: true, search: true, payment: true);
+var asb = builder.AddServiceBus();
+
+asb.Topology()
+   .AddCustomerTopology()
+   .AddSearchTopology()
+   .AddPaymentTopology();
 
 var auth = builder.AddAuth<Projects.Concertable_Auth>(authDb, b2bDb, asb);
 var paymentWeb = builder.AddPaymentWeb<Projects.Concertable_Payment_Web>(auth, paymentDb, asb);

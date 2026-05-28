@@ -1,0 +1,179 @@
+using Aspire.Hosting;
+using Aspire.Hosting.ApplicationModel;
+using Aspire.Hosting.Testing;
+using Concertable.Customer.Concert.Infrastructure.Extensions;
+using Concertable.Customer.Preference.Infrastructure.Extensions;
+using Concertable.Customer.Seeding;
+using Concertable.DataAccess.Application;
+using Concertable.DataAccess.Infrastructure.Data;
+using Concertable.Kernel;
+using Concertable.Kernel.Events;
+using Concertable.Kernel.Extensions;
+using Concertable.Kernel.Identity;
+using Concertable.Messaging.Infrastructure.Extensions;
+using Concertable.Messaging.Infrastructure.Inbox;
+using Concertable.Messaging.Infrastructure.Outbox;
+using Concertable.Seeding;
+using Concertable.Seeding.Extensions;
+using Concertable.Seeding.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System.Net.Http.Headers;
+using CustomerDevDbInitializer = Concertable.Customer.Web.DevDbInitializer;
+
+namespace Concertable.Customer.E2ETests;
+
+public class AppFixture : IAsyncLifetime
+{
+    private DistributedApplication app = null!;
+    private AspireResourceLogger resourceLogger = null!;
+    private IHost host = null!;
+    private HealthWaiter healthWaiter = null!;
+    private readonly ILoggerFactory loggerFactory;
+    private readonly ILogger<AppFixture> logger;
+    private readonly IConfiguration configuration;
+    private readonly TestTokenMinter tokenMinter;
+
+    private readonly string customerWebUrl;
+    private readonly string searchWebUrl;
+    private readonly string paymentWebUrl;
+    private readonly string authUrl;
+    private readonly string customerSpaUrl;
+
+    public const string TestPaymentMethodId = "pm_card_visa";
+
+    public HttpClient CustomerClient { get; private set; } = null!;
+    public IPollingService Polling { get; private set; } = null!;
+    public SeedData SeedData { get; } = new();
+    public DbFixture DbFixture { get; private set; } = null!;
+    public string AuthUrl => authUrl;
+    public string CustomerSpaUrl => customerSpaUrl;
+
+    public AppFixture()
+    {
+        loggerFactory = LoggerFactory.Create(b => b
+            .AddSimpleConsole(o => o.SingleLine = true)
+            .SetMinimumLevel(LogLevel.Information));
+        logger = loggerFactory.CreateLogger<AppFixture>();
+        Polling = new PollingService(loggerFactory.CreateLogger<PollingService>());
+
+        configuration = new ConfigurationBuilder()
+            .AddJsonFile(Path.Combine(AppContext.BaseDirectory, "appsettings.E2E.json"))
+            .AddEnvironmentVariables()
+            .Build();
+
+        customerWebUrl = configuration["Endpoints:CustomerWeb"]
+            ?? throw new InvalidOperationException("Endpoints:CustomerWeb is missing from appsettings.E2E.json.");
+        searchWebUrl = configuration["Endpoints:SearchWeb"]
+            ?? throw new InvalidOperationException("Endpoints:SearchWeb is missing from appsettings.E2E.json.");
+        paymentWebUrl = configuration["Endpoints:PaymentWeb"]
+            ?? throw new InvalidOperationException("Endpoints:PaymentWeb is missing from appsettings.E2E.json.");
+        authUrl = configuration["Endpoints:Auth"]
+            ?? throw new InvalidOperationException("Endpoints:Auth is missing from appsettings.E2E.json.");
+        customerSpaUrl = configuration["Endpoints:CustomerSpa"]
+            ?? throw new InvalidOperationException("Endpoints:CustomerSpa is missing from appsettings.E2E.json.");
+
+        tokenMinter = new TestTokenMinter(configuration);
+    }
+
+    public async Task InitializeAsync()
+    {
+        logger.InitializingE2ETestFixture();
+
+        healthWaiter = new HealthWaiter(loggerFactory.CreateLogger<HealthWaiter>());
+
+        var builder = await DistributedApplicationTestingBuilder
+            .CreateAsync<Projects.Concertable_Customer_AppHost>();
+
+        builder.AddCustomerE2E(customerWebUrl, searchWebUrl, authUrl, paymentWebUrl);
+
+        app = await builder.BuildAsync();
+        resourceLogger = new AspireResourceLogger(app.ResourceNotifications, logger);
+        await app.StartAsync();
+
+        CustomerClient = new HttpClient { BaseAddress = new Uri(customerWebUrl) };
+
+        await healthWaiter.WaitForAllHealthyAsync(
+            [customerWebUrl, searchWebUrl, paymentWebUrl],
+            TimeSpan.FromMinutes(6));
+
+        DbFixture = new DbFixture(app);
+        await DbFixture.InitializeAsync();
+        await DbFixture.ResetAsync();
+
+        var customerConnectionString = await app.GetConnectionStringAsync(AppHostConstants.Databases.Customer);
+
+        var customerSeedConfig = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                [$"ConnectionStrings:{AppHostConstants.Databases.Customer}"] = customerConnectionString,
+            })
+            .Build();
+
+        host = Host.CreateDefaultBuilder()
+            .ConfigureServices((_, services) =>
+            {
+                services.AddSingleton<IConfiguration>(customerSeedConfig);
+                services.AddLogging(b => b.AddSimpleConsole(o => o.SingleLine = true).SetMinimumLevel(LogLevel.Warning));
+                services.AddSingleton(TimeProvider.System);
+                services.AddCurrentUser();
+                services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+                services.AddScoped<AuditInterceptor>();
+                services.AddScoped<DomainEventDispatchInterceptor>();
+                services.AddOutbox(opt => opt.UseSqlServer(customerConnectionString), runDispatcher: false);
+                services.AddInbox(opt => opt.UseSqlServer(customerConnectionString));
+                services.AddSeedingInfrastructure();
+                services.AddCustomerConcertModule(customerSeedConfig);
+                services.AddCustomerConcertDevSeeder();
+                services.AddCustomerPreferenceModule(customerSeedConfig);
+                services.AddCustomerPreferenceDevSeeder();
+                services.AddScoped<IDbInitializer, CustomerDevDbInitializer>();
+            })
+            .Build();
+
+        await host.StartAsync();
+        await ReseedAsync();
+
+        logger.E2ETestFixtureReady();
+    }
+
+    public async Task ResetAsync()
+    {
+        logger.ResettingTestState();
+        await DbFixture.ResetAsync();
+        await ReseedAsync();
+    }
+
+    public async Task<HttpClient> CreateAuthenticatedClientAsync(string email)
+    {
+        var token = await tokenMinter.MintAsync(email, SeedData.TestPassword);
+        var client = new HttpClient { BaseAddress = new Uri(customerWebUrl) };
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        return client;
+    }
+
+    public async Task DisposeAsync()
+    {
+        CustomerClient.Dispose();
+        tokenMinter.Dispose();
+        healthWaiter.Dispose();
+        await DbFixture.DisposeAsync();
+        await host.StopAsync();
+        host.Dispose();
+        await app.DisposeAsync();
+        await resourceLogger.DisposeAsync();
+        loggerFactory.Dispose();
+    }
+
+    public ResourceNotificationService ResourceNotifications => app.ResourceNotifications;
+
+    private async Task ReseedAsync()
+    {
+        await using var scope = host.Services.CreateAsyncScope();
+        var initializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        await initializer.InitializeAsync();
+    }
+}

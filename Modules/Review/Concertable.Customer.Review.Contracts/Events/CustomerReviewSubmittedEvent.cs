@@ -2,6 +2,7 @@ using Concertable.Messaging.Contracts;
 
 namespace Concertable.Customer.Review.Contracts.Events;
 
+[MessageType("concertable.customer.customer-review-submitted.v1")]
 public record CustomerReviewSubmittedEvent(
     Guid TicketId,
     int ArtistId,

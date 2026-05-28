@@ -2,5 +2,5 @@ namespace Concertable.Customer.User.Contracts;
 
 public interface IUserModule
 {
-    Task<IReadOnlyCollection<UserDto>> GetByIdsAsync(IEnumerable<Guid> ids);
+    Task<IReadOnlyCollection<CustomerDto>> GetByIdsAsync(IEnumerable<Guid> ids);
 }

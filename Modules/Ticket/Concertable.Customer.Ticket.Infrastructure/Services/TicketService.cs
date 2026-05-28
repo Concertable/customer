@@ -58,8 +58,6 @@ internal class TicketService : ITicketService
         if (validationResult.IsFailed)
             throw new BadRequestException(validationResult.Errors);
 
-        logger.RoutingTicketRevenue(concert.Id, concert.ContractType, concert.PayeeUserId, purchaseParams.Quantity, concert.Price, "GBP");
-
         var metadata = new Dictionary<string, string>
         {
             ["type"] = TransactionTypes.Ticket,
@@ -68,7 +66,7 @@ internal class TicketService : ITicketService
         };
 
         var paymentResult = await customerPaymentClient.PayAsync(
-            currentUser.GetId(), concert.PayeeUserId,
+            currentUser.GetId(), concert.Id,
             concert.Price * purchaseParams.Quantity,
             metadata,
             purchaseParams.PaymentMethodId);
@@ -150,13 +148,12 @@ internal class TicketService : ITicketService
         {
             ["type"] = TransactionTypes.Ticket,
             ["concertId"] = concert.Id.ToString(),
-            ["toUserId"] = concert.PayeeUserId.ToString(),
             ["quantity"] = quantity.ToString(),
             ["amount"] = ((long)(concert.Price * quantity * 100)).ToString(),
             ["currency"] = "gbp"
         };
 
-        var session = await customerPaymentClient.CreatePaymentSessionAsync(currentUser.GetId(), metadata);
+        var session = await customerPaymentClient.CreatePaymentSessionAsync(currentUser.GetId(), concert.Id, metadata);
 
         return Result.Ok(new TicketCheckout(session, concert.Price, concert.Id, quantity));
     }

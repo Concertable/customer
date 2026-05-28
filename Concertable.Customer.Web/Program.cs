@@ -37,14 +37,18 @@ using Concertable.Messaging.AzureServiceBus.Extensions;
 using Concertable.Kernel.Extensions;
 using Concertable.Shared.Notification.Infrastructure.Hubs;
 using Concertable.Shared.Notification.Infrastructure.Extensions;
+using Concertable.DataAccess.Application;
+using Concertable.Seeding;
 using Concertable.Seeding.Extensions;
+using Concertable.Customer.Seeding;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 builder.Configuration.AddEnvironmentVariables();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(opts => opts.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
 
 var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options =>
@@ -101,6 +105,13 @@ services.AddInbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionStr
 services.AddScoped<AuditInterceptor>();
 services.AddScoped<DomainEventDispatchInterceptor>();
 services.AddSeedingInfrastructure();
+if (!builder.Environment.IsEnvironment("Testing"))
+{
+    services.AddScoped<IDbInitializer, DevDbInitializer>();
+    services.AddScoped<SeedData>();
+    services.AddCustomerPreferenceDevSeeder();
+    services.AddCustomerConcertDevSeeder();
+}
 
 services.AddCustomerConcertModule(builder.Configuration);
 services.AddCustomerTicketModule(builder.Configuration);
@@ -167,6 +178,8 @@ if (!app.Environment.IsProduction())
     await sp.GetRequiredService<TicketDbContext>().Database.MigrateAsync();
     await sp.GetRequiredService<UserDbContext>().Database.MigrateAsync();
     await sp.GetRequiredService<VenueDbContext>().Database.MigrateAsync();
+    if (app.Environment.IsDevelopment())
+        await sp.GetRequiredService<IDbInitializer>().InitializeAsync();
 }
 
 app.Run();

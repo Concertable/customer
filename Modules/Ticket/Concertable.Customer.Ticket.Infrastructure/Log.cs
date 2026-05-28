@@ -4,9 +4,6 @@ namespace Concertable.Customer.Ticket.Infrastructure;
 
 internal static partial class Log
 {
-    [LoggerMessage(Level = LogLevel.Information, Message = "Routing ticket revenue for concert {ConcertId} ({ContractType}) to {PayeeUserId}: {Quantity} x {Price} {Currency}")]
-    internal static partial void RoutingTicketRevenue(this ILogger logger, int concertId, string contractType, Guid payeeUserId, int quantity, decimal price, string currency);
-
     [LoggerMessage(Level = LogLevel.Information, Message = "[TicketPaymentProcessor] fromUserId={FromUserId}")]
     internal static partial void TicketPaymentProcessing(this ILogger logger, string fromUserId);
 
