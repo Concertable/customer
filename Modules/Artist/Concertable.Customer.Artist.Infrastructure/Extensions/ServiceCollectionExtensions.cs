@@ -1,9 +1,11 @@
 using Concertable.B2B.Artist.Contracts.Events;
 using Concertable.Customer.Artist.Contracts;
 using Concertable.Customer.Artist.Infrastructure.Data;
+using Concertable.Customer.Artist.Infrastructure.Data.Seeders;
 using Concertable.Customer.Artist.Infrastructure.Handlers;
 using Concertable.Customer.Artist.Infrastructure.Repositories;
 using Concertable.Customer.Artist.Infrastructure.Services;
+using Concertable.Seeding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,6 +34,12 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ArtistConfigurationProvider>();
         services.AddSingleton<IEntityTypeConfigurationProvider>(sp => sp.GetRequiredService<ArtistConfigurationProvider>());
 
+        return services;
+    }
+
+    public static IServiceCollection AddCustomerArtistDevSeeder(this IServiceCollection services)
+    {
+        services.AddScoped<IDevSeeder, ArtistDevSeeder>();
         return services;
     }
 }
