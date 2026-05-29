@@ -48,6 +48,7 @@ builder.AddServiceDefaults();
 builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddControllers()
+    .AddApplicationPart(typeof(Concertable.Shared.Api.Controllers.GenreController).Assembly)
     .AddJsonOptions(opts => opts.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
 
 var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
@@ -110,7 +111,6 @@ if (!builder.Environment.IsEnvironment("Testing"))
     services.AddScoped<IDbInitializer, DevDbInitializer>();
     services.AddScoped<SeedData>();
     services.AddCustomerPreferenceDevSeeder();
-    services.AddCustomerConcertDevSeeder();
 }
 
 services.AddCustomerConcertModule(builder.Configuration);
