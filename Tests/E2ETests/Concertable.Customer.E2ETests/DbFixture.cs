@@ -1,6 +1,11 @@
 using Aspire.Hosting;
 using Respawn;
 using Respawn.Graph;
+using ConcertSchema = Concertable.Customer.Concert.Infrastructure.Schema;
+using ArtistSchema = Concertable.Customer.Artist.Infrastructure.Schema;
+using VenueSchema = Concertable.Customer.Venue.Infrastructure.Schema;
+using UserSchema = Concertable.Customer.User.Infrastructure.Schema;
+using MessagingSchema = Concertable.Messaging.Infrastructure.Schema;
 
 namespace Concertable.Customer.E2ETests;
 
@@ -20,13 +25,13 @@ public sealed class DbFixture
         {
             TablesToIgnore = [
                 "__EFMigrationsHistory",
-                new Table("Concerts", "concert"),
-                new Table("ConcertGenres", "concert"),
-                new Table("Artists", "artist"),
-                new Table("ArtistGenres", "artist"),
-                new Table("Venues", "venue"),
-                new Table("Users", "user"),
-                new Table("Inbox", "messaging"),
+                new Table(ConcertSchema.Name, ConcertSchema.Concerts),
+                new Table(ConcertSchema.Name, ConcertSchema.ConcertGenres),
+                new Table(ArtistSchema.Name, ArtistSchema.Artists),
+                new Table(ArtistSchema.Name, ArtistSchema.ArtistGenres),
+                new Table(VenueSchema.Name, VenueSchema.Venues),
+                new Table(UserSchema.Name, UserSchema.Users),
+                new Table(MessagingSchema.Name, MessagingSchema.Inbox),
             ],
             DbAdapter = DbAdapter.SqlServer,
             WithReseed = true
