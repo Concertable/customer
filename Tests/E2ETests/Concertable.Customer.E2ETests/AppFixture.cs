@@ -1,9 +1,11 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Testing;
+using Concertable.Customer.Artist.Infrastructure.Extensions;
 using Concertable.Customer.Concert.Infrastructure.Extensions;
 using Concertable.Customer.Preference.Infrastructure.Extensions;
 using Concertable.Customer.Seeding;
+using Concertable.Customer.Venue.Infrastructure.Extensions;
 using Concertable.DataAccess.Application;
 using Concertable.DataAccess.Infrastructure.Data;
 using Concertable.Kernel;
@@ -131,8 +133,13 @@ public class AppFixture : IAsyncLifetime
                 services.AddInbox(opt => opt.UseSqlServer(customerConnectionString));
                 services.AddSeedingInfrastructure();
                 services.AddScoped<SeedData>();
+                services.AddCustomerVenueModule(customerSeedConfig);
+                services.AddCustomerArtistModule(customerSeedConfig);
                 services.AddCustomerConcertModule(customerSeedConfig);
                 services.AddCustomerPreferenceModule(customerSeedConfig);
+                services.AddCustomerVenueDevSeeder();
+                services.AddCustomerArtistDevSeeder();
+                services.AddCustomerConcertDevSeeder();
                 services.AddCustomerPreferenceDevSeeder();
                 services.AddScoped<IDbInitializer, CustomerDevDbInitializer>();
             })
@@ -140,7 +147,6 @@ public class AppFixture : IAsyncLifetime
 
         await host.StartAsync();
         await ReseedAsync();
-        await new ProjectionSeeder(host, Polling).SeedAsync();
 
         logger.E2ETestFixtureReady();
     }
@@ -150,7 +156,6 @@ public class AppFixture : IAsyncLifetime
         logger.ResettingTestState();
         await DbFixture.ResetAsync();
         await ReseedAsync();
-        await new ProjectionSeeder(host, Polling).SeedAsync();
     }
 
     public async Task<HttpClient> CreateAuthenticatedClientAsync(string email)
