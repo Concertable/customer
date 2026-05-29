@@ -25,7 +25,7 @@ public static class ServiceCollectionExtensions
                     sqlOpts => sqlOpts.UseNetTopologySuite())
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
-                    sp.GetRequiredService<DomainEventDispatchInterceptor>()));
+                    sp.GetRequiredService<IDomainEventDispatchInterceptor>()));
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserRepository, UserRepository>();

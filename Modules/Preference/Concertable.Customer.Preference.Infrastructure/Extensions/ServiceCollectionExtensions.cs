@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions
             opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
-                    sp.GetRequiredService<DomainEventDispatchInterceptor>())
+                    sp.GetRequiredService<IDomainEventDispatchInterceptor>())
                 .UseSeedingSupport(sp));
 
         services.AddSingleton<PreferenceConfigurationProvider>();

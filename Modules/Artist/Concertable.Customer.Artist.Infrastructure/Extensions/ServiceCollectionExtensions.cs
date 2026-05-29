@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
             opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
-                    sp.GetRequiredService<DomainEventDispatchInterceptor>()));
+                    sp.GetRequiredService<IDomainEventDispatchInterceptor>()));
 
         services.AddScoped<IUnitOfWork<ArtistDbContext>, UnitOfWork<ArtistDbContext>>();
         services.AddScoped<IUnitOfWorkBehavior, UnitOfWorkBehavior>();

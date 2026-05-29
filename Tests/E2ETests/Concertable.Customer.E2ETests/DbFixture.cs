@@ -20,12 +20,13 @@ public sealed class DbFixture
         {
             TablesToIgnore = [
                 "__EFMigrationsHistory",
-                new Table("Users", "user"),
                 new Table("Concerts", "concert"),
                 new Table("ConcertGenres", "concert"),
                 new Table("Artists", "artist"),
                 new Table("ArtistGenres", "artist"),
-                new Table("Venues", "venue")
+                new Table("Venues", "venue"),
+                new Table("Users", "user"),
+                new Table("Inbox", "messaging"),
             ],
             DbAdapter = DbAdapter.SqlServer,
             WithReseed = true

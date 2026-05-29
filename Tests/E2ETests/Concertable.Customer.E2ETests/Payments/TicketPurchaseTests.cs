@@ -1,4 +1,5 @@
 using Concertable.Customer.Seeding;
+using Concertable.Seeding.Identity;
 using Xunit;
 
 namespace Concertable.Customer.E2ETests.Payments;

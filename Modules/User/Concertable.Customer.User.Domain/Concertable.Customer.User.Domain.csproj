@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Shared\Concertable.Kernel\Concertable.Kernel.csproj" />
+    <ProjectReference Include="..\..\..\..\Seeding\Concertable.Seeding.Identity\Concertable.Seeding.Identity.csproj" />
   </ItemGroup>
 
 </Project>
