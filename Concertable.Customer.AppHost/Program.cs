@@ -19,6 +19,7 @@ var paymentWeb = builder.AddPaymentWeb<Projects.Concertable_Payment_Web>(auth, p
 var customerWeb = builder.AddCustomerWeb<Projects.Concertable_Customer_Web>(auth, customerDb, asb, paymentWeb);
 
 auth.WithEnvironment("ServiceAuth__AuthClientId", "concertable-auth");
+auth.WithEnvironment("Services__CustomerApiUrl", customerWeb.GetEndpoint("https"));
 
 builder.AddPaymentWorkers<Projects.Concertable_Payment_Workers>(paymentDb, asb);
 builder.AddSearchWeb<Projects.Concertable_Search_Web>(auth, searchDb);

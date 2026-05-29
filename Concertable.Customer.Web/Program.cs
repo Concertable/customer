@@ -15,6 +15,7 @@ using Concertable.Customer.Venue.Infrastructure.Extensions;
 using Concertable.Customer.Preference.Api.Extensions;
 using Concertable.Customer.Preference.Infrastructure.Extensions;
 using Concertable.Customer.User.Infrastructure.Extensions;
+using Concertable.Customer.User.Api.Extensions;
 using Concertable.Customer.Review.Infrastructure.Extensions;
 using Concertable.Customer.Ticket.Infrastructure.Extensions;
 using Concertable.B2B.Venue.Contracts.Events;
@@ -104,7 +105,7 @@ services.AddDirectBusKeyed("webhook");
 services.AddOutbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("CustomerDb")));
 services.AddInbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("CustomerDb")));
 services.AddScoped<AuditInterceptor>();
-services.AddScoped<DomainEventDispatchInterceptor>();
+services.AddScoped<IDomainEventDispatchInterceptor, DomainEventDispatchInterceptor>();
 services.AddSeedingInfrastructure();
 if (!builder.Environment.IsEnvironment("Testing"))
 {
@@ -117,6 +118,7 @@ services.AddCustomerConcertModule(builder.Configuration);
 services.AddCustomerTicketModule(builder.Configuration);
 services.AddCustomerReviewModule(builder.Configuration);
 services.AddCustomerUserModule(builder.Configuration);
+services.AddCustomerUserApi();
 services.AddCustomerPreferenceModule(builder.Configuration);
 services.AddCustomerPreferenceApi();
 services.AddCustomerVenueModule(builder.Configuration);
@@ -138,7 +140,8 @@ services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         opts.TokenValidationParameters = new TokenValidationParameters
         {
             ClockSkew = TimeSpan.Zero,
-            ValidateIssuer = !builder.Environment.IsDevelopment()
+            ValidateIssuer = !builder.Environment.IsDevelopment(),
+            RoleClaimType = "role"
         };
         opts.Events = new JwtBearerEvents
         {

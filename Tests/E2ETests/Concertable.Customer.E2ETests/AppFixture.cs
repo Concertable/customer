@@ -10,13 +10,12 @@ using Concertable.Kernel;
 using Concertable.Kernel.Events;
 using Concertable.Kernel.Extensions;
 using Concertable.Kernel.Identity;
-using Concertable.Messaging.AzureServiceBus.Extensions;
 using Concertable.Messaging.Infrastructure.Extensions;
 using Concertable.Messaging.Infrastructure.Inbox;
 using Concertable.Messaging.Infrastructure.Outbox;
 using Concertable.Seeding;
+using Concertable.Seeding.Events;
 using Concertable.Seeding.Extensions;
-using Concertable.Seeding.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,7 +47,7 @@ public class AppFixture : IAsyncLifetime
 
     public HttpClient CustomerClient { get; private set; } = null!;
     public IPollingService Polling { get; private set; } = null!;
-    public SeedData SeedData { get; } = new();
+    public SeedData SeedData { get; private set; } = null!;
     public DbFixture DbFixture { get; private set; } = null!;
     public string AuthUrl => authUrl;
     public string CustomerSpaUrl => customerSpaUrl;
@@ -107,8 +106,6 @@ public class AppFixture : IAsyncLifetime
 
         var customerConnectionString = await app.GetConnectionStringAsync(AppHostConstants.Databases.Customer)
             ?? throw new InvalidOperationException("Customer DB connection string is missing.");
-        var asbConnectionString = await app.GetConnectionStringAsync("asb")
-            ?? throw new InvalidOperationException("ASB connection string is missing.");
 
         var customerSeedConfig = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
@@ -121,25 +118,21 @@ public class AppFixture : IAsyncLifetime
             .ConfigureServices((_, services) =>
             {
                 services.AddSingleton<IConfiguration>(customerSeedConfig);
-                services.AddLogging(b => b.AddSimpleConsole(o => o.SingleLine = true).SetMinimumLevel(LogLevel.Warning));
+                services.AddLogging(b => b
+                    .AddSimpleConsole(o => o.SingleLine = true)
+                    .SetMinimumLevel(LogLevel.Warning)
+                    .AddFilter("Concertable.Customer.Web.DevDbInitializer", LogLevel.Information));
                 services.AddSingleton(TimeProvider.System);
                 services.AddCurrentUser();
                 services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
                 services.AddScoped<AuditInterceptor>();
-                services.AddScoped<DomainEventDispatchInterceptor>();
+                services.AddScoped<IDomainEventDispatchInterceptor, SeedingDomainEventDispatchInterceptor>();
                 services.AddOutbox(opt => opt.UseSqlServer(customerConnectionString), runDispatcher: false);
                 services.AddInbox(opt => opt.UseSqlServer(customerConnectionString));
                 services.AddSeedingInfrastructure();
-                services.AddSingleton<SeedData>();
+                services.AddScoped<SeedData>();
                 services.AddCustomerConcertModule(customerSeedConfig);
                 services.AddCustomerPreferenceModule(customerSeedConfig);
-                services.AddAzureServiceBusTransport(
-                    opts =>
-                    {
-                        opts.ConnectionString = asbConnectionString;
-                        opts.ServiceName = "concertable-e2e-seeder";
-                    },
-                    _ => { });
                 services.AddCustomerPreferenceDevSeeder();
                 services.AddScoped<IDbInitializer, CustomerDevDbInitializer>();
             })
@@ -188,5 +181,6 @@ public class AppFixture : IAsyncLifetime
         await using var scope = host.Services.CreateAsyncScope();
         var initializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
         await initializer.InitializeAsync();
+        SeedData = scope.ServiceProvider.GetRequiredService<SeedData>();
     }
 }

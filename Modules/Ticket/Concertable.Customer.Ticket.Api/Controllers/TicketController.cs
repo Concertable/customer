@@ -1,12 +1,12 @@
 using Concertable.Customer.Ticket.Application.Requests;
 using Concertable.Customer.Ticket.Application.Responses;
+using Concertable.Customer.User.Api.Authorization;
 using Concertable.Kernel;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Concertable.Customer.Ticket.Api.Controllers;
 
-[Authorize(Policy = "Customer")]
+[AuthorizeCustomer]
 [ApiController]
 [Route("api/[controller]")]
 internal class TicketController : ControllerBase
