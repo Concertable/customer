@@ -14,6 +14,7 @@ export default defineConfig({
   define: {
     'import.meta.env.VITE_OIDC_CLIENT_ID': JSON.stringify('customer-web'),
     'import.meta.env.VITE_OIDC_SCOPE': JSON.stringify('openid profile roles concertable.customer.api concertable.search.api offline_access'),
+    'import.meta.env.VITE_API_URL': JSON.stringify('https://localhost:7090/api'),
     'import.meta.env.VITE_BASE_URL': JSON.stringify('https://localhost:7090'),
   },
   resolve: {

@@ -10,6 +10,7 @@ using Concertable.Kernel;
 using Concertable.Kernel.Events;
 using Concertable.Kernel.Extensions;
 using Concertable.Kernel.Identity;
+using Concertable.Messaging.AzureServiceBus.Extensions;
 using Concertable.Messaging.Infrastructure.Extensions;
 using Concertable.Messaging.Infrastructure.Inbox;
 using Concertable.Messaging.Infrastructure.Outbox;
@@ -104,7 +105,10 @@ public class AppFixture : IAsyncLifetime
         await DbFixture.InitializeAsync();
         await DbFixture.ResetAsync();
 
-        var customerConnectionString = await app.GetConnectionStringAsync(AppHostConstants.Databases.Customer);
+        var customerConnectionString = await app.GetConnectionStringAsync(AppHostConstants.Databases.Customer)
+            ?? throw new InvalidOperationException("Customer DB connection string is missing.");
+        var asbConnectionString = await app.GetConnectionStringAsync("asb")
+            ?? throw new InvalidOperationException("ASB connection string is missing.");
 
         var customerSeedConfig = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
@@ -126,9 +130,16 @@ public class AppFixture : IAsyncLifetime
                 services.AddOutbox(opt => opt.UseSqlServer(customerConnectionString), runDispatcher: false);
                 services.AddInbox(opt => opt.UseSqlServer(customerConnectionString));
                 services.AddSeedingInfrastructure();
+                services.AddSingleton<SeedData>();
                 services.AddCustomerConcertModule(customerSeedConfig);
-                services.AddCustomerConcertDevSeeder();
                 services.AddCustomerPreferenceModule(customerSeedConfig);
+                services.AddAzureServiceBusTransport(
+                    opts =>
+                    {
+                        opts.ConnectionString = asbConnectionString;
+                        opts.ServiceName = "concertable-e2e-seeder";
+                    },
+                    _ => { });
                 services.AddCustomerPreferenceDevSeeder();
                 services.AddScoped<IDbInitializer, CustomerDevDbInitializer>();
             })
@@ -136,6 +147,7 @@ public class AppFixture : IAsyncLifetime
 
         await host.StartAsync();
         await ReseedAsync();
+        await new ProjectionSeeder(host, Polling).SeedAsync();
 
         logger.E2ETestFixtureReady();
     }
@@ -145,6 +157,7 @@ public class AppFixture : IAsyncLifetime
         logger.ResettingTestState();
         await DbFixture.ResetAsync();
         await ReseedAsync();
+        await new ProjectionSeeder(host, Polling).SeedAsync();
     }
 
     public async Task<HttpClient> CreateAuthenticatedClientAsync(string email)
