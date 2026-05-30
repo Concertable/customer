@@ -1,11 +1,11 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Testing;
-using Concertable.B2B.Seeding.Fixture;
+using Concertable.B2B.Seed.Contracts;
 using Concertable.Customer.Artist.Infrastructure.Extensions;
 using Concertable.Customer.Concert.Infrastructure.Extensions;
 using Concertable.Customer.Preference.Infrastructure.Extensions;
-using Concertable.Customer.Seeding;
+using Concertable.Customer.Seed;
 using Concertable.Customer.Venue.Infrastructure.Extensions;
 using Concertable.DataAccess.Application;
 using Concertable.DataAccess.Infrastructure.Data;
@@ -16,9 +16,9 @@ using Concertable.Kernel.Identity;
 using Concertable.Messaging.Infrastructure.Extensions;
 using Concertable.Messaging.Infrastructure.Inbox;
 using Concertable.Messaging.Infrastructure.Outbox;
-using Concertable.Seeding;
-using Concertable.Seeding.Events;
-using Concertable.Seeding.Extensions;
+using Concertable.Seed;
+using Concertable.Seed.Events;
+using Concertable.Seed.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,7 +51,7 @@ public class AppFixture : IAsyncLifetime
     public HttpClient CustomerClient { get; private set; } = null!;
     public IPollingService Polling { get; private set; } = null!;
     public SeedData SeedData { get; private set; } = null!;
-    public B2BSeedFixture B2BSeed { get; private set; } = null!;
+    public SeedCatalog Catalog { get; private set; } = null!;
     public DbFixture DbFixture { get; private set; } = null!;
     public string AuthUrl => authUrl;
     public string CustomerSpaUrl => customerSpaUrl;
@@ -127,7 +127,7 @@ public class AppFixture : IAsyncLifetime
                     .SetMinimumLevel(LogLevel.Warning)
                     .AddFilter("Concertable.Customer.Web.DevDbInitializer", LogLevel.Information));
                 services.AddSingleton(TimeProvider.System);
-                services.AddSingleton<B2BSeedFixture>();
+                services.AddSingleton<SeedCatalog>();
                 services.AddCurrentUser();
                 services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
                 services.AddScoped<AuditInterceptor>();
@@ -187,6 +187,6 @@ public class AppFixture : IAsyncLifetime
         var initializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
         await initializer.InitializeAsync();
         SeedData = scope.ServiceProvider.GetRequiredService<SeedData>();
-        B2BSeed = scope.ServiceProvider.GetRequiredService<B2BSeedFixture>();
+        Catalog = scope.ServiceProvider.GetRequiredService<SeedCatalog>();
     }
 }

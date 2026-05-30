@@ -1,11 +1,10 @@
-using Concertable.Seeding.Identity;
+using Concertable.Seed.Identity;
 
-namespace Concertable.Customer.Seeding;
+namespace Concertable.Customer.Seed;
 
 public sealed class SeedData
 {
     public const string TestPassword = "Password11!";
-    public const int UpcomingConcertId = 13;
 
     public SeedCustomer Customer { get; }
     public IReadOnlyList<Guid> CustomerIds { get; }

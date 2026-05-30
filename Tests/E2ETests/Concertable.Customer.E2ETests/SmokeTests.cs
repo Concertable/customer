@@ -1,4 +1,4 @@
-using Concertable.Seeding;
+using Concertable.Seed;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 

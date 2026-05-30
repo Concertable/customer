@@ -1,4 +1,4 @@
-using Concertable.B2B.Seeding.Fixture;
+using Concertable.B2B.Seed.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -7,9 +7,9 @@ namespace Concertable.Customer.Concert.Infrastructure.Data;
 internal sealed class ConcertProjectionHealthCheck : IHealthCheck
 {
     private readonly ConcertDbContext context;
-    private readonly B2BSeedFixture fixture;
+    private readonly SeedCatalog fixture;
 
-    public ConcertProjectionHealthCheck(ConcertDbContext context, B2BSeedFixture fixture)
+    public ConcertProjectionHealthCheck(ConcertDbContext context, SeedCatalog fixture)
     {
         this.context = context;
         this.fixture = fixture;
