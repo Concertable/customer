@@ -1,13 +1,11 @@
 using Concertable.B2B.Concert.Contracts.Events;
 using Concertable.Customer.Concert.Infrastructure.Data;
-using Concertable.Customer.Concert.Infrastructure.Data.Seeders;
 using Concertable.Customer.Concert.Infrastructure.Handlers;
 using Concertable.Customer.Concert.Infrastructure.Repositories;
 using Concertable.Customer.Concert.Infrastructure.Services;
 using Concertable.DataAccess.Application;
 using Concertable.DataAccess.Infrastructure.Data;
 using Concertable.Messaging.Contracts;
-using Concertable.Seeding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,15 +30,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IIntegrationEventHandler<ConcertChangedEvent>, ConcertProjectionHandler>();
         services.AddScoped<IIntegrationEventHandler<ConcertRatingUpdatedEvent>, ConcertRatingProjectionHandler>();
 
+        services.AddHealthChecks().AddCheck<ConcertProjectionHealthCheck>("concert-projection");
+
         services.AddSingleton<ConcertConfigurationProvider>();
         services.AddSingleton<IEntityTypeConfigurationProvider>(sp => sp.GetRequiredService<ConcertConfigurationProvider>());
 
-        return services;
-    }
-
-    public static IServiceCollection AddCustomerConcertDevSeeder(this IServiceCollection services)
-    {
-        services.AddScoped<IDevSeeder, ConcertDevSeeder>();
         return services;
     }
 }
