@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -42,8 +42,8 @@
     <ProjectReference Include="..\Modules\Artist\Concertable.Customer.Artist.Infrastructure\Concertable.Customer.Artist.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Concertable.Messaging\Concertable.Messaging.AzureServiceBus\Concertable.Messaging.AzureServiceBus.csproj" />
     <ProjectReference Include="..\..\Concertable.Messaging\Concertable.Messaging.Infrastructure\Concertable.Messaging.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Seeding\Concertable.Seeding.Shared\Concertable.Seeding.Shared.csproj" />
-    <ProjectReference Include="..\..\Seeding\Concertable.Customer.Seeding\Concertable.Customer.Seeding.csproj" />
+    <ProjectReference Include="..\..\Shared\Concertable.Seeding.Shared\Concertable.Seeding.Shared.csproj" />
+    <ProjectReference Include="..\..\Concertable.Customer\Concertable.Customer.Seeding\Concertable.Customer.Seeding.csproj" />
   </ItemGroup>
 
 </Project>

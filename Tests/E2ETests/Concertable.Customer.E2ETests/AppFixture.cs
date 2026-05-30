@@ -137,9 +137,6 @@ public class AppFixture : IAsyncLifetime
                 services.AddCustomerArtistModule(customerSeedConfig);
                 services.AddCustomerConcertModule(customerSeedConfig);
                 services.AddCustomerPreferenceModule(customerSeedConfig);
-                services.AddCustomerVenueDevSeeder();
-                services.AddCustomerArtistDevSeeder();
-                services.AddCustomerConcertDevSeeder();
                 services.AddCustomerPreferenceDevSeeder();
                 services.AddScoped<IDbInitializer, CustomerDevDbInitializer>();
             })

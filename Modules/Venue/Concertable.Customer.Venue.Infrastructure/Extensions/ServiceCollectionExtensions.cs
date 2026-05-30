@@ -1,11 +1,9 @@
 using Concertable.Customer.Venue.Contracts;
 using Concertable.Customer.Venue.Infrastructure.Data;
-using Concertable.Customer.Venue.Infrastructure.Data.Seeders;
 using Concertable.Customer.Venue.Infrastructure.Handlers;
 using Concertable.Customer.Venue.Infrastructure.Repositories;
 using Concertable.Customer.Venue.Infrastructure.Services;
 using Concertable.B2B.Venue.Contracts.Events;
-using Concertable.Seeding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,12 +32,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<VenueConfigurationProvider>();
         services.AddSingleton<IEntityTypeConfigurationProvider>(sp => sp.GetRequiredService<VenueConfigurationProvider>());
 
-        return services;
-    }
-
-    public static IServiceCollection AddCustomerVenueDevSeeder(this IServiceCollection services)
-    {
-        services.AddScoped<IDevSeeder, VenueDevSeeder>();
         return services;
     }
 }

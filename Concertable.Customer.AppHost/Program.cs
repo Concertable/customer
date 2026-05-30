@@ -24,6 +24,7 @@ auth.WithEnvironment("Services__CustomerApiUrl", customerWeb.GetEndpoint("https"
 builder.AddPaymentWorkers<Projects.Concertable_Payment_Workers>(paymentDb, asb);
 builder.AddSearchWeb<Projects.Concertable_Search_Web>(auth, searchDb);
 builder.AddSearchWorkers<Projects.Concertable_Search_Workers>(searchDb, asb);
+builder.AddB2BSeedingSimulator<Projects.Concertable_B2B_Seeding_Simulator>(asb);
 builder.AddCustomerSpa(customerWeb, customerWeb, auth);
 builder.AddMobileCustomer(customerWeb, auth);
 

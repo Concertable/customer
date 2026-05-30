@@ -111,9 +111,6 @@ if (!builder.Environment.IsEnvironment("Testing"))
 {
     services.AddScoped<IDbInitializer, DevDbInitializer>();
     services.AddScoped<SeedData>();
-    services.AddCustomerVenueDevSeeder();
-    services.AddCustomerArtistDevSeeder();
-    services.AddCustomerConcertDevSeeder();
     services.AddCustomerPreferenceDevSeeder();
 }
 
