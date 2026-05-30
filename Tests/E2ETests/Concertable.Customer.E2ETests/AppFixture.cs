@@ -1,6 +1,7 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Testing;
+using Concertable.B2B.Seeding.Fixture;
 using Concertable.Customer.Artist.Infrastructure.Extensions;
 using Concertable.Customer.Concert.Infrastructure.Extensions;
 using Concertable.Customer.Preference.Infrastructure.Extensions;
@@ -50,6 +51,7 @@ public class AppFixture : IAsyncLifetime
     public HttpClient CustomerClient { get; private set; } = null!;
     public IPollingService Polling { get; private set; } = null!;
     public SeedData SeedData { get; private set; } = null!;
+    public B2BSeedFixture B2BSeed { get; private set; } = null!;
     public DbFixture DbFixture { get; private set; } = null!;
     public string AuthUrl => authUrl;
     public string CustomerSpaUrl => customerSpaUrl;
@@ -125,6 +127,7 @@ public class AppFixture : IAsyncLifetime
                     .SetMinimumLevel(LogLevel.Warning)
                     .AddFilter("Concertable.Customer.Web.DevDbInitializer", LogLevel.Information));
                 services.AddSingleton(TimeProvider.System);
+                services.AddSingleton<B2BSeedFixture>();
                 services.AddCurrentUser();
                 services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
                 services.AddScoped<AuditInterceptor>();
@@ -184,5 +187,6 @@ public class AppFixture : IAsyncLifetime
         var initializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
         await initializer.InitializeAsync();
         SeedData = scope.ServiceProvider.GetRequiredService<SeedData>();
+        B2BSeed = scope.ServiceProvider.GetRequiredService<B2BSeedFixture>();
     }
 }

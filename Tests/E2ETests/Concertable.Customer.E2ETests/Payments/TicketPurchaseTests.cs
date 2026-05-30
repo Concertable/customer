@@ -1,4 +1,3 @@
-using Concertable.B2B.Seeding.Fixture;
 using Concertable.Seeding.Identity;
 using Xunit;
 
@@ -15,11 +14,12 @@ public class TicketPurchaseTests(AppFixture fixture) : IAsyncLifetime
     {
         // Arrange
         var client = await fixture.CreateAuthenticatedClientAsync(SeedCustomers.Customer1.Email);
+        var upcomingConcertId = fixture.B2BSeed.Concerts.First(c => c.Name == "Upcoming FlatFee Show").ConcertId;
 
         // Act
         await client.PostAsSuccessAsync("/api/Ticket/purchase", new
         {
-            ConcertId = B2BSeedFixture.UpcomingConcertId,
+            ConcertId = upcomingConcertId,
             Quantity = 1,
             PaymentMethodId = AppFixture.TestPaymentMethodId
         });
@@ -27,7 +27,7 @@ public class TicketPurchaseTests(AppFixture fixture) : IAsyncLifetime
         // Assert
         await fixture.Polling.UntilAsync(
             () => client.GetAssertAsync<IEnumerable<UpcomingTicket>>("/api/Ticket/upcoming/user"),
-            tickets => tickets is not null && tickets.Any(t => t.Concert.Id == B2BSeedFixture.UpcomingConcertId),
+            tickets => tickets is not null && tickets.Any(t => t.Concert.Id == upcomingConcertId),
             timeout: TimeSpan.FromSeconds(30));
     }
 

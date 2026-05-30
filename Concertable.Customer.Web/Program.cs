@@ -1,5 +1,6 @@
 using Concertable.B2B.Artist.Contracts.Events;
 using Concertable.B2B.Concert.Contracts.Events;
+using Concertable.B2B.Seeding.Fixture;
 using Concertable.Customer.Review.Contracts.Events;
 using Concertable.Customer.Web;
 using Concertable.Customer.Artist.Infrastructure.Data;
@@ -68,6 +69,7 @@ var services = builder.Services;
 
 services.AddScoped<IKeyedServiceProvider>(sp => (IKeyedServiceProvider)sp);
 services.AddSingleton(TimeProvider.System);
+services.AddSingleton<B2BSeedFixture>();
 services.AddSharedInfrastructure(builder.Configuration);
 services.AddGeometry();
 services.AddClientCredentials(opts =>
