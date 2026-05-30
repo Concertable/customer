@@ -14,7 +14,7 @@ public static class LoginCaptureHooks
         if (storageState is not null)
             return storageState;
 
-        var seed = fixture.App.SeedData;
+        var seed = fixture.App.SeedState;
         var spaUrl = fixture.App.CustomerSpaUrl;
 
         await using var context = await fixture.Browser.NewContextAsync(new() { IgnoreHTTPSErrors = true });
@@ -22,7 +22,7 @@ public static class LoginCaptureHooks
         var login = new LoginPage(page, spaUrl);
 
         await login.GotoAsync();
-        await login.SignInAsync(seed.Customer.Email, SeedData.TestPassword);
+        await login.SignInAsync(seed.Customer.Email, SeedState.TestPassword);
         await page.WaitForURLAsync($"{spaUrl}/");
 
         storageState = await context.StorageStateAsync();
