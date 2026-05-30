@@ -31,8 +31,8 @@ public class LoginSteps
     [When(@"they submit seeded customer credentials")]
     public Task SubmitCustomerCredentials()
     {
-        var seed = fixture.App.SeedData;
-        return loginPage.SignInAsync(seed.Customer.Email, SeedData.TestPassword);
+        var seed = fixture.App.SeedState;
+        return loginPage.SignInAsync(seed.Customer.Email, SeedState.TestPassword);
     }
 
     [Then(@"they are returned to the home page")]

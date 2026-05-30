@@ -40,8 +40,8 @@ using Concertable.Kernel.Extensions;
 using Concertable.Shared.Notification.Infrastructure.Hubs;
 using Concertable.Shared.Notification.Infrastructure.Extensions;
 using Concertable.DataAccess.Application;
-using Concertable.Seed;
-using Concertable.Seed.Extensions;
+using Concertable.Seed.Shared;
+using Concertable.Seed.Shared.Extensions;
 using Concertable.Customer.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -112,7 +112,7 @@ services.AddSeedingInfrastructure();
 if (!builder.Environment.IsEnvironment("Testing"))
 {
     services.AddScoped<IDbInitializer, DevDbInitializer>();
-    services.AddScoped<SeedData>();
+    services.AddScoped<SeedState>();
     services.AddCustomerPreferenceDevSeeder();
 }
 

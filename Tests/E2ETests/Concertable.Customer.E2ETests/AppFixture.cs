@@ -16,9 +16,9 @@ using Concertable.Kernel.Identity;
 using Concertable.Messaging.Infrastructure.Extensions;
 using Concertable.Messaging.Infrastructure.Inbox;
 using Concertable.Messaging.Infrastructure.Outbox;
-using Concertable.Seed;
-using Concertable.Seed.Events;
-using Concertable.Seed.Extensions;
+using Concertable.Seed.Shared;
+using Concertable.Seed.Infrastructure;
+using Concertable.Seed.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,7 +50,7 @@ public class AppFixture : IAsyncLifetime
 
     public HttpClient CustomerClient { get; private set; } = null!;
     public IPollingService Polling { get; private set; } = null!;
-    public SeedData SeedData { get; private set; } = null!;
+    public SeedState SeedState { get; private set; } = null!;
     public SeedCatalog Catalog { get; private set; } = null!;
     public DbFixture DbFixture { get; private set; } = null!;
     public string AuthUrl => authUrl;
@@ -135,7 +135,7 @@ public class AppFixture : IAsyncLifetime
                 services.AddOutbox(opt => opt.UseSqlServer(customerConnectionString), runDispatcher: false);
                 services.AddInbox(opt => opt.UseSqlServer(customerConnectionString));
                 services.AddSeedingInfrastructure();
-                services.AddScoped<SeedData>();
+                services.AddScoped<SeedState>();
                 services.AddCustomerVenueModule(customerSeedConfig);
                 services.AddCustomerArtistModule(customerSeedConfig);
                 services.AddCustomerConcertModule(customerSeedConfig);
@@ -160,7 +160,7 @@ public class AppFixture : IAsyncLifetime
 
     public async Task<HttpClient> CreateAuthenticatedClientAsync(string email)
     {
-        var token = await tokenMinter.MintAsync(email, SeedData.TestPassword);
+        var token = await tokenMinter.MintAsync(email, SeedState.TestPassword);
         var client = new HttpClient { BaseAddress = new Uri(customerWebUrl) };
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         return client;
@@ -186,7 +186,7 @@ public class AppFixture : IAsyncLifetime
         await using var scope = host.Services.CreateAsyncScope();
         var initializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
         await initializer.InitializeAsync();
-        SeedData = scope.ServiceProvider.GetRequiredService<SeedData>();
+        SeedState = scope.ServiceProvider.GetRequiredService<SeedState>();
         Catalog = scope.ServiceProvider.GetRequiredService<SeedCatalog>();
     }
 }

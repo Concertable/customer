@@ -1,4 +1,4 @@
-using Concertable.Seed;
+using Concertable.Seed.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -12,7 +12,7 @@ public class SmokeTests(AppFixture fixture)
     {
         // Arrange / Act / Assert
         var scope = fixture.DbFixture.GetType(); // fixture initialized = app healthy
-        Assert.NotNull(fixture.SeedData);
+        Assert.NotNull(fixture.SeedState);
         Assert.NotNull(fixture.CustomerClient);
     }
 }

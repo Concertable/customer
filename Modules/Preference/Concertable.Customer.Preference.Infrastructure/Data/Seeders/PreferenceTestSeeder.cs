@@ -1,5 +1,5 @@
-using Concertable.Seed;
-using Concertable.Seed.Extensions;
+using Concertable.Seed.Shared;
+using Concertable.Seed.Shared.Extensions;
 using Concertable.Customer.Seed;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,9 +10,9 @@ internal class PreferenceTestSeeder : ITestSeeder
     public int Order => 7;
 
     private readonly PreferenceDbContext context;
-    private readonly SeedData seedData;
+    private readonly SeedState seedData;
 
-    public PreferenceTestSeeder(PreferenceDbContext context, SeedData seedData)
+    public PreferenceTestSeeder(PreferenceDbContext context, SeedState seedData)
     {
         this.context = context;
         this.seedData = seedData;
