@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Concertable.Seeding.Identity\Concertable.Seeding.Identity.csproj" />
+    <ProjectReference Include="..\..\Shared\Concertable.Seed.Identity\Concertable.Seed.Identity.csproj" />
   </ItemGroup>
 
 </Project>

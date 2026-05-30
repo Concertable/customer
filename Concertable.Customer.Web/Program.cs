@@ -1,6 +1,6 @@
 using Concertable.B2B.Artist.Contracts.Events;
 using Concertable.B2B.Concert.Contracts.Events;
-using Concertable.B2B.Seeding.Fixture;
+using Concertable.B2B.Seed.Contracts;
 using Concertable.Customer.Review.Contracts.Events;
 using Concertable.Customer.Web;
 using Concertable.Customer.Artist.Infrastructure.Data;
@@ -40,9 +40,9 @@ using Concertable.Kernel.Extensions;
 using Concertable.Shared.Notification.Infrastructure.Hubs;
 using Concertable.Shared.Notification.Infrastructure.Extensions;
 using Concertable.DataAccess.Application;
-using Concertable.Seeding;
-using Concertable.Seeding.Extensions;
-using Concertable.Customer.Seeding;
+using Concertable.Seed;
+using Concertable.Seed.Extensions;
+using Concertable.Customer.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,7 +69,7 @@ var services = builder.Services;
 
 services.AddScoped<IKeyedServiceProvider>(sp => (IKeyedServiceProvider)sp);
 services.AddSingleton(TimeProvider.System);
-services.AddSingleton<B2BSeedFixture>();
+services.AddSingleton<SeedCatalog>();
 services.AddSharedInfrastructure(builder.Configuration);
 services.AddGeometry();
 services.AddClientCredentials(opts =>

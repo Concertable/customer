@@ -1,8 +1,8 @@
 using Concertable.DataAccess.Application;
 using Concertable.Messaging.Infrastructure.Inbox;
 using Concertable.Messaging.Infrastructure.Outbox;
-using Concertable.Seeding;
-using Concertable.Seeding.Identity;
+using Concertable.Seed;
+using Concertable.Seed.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
