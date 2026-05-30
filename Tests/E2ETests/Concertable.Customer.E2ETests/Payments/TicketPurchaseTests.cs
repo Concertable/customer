@@ -1,4 +1,4 @@
-using Concertable.Seeding.Identity;
+using Concertable.Seed.Identity;
 using Xunit;
 
 namespace Concertable.Customer.E2ETests.Payments;
@@ -14,7 +14,7 @@ public class TicketPurchaseTests(AppFixture fixture) : IAsyncLifetime
     {
         // Arrange
         var client = await fixture.CreateAuthenticatedClientAsync(SeedCustomers.Customer1.Email);
-        var upcomingConcertId = fixture.B2BSeed.Concerts.First(c => c.Name == "Upcoming FlatFee Show").ConcertId;
+        var upcomingConcertId = fixture.Catalog.Concerts.First(c => c.Name == "Upcoming FlatFee Show").ConcertId;
 
         // Act
         await client.PostAsSuccessAsync("/api/Ticket/purchase", new

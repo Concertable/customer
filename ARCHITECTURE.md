@@ -48,7 +48,7 @@ All modules live under `Modules/`. Each follows the `Concertable.Customer.<Modul
 
 > Note: read-model files under these modules are named `*Entity.cs` but contain classes named `*ReadModel`. Don't be misled — they have no canonical write path. See TECH_DEBT for the rename.
 
-These tables are empty until upstream B2B events arrive. Under the umbrella `Concertable.AppHost`, real B2B publishes them. Under standalone `Concertable.Customer.AppHost` (dev), the `Concertable.B2B.Seeding.Simulator` Worker is registered as an Aspire resource and stands in for B2B — publishing the same events from the canonical fixture, so projection state is identical either way. See [`../Concertable.B2B/Concertable.B2B.Seeding.Simulator/CLAUDE.md`](../Concertable.B2B/Concertable.B2B.Seeding.Simulator/CLAUDE.md) for the pattern.
+These tables are empty until upstream B2B events arrive. Under the umbrella `Concertable.AppHost`, real B2B publishes them. Under standalone `Concertable.Customer.AppHost` (dev), the `Concertable.B2B.Seed.Simulator` Worker is registered as an Aspire resource and stands in for B2B — publishing the same events from the canonical fixture, so projection state is identical either way. See [`../Concertable.B2B/Concertable.B2B.Seed.Simulator/CLAUDE.md`](../Concertable.B2B/Concertable.B2B.Seed.Simulator/CLAUDE.md) for the pattern.
 
 ---
 
