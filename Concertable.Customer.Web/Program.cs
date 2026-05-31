@@ -128,7 +128,8 @@ services.AddCustomerArtistModule(builder.Configuration);
 
 services.AddNotificationClient();
 services.AddCurrentUser();
-services.AddPaymentClient(builder.Configuration);
+if (!builder.Environment.IsEnvironment("Testing"))
+    services.AddPaymentClient(builder.Configuration);
 
 services.AddExceptionHandler<GlobalExceptionHandler>();
 services.AddProblemDetails();
