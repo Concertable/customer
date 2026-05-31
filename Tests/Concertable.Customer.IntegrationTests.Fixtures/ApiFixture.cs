@@ -16,6 +16,7 @@ using Concertable.Seed.Identity;
 using Concertable.Shared.Email.Application;
 using Concertable.Shared.Geocoding.Application;
 using Concertable.Testing.Integration;
+using Concertable.Testing.Integration.Logging;
 using Concertable.Testing.Integration.Mocks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
@@ -25,7 +26,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Xunit;
+using Xunit.Abstractions;
 using Concertable.Customer.Artist.Domain.Entities;
 using Concertable.Customer.Venue.Domain.Entities;
 
@@ -35,6 +38,10 @@ public class ApiFixture : IAsyncLifetime
 {
     private SqlFixture sqlFixture = null!;
     private WebApplicationFactory<Program> factory = null!;
+    private readonly XunitOutputAccessor outputAccessor = new();
+
+    public void AttachOutput(ITestOutputHelper output) => outputAccessor.Output = output;
+    public void DetachOutput() => outputAccessor.Output = null;
 
     public SeedCustomer Customer => SeedCustomers.Customer1;
     public SeedCustomer OtherCustomer => SeedCustomers.Customer2;
@@ -59,6 +66,13 @@ public class ApiFixture : IAsyncLifetime
 
             builder.ConfigureTestServices(services =>
             {
+                services.AddLogging(b =>
+                {
+                    b.ClearProviders();
+                    b.AddProvider(new XunitLoggerProvider(outputAccessor));
+                    b.SetMinimumLevel(LogLevel.Information);
+                });
+
                 var asbDescriptors = services
                     .Where(d => d.ServiceType == typeof(IHostedService) &&
                                 d.ImplementationType?.Name == "AzureServiceBusReceiver")

@@ -2,6 +2,7 @@ using System.Net;
 using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Application.Requests;
 using Concertable.Customer.Ticket.Application.Responses;
+using Xunit.Abstractions;
 
 namespace Concertable.Customer.Ticket.IntegrationTests;
 
@@ -10,13 +11,14 @@ public class TicketApiTests : IAsyncLifetime
 {
     private readonly ApiFixture fixture;
 
-    public TicketApiTests(ApiFixture fixture)
+    public TicketApiTests(ApiFixture fixture, ITestOutputHelper output)
     {
         this.fixture = fixture;
+        fixture.AttachOutput(output);
     }
 
     public Task InitializeAsync() => fixture.ResetAsync();
-    public Task DisposeAsync() => Task.CompletedTask;
+    public Task DisposeAsync() { fixture.DetachOutput(); return Task.CompletedTask; }
 
     #region Purchase
 
