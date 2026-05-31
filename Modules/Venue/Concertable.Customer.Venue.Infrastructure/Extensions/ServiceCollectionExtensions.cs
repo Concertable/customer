@@ -14,7 +14,7 @@ namespace Concertable.Customer.Venue.Infrastructure.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCustomerVenueModule(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddVenueModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<VenueDbContext>((sp, opts) =>
             opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
@@ -37,7 +37,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddCustomerVenueProjectionTestSeeder(this IServiceCollection services)
+    public static IServiceCollection AddVenueProjectionTestSeeder(this IServiceCollection services)
     {
         services.AddScoped<ITestSeeder, VenueProjectionTestSeeder>();
         return services;

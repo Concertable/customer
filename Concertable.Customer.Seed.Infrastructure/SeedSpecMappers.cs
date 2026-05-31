@@ -33,7 +33,7 @@ public static class SeedSpecMappers
         var concert = ConcertReadModel.Create(
             spec.ConcertId, spec.Name, spec.About, spec.BannerUrl, spec.Avatar,
             spec.TotalTickets, spec.Price, spec.Period, spec.DatePosted,
-            spec.ArtistId, spec.ArtistName, spec.VenueId, spec.VenueName);
+            spec.ArtistId, spec.ArtistName, spec.VenueId, spec.VenueName, spec.PayeeUserId);
 
         foreach (var genre in spec.Genres)
             concert.Genres.Add(new ConcertGenreReadModel { ConcertId = spec.ConcertId, Genre = genre });

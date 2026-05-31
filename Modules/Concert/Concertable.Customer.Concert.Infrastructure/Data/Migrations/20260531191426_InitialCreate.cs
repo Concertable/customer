@@ -34,6 +34,7 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                     ArtistName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     VenueId = table.Column<int>(type: "int", nullable: false),
                     VenueName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PayeeUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AverageRating = table.Column<double>(type: "float", nullable: false),
                     ReviewCount = table.Column<int>(type: "int", nullable: false)
                 },

@@ -41,7 +41,8 @@ internal class ConcertProjectionHandler : IIntegrationEventHandler<ConcertChange
                 e.ArtistId,
                 e.ArtistName,
                 e.VenueId,
-                e.VenueName);
+                e.VenueName,
+                e.PayeeUserId);
 
             foreach (var g in e.Genres)
                 concert.Genres.Add(new ConcertGenreReadModel { ConcertId = e.ConcertId, Genre = g });
@@ -62,7 +63,8 @@ internal class ConcertProjectionHandler : IIntegrationEventHandler<ConcertChange
                 e.ArtistId,
                 e.ArtistName,
                 e.VenueId,
-                e.VenueName);
+                e.VenueName,
+                e.PayeeUserId);
 
             var desired = e.Genres.ToHashSet();
             var current = concert.Genres.Select(g => g.Genre).ToHashSet();
