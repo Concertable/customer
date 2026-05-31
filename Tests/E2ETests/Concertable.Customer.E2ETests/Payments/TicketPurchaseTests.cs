@@ -1,4 +1,6 @@
+using System.Net;
 using Concertable.Seed.Identity;
+using Concertable.Testing;
 using Xunit;
 
 namespace Concertable.Customer.E2ETests.Payments;
@@ -17,16 +19,22 @@ public class TicketPurchaseTests(AppFixture fixture) : IAsyncLifetime
         var upcomingConcertId = fixture.Catalog.Concerts.First(c => c.Name == "Upcoming FlatFee Show").ConcertId;
 
         // Act
-        await client.PostAsSuccessAsync("/api/Ticket/purchase", new
+        var response = await client.PostAsync("/api/Ticket/purchase", new
         {
             ConcertId = upcomingConcertId,
             Quantity = 1,
             PaymentMethodId = AppFixture.TestPaymentMethodId
         });
+        await response.ShouldBe(HttpStatusCode.OK);
 
         // Assert
         await fixture.Polling.UntilAsync(
-            () => client.GetAssertAsync<IEnumerable<UpcomingTicket>>("/api/Ticket/upcoming/user"),
+            async () =>
+            {
+                var ticketsResponse = await client.GetAsync("/api/Ticket/upcoming/user");
+                await ticketsResponse.ShouldBe(HttpStatusCode.OK);
+                return await ticketsResponse.Content.ReadAsync<IEnumerable<UpcomingTicket>>();
+            },
             tickets => tickets is not null && tickets.Any(t => t.Concert.Id == upcomingConcertId),
             timeout: TimeSpan.FromSeconds(30));
     }
