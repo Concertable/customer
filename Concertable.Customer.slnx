@@ -74,6 +74,9 @@
   <Project Path="../Concertable.Payment/Concertable.Payment.Workers/Concertable.Payment.Workers.csproj" />
   <Project Path="../Concertable.Search/Concertable.Search.Web/Concertable.Search.Web.csproj" />
   <Project Path="../Concertable.Search/Concertable.Search.Workers/Concertable.Search.Workers.csproj" />
+  <Folder Name="/Tests/">
+    <Project Path="Tests/Concertable.Customer.IntegrationTests.Fixtures/Concertable.Customer.IntegrationTests.Fixtures.csproj" />
+  </Folder>
   <Folder Name="/Tests/E2ETests/">
     <Project Path="Tests/E2ETests/Concertable.Customer.E2ETests/Concertable.Customer.E2ETests.csproj" />
     <Project Path="Tests/E2ETests/Concertable.Customer.E2ETests.Ui/Concertable.Customer.E2ETests.Ui.csproj" />

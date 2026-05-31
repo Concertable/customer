@@ -4,5 +4,5 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Concertable.Customer.Venue.IntegrationTests")]
 [assembly: InternalsVisibleTo("Concertable.Customer.Venue.UnitTests")]
 [assembly: InternalsVisibleTo("Concertable.Customer.Web")]
-[assembly: InternalsVisibleTo("Concertable.Testing.Integration.Customer")]
+[assembly: InternalsVisibleTo("Concertable.Customer.IntegrationTests.Fixtures")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
