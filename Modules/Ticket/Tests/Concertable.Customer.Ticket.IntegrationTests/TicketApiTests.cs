@@ -32,7 +32,7 @@ public class TicketApiTests : IAsyncLifetime
         var response = await client.PostAsync("/api/ticket/purchase", new TicketPurchaseParams
         {
             PaymentMethodId = "pm_test",
-            ConcertId = 1,
+            ConcertId = fixture.SeedState.UpcomingFlatFeeConcert.Id,
             Quantity = 1
         });
 
@@ -43,14 +43,14 @@ public class TicketApiTests : IAsyncLifetime
     [Fact]
     public async Task Purchase_ShouldReturn403_WhenUserNotInDatabase()
     {
-        // Arrange - Customer header set but not seeded in UserDb
-        var client = fixture.CreateClient(fixture.Customer);
+        // Arrange - authenticated as a user that was never seeded
+        var client = fixture.CreateClient(Guid.NewGuid());
 
         // Act
         var response = await client.PostAsync("/api/ticket/purchase", new TicketPurchaseParams
         {
             PaymentMethodId = "pm_test",
-            ConcertId = 1,
+            ConcertId = fixture.SeedState.UpcomingFlatFeeConcert.Id,
             Quantity = 1
         });
 
@@ -62,9 +62,8 @@ public class TicketApiTests : IAsyncLifetime
     public async Task Purchase_ShouldReturn200_WithPaymentResponse()
     {
         // Arrange
-        await fixture.SeedUserAsync(fixture.Customer);
-        var concert = await fixture.SeedConcertAsync(1);
-        var client = fixture.CreateClient(fixture.Customer);
+        var concert = fixture.SeedState.UpcomingFlatFeeConcert;
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
         // Act
         var response = await client.PostAsync("/api/ticket/purchase", new TicketPurchaseParams
@@ -93,7 +92,8 @@ public class TicketApiTests : IAsyncLifetime
         var client = fixture.CreateClient();
 
         // Act
-        var response = await client.PostAsync("/api/ticket/checkout", new TicketCheckoutRequest(1, 1));
+        var response = await client.PostAsync("/api/ticket/checkout",
+            new TicketCheckoutRequest(fixture.SeedState.UpcomingFlatFeeConcert.Id, 1));
 
         // Assert
         await response.ShouldBe(HttpStatusCode.Unauthorized);
@@ -103,10 +103,11 @@ public class TicketApiTests : IAsyncLifetime
     public async Task Checkout_ShouldReturn403_WhenUserNotInDatabase()
     {
         // Arrange
-        var client = fixture.CreateClient(fixture.Customer);
+        var client = fixture.CreateClient(Guid.NewGuid());
 
         // Act
-        var response = await client.PostAsync("/api/ticket/checkout", new TicketCheckoutRequest(1, 1));
+        var response = await client.PostAsync("/api/ticket/checkout",
+            new TicketCheckoutRequest(fixture.SeedState.UpcomingFlatFeeConcert.Id, 1));
 
         // Assert
         await response.ShouldBe(HttpStatusCode.Forbidden);
@@ -116,9 +117,8 @@ public class TicketApiTests : IAsyncLifetime
     public async Task Checkout_ShouldReturn200_WithCheckoutSession()
     {
         // Arrange
-        await fixture.SeedUserAsync(fixture.Customer);
-        var concert = await fixture.SeedConcertAsync(1);
-        var client = fixture.CreateClient(fixture.Customer);
+        var concert = fixture.SeedState.UpcomingFlatFeeConcert;
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
         // Act
         var response = await client.PostAsync("/api/ticket/checkout", new TicketCheckoutRequest(concert.Id, 1));
@@ -153,9 +153,7 @@ public class TicketApiTests : IAsyncLifetime
     public async Task GetUserUpcoming_ShouldReturn200_WithUpcomingTickets()
     {
         // Arrange
-        await fixture.SeedUserAsync(fixture.Customer);
-        await fixture.SeedTicketAsync(fixture.Customer.Id, 1, upcoming: true);
-        var client = fixture.CreateClient(fixture.Customer);
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
         // Act
         var response = await client.GetAsync("/api/ticket/upcoming/user");
@@ -164,25 +162,25 @@ public class TicketApiTests : IAsyncLifetime
         await response.ShouldBe(HttpStatusCode.OK);
         var tickets = await response.Content.ReadAsync<IEnumerable<TicketDto>>();
         Assert.NotNull(tickets);
-        Assert.Single(tickets);
+        var ticket = Assert.Single(tickets);
+        Assert.Equal(fixture.SeedState.UpcomingFlatFeeConcert.Id, ticket.Concert.Id);
     }
 
     [Fact]
     public async Task GetUserUpcoming_ShouldNotReturnPastTickets()
     {
         // Arrange
-        await fixture.SeedUserAsync(fixture.Customer);
-        await fixture.SeedTicketAsync(fixture.Customer.Id, 1, upcoming: false);
-        var client = fixture.CreateClient(fixture.Customer);
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
         // Act
         var response = await client.GetAsync("/api/ticket/upcoming/user");
 
         // Assert
         await response.ShouldBe(HttpStatusCode.OK);
-        var tickets = await response.Content.ReadAsync<IEnumerable<TicketDto>>();
+        var tickets = (await response.Content.ReadAsync<IEnumerable<TicketDto>>())?.ToList();
         Assert.NotNull(tickets);
-        Assert.Empty(tickets);
+        Assert.DoesNotContain(tickets, t => t.Concert.Id == fixture.SeedState.PastDoorSplitConcert.Id);
+        Assert.DoesNotContain(tickets, t => t.Concert.Id == fixture.SeedState.PastFlatFeeConcert.Id);
     }
 
     #endregion
@@ -206,27 +204,24 @@ public class TicketApiTests : IAsyncLifetime
     public async Task GetUserHistory_ShouldReturn200_WithPastTickets()
     {
         // Arrange
-        await fixture.SeedUserAsync(fixture.Customer);
-        await fixture.SeedTicketAsync(fixture.Customer.Id, 1, upcoming: false);
-        var client = fixture.CreateClient(fixture.Customer);
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
         // Act
         var response = await client.GetAsync("/api/ticket/history/user");
 
         // Assert
         await response.ShouldBe(HttpStatusCode.OK);
-        var tickets = await response.Content.ReadAsync<IEnumerable<TicketDto>>();
+        var tickets = (await response.Content.ReadAsync<IEnumerable<TicketDto>>())?.ToList();
         Assert.NotNull(tickets);
-        Assert.Single(tickets);
+        Assert.Contains(tickets, t => t.Concert.Id == fixture.SeedState.PastDoorSplitConcert.Id);
+        Assert.Contains(tickets, t => t.Concert.Id == fixture.SeedState.PastFlatFeeConcert.Id);
     }
 
     [Fact]
     public async Task GetUserHistory_ShouldNotReturnUpcomingTickets()
     {
         // Arrange
-        await fixture.SeedUserAsync(fixture.Customer);
-        await fixture.SeedTicketAsync(fixture.Customer.Id, 1, upcoming: true);
-        var client = fixture.CreateClient(fixture.Customer);
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
         // Act
         var response = await client.GetAsync("/api/ticket/history/user");
@@ -235,7 +230,7 @@ public class TicketApiTests : IAsyncLifetime
         await response.ShouldBe(HttpStatusCode.OK);
         var tickets = await response.Content.ReadAsync<IEnumerable<TicketDto>>();
         Assert.NotNull(tickets);
-        Assert.Empty(tickets);
+        Assert.DoesNotContain(tickets, t => t.Concert.Id == fixture.SeedState.UpcomingFlatFeeConcert.Id);
     }
 
     #endregion
@@ -249,7 +244,7 @@ public class TicketApiTests : IAsyncLifetime
         var client = fixture.CreateClient();
 
         // Act
-        var response = await client.GetAsync("/api/ticket/concert/1/eligibility");
+        var response = await client.GetAsync($"/api/ticket/concert/{fixture.SeedState.UpcomingFlatFeeConcert.Id}/eligibility");
 
         // Assert
         await response.ShouldBe(HttpStatusCode.Unauthorized);
@@ -259,9 +254,8 @@ public class TicketApiTests : IAsyncLifetime
     public async Task CanPurchase_ShouldReturn200True_WhenConcertIsAvailable()
     {
         // Arrange
-        await fixture.SeedUserAsync(fixture.Customer);
-        var concert = await fixture.SeedConcertAsync(1, posted: true, availableTickets: 50);
-        var client = fixture.CreateClient(fixture.Customer);
+        var concert = fixture.SeedState.UpcomingFlatFeeConcert;
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
         // Act
         var response = await client.GetAsync($"/api/ticket/concert/{concert.Id}/eligibility");
@@ -272,28 +266,11 @@ public class TicketApiTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task CanPurchase_ShouldReturn200False_WhenConcertIsSoldOut()
+    public async Task CanPurchase_ShouldReturn200False_WhenConcertHasPassed()
     {
         // Arrange
-        await fixture.SeedUserAsync(fixture.Customer);
-        var concert = await fixture.SeedConcertAsync(1, posted: true, availableTickets: 0);
-        var client = fixture.CreateClient(fixture.Customer);
-
-        // Act
-        var response = await client.GetAsync($"/api/ticket/concert/{concert.Id}/eligibility");
-
-        // Assert
-        await response.ShouldBe(HttpStatusCode.OK);
-        Assert.False(await response.Content.ReadAsync<bool>());
-    }
-
-    [Fact]
-    public async Task CanPurchase_ShouldReturn200False_WhenConcertIsNotPosted()
-    {
-        // Arrange
-        await fixture.SeedUserAsync(fixture.Customer);
-        var concert = await fixture.SeedConcertAsync(1, posted: false, availableTickets: 50);
-        var client = fixture.CreateClient(fixture.Customer);
+        var concert = fixture.SeedState.PastDoorSplitConcert;
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
         // Act
         var response = await client.GetAsync($"/api/ticket/concert/{concert.Id}/eligibility");

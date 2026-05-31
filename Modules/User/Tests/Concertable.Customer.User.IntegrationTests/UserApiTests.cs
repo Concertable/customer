@@ -38,7 +38,7 @@ public class UserApiTests : IAsyncLifetime
     public async Task Me_ShouldReturn403_WhenUserNotInDatabase()
     {
         // Arrange
-        var client = fixture.CreateClient(fixture.Customer);
+        var client = fixture.CreateClient(Guid.NewGuid());
 
         // Act
         var response = await client.GetAsync("/api/user/me");
@@ -51,8 +51,8 @@ public class UserApiTests : IAsyncLifetime
     public async Task Me_ShouldReturn200_WithUserDetails()
     {
         // Arrange
-        await fixture.SeedUserAsync(fixture.Customer);
-        var client = fixture.CreateClient(fixture.Customer);
+        var customer = fixture.SeedState.Customer1;
+        var client = fixture.CreateClient(customer);
 
         // Act
         var response = await client.GetAsync("/api/user/me");
@@ -61,8 +61,8 @@ public class UserApiTests : IAsyncLifetime
         await response.ShouldBe(HttpStatusCode.OK);
         var user = await response.Content.ReadAsync<CustomerDto>();
         Assert.NotNull(user);
-        Assert.Equal(fixture.Customer.Id, user.Id);
-        Assert.Equal(fixture.Customer.Email, user.Email);
+        Assert.Equal(customer.Id, user.Id);
+        Assert.Equal(customer.Email, user.Email);
     }
 
     #endregion
@@ -86,7 +86,7 @@ public class UserApiTests : IAsyncLifetime
     public async Task UpdateLocation_ShouldReturn403_WhenUserNotInDatabase()
     {
         // Arrange
-        var client = fixture.CreateClient(fixture.Customer);
+        var client = fixture.CreateClient(Guid.NewGuid());
 
         // Act
         var response = await client.PutAsync("/api/user/location", new UpdateLocationRequest(51.5, -0.1));
@@ -99,8 +99,7 @@ public class UserApiTests : IAsyncLifetime
     public async Task UpdateLocation_ShouldReturn200_WithUpdatedCoordinates()
     {
         // Arrange
-        await fixture.SeedUserAsync(fixture.Customer);
-        var client = fixture.CreateClient(fixture.Customer);
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
         // Act
         var response = await client.PutAsync("/api/user/location", new UpdateLocationRequest(51.5074, -0.1278));

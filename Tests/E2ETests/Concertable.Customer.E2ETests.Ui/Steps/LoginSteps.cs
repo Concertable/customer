@@ -32,7 +32,7 @@ public class LoginSteps
     public Task SubmitCustomerCredentials()
     {
         var seed = fixture.App.SeedState;
-        return loginPage.SignInAsync(seed.Customer.Email, SeedState.TestPassword);
+        return loginPage.SignInAsync(seed.Customer1.Email, SeedState.TestPassword);
     }
 
     [Then(@"they are returned to the home page")]

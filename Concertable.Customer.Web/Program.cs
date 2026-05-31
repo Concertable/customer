@@ -42,7 +42,7 @@ using Concertable.Shared.Notification.Infrastructure.Extensions;
 using Concertable.DataAccess.Application;
 using Concertable.Seed.Shared;
 using Concertable.Seed.Shared.Extensions;
-using Concertable.Customer.Seed;
+using Concertable.Customer.Seed.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 

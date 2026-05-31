@@ -19,7 +19,7 @@
     <ProjectReference Include="..\..\Concertable.Customer.Web\Concertable.Customer.Web.csproj" />
     <ProjectReference Include="..\..\..\Shared\Tests\Concertable.Testing\Concertable.Testing.csproj" />
     <ProjectReference Include="..\..\..\Shared\Tests\Concertable.Testing.Integration\Concertable.Testing.Integration.csproj" />
-    <ProjectReference Include="..\..\Concertable.Customer.Seed\Concertable.Customer.Seed.csproj" />
+    <ProjectReference Include="..\..\Concertable.Customer.Seed.Infrastructure\Concertable.Customer.Seed.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Concertable.Payment\Concertable.Payment.Client\Concertable.Payment.Client.csproj" />
   </ItemGroup>
 

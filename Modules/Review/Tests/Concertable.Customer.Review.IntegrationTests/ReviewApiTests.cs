@@ -25,10 +25,11 @@ public class ReviewApiTests : IAsyncLifetime
     public async Task GetConcertReviews_ShouldReturn200_WithEmptyList_WhenNoReviews()
     {
         // Arrange
+        var concert = fixture.SeedState.UpcomingFlatFeeConcert;
         var client = fixture.CreateClient();
 
         // Act
-        var response = await client.GetAsync("/api/concerts/1/reviews");
+        var response = await client.GetAsync($"/api/concerts/{concert.Id}/reviews");
 
         // Assert
         await response.ShouldBe(HttpStatusCode.OK);
@@ -46,10 +47,11 @@ public class ReviewApiTests : IAsyncLifetime
     public async Task GetConcertReviewSummary_ShouldReturn200_WithNoReviews()
     {
         // Arrange
+        var concert = fixture.SeedState.UpcomingFlatFeeConcert;
         var client = fixture.CreateClient();
 
         // Act
-        var response = await client.GetAsync("/api/concerts/1/reviews/summary");
+        var response = await client.GetAsync($"/api/concerts/{concert.Id}/reviews/summary");
 
         // Assert
         await response.ShouldBe(HttpStatusCode.OK);
@@ -66,12 +68,12 @@ public class ReviewApiTests : IAsyncLifetime
     [Fact]
     public async Task GetConcertReviewEligibility_ShouldReturn200False_WhenUserHasNoTicket()
     {
-        // Arrange
-        await fixture.SeedUserAsync(fixture.Customer);
-        var client = fixture.CreateClient(fixture.Customer);
+        // Arrange - Customer2 holds no tickets
+        var concert = fixture.SeedState.PastFlatFeeConcert;
+        var client = fixture.CreateClient(fixture.SeedState.Customer2);
 
         // Act
-        var response = await client.GetAsync("/api/concerts/1/reviews/eligibility");
+        var response = await client.GetAsync($"/api/concerts/{concert.Id}/reviews/eligibility");
 
         // Assert
         await response.ShouldBe(HttpStatusCode.OK);
@@ -81,13 +83,12 @@ public class ReviewApiTests : IAsyncLifetime
     [Fact]
     public async Task GetConcertReviewEligibility_ShouldReturn200False_WhenConcertHasNotHappenedYet()
     {
-        // Arrange
-        await fixture.SeedUserAsync(fixture.Customer);
-        await fixture.SeedTicketAsync(fixture.Customer.Id, 1, upcoming: true);
-        var client = fixture.CreateClient(fixture.Customer);
+        // Arrange - Customer1 holds an upcoming ticket for this concert
+        var concert = fixture.SeedState.UpcomingFlatFeeConcert;
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
         // Act
-        var response = await client.GetAsync("/api/concerts/1/reviews/eligibility");
+        var response = await client.GetAsync($"/api/concerts/{concert.Id}/reviews/eligibility");
 
         // Assert
         await response.ShouldBe(HttpStatusCode.OK);
@@ -97,13 +98,12 @@ public class ReviewApiTests : IAsyncLifetime
     [Fact]
     public async Task GetConcertReviewEligibility_ShouldReturn200True_WhenConcertPassedAndNoReviewYet()
     {
-        // Arrange
-        await fixture.SeedUserAsync(fixture.Customer);
-        await fixture.SeedTicketAsync(fixture.Customer.Id, 1, upcoming: false);
-        var client = fixture.CreateClient(fixture.Customer);
+        // Arrange - Customer1 holds a past, unreviewed ticket for this concert
+        var concert = fixture.SeedState.PastFlatFeeConcert;
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
         // Act
-        var response = await client.GetAsync("/api/concerts/1/reviews/eligibility");
+        var response = await client.GetAsync($"/api/concerts/{concert.Id}/reviews/eligibility");
 
         // Assert
         await response.ShouldBe(HttpStatusCode.OK);
@@ -117,12 +117,12 @@ public class ReviewApiTests : IAsyncLifetime
     [Fact]
     public async Task CreateConcertReview_ShouldReturn404_WhenUserHasNoTicket()
     {
-        // Arrange
-        await fixture.SeedUserAsync(fixture.Customer);
-        var client = fixture.CreateClient(fixture.Customer);
+        // Arrange - Customer2 holds no tickets
+        var concert = fixture.SeedState.PastFlatFeeConcert;
+        var client = fixture.CreateClient(fixture.SeedState.Customer2);
 
         // Act
-        var response = await client.PostAsync("/api/concerts/1/reviews", new CreateReviewRequest
+        var response = await client.PostAsync($"/api/concerts/{concert.Id}/reviews", new CreateReviewRequest
         {
             Stars = 4,
             Details = "Great concert"
@@ -135,13 +135,12 @@ public class ReviewApiTests : IAsyncLifetime
     [Fact]
     public async Task CreateConcertReview_ShouldReturn201_WithReviewDetails()
     {
-        // Arrange
-        await fixture.SeedUserAsync(fixture.Customer);
-        await fixture.SeedTicketAsync(fixture.Customer.Id, 1, upcoming: false);
-        var client = fixture.CreateClient(fixture.Customer);
+        // Arrange - Customer1 holds a past, unreviewed ticket for this concert
+        var concert = fixture.SeedState.PastFlatFeeConcert;
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
         // Act
-        var response = await client.PostAsync("/api/concerts/1/reviews", new CreateReviewRequest
+        var response = await client.PostAsync($"/api/concerts/{concert.Id}/reviews", new CreateReviewRequest
         {
             Stars = 4,
             Details = "Great concert"

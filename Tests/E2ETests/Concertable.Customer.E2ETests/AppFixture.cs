@@ -5,7 +5,7 @@ using Concertable.B2B.Seed.Contracts;
 using Concertable.Customer.Artist.Infrastructure.Extensions;
 using Concertable.Customer.Concert.Infrastructure.Extensions;
 using Concertable.Customer.Preference.Infrastructure.Extensions;
-using Concertable.Customer.Seed;
+using Concertable.Customer.Seed.Infrastructure;
 using Concertable.Customer.Venue.Infrastructure.Extensions;
 using Concertable.DataAccess.Application;
 using Concertable.DataAccess.Infrastructure.Data;

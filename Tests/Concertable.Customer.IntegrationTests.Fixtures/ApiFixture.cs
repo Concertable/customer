@@ -1,18 +1,17 @@
-using Concertable.Customer.Artist.Infrastructure.Data;
 using Concertable.Customer.IntegrationTests.Fixtures.Mocks;
-using Concertable.Kernel;
 using Concertable.Kernel.Notifications;
-using Concertable.Customer.Concert.Domain.Entities;
-using Concertable.Customer.Concert.Infrastructure.Data;
-using Concertable.Customer.Review.Infrastructure.Data;
-using Concertable.Customer.Ticket.Domain.Entities;
-using Concertable.Customer.Ticket.Infrastructure.Data;
-using Concertable.Customer.User.Infrastructure.Data;
-using Concertable.Customer.Venue.Infrastructure.Data;
+using Concertable.Customer.Artist.Infrastructure.Extensions;
+using Concertable.Customer.Concert.Infrastructure.Extensions;
+using Concertable.Customer.Preference.Infrastructure.Extensions;
+using Concertable.Customer.Review.Infrastructure.Extensions;
+using Concertable.Customer.Ticket.Infrastructure.Extensions;
+using Concertable.Customer.User.Domain;
+using Concertable.Customer.User.Infrastructure.Extensions;
+using Concertable.Customer.Venue.Infrastructure.Extensions;
+using Concertable.DataAccess.Application;
 using Concertable.Messaging.Contracts;
 using Concertable.Payment.Client;
-using Concertable.Customer.Seed;
-using Concertable.Seed.Identity;
+using Concertable.Customer.Seed.Infrastructure;
 using Concertable.Shared.Email.Application;
 using Concertable.Shared.Geocoding.Application;
 using Concertable.Testing.Integration;
@@ -29,8 +28,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
-using Concertable.Customer.Artist.Domain.Entities;
-using Concertable.Customer.Venue.Domain.Entities;
 
 namespace Concertable.Customer.IntegrationTests.Fixtures;
 
@@ -38,15 +35,14 @@ public class ApiFixture : IAsyncLifetime
 {
     private SqlFixture sqlFixture = null!;
     private WebApplicationFactory<Program> factory = null!;
+    private IServiceScope? scope;
     private readonly XunitOutputAccessor outputAccessor = new();
 
     public void AttachOutput(ITestOutputHelper output) => outputAccessor.Output = output;
     public void DetachOutput() => outputAccessor.Output = null;
 
-    public SeedCustomer Customer => SeedCustomers.Customer1;
-    public SeedCustomer OtherCustomer => SeedCustomers.Customer2;
-
     public IMockNotificationClient NotificationClient { get; } = new MockNotificationClient();
+    public SeedState SeedState { get; private set; } = null!;
 
     public async Task InitializeAsync()
     {
@@ -86,6 +82,16 @@ public class ApiFixture : IAsyncLifetime
                 services.AddSingleton<IEmailSender, MockEmailSender>();
                 services.Replace(ServiceDescriptor.Singleton<INotificationClient>(NotificationClient));
 
+                services.AddScoped<IDbInitializer, TestDbInitializer>();
+                services.AddScoped<SeedState>();
+                services.AddCustomerUserTestSeeder();
+                services.AddCustomerVenueProjectionTestSeeder();
+                services.AddCustomerArtistProjectionTestSeeder();
+                services.AddCustomerConcertProjectionTestSeeder();
+                services.AddCustomerTicketTestSeeder();
+                services.AddCustomerReviewTestSeeder();
+                services.AddCustomerPreferenceTestSeeder();
+
                 services.PostConfigure<AuthenticationOptions>(opts =>
                 {
                     opts.DefaultAuthenticateScheme = TestAuthHandler.SchemeName;
@@ -105,94 +111,31 @@ public class ApiFixture : IAsyncLifetime
     {
         await sqlFixture.ResetAsync();
         NotificationClient.Reset();
+
+        scope?.Dispose();
+        scope = factory.Services.CreateScope();
+        var sp = scope.ServiceProvider;
+        await sp.GetRequiredService<IDbInitializer>().InitializeAsync();
+        SeedState = sp.GetRequiredService<SeedState>();
     }
 
     public async Task DisposeAsync()
     {
+        scope?.Dispose();
         await factory.DisposeAsync();
         await sqlFixture.DisposeAsync();
     }
 
     public HttpClient CreateClient() => factory.CreateClient();
 
-    public HttpClient CreateClient(SeedCustomer customer)
+    public HttpClient CreateClient(UserEntity user) => CreateClient(user.Id);
+
+    public HttpClient CreateClient(Guid userId)
     {
         var client = factory.CreateClient();
-        client.DefaultRequestHeaders.Add(TestAuthHandler.UserIdHeader, customer.Id.ToString());
+        client.DefaultRequestHeaders.Add(TestAuthHandler.UserIdHeader, userId.ToString());
         return client;
     }
 
     public IServiceProvider Services => factory.Services;
-
-    public async Task<Concertable.Customer.User.Domain.UserEntity> SeedUserAsync(SeedCustomer customer)
-    {
-        using var scope = Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<UserDbContext>();
-        var user = Concertable.Customer.User.Domain.UserEntity.FromRegistration(customer.Id, customer.Email);
-        db.Users.Add(user);
-        await db.SaveChangesAsync();
-        return user;
-    }
-
-    public async Task<VenueReadModel> SeedVenueAsync(int id = 1)
-    {
-        using var scope = Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<VenueDbContext>();
-        var venue = VenueReadModel.Create(
-            id, Guid.NewGuid(), "Test Venue", "About the venue", "avatar.jpg", "banner.jpg",
-            "Test County", "Test Town", 51.5, -0.1, "venue@test.com");
-        db.Venues.Add(venue);
-        await db.SaveChangesAsync();
-        return venue;
-    }
-
-    public async Task<ArtistReadModel> SeedArtistAsync(int id = 1)
-    {
-        using var scope = Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ArtistDbContext>();
-        var artist = ArtistReadModel.Create(
-            id, Guid.NewGuid(), "Test Artist", "About the artist", "avatar.jpg", "banner.jpg",
-            "Test County", "Test Town", 51.5, -0.1, "artist@test.com");
-        db.Artists.Add(artist);
-        await db.SaveChangesAsync();
-        return artist;
-    }
-
-    public async Task<ConcertReadModel> SeedConcertAsync(
-        int id = 1,
-        bool posted = true,
-        int availableTickets = 100,
-        DateTime? startDate = null)
-    {
-        using var scope = Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<ConcertDbContext>();
-        var start = startDate ?? DateTime.UtcNow.AddDays(7);
-        var period = new DateRange(start, start.AddHours(3));
-        var concert = ConcertReadModel.Create(
-            id, "Test Concert", "About the concert",
-            null, null, availableTickets, 15.00m, period,
-            posted ? DateTime.UtcNow.AddDays(-1) : null,
-            artistId: 1, "Test Artist", venueId: 1, "Test Venue");
-        context.Concerts.Add(concert);
-        await context.SaveChangesAsync();
-        return concert;
-    }
-
-    public async Task<TicketEntity> SeedTicketAsync(
-        Guid userId,
-        int concertId,
-        bool upcoming = true)
-    {
-        using var scope = Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<TicketDbContext>();
-        var concertStart = upcoming ? DateTime.UtcNow.AddDays(7) : DateTime.UtcNow.AddDays(-7);
-        var period = new DateRange(concertStart, concertStart.AddHours(3));
-        var ticket = TicketEntity.Create(
-            Guid.CreateVersion7(), userId, concertId,
-            [], DateTime.UtcNow,
-            "Test Concert", 15.00m, period, 1, "Test Artist", 1, "Test Venue");
-        db.Tickets.Add(ticket);
-        await db.SaveChangesAsync();
-        return ticket;
-    }
 }
