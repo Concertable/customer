@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Concertable.Customer.User.Api.Controllers;
 
-[AuthorizeCustomer]
+[Customer]
 [ApiController]
 [Route("api/[controller]")]
 internal class UserController : ControllerBase
