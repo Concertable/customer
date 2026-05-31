@@ -22,7 +22,7 @@
     <ProjectReference Include="..\..\Concertable.Payment\Concertable.Payment.Workers\Concertable.Payment.Workers.csproj" />
     <ProjectReference Include="..\..\Concertable.Search\Concertable.Search.Web\Concertable.Search.Web.csproj" />
     <ProjectReference Include="..\..\Concertable.Search\Concertable.Search.Workers\Concertable.Search.Workers.csproj" />
-    <ProjectReference Include="..\..\Concertable.B2B\Concertable.B2B.Seed.Simulator\Concertable.B2B.Seed.Simulator.csproj" />
+    <ProjectReference Include="..\..\Concertable.B2B\Seed\Concertable.B2B.Seed.Simulator\Concertable.B2B.Seed.Simulator.csproj" />
   </ItemGroup>
 
 </Project>

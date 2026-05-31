@@ -28,7 +28,7 @@
     <ProjectReference Include="..\..\..\..\Shared\Concertable.Shared.Pdf\Concertable.Shared.Pdf.Application\Concertable.Shared.Pdf.Application.csproj" />
     <ProjectReference Include="..\..\..\..\Concertable.Messaging\Concertable.Messaging.Contracts\Concertable.Messaging.Contracts.csproj" />
     <ProjectReference Include="..\..\..\..\Shared\Seed\Concertable.Seed.Shared\Concertable.Seed.Shared.csproj" />
-    <ProjectReference Include="..\..\..\..\Concertable.Customer\Concertable.Customer.Seed.Infrastructure\Concertable.Customer.Seed.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\Concertable.Customer\Seed\Concertable.Customer.Seed.Infrastructure\Concertable.Customer.Seed.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
