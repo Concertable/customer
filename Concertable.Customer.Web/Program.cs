@@ -24,7 +24,7 @@ using Concertable.Messaging.Infrastructure.Extensions;
 using Concertable.Messaging.Infrastructure.Inbox;
 using Concertable.Messaging.Infrastructure.Outbox;
 using Concertable.Payment.Client.Extensions;
-using Concertable.Payment.Domain.Events;
+using Concertable.Payment.Contracts.Events;
 using Concertable.Auth.Contracts.Events;
 using Concertable.Shared.Email.Infrastructure.Extensions;
 using Concertable.Shared.Geocoding.Infrastructure.Extensions;
@@ -113,18 +113,19 @@ if (!builder.Environment.IsEnvironment("Testing"))
 {
     services.AddScoped<IDbInitializer, DevDbInitializer>();
     services.AddScoped<SeedState>();
-    services.AddCustomerPreferenceDevSeeder();
+    services.AddPreferenceDevSeeder();
+    services.AddTicketDevSeeder();
 }
 
-services.AddCustomerConcertModule(builder.Configuration);
-services.AddCustomerTicketModule(builder.Configuration);
-services.AddCustomerReviewModule(builder.Configuration);
-services.AddCustomerUserModule(builder.Configuration);
-services.AddCustomerUserApi();
-services.AddCustomerPreferenceModule(builder.Configuration);
-services.AddCustomerPreferenceApi();
-services.AddCustomerVenueModule(builder.Configuration);
-services.AddCustomerArtistModule(builder.Configuration);
+services.AddConcertModule(builder.Configuration);
+services.AddTicketModule(builder.Configuration);
+services.AddReviewModule(builder.Configuration);
+services.AddUserModule(builder.Configuration);
+services.AddUserApi();
+services.AddPreferenceModule(builder.Configuration);
+services.AddPreferenceApi();
+services.AddVenueModule(builder.Configuration);
+services.AddArtistModule(builder.Configuration);
 
 services.AddNotificationClient();
 services.AddCurrentUser();

@@ -18,6 +18,7 @@ public class ConcertReadModel : IIdEntity
     public string ArtistName { get; private set; } = null!;
     public int VenueId { get; private set; }
     public string VenueName { get; private set; } = null!;
+    public Guid PayeeUserId { get; private set; }
     public double AverageRating { get; private set; }
     public int ReviewCount { get; private set; }
     public ICollection<ConcertGenreReadModel> Genres { get; private set; } = [];
@@ -37,7 +38,8 @@ public class ConcertReadModel : IIdEntity
         int artistId,
         string artistName,
         int venueId,
-        string venueName) => new()
+        string venueName,
+        Guid payeeUserId) => new()
     {
         Id = concertId,
         Name = name,
@@ -52,7 +54,8 @@ public class ConcertReadModel : IIdEntity
         ArtistId = artistId,
         ArtistName = artistName,
         VenueId = venueId,
-        VenueName = venueName
+        VenueName = venueName,
+        PayeeUserId = payeeUserId
     };
 
     public void Update(
@@ -67,7 +70,8 @@ public class ConcertReadModel : IIdEntity
         int artistId,
         string artistName,
         int venueId,
-        string venueName)
+        string venueName,
+        Guid payeeUserId)
     {
         var sold = TotalTickets - AvailableTickets;
         Name = name;
@@ -83,6 +87,7 @@ public class ConcertReadModel : IIdEntity
         ArtistName = artistName;
         VenueId = venueId;
         VenueName = venueName;
+        PayeeUserId = payeeUserId;
     }
 
     public void UpdateRating(double averageRating, int reviewCount)

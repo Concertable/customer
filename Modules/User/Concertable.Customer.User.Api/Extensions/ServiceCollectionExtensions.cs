@@ -6,7 +6,7 @@ namespace Concertable.Customer.User.Api.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCustomerUserApi(this IServiceCollection services)
+    public static IServiceCollection AddUserApi(this IServiceCollection services)
     {
         services.AddAuthorization(options =>
         {

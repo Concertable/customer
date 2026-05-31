@@ -84,13 +84,13 @@ public class ApiFixture : IAsyncLifetime
 
                 services.AddScoped<IDbInitializer, TestDbInitializer>();
                 services.AddScoped<SeedState>();
-                services.AddCustomerUserTestSeeder();
-                services.AddCustomerVenueProjectionTestSeeder();
-                services.AddCustomerArtistProjectionTestSeeder();
-                services.AddCustomerConcertProjectionTestSeeder();
-                services.AddCustomerTicketTestSeeder();
-                services.AddCustomerReviewTestSeeder();
-                services.AddCustomerPreferenceTestSeeder();
+                services.AddUserTestSeeder();
+                services.AddVenueProjectionTestSeeder();
+                services.AddArtistProjectionTestSeeder();
+                services.AddConcertProjectionTestSeeder();
+                services.AddTicketTestSeeder();
+                services.AddReviewTestSeeder();
+                services.AddPreferenceTestSeeder();
 
                 services.PostConfigure<AuthenticationOptions>(opts =>
                 {
