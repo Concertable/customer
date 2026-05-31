@@ -2,11 +2,10 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Concertable.Customer.User.Api.Authorization;
 
-public sealed class AuthorizeCustomerAttribute : AuthorizeAttribute
+public sealed class CustomerAttribute : AuthorizeAttribute
 {
-    public AuthorizeCustomerAttribute()
+    public CustomerAttribute()
     {
         Policy = "Customer";
-        Roles = "Customer";
     }
 }
