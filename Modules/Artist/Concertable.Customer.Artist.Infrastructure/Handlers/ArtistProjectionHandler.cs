@@ -1,4 +1,4 @@
-using Concertable.B2B.Artist.Contracts.Events;
+﻿using Concertable.B2B.Artist.Contracts.Events;
 using Concertable.Customer.Artist.Domain.Entities;
 using Concertable.Customer.Artist.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +27,7 @@ internal class ArtistProjectionHandler : IIntegrationEventHandler<ArtistChangedE
 
         if (artist is null)
         {
-            artist = ArtistReadModel.Create(
+            artist = ArtistEntity.Create(
                 e.ArtistId,
                 e.UserId,
                 e.Name,
@@ -41,7 +41,7 @@ internal class ArtistProjectionHandler : IIntegrationEventHandler<ArtistChangedE
                 e.Email);
 
             foreach (var g in e.Genres)
-                artist.Genres.Add(new ArtistGenreReadModel { ArtistId = e.ArtistId, Genre = g });
+                artist.Genres.Add(new ArtistGenreEntity { ArtistId = e.ArtistId, Genre = g });
 
             context.Artists.Add(artist);
         }
@@ -65,7 +65,7 @@ internal class ArtistProjectionHandler : IIntegrationEventHandler<ArtistChangedE
             foreach (var g in artist.Genres.Where(g => !desired.Contains(g.Genre)).ToList())
                 artist.Genres.Remove(g);
             foreach (var g in desired.Where(g => !current.Contains(g)))
-                artist.Genres.Add(new ArtistGenreReadModel { ArtistId = e.ArtistId, Genre = g });
+                artist.Genres.Add(new ArtistGenreEntity { ArtistId = e.ArtistId, Genre = g });
         }
 
         await context.SaveChangesAsync(ct);

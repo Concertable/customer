@@ -1,6 +1,6 @@
-namespace Concertable.Customer.Artist.Domain.Entities;
+﻿namespace Concertable.Customer.Artist.Domain.Entities;
 
-public class ArtistReadModel : IIdEntity
+public class ArtistEntity : IIdEntity
 {
     public int Id { get; private set; }
     public Guid UserId { get; private set; }
@@ -15,11 +15,11 @@ public class ArtistReadModel : IIdEntity
     public string Email { get; private set; } = null!;
     public double AverageRating { get; private set; }
     public int ReviewCount { get; private set; }
-    public ICollection<ArtistGenreReadModel> Genres { get; private set; } = [];
+    public ICollection<ArtistGenreEntity> Genres { get; private set; } = [];
 
-    private ArtistReadModel() { }
+    private ArtistEntity() { }
 
-    public static ArtistReadModel Create(
+    public static ArtistEntity Create(
         int artistId,
         Guid userId,
         string name,

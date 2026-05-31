@@ -1,11 +1,11 @@
-using Concertable.Customer.Venue.Application.Dtos;
+﻿using Concertable.Customer.Venue.Application.Dtos;
 using Concertable.Customer.Venue.Domain.Entities;
 
 namespace Concertable.Customer.Venue.Application.Mappers;
 
 internal static class VenueDetailMapper
 {
-    public static VenueDetailDto ToDetailDto(this VenueReadModel venue) => new(
+    public static VenueDetailDto ToDetailDto(this VenueEntity venue) => new(
         venue.Id,
         venue.Name,
         venue.About,

@@ -1,4 +1,4 @@
-using Concertable.Customer.Artist.Domain.Entities;
+﻿using Concertable.Customer.Artist.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Artist.Infrastructure.Data;
@@ -13,7 +13,7 @@ internal class ArtistDbContext : DbContextBase
         this.provider = provider;
     }
 
-    public DbSet<ArtistReadModel> Artists => Set<ArtistReadModel>();
+    public DbSet<ArtistEntity> Artists => Set<ArtistEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

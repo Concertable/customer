@@ -17,14 +17,6 @@ The inverse-direction event flow (Customer → B2B/Search) from plan §6 is not 
 
 ---
 
-### `ConcertReadModel` doesn't own `AvailableTickets`
-
-Plan §4.5 specifies Customer's concert row as a **behavioural entity** — `ConcertEntity` with `DecrementAvailability(int)` / `RestoreAvailability(int)` methods and invariants (`AvailableTickets >= 0`, `AvailableTickets <= TotalTickets`). Currently `Modules/Concert/.../Domain/Entities/ConcertEntity.cs` contains a class named `ConcertReadModel` with no behaviour and no `AvailableTickets` field. Ticket capacity enforcement may be absent today.
-
-**Resolves when:** Class renamed `ConcertEntity`; `AvailableTickets` field added (sourced from `ConcertChangedEvent`); `DecrementAvailability` / `RestoreAvailability` methods added; `TicketService.PurchaseAsync` decrements availability atomically in the same DB transaction as `TicketEntity` insert.
-
----
-
 ### E2E boots the whole real fleet from source references (won't survive the repo split)
 
 `Concertable.Customer.E2ETests/AppFixture.cs` launches the Customer AppHost via
@@ -66,8 +58,4 @@ Cross-module access into these three modules is not behind an `IXModule` facade 
 
 ## LOW
 
-### Read-model filename / class-name mismatch
-
-Files under `Modules/Concert/`, `Modules/Artist/`, `Modules/Venue/` are named `*Entity.cs` but contain classes called `*ReadModel` (e.g. `ConcertEntity.cs` → `class ConcertReadModel`). This misleads anyone reading the file tree.
-
-**Resolves when:** Files renamed to `*ReadModel.cs` to match the class name inside.
+_(none)_

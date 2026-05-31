@@ -23,20 +23,7 @@ namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Concertable.Customer.Artist.Domain.Entities.ArtistGenreReadModel", b =>
-                {
-                    b.Property<int>("ArtistId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Genre")
-                        .HasColumnType("int");
-
-                    b.HasKey("ArtistId", "Genre");
-
-                    b.ToTable("ArtistGenres", "artist");
-                });
-
-            modelBuilder.Entity("Concertable.Customer.Artist.Domain.Entities.ArtistReadModel", b =>
+            modelBuilder.Entity("Concertable.Customer.Artist.Domain.Entities.ArtistEntity", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -87,6 +74,19 @@ namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Artists", "artist");
+                });
+
+            modelBuilder.Entity("Concertable.Customer.Artist.Domain.Entities.ArtistGenreEntity", b =>
+                {
+                    b.Property<int>("ArtistId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Genre")
+                        .HasColumnType("int");
+
+                    b.HasKey("ArtistId", "Genre");
+
+                    b.ToTable("ArtistGenres", "artist");
                 });
 
             modelBuilder.Entity("Concertable.Messaging.Domain.InboxMessageEntity", b =>
@@ -158,9 +158,9 @@ namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Concertable.Customer.Artist.Domain.Entities.ArtistGenreReadModel", b =>
+            modelBuilder.Entity("Concertable.Customer.Artist.Domain.Entities.ArtistGenreEntity", b =>
                 {
-                    b.HasOne("Concertable.Customer.Artist.Domain.Entities.ArtistReadModel", "Artist")
+                    b.HasOne("Concertable.Customer.Artist.Domain.Entities.ArtistEntity", "Artist")
                         .WithMany("Genres")
                         .HasForeignKey("ArtistId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -169,7 +169,7 @@ namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
                     b.Navigation("Artist");
                 });
 
-            modelBuilder.Entity("Concertable.Customer.Artist.Domain.Entities.ArtistReadModel", b =>
+            modelBuilder.Entity("Concertable.Customer.Artist.Domain.Entities.ArtistEntity", b =>
                 {
                     b.Navigation("Genres");
                 });

@@ -1,4 +1,4 @@
-using Concertable.B2B.Seed.Contracts;
+﻿using Concertable.B2B.Seed.Contracts;
 using Concertable.Customer.Artist.Domain.Entities;
 using Concertable.Customer.Concert.Domain.Entities;
 using Concertable.Customer.Preference.Domain;
@@ -35,14 +35,14 @@ public sealed class SeedState
     public ReviewEntity ConfirmedConcertReview { get; }
 
     // Read-model entities built from the canonical SeedCatalog; XProjectionTestSeeders persist these.
-    public VenueReadModel Venue { get; }
-    public IReadOnlyList<VenueReadModel> Venues { get; }
-    public ArtistReadModel Artist { get; }
-    public IReadOnlyList<ArtistReadModel> Artists { get; }
-    public ConcertReadModel UpcomingFlatFeeConcert { get; }
-    public ConcertReadModel PastDoorSplitConcert { get; }
-    public ConcertReadModel PastFlatFeeConcert { get; }
-    public IReadOnlyList<ConcertReadModel> Concerts { get; }
+    public VenueEntity Venue { get; }
+    public IReadOnlyList<VenueEntity> Venues { get; }
+    public ArtistEntity Artist { get; }
+    public IReadOnlyList<ArtistEntity> Artists { get; }
+    public ConcertEntity UpcomingFlatFeeConcert { get; }
+    public ConcertEntity PastDoorSplitConcert { get; }
+    public ConcertEntity PastFlatFeeConcert { get; }
+    public IReadOnlyList<ConcertEntity> Concerts { get; }
 
     public SeedState(SeedCatalog catalog)
     {
@@ -58,11 +58,11 @@ public sealed class SeedState
             PreferenceFactory.Create(Customer3.Id, 50, []),
         ];
 
-        Venues = catalog.Venues.Select(s => s.ToReadModel()).ToList();
+        Venues = catalog.Venues.Select(s => s.ToEntity()).ToList();
         Venue = Venues[0];
-        Artists = catalog.Artists.Select(s => s.ToReadModel()).ToList();
+        Artists = catalog.Artists.Select(s => s.ToEntity()).ToList();
         Artist = Artists[0];
-        Concerts = catalog.Concerts.Select(s => s.ToReadModel()).ToList();
+        Concerts = catalog.Concerts.Select(s => s.ToEntity()).ToList();
         UpcomingFlatFeeConcert = Concerts.First(c => c.Name == "Upcoming FlatFee Show");
         PastDoorSplitConcert = Concerts.First(c => c.Name == "Past DoorSplit Show");
         PastFlatFeeConcert = Concerts.First(c => c.Name == "Past FlatFee Show");

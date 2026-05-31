@@ -1,4 +1,4 @@
-using Concertable.Customer.Venue.Infrastructure.Data;
+﻿using Concertable.Customer.Venue.Infrastructure.Data;
 using Concertable.B2B.Venue.Contracts.Events;
 using Microsoft.EntityFrameworkCore;
 using Concertable.Customer.Venue.Domain.Entities;
@@ -25,7 +25,7 @@ internal class VenueProjectionHandler : IIntegrationEventHandler<VenueChangedEve
 
         if (venue is null)
         {
-            venue = VenueReadModel.Create(
+            venue = VenueEntity.Create(
                 e.VenueId,
                 e.UserId,
                 e.Name,

@@ -1,4 +1,4 @@
-using Concertable.Customer.Concert.Application.Interfaces;
+﻿using Concertable.Customer.Concert.Application.Interfaces;
 using Concertable.Customer.Concert.Domain.Entities;
 using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Application.Requests;
@@ -170,7 +170,7 @@ internal class TicketService : ITicketService
         return tickets.ToDtos(currentUser.Email ?? string.Empty);
     }
 
-    private TicketEntity BuildTicket(Guid userId, ConcertReadModel concert)
+    private TicketEntity BuildTicket(Guid userId, ConcertEntity concert)
     {
         var ticketId = Guid.CreateVersion7();
         var qrCode = qrCodeService.GenerateFromTicketId(ticketId);
