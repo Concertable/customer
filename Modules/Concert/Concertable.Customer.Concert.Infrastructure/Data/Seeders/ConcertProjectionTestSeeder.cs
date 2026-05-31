@@ -3,16 +3,16 @@ using Concertable.Seed.Shared.Extensions;
 using Concertable.Customer.Seed.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace Concertable.Customer.Preference.Infrastructure.Data.Seeders;
+namespace Concertable.Customer.Concert.Infrastructure.Data.Seeders;
 
-internal class PreferenceTestSeeder : ITestSeeder
+internal class ConcertProjectionTestSeeder : ITestSeeder
 {
-    public int Order => 7;
+    public int Order => 3;
 
-    private readonly PreferenceDbContext context;
+    private readonly ConcertDbContext context;
     private readonly SeedState seedData;
 
-    public PreferenceTestSeeder(PreferenceDbContext context, SeedState seedData)
+    public ConcertProjectionTestSeeder(ConcertDbContext context, SeedState seedData)
     {
         this.context = context;
         this.seedData = seedData;
@@ -22,9 +22,9 @@ internal class PreferenceTestSeeder : ITestSeeder
 
     public async Task SeedAsync(CancellationToken ct = default)
     {
-        await context.Preferences.SeedIfEmptyAsync(async () =>
+        await context.Concerts.SeedIfEmptyAsync(async () =>
         {
-            context.Preferences.AddRange(seedData.Preferences);
+            context.Concerts.AddRange(seedData.Concerts);
             await context.SaveChangesAsync(ct);
         });
     }

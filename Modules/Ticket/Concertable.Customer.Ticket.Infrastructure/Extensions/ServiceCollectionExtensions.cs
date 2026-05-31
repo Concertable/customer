@@ -1,5 +1,6 @@
 using Concertable.Customer.Ticket.Application.Validators;
 using Concertable.Customer.Ticket.Infrastructure.Data;
+using Concertable.Customer.Ticket.Infrastructure.Data.Seeders;
 using Concertable.Customer.Ticket.Infrastructure.Pdf;
 using Concertable.Customer.Ticket.Infrastructure.Repositories;
 using Concertable.Customer.Ticket.Infrastructure.Services;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Concertable.DataAccess.Application;
 using Concertable.DataAccess.Infrastructure.Data;
 using Concertable.Messaging.Contracts;
+using Concertable.Seed.Shared;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Extensions;
 
@@ -49,6 +51,12 @@ public static class ServiceCollectionExtensions
 
         services.AddValidatorsFromAssemblyContaining<TicketPurchaseParamsValidator>();
 
+        return services;
+    }
+
+    public static IServiceCollection AddCustomerTicketTestSeeder(this IServiceCollection services)
+    {
+        services.AddScoped<ITestSeeder, TicketTestSeeder>();
         return services;
     }
 }

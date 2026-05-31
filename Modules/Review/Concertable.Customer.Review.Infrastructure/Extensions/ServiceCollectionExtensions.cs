@@ -2,6 +2,7 @@ using Concertable.Customer.Review.Application.Validators;
 using Concertable.Customer.Review.Contracts;
 using Concertable.Customer.Review.Domain.Events;
 using Concertable.Customer.Review.Infrastructure.Data;
+using Concertable.Customer.Review.Infrastructure.Data.Seeders;
 using Concertable.Customer.Review.Infrastructure.Events;
 using Concertable.Customer.Review.Infrastructure.Repositories;
 using Concertable.Customer.Review.Infrastructure.Services;
@@ -9,6 +10,7 @@ using Concertable.Customer.Review.Infrastructure.Validators;
 using Concertable.DataAccess.Application;
 using Concertable.DataAccess.Infrastructure.Data;
 using Concertable.Kernel;
+using Concertable.Seed.Shared;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -45,6 +47,12 @@ public static class ServiceCollectionExtensions
 
         services.AddValidatorsFromAssemblyContaining<CreateReviewRequestValidator>();
 
+        return services;
+    }
+
+    public static IServiceCollection AddCustomerReviewTestSeeder(this IServiceCollection services)
+    {
+        services.AddScoped<ITestSeeder, ReviewTestSeeder>();
         return services;
     }
 }

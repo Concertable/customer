@@ -2,11 +2,13 @@ using Concertable.Auth.Contracts.Events;
 using Concertable.Customer.User.Application.Validators;
 using Concertable.Customer.User.Infrastructure.Authorization;
 using Concertable.Customer.User.Infrastructure.Data;
+using Concertable.Customer.User.Infrastructure.Data.Seeders;
 using Concertable.Customer.User.Infrastructure.Events;
 using Concertable.Customer.User.Infrastructure.Repositories;
 using Concertable.Customer.User.Infrastructure.Services;
 using Concertable.DataAccess.Infrastructure.Data;
 using Concertable.Messaging.Contracts;
+using Concertable.Seed.Shared;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +46,12 @@ public static class ServiceCollectionExtensions
         });
         services.AddScoped<IAuthorizationHandler, CustomerUserHandler>();
 
+        return services;
+    }
+
+    public static IServiceCollection AddCustomerUserTestSeeder(this IServiceCollection services)
+    {
+        services.AddScoped<ITestSeeder, UserTestSeeder>();
         return services;
     }
 }

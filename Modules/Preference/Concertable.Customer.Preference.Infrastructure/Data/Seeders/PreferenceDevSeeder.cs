@@ -1,6 +1,6 @@
 using Concertable.Seed.Shared;
 using Concertable.Seed.Shared.Extensions;
-using Concertable.Customer.Seed;
+using Concertable.Customer.Seed.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Preference.Infrastructure.Data.Seeders;
@@ -24,15 +24,7 @@ internal class PreferenceDevSeeder : IDevSeeder
     {
         await context.Preferences.SeedIfEmptyAsync(async () =>
         {
-            var customerIds = seedData.CustomerIds;
-            if (customerIds.Count < 3)
-                return;
-
-            context.Preferences.AddRange(
-                PreferenceEntity.Create(customerIds[0], 10, [Genre.Rock]),
-                PreferenceEntity.Create(customerIds[1], 25, []),
-                PreferenceEntity.Create(customerIds[2], 50, []));
-
+            context.Preferences.AddRange(seedData.Preferences);
             await context.SaveChangesAsync(ct);
         });
     }

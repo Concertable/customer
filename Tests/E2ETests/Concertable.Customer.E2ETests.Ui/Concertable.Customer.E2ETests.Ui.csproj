@@ -36,7 +36,7 @@
     <Using Include="Concertable.Customer.E2ETests" />
     <Using Include="Concertable.E2ETests" />
     <Using Include="Concertable.Testing" />
-    <Using Include="Concertable.Customer.Seed" />
+    <Using Include="Concertable.Customer.Seed.Infrastructure" />
     <Using Include="Concertable.Kernel.Identity" />
     <Using Include="Concertable.E2ETests.Support" />
     <Using Include="Microsoft.Playwright" />
