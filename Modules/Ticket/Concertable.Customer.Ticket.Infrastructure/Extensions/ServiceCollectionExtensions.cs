@@ -21,7 +21,7 @@ namespace Concertable.Customer.Ticket.Infrastructure.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCustomerTicketModule(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddTicketModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<TicketDbContext>((sp, opts) =>
             opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
@@ -54,7 +54,13 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddCustomerTicketTestSeeder(this IServiceCollection services)
+    public static IServiceCollection AddTicketDevSeeder(this IServiceCollection services)
+    {
+        services.AddScoped<IDevSeeder, TicketDevSeeder>();
+        return services;
+    }
+
+    public static IServiceCollection AddTicketTestSeeder(this IServiceCollection services)
     {
         services.AddScoped<ITestSeeder, TicketTestSeeder>();
         return services;

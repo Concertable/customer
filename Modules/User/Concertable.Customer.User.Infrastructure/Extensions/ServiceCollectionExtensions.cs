@@ -19,7 +19,7 @@ namespace Concertable.Customer.User.Infrastructure.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCustomerUserModule(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddUserModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<UserDbContext>((sp, opts) =>
             opts.UseSqlServer(
@@ -49,7 +49,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddCustomerUserTestSeeder(this IServiceCollection services)
+    public static IServiceCollection AddUserTestSeeder(this IServiceCollection services)
     {
         services.AddScoped<ITestSeeder, UserTestSeeder>();
         return services;

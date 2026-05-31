@@ -16,7 +16,7 @@ namespace Concertable.Customer.Concert.Infrastructure.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCustomerConcertModule(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddConcertModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ConcertDbContext>((sp, opts) =>
             opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
@@ -40,7 +40,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddCustomerConcertProjectionTestSeeder(this IServiceCollection services)
+    public static IServiceCollection AddConcertProjectionTestSeeder(this IServiceCollection services)
     {
         services.AddScoped<ITestSeeder, ConcertProjectionTestSeeder>();
         return services;

@@ -20,7 +20,7 @@ namespace Concertable.Customer.Review.Infrastructure.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCustomerReviewModule(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddReviewModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ReviewDbContext>((sp, opts) =>
             opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
@@ -50,7 +50,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddCustomerReviewTestSeeder(this IServiceCollection services)
+    public static IServiceCollection AddReviewTestSeeder(this IServiceCollection services)
     {
         services.AddScoped<ITestSeeder, ReviewTestSeeder>();
         return services;

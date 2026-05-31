@@ -136,11 +136,11 @@ public class AppFixture : IAsyncLifetime
                 services.AddInbox(opt => opt.UseSqlServer(customerConnectionString));
                 services.AddSeedingInfrastructure();
                 services.AddScoped<SeedState>();
-                services.AddCustomerVenueModule(customerSeedConfig);
-                services.AddCustomerArtistModule(customerSeedConfig);
-                services.AddCustomerConcertModule(customerSeedConfig);
-                services.AddCustomerPreferenceModule(customerSeedConfig);
-                services.AddCustomerPreferenceDevSeeder();
+                services.AddVenueModule(customerSeedConfig);
+                services.AddArtistModule(customerSeedConfig);
+                services.AddConcertModule(customerSeedConfig);
+                services.AddPreferenceModule(customerSeedConfig);
+                services.AddPreferenceDevSeeder();
                 services.AddScoped<IDbInitializer, CustomerDevDbInitializer>();
             })
             .Build();

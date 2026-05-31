@@ -6,7 +6,7 @@ namespace Concertable.Customer.Preference.Api.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCustomerPreferenceApi(this IServiceCollection services)
+    public static IServiceCollection AddPreferenceApi(this IServiceCollection services)
     {
         services.AddControllers()
             .AddInternalControllers(typeof(PreferenceController).Assembly);

@@ -15,7 +15,7 @@ namespace Concertable.Customer.Preference.Infrastructure.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCustomerPreferenceModule(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddPreferenceModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<PreferenceDbContext>((sp, opts) =>
             opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
@@ -36,13 +36,13 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddCustomerPreferenceDevSeeder(this IServiceCollection services)
+    public static IServiceCollection AddPreferenceDevSeeder(this IServiceCollection services)
     {
         services.AddScoped<IDevSeeder, PreferenceDevSeeder>();
         return services;
     }
 
-    public static IServiceCollection AddCustomerPreferenceTestSeeder(this IServiceCollection services)
+    public static IServiceCollection AddPreferenceTestSeeder(this IServiceCollection services)
     {
         services.AddScoped<ITestSeeder, PreferenceTestSeeder>();
         return services;

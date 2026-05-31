@@ -66,7 +66,7 @@ internal class TicketService : ITicketService
         };
 
         var paymentResult = await customerPaymentClient.PayAsync(
-            currentUser.GetId(), concert.Id,
+            currentUser.GetId(), concert.Id, concert.PayeeUserId,
             concert.Price * purchaseParams.Quantity,
             metadata,
             purchaseParams.PaymentMethodId);
@@ -153,7 +153,7 @@ internal class TicketService : ITicketService
             ["currency"] = "gbp"
         };
 
-        var session = await customerPaymentClient.CreatePaymentSessionAsync(currentUser.GetId(), concert.Id, metadata);
+        var session = await customerPaymentClient.CreatePaymentSessionAsync(currentUser.GetId(), concert.Id, concert.PayeeUserId, metadata);
 
         return Result.Ok(new TicketCheckout(session, concert.Price, concert.Id, quantity));
     }
