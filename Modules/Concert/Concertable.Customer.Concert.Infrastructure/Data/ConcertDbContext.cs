@@ -1,4 +1,4 @@
-using Concertable.Customer.Concert.Domain.Entities;
+﻿using Concertable.Customer.Concert.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Concert.Infrastructure.Data;
@@ -8,7 +8,7 @@ internal class ConcertDbContext(
     ConcertConfigurationProvider provider)
     : DbContextBase(options)
 {
-    public DbSet<ConcertReadModel> Concerts => Set<ConcertReadModel>();
+    public DbSet<ConcertEntity> Concerts => Set<ConcertEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,8 +1,8 @@
-using Concertable.Customer.Artist.Domain.Entities;
+﻿using Concertable.Customer.Artist.Domain.Entities;
 
 namespace Concertable.Customer.Artist.Application.Interfaces;
 
 internal interface IArtistReadRepository
 {
-    Task<ArtistReadModel?> GetByIdAsync(int artistId);
+    Task<ArtistEntity?> GetByIdAsync(int artistId);
 }

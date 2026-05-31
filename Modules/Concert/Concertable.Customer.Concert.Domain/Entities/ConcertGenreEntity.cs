@@ -1,10 +1,10 @@
-using Concertable.Contracts;
+﻿using Concertable.Contracts;
 
 namespace Concertable.Customer.Concert.Domain.Entities;
 
-public sealed class ConcertGenreReadModel
+public sealed class ConcertGenreEntity
 {
     public int ConcertId { get; set; }
     public Genre Genre { get; set; }
-    public ConcertReadModel Concert { get; set; } = null!;
+    public ConcertEntity Concert { get; set; } = null!;
 }

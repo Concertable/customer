@@ -1,4 +1,4 @@
-using Concertable.Customer.Concert.Infrastructure.Data.Configurations;
+﻿using Concertable.Customer.Concert.Infrastructure.Data.Configurations;
 using Concertable.DataAccess.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +8,7 @@ internal sealed class ConcertConfigurationProvider : IEntityTypeConfigurationPro
 {
     public void Configure(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new ConcertReadModelConfiguration());
-        modelBuilder.ApplyConfiguration(new ConcertGenreReadModelConfiguration());
+        modelBuilder.ApplyConfiguration(new ConcertEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new ConcertGenreEntityConfiguration());
     }
 }

@@ -1,8 +1,8 @@
-using Concertable.Kernel;
+﻿using Concertable.Kernel;
 
 namespace Concertable.Customer.Concert.Domain.Entities;
 
-public class ConcertReadModel : IIdEntity
+public class ConcertEntity : IIdEntity
 {
     public int Id { get; private set; }
     public string Name { get; private set; } = null!;
@@ -21,11 +21,11 @@ public class ConcertReadModel : IIdEntity
     public Guid PayeeUserId { get; private set; }
     public double AverageRating { get; private set; }
     public int ReviewCount { get; private set; }
-    public ICollection<ConcertGenreReadModel> Genres { get; private set; } = [];
+    public ICollection<ConcertGenreEntity> Genres { get; private set; } = [];
 
-    private ConcertReadModel() { }
+    private ConcertEntity() { }
 
-    public static ConcertReadModel Create(
+    public static ConcertEntity Create(
         int concertId,
         string name,
         string about,

@@ -1,4 +1,4 @@
-using Concertable.Customer.Venue.Domain.Entities;
+﻿using Concertable.Customer.Venue.Domain.Entities;
 using Concertable.Customer.Venue.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +13,6 @@ internal class VenueReadRepository : IVenueReadRepository
         this.context = context;
     }
 
-    public Task<VenueReadModel?> GetByIdAsync(int venueId) =>
+    public Task<VenueEntity?> GetByIdAsync(int venueId) =>
         context.Venues.FirstOrDefaultAsync(v => v.Id == venueId);
 }
