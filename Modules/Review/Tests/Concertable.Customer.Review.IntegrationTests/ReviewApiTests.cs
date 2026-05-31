@@ -1,6 +1,7 @@
 using System.Net;
 using Concertable.Contracts;
 using Concertable.Customer.Review.Application.Requests;
+using Xunit.Abstractions;
 
 namespace Concertable.Customer.Review.IntegrationTests;
 
@@ -9,13 +10,14 @@ public class ReviewApiTests : IAsyncLifetime
 {
     private readonly ApiFixture fixture;
 
-    public ReviewApiTests(ApiFixture fixture)
+    public ReviewApiTests(ApiFixture fixture, ITestOutputHelper output)
     {
         this.fixture = fixture;
+        fixture.AttachOutput(output);
     }
 
     public Task InitializeAsync() => fixture.ResetAsync();
-    public Task DisposeAsync() => Task.CompletedTask;
+    public Task DisposeAsync() { fixture.DetachOutput(); return Task.CompletedTask; }
 
     #region GetConcertReviews
 
