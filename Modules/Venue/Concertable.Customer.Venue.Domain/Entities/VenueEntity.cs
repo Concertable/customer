@@ -1,6 +1,6 @@
-namespace Concertable.Customer.Venue.Domain.Entities;
+﻿namespace Concertable.Customer.Venue.Domain.Entities;
 
-public class VenueReadModel : IIdEntity
+public class VenueEntity : IIdEntity
 {
     public int Id { get; private set; }
     public Guid UserId { get; private set; }
@@ -16,9 +16,9 @@ public class VenueReadModel : IIdEntity
     public double AverageRating { get; private set; }
     public int ReviewCount { get; private set; }
 
-    private VenueReadModel() { }
+    private VenueEntity() { }
 
-    public static VenueReadModel Create(
+    public static VenueEntity Create(
         int venueId,
         Guid userId,
         string name,

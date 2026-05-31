@@ -1,4 +1,4 @@
-using Concertable.Customer.Artist.Infrastructure.Data.Configurations;
+﻿using Concertable.Customer.Artist.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Artist.Infrastructure.Data;
@@ -7,7 +7,7 @@ internal sealed class ArtistConfigurationProvider : IEntityTypeConfigurationProv
 {
     public void Configure(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new ArtistReadModelConfiguration());
-        modelBuilder.ApplyConfiguration(new ArtistGenreReadModelConfiguration());
+        modelBuilder.ApplyConfiguration(new ArtistEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new ArtistGenreEntityConfiguration());
     }
 }

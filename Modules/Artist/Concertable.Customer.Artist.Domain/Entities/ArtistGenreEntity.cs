@@ -1,8 +1,8 @@
-namespace Concertable.Customer.Artist.Domain.Entities;
+﻿namespace Concertable.Customer.Artist.Domain.Entities;
 
-public sealed class ArtistGenreReadModel
+public sealed class ArtistGenreEntity
 {
     public int ArtistId { get; set; }
     public Genre Genre { get; set; }
-    public ArtistReadModel Artist { get; set; } = null!;
+    public ArtistEntity Artist { get; set; } = null!;
 }

@@ -1,4 +1,4 @@
-using Concertable.Customer.Venue.Domain.Entities;
+﻿using Concertable.Customer.Venue.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Venue.Infrastructure.Data;
@@ -13,7 +13,7 @@ internal class VenueDbContext : DbContextBase
         this.provider = provider;
     }
 
-    public DbSet<VenueReadModel> Venues => Set<VenueReadModel>();
+    public DbSet<VenueEntity> Venues => Set<VenueEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,4 +1,4 @@
-using Concertable.Customer.Venue.Infrastructure.Data.Configurations;
+﻿using Concertable.Customer.Venue.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Venue.Infrastructure.Data;
@@ -7,6 +7,6 @@ internal sealed class VenueConfigurationProvider : IEntityTypeConfigurationProvi
 {
     public void Configure(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new VenueReadModelConfiguration());
+        modelBuilder.ApplyConfiguration(new VenueEntityConfiguration());
     }
 }

@@ -38,15 +38,15 @@ All modules live under `Modules/`. Each follows the `Concertable.Customer.<Modul
 | **Preference** | `PreferenceEntity` — UserId, RadiusKm, `HashSet<GenrePreferenceEntity>` | Api, Application, Domain, Infrastructure — **no Contracts** |
 | **User** | `UserEntity` — Id (Auth `sub`), Email, optional `Point Location`, optional `Address`. This is the customer profile — there is no separate `CustomerProfileEntity`. Created from `CredentialRegisteredEvent`. | Api, Application, **Contracts**, Domain, Infrastructure, IntegrationTests, UnitTests |
 
-### Read-model modules (populated from B2B events; no canonical writes)
+### Replica modules (event-synced from B2B; no canonical writes)
 
-| Module | Read model(s) | Event handlers |
+These hold Customer's own model of upstream B2B concepts. In Customer's isolated context they *are* the entity — there is no other representation — so they're named `*Entity`, not `*ReadModel` (that suffix is reserved for a denormalized projection sitting beside an authoritative write model in the same system, which is B2B's case, not Customer's). The distinguishing invariant is **how they're populated**: each row is written only by an `XChangedEvent` handler. They have **no canonical write path** and must never be seeded or mutated directly — drive the upstream event instead (see `api/docs/SEEDING_CONVENTIONS.md`).
+
+| Module | Replica entities | Event handlers |
 |---|---|---|
-| **Concert** | `ConcertReadModel`, `ConcertGenreReadModel` (file: `ConcertEntity.cs` — misleading name) | `ConcertProjectionHandler` ← `ConcertChangedEvent`; `ConcertRatingProjectionHandler` ← `ConcertRatingUpdatedEvent`; `ConcertPostedNotificationHandler` ← `ConcertPostedEvent` (Preference module) |
-| **Artist** | `ArtistReadModel`, `ArtistGenreReadModel` | `ArtistProjectionHandler` ← `ArtistChangedEvent`; `ArtistRatingProjectionHandler` ← `ArtistRatingUpdatedEvent` |
-| **Venue** | `VenueReadModel` | `VenueProjectionHandler` ← `VenueChangedEvent`; `VenueRatingProjectionHandler` ← `VenueRatingUpdatedEvent` |
-
-> Note: read-model files under these modules are named `*Entity.cs` but contain classes named `*ReadModel`. Don't be misled — they have no canonical write path. See TECH_DEBT for the rename.
+| **Concert** | `ConcertEntity`, `ConcertGenreEntity` | `ConcertProjectionHandler` ← `ConcertChangedEvent`; `ConcertRatingProjectionHandler` ← `ConcertRatingUpdatedEvent`; `ConcertPostedNotificationHandler` ← `ConcertPostedEvent` (Preference module) |
+| **Artist** | `ArtistEntity`, `ArtistGenreEntity` | `ArtistProjectionHandler` ← `ArtistChangedEvent`; `ArtistRatingProjectionHandler` ← `ArtistRatingUpdatedEvent` |
+| **Venue** | `VenueEntity` | `VenueProjectionHandler` ← `VenueChangedEvent`; `VenueRatingProjectionHandler` ← `VenueRatingUpdatedEvent` |
 
 These tables are empty until upstream B2B events arrive. Under the umbrella `Concertable.AppHost`, real B2B publishes them. Under standalone `Concertable.Customer.AppHost` (dev), the `Concertable.B2B.Seed.Simulator` Worker is registered as an Aspire resource and stands in for B2B — publishing the same events from the canonical fixture, so projection state is identical either way. See [`../Concertable.B2B/Concertable.B2B.Seed.Simulator/CLAUDE.md`](../Concertable.B2B/Concertable.B2B.Seed.Simulator/CLAUDE.md) for the pattern.
 

@@ -1,12 +1,12 @@
-using Concertable.Customer.Venue.Domain.Entities;
+﻿using Concertable.Customer.Venue.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Concertable.Customer.Venue.Infrastructure.Data.Configurations;
 
-internal class VenueReadModelConfiguration : IEntityTypeConfiguration<VenueReadModel>
+internal class VenueEntityConfiguration : IEntityTypeConfiguration<VenueEntity>
 {
-    public void Configure(EntityTypeBuilder<VenueReadModel> builder)
+    public void Configure(EntityTypeBuilder<VenueEntity> builder)
     {
         builder.ToTable("Venues", Schema.Name);
         builder.Property(v => v.Id).ValueGeneratedNever();

@@ -1,4 +1,4 @@
-using Concertable.B2B.Concert.Contracts.Events;
+﻿using Concertable.B2B.Concert.Contracts.Events;
 using Concertable.Customer.Concert.Domain.Entities;
 using Concertable.Customer.Concert.Infrastructure.Data;
 using Concertable.Messaging.Contracts;
@@ -28,7 +28,7 @@ internal class ConcertProjectionHandler : IIntegrationEventHandler<ConcertChange
 
         if (concert is null)
         {
-            concert = ConcertReadModel.Create(
+            concert = ConcertEntity.Create(
                 e.ConcertId,
                 e.Name,
                 e.About,
@@ -45,7 +45,7 @@ internal class ConcertProjectionHandler : IIntegrationEventHandler<ConcertChange
                 e.PayeeUserId);
 
             foreach (var g in e.Genres)
-                concert.Genres.Add(new ConcertGenreReadModel { ConcertId = e.ConcertId, Genre = g });
+                concert.Genres.Add(new ConcertGenreEntity { ConcertId = e.ConcertId, Genre = g });
 
             context.Concerts.Add(concert);
         }
@@ -72,7 +72,7 @@ internal class ConcertProjectionHandler : IIntegrationEventHandler<ConcertChange
             foreach (var g in concert.Genres.Where(g => !desired.Contains(g.Genre)).ToList())
                 concert.Genres.Remove(g);
             foreach (var g in desired.Where(g => !current.Contains(g)))
-                concert.Genres.Add(new ConcertGenreReadModel { ConcertId = e.ConcertId, Genre = g });
+                concert.Genres.Add(new ConcertGenreEntity { ConcertId = e.ConcertId, Genre = g });
         }
 
         await context.SaveChangesAsync(ct);
