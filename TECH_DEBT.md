@@ -17,6 +17,14 @@ The inverse-direction event flow (Customer → B2B/Search) from plan §6 is not 
 
 ---
 
+### Concert read-model written directly by `TicketService` through the query repo
+
+`IConcertReadRepository` exposes `SaveChangesAsync`, and `TicketService.CompleteAsync` calls `concert.DecrementAvailability(...)` then `concertRepository.SaveChangesAsync()` — an application service mutating an event-sourced read-model through its **query** repo. Every other read repo is read-only by omission (`IReadRepository<T>` declares no write method); this is the lone write surface leaking across a module boundary. It exists because `TicketService` (Ticket module) can't reach the `internal` `ConcertDbContext`, so the only available door was bolting `SaveChangesAsync` onto the read repo.
+
+**Resolves when:** `SaveChangesAsync` is removed from `IConcertReadRepository` / `ConcertReadRepository` (read repo becomes write-free, matching Venue/Artist), and the availability decrement moves onto the event path — the `TicketPurchasedEvent` above drives a Customer Concert projection handler that applies it via the concrete `ConcertDbContext` (handler-only write surface, same pattern as Search). Read-only is then enforced structurally: read interface with no write method + `internal` writable context reachable only by its own projection handlers.
+
+---
+
 ### E2E boots the whole real fleet from source references (won't survive the repo split)
 
 `Concertable.Customer.E2ETests/AppFixture.cs` launches the Customer AppHost via

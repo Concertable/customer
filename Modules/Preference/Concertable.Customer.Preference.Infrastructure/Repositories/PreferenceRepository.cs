@@ -7,14 +7,14 @@ internal class PreferenceRepository : Repository<PreferenceEntity>, IPreferenceR
 {
     public PreferenceRepository(PreferenceDbContext context) : base(context) { }
 
-    public async new Task<IEnumerable<PreferenceEntity>> GetAllAsync()
+    public override async Task<IEnumerable<PreferenceEntity>> GetAllAsync()
     {
         return await context.Preferences
             .Include(p => p.GenrePreferences)
             .ToListAsync();
     }
 
-    public async new Task<PreferenceEntity?> GetByIdAsync(int id)
+    public override async Task<PreferenceEntity?> GetByIdAsync(int id)
     {
         return await context.Preferences
             .Include(p => p.GenrePreferences)
