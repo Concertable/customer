@@ -7,7 +7,7 @@ internal sealed class UserEntityConfiguration : IEntityTypeConfiguration<UserEnt
 {
     public void Configure(EntityTypeBuilder<UserEntity> builder)
     {
-        builder.ToTable("Users", Schema.Name);
+        builder.ToTable(Schema.Tables.Users, Schema.Name);
         builder.HasKey(u => u.Id);
         builder.Property(u => u.Id).ValueGeneratedNever();
         builder.Property(u => u.Location).HasColumnType("geography");

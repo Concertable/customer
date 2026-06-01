@@ -8,7 +8,7 @@ internal class ArtistEntityConfiguration : IEntityTypeConfiguration<ArtistEntity
 {
     public void Configure(EntityTypeBuilder<ArtistEntity> builder)
     {
-        builder.ToTable("Artists", Schema.Name);
+        builder.ToTable(Schema.Tables.Artists, Schema.Name);
         builder.Property(a => a.Id).ValueGeneratedNever();
 
         builder.HasMany(a => a.Genres)
@@ -21,7 +21,7 @@ internal class ArtistGenreEntityConfiguration : IEntityTypeConfiguration<ArtistG
 {
     public void Configure(EntityTypeBuilder<ArtistGenreEntity> builder)
     {
-        builder.ToTable("ArtistGenres", Schema.Name);
+        builder.ToTable(Schema.Tables.ArtistGenres, Schema.Name);
         builder.HasKey(x => new { x.ArtistId, x.Genre });
     }
 }

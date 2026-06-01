@@ -4,5 +4,8 @@ public static class Schema
 {
     public const string Name = "venue";
 
-    public const string Venues = "Venues";
+    public static class Tables
+    {
+        public const string Venues = "Venues";
+    }
 }

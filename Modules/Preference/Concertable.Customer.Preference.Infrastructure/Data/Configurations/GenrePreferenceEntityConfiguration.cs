@@ -7,7 +7,7 @@ internal class GenrePreferenceEntityConfiguration : IEntityTypeConfiguration<Gen
 {
     public void Configure(EntityTypeBuilder<GenrePreferenceEntity> builder)
     {
-        builder.ToTable("GenrePreferences", Schema.Name);
+        builder.ToTable(Schema.Tables.GenrePreferences, Schema.Name);
         builder.HasOne(gp => gp.Preference)
             .WithMany(p => p.GenrePreferences)
             .HasForeignKey(gp => gp.PreferenceId)

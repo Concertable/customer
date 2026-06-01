@@ -25,13 +25,13 @@ public sealed class DbFixture
         {
             TablesToIgnore = [
                 "__EFMigrationsHistory",
-                new Table(ConcertSchema.Name, ConcertSchema.Concerts),
-                new Table(ConcertSchema.Name, ConcertSchema.ConcertGenres),
-                new Table(ArtistSchema.Name, ArtistSchema.Artists),
-                new Table(ArtistSchema.Name, ArtistSchema.ArtistGenres),
-                new Table(VenueSchema.Name, VenueSchema.Venues),
-                new Table(UserSchema.Name, UserSchema.Users),
-                new Table(MessagingSchema.Name, MessagingSchema.Inbox),
+                new Table(ConcertSchema.Name, ConcertSchema.Tables.Concerts),
+                new Table(ConcertSchema.Name, ConcertSchema.Tables.ConcertGenres),
+                new Table(ArtistSchema.Name, ArtistSchema.Tables.Artists),
+                new Table(ArtistSchema.Name, ArtistSchema.Tables.ArtistGenres),
+                new Table(VenueSchema.Name, VenueSchema.Tables.Venues),
+                new Table(UserSchema.Name, UserSchema.Tables.Users),
+                new Table(MessagingSchema.Name, MessagingSchema.Tables.Inbox),
             ],
             DbAdapter = DbAdapter.SqlServer,
             WithReseed = true
