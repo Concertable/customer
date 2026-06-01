@@ -1,6 +1,6 @@
 namespace Concertable.Customer.Review.Application.Requests;
 
-internal record CreateReviewRequest
+internal sealed record CreateReviewRequest
 {
     public int ConcertId { get; set; }
     public byte Stars { get; set; }

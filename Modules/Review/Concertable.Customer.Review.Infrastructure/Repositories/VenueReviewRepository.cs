@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Review.Infrastructure.Repositories;
 
-internal class VenueReviewRepository : IVenueReviewRepository
+internal sealed class VenueReviewRepository : IVenueReviewRepository
 {
     private readonly ReviewDbContext context;
     private readonly ITicketRepository ticketRepository;

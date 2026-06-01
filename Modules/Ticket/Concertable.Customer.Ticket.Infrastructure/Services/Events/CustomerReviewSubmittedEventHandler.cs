@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Services.Events;
 
-internal class CustomerReviewSubmittedEventHandler : IIntegrationEventHandler<CustomerReviewSubmittedEvent>
+internal sealed class CustomerReviewSubmittedEventHandler : IIntegrationEventHandler<CustomerReviewSubmittedEvent>
 {
     private readonly ITicketRepository ticketRepository;
     private readonly TicketDbContext context;

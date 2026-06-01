@@ -1,6 +1,6 @@
 namespace Concertable.Customer.E2ETests.Ui.PageObjects;
 
-public class LoginPage
+public sealed class LoginPage
 {
     private readonly IPage page;
     private readonly string spaBaseUrl;

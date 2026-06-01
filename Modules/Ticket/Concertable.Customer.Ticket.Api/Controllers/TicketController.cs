@@ -9,7 +9,7 @@ namespace Concertable.Customer.Ticket.Api.Controllers;
 [Customer]
 [ApiController]
 [Route("api/[controller]")]
-internal class TicketController : ControllerBase
+internal sealed class TicketController : ControllerBase
 {
     private readonly ITicketService ticketService;
     private readonly ITicketValidator ticketValidator;

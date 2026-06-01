@@ -4,7 +4,7 @@ using Concertable.Customer.E2ETests.Ui.Support;
 namespace Concertable.Customer.E2ETests.Ui.Steps;
 
 [Binding]
-public class LoginSteps
+public sealed class LoginSteps
 {
     private readonly UiFixture fixture;
     private readonly Browser browser;

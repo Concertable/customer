@@ -5,7 +5,7 @@ namespace Concertable.Customer.Review.Api.Controllers;
 
 [ApiController]
 [Route("api/concerts/{concertId}/reviews")]
-internal class ConcertReviewsController : ControllerBase
+internal sealed class ConcertReviewsController : ControllerBase
 {
     private readonly IConcertReviewService reviewService;
 

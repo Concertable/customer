@@ -5,7 +5,7 @@ using Concertable.Customer.Venue.Domain.Entities;
 
 namespace Concertable.Customer.Venue.Infrastructure.Handlers;
 
-internal class VenueProjectionHandler : IIntegrationEventHandler<VenueChangedEvent>
+internal sealed class VenueProjectionHandler : IIntegrationEventHandler<VenueChangedEvent>
 {
     private readonly VenueDbContext context;
 

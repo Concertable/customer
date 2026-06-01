@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Concertable.Customer.Ticket.Application.Validators;
 
-internal class TicketPurchaseParamsValidator : AbstractValidator<TicketPurchaseParams>
+internal sealed class TicketPurchaseParamsValidator : AbstractValidator<TicketPurchaseParams>
 {
     public TicketPurchaseParamsValidator()
     {

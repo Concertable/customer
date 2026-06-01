@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace Concertable.Customer.Review.Infrastructure.Data;
 
-internal class ReviewDbContextFactory : IDesignTimeDbContextFactory<ReviewDbContext>
+internal sealed class ReviewDbContextFactory : IDesignTimeDbContextFactory<ReviewDbContext>
 {
     public ReviewDbContext CreateDbContext(string[] args)
     {

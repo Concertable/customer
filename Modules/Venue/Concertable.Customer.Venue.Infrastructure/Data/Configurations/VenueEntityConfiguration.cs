@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Concertable.Customer.Venue.Infrastructure.Data.Configurations;
 
-internal class VenueEntityConfiguration : IEntityTypeConfiguration<VenueEntity>
+internal sealed class VenueEntityConfiguration : IEntityTypeConfiguration<VenueEntity>
 {
     public void Configure(EntityTypeBuilder<VenueEntity> builder)
     {

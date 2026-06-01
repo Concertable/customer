@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Review.Infrastructure.Repositories;
 
-internal class ConcertReviewRepository(
+internal sealed class ConcertReviewRepository(
     ReviewDbContext context,
     ITicketRepository ticketRepository,
     TimeProvider timeProvider) : IConcertReviewRepository

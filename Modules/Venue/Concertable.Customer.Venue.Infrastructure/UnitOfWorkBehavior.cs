@@ -4,5 +4,5 @@ namespace Concertable.Customer.Venue.Infrastructure;
 
 internal interface IUnitOfWorkBehavior : IUnitOfWorkBehavior<VenueDbContext>;
 
-internal class UnitOfWorkBehavior(IUnitOfWork<VenueDbContext> unitOfWork)
+internal sealed class UnitOfWorkBehavior(IUnitOfWork<VenueDbContext> unitOfWork)
     : UnitOfWorkBehavior<VenueDbContext>(unitOfWork), IUnitOfWorkBehavior;

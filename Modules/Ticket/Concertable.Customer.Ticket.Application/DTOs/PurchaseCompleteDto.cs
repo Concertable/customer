@@ -1,6 +1,6 @@
 namespace Concertable.Customer.Ticket.Application.DTOs;
 
-internal record PurchaseCompleteDto
+internal sealed record PurchaseCompleteDto
 {
     public int EntityId { get; set; }
     public Guid FromUserId { get; set; }

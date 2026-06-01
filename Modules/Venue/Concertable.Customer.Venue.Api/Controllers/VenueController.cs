@@ -7,7 +7,7 @@ namespace Concertable.Customer.Venue.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-internal class VenueController : ControllerBase
+internal sealed class VenueController : ControllerBase
 {
     private readonly IVenueService venueService;
 

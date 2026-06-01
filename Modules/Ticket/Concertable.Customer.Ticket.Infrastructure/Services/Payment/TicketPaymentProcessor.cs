@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Services.Payment;
 
-internal class TicketPaymentProcessor : IIntegrationEventHandler<PaymentSucceededEvent>
+internal sealed class TicketPaymentProcessor : IIntegrationEventHandler<PaymentSucceededEvent>
 {
     private readonly ITicketService ticketService;
     private readonly ITicketNotifier notifier;

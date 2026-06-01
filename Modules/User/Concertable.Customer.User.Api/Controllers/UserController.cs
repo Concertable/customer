@@ -9,7 +9,7 @@ namespace Concertable.Customer.User.Api.Controllers;
 [Customer]
 [ApiController]
 [Route("api/[controller]")]
-internal class UserController : ControllerBase
+internal sealed class UserController : ControllerBase
 {
     private readonly IUserService userService;
 

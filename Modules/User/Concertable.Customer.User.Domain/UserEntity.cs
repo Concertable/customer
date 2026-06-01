@@ -3,7 +3,7 @@ using NetTopologySuite.Geometries;
 
 namespace Concertable.Customer.User.Domain;
 
-public class UserEntity : IGuidEntity
+public sealed class UserEntity : IGuidEntity
 {
     protected UserEntity() { }
 

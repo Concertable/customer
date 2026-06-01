@@ -1,6 +1,6 @@
 namespace Concertable.Customer.E2ETests.Ui.PageObjects;
 
-public class TicketCheckoutPage
+public sealed class TicketCheckoutPage
 {
     private readonly IPage page;
     private readonly IStripePayment payment;
@@ -11,8 +11,8 @@ public class TicketCheckoutPage
         this.payment = payment;
     }
 
-    private ILocator ConfirmButton     => page.GetByTestId("confirm");
-    private ILocator SuccessScreen     => page.GetByTestId("checkout-success");
+    private ILocator ConfirmButton => page.GetByTestId("confirm");
+    private ILocator SuccessScreen => page.GetByTestId("checkout-success");
     private ILocator ViewTicketsButton => page.GetByTestId("view-tickets");
     private ILocator Toast(string text) =>
         page.Locator("[data-sonner-toast]").Filter(new() { HasText = text });

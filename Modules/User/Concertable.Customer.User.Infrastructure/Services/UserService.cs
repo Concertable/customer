@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Concertable.Customer.User.Infrastructure.Services;
 
-internal class UserService : IUserService
+internal sealed class UserService : IUserService
 {
     private readonly IUserRepository userRepository;
     private readonly ICurrentUser currentUser;

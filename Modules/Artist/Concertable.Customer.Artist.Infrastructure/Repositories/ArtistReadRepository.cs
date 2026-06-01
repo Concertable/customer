@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Artist.Infrastructure.Repositories;
 
-internal class ArtistReadRepository : ReadRepository<ArtistEntity>, IArtistReadRepository
+internal sealed class ArtistReadRepository : ReadRepository<ArtistEntity>, IArtistReadRepository
 {
     public ArtistReadRepository(ArtistDbContext context) : base(context) { }
 

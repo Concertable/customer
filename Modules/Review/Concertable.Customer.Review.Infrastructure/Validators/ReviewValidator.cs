@@ -1,6 +1,6 @@
 namespace Concertable.Customer.Review.Infrastructure.Validators;
 
-internal class ReviewValidator(
+internal sealed class ReviewValidator(
     IConcertReviewRepository concertReviewRepository,
     IArtistReviewRepository artistReviewRepository,
     IVenueReviewRepository venueReviewRepository) : IReviewValidator

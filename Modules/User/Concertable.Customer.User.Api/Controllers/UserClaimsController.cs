@@ -7,7 +7,7 @@ namespace Concertable.Customer.User.Api.Controllers;
 [ApiController]
 [Route("internal/users")]
 [Authorize("UserClaimsScope")]
-internal class UserClaimsController : ControllerBase
+internal sealed class UserClaimsController : ControllerBase
 {
     private readonly IUserModule userModule;
 
@@ -26,5 +26,5 @@ internal class UserClaimsController : ControllerBase
         return Ok(new[] { new ClaimDto("role", "Customer") });
     }
 
-    public record ClaimDto(string Type, string Value);
+    public sealed record ClaimDto(string Type, string Value);
 }

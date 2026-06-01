@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Concertable.Customer.User.Application.Validators;
 
-public class UpdateLocationRequestValidator : AbstractValidator<UpdateLocationRequest>
+public sealed class UpdateLocationRequestValidator : AbstractValidator<UpdateLocationRequest>
 {
     public UpdateLocationRequestValidator()
     {

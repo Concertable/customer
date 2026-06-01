@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Concertable.Customer.Concert.Infrastructure.Data.Configurations;
 
-internal class ConcertEntityConfiguration : IEntityTypeConfiguration<ConcertEntity>
+internal sealed class ConcertEntityConfiguration : IEntityTypeConfiguration<ConcertEntity>
 {
     public void Configure(EntityTypeBuilder<ConcertEntity> builder)
     {
@@ -23,7 +23,7 @@ internal class ConcertEntityConfiguration : IEntityTypeConfiguration<ConcertEnti
     }
 }
 
-internal class ConcertGenreEntityConfiguration : IEntityTypeConfiguration<ConcertGenreEntity>
+internal sealed class ConcertGenreEntityConfiguration : IEntityTypeConfiguration<ConcertGenreEntity>
 {
     public void Configure(EntityTypeBuilder<ConcertGenreEntity> builder)
     {

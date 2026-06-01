@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Services;
 
-internal class TicketService : ITicketService
+internal sealed class TicketService : ITicketService
 {
     private readonly ITicketRepository ticketRepository;
     private readonly ITicketValidator ticketValidator;

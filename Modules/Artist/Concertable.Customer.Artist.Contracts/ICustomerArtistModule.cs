@@ -7,7 +7,7 @@ public interface ICustomerArtistModule
     Task<ArtistSummary?> GetSummaryAsync(int artistId, CancellationToken ct = default);
 }
 
-public record ArtistSummary(
+public sealed record ArtistSummary(
     int Id,
     string Name,
     string? Avatar,

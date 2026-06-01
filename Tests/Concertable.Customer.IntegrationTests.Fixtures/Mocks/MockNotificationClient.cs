@@ -1,6 +1,6 @@
 namespace Concertable.Customer.IntegrationTests.Fixtures.Mocks;
 
-public class MockNotificationClient : IMockNotificationClient
+public sealed class MockNotificationClient : IMockNotificationClient
 {
     public List<(string UserId, object Payload)> ConcertPosted { get; } = [];
     public List<(string UserId, object Payload)> TicketPurchased { get; } = [];

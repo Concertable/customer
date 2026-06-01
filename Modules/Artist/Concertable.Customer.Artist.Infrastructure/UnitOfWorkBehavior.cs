@@ -4,5 +4,5 @@ namespace Concertable.Customer.Artist.Infrastructure;
 
 internal interface IUnitOfWorkBehavior : IUnitOfWorkBehavior<ArtistDbContext>;
 
-internal class UnitOfWorkBehavior(IUnitOfWork<ArtistDbContext> unitOfWork)
+internal sealed class UnitOfWorkBehavior(IUnitOfWork<ArtistDbContext> unitOfWork)
     : UnitOfWorkBehavior<ArtistDbContext>(unitOfWork), IUnitOfWorkBehavior;

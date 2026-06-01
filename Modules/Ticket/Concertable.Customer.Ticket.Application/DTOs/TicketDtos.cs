@@ -2,13 +2,13 @@ using Concertable.Payment.Client;
 
 namespace Concertable.Customer.Ticket.Application.DTOs;
 
-internal record TicketCheckout(
+internal sealed record TicketCheckout(
     CheckoutSession Session,
     decimal Price,
     int ConcertId,
     int Quantity);
 
-internal record TicketConcertDto
+internal sealed record TicketConcertDto
 {
     public int Id { get; set; }
     public required string Name { get; set; }
@@ -19,7 +19,7 @@ internal record TicketConcertDto
     public required string ArtistName { get; set; }
 }
 
-internal record TicketDto
+internal sealed record TicketDto
 {
     public Guid Id { get; set; }
     public DateTime PurchaseDate { get; set; }
