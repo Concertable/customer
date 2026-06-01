@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Preference.Infrastructure.Data;
 
-internal class PreferenceDbContext(
+internal sealed class PreferenceDbContext(
     DbContextOptions<PreferenceDbContext> options,
     PreferenceConfigurationProvider provider)
     : DbContextBase(options)

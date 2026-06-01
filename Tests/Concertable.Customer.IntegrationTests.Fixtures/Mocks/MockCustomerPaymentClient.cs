@@ -3,7 +3,7 @@ using FluentResults;
 
 namespace Concertable.Customer.IntegrationTests.Fixtures;
 
-internal class MockCustomerPaymentClient : ICustomerPaymentClient
+internal sealed class MockCustomerPaymentClient : ICustomerPaymentClient
 {
     public Task<Result<PaymentResponse>> PayAsync(Guid payerId, int concertId, Guid payeeId, decimal amount, IDictionary<string, string> metadata, string paymentMethodId, CancellationToken ct = default) =>
         Task.FromResult(Result.Ok(new PaymentResponse { RequiresAction = false, TransactionId = "pi_mock_pay" }));

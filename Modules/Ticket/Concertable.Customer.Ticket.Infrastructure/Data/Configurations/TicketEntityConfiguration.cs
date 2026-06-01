@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Data.Configurations;
 
-internal class TicketEntityConfiguration : IEntityTypeConfiguration<TicketEntity>
+internal sealed class TicketEntityConfiguration : IEntityTypeConfiguration<TicketEntity>
 {
     public void Configure(EntityTypeBuilder<TicketEntity> builder)
     {

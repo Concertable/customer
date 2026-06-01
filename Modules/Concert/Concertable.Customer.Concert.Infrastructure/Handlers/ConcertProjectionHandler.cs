@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Concert.Infrastructure.Handlers;
 
-internal class ConcertProjectionHandler : IIntegrationEventHandler<ConcertChangedEvent>
+internal sealed class ConcertProjectionHandler : IIntegrationEventHandler<ConcertChangedEvent>
 {
     private readonly ConcertDbContext context;
 

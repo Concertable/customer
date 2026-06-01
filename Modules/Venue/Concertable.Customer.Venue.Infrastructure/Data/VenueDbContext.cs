@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Venue.Infrastructure.Data;
 
-internal class VenueDbContext : DbContextBase
+internal sealed class VenueDbContext : DbContextBase
 {
     private readonly VenueConfigurationProvider provider;
 

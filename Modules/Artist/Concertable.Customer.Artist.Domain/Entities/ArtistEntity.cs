@@ -1,6 +1,6 @@
 ﻿namespace Concertable.Customer.Artist.Domain.Entities;
 
-public class ArtistEntity : IIdEntity
+public sealed class ArtistEntity : IIdEntity
 {
     public int Id { get; private set; }
     public Guid UserId { get; private set; }
@@ -31,19 +31,19 @@ public class ArtistEntity : IIdEntity
         double latitude,
         double longitude,
         string email) => new()
-    {
-        Id = artistId,
-        UserId = userId,
-        Name = name,
-        About = about,
-        Avatar = avatar,
-        BannerUrl = bannerUrl,
-        County = county,
-        Town = town,
-        Latitude = latitude,
-        Longitude = longitude,
-        Email = email
-    };
+        {
+            Id = artistId,
+            UserId = userId,
+            Name = name,
+            About = about,
+            Avatar = avatar,
+            BannerUrl = bannerUrl,
+            County = county,
+            Town = town,
+            Latitude = latitude,
+            Longitude = longitude,
+            Email = email
+        };
 
     public void Update(
         Guid userId,

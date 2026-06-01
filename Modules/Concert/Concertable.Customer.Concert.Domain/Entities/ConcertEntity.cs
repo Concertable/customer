@@ -2,7 +2,7 @@
 
 namespace Concertable.Customer.Concert.Domain.Entities;
 
-public class ConcertEntity : IIdEntity
+public sealed class ConcertEntity : IIdEntity
 {
     public int Id { get; private set; }
     public string Name { get; private set; } = null!;
@@ -40,23 +40,23 @@ public class ConcertEntity : IIdEntity
         int venueId,
         string venueName,
         Guid payeeUserId) => new()
-    {
-        Id = concertId,
-        Name = name,
-        About = about,
-        BannerUrl = bannerUrl,
-        Avatar = avatar,
-        TotalTickets = totalTickets,
-        AvailableTickets = totalTickets,
-        Price = price,
-        Period = period,
-        DatePosted = datePosted,
-        ArtistId = artistId,
-        ArtistName = artistName,
-        VenueId = venueId,
-        VenueName = venueName,
-        PayeeUserId = payeeUserId
-    };
+        {
+            Id = concertId,
+            Name = name,
+            About = about,
+            BannerUrl = bannerUrl,
+            Avatar = avatar,
+            TotalTickets = totalTickets,
+            AvailableTickets = totalTickets,
+            Price = price,
+            Period = period,
+            DatePosted = datePosted,
+            ArtistId = artistId,
+            ArtistName = artistName,
+            VenueId = venueId,
+            VenueName = venueName,
+            PayeeUserId = payeeUserId
+        };
 
     public void Update(
         string name,

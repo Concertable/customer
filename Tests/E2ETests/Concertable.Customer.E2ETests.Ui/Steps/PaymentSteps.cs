@@ -3,7 +3,7 @@ using Concertable.Customer.E2ETests.Ui.Support;
 namespace Concertable.Customer.E2ETests.Ui.Steps;
 
 [Binding]
-public class PaymentSteps
+public sealed class PaymentSteps
 {
     private readonly Browser browser;
 

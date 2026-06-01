@@ -5,7 +5,7 @@ using Concertable.Kernel;
 namespace Concertable.Customer.Review.Domain.Entities;
 
 [Table("Reviews")]
-public class ReviewEntity : IIdEntity, IEventRaiser
+public sealed class ReviewEntity : IIdEntity, IEventRaiser
 {
     public int Id { get; private set; }
     public Guid TicketId { get; private set; }

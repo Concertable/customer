@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Venue.Infrastructure.Services;
 
-internal class CustomerVenueModule : ICustomerVenueModule
+internal sealed class CustomerVenueModule : ICustomerVenueModule
 {
     private readonly VenueDbContext context;
 

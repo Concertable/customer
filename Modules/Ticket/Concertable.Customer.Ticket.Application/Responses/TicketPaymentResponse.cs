@@ -2,7 +2,7 @@ using Concertable.Payment.Client;
 
 namespace Concertable.Customer.Ticket.Application.Responses;
 
-internal record TicketPaymentResponse : PaymentResponse
+internal sealed record TicketPaymentResponse : PaymentResponse
 {
     public IReadOnlyList<Guid> TicketIds { get; set; } = [];
     public int ConcertId { get; set; }

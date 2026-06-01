@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Venue.Infrastructure.Data.Seeders;
 
-internal class VenueProjectionTestSeeder : ITestSeeder
+internal sealed class VenueProjectionTestSeeder : ITestSeeder
 {
     public int Order => 1;
 

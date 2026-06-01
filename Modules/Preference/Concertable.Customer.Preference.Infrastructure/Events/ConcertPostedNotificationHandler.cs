@@ -4,7 +4,7 @@ using Concertable.Customer.Preference.Infrastructure.Notifications;
 
 namespace Concertable.Customer.Preference.Infrastructure.Events;
 
-internal class ConcertPostedNotificationHandler : IIntegrationEventHandler<ConcertPostedEvent>
+internal sealed class ConcertPostedNotificationHandler : IIntegrationEventHandler<ConcertPostedEvent>
 {
     private readonly PreferenceDbContext context;
     private readonly IPreferenceService preferenceService;

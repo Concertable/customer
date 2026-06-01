@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace Concertable.Customer.E2ETests.Ui.PageObjects;
 
-public class FindPage
+public sealed class FindPage
 {
     private readonly IPage page;
     private readonly string url;
@@ -13,16 +13,16 @@ public class FindPage
         this.url = $"{spaBaseUrl}/find";
     }
 
-    private ILocator FilterOpenButton  => page.GetByTestId("filter-open");
-    private ILocator FilterPanel       => page.GetByTestId("filter-panel");
-    private ILocator HeaderTypeSelect  => page.GetByTestId("filter-header-type");
-    private ILocator GenreSelect       => page.GetByTestId("filter-genre-select");
-    private ILocator GenreAddButton    => page.GetByTestId("filter-genre-add");
-    private RadixSlider RadiusSlider    => new(page, page.GetByTestId("filter-radius-slider"), min: 1, max: 200);
-    private ILocator ApplyButton       => page.GetByTestId("filter-apply");
-    private ILocator SearchResults     => page.GetByTestId("search-results");
-    private ILocator HeaderCards       => page.GetByTestId("header-card");
-    private ILocator QueryInput        => page.GetByTestId("search-query");
+    private ILocator FilterOpenButton => page.GetByTestId("filter-open");
+    private ILocator FilterPanel => page.GetByTestId("filter-panel");
+    private ILocator HeaderTypeSelect => page.GetByTestId("filter-header-type");
+    private ILocator GenreSelect => page.GetByTestId("filter-genre-select");
+    private ILocator GenreAddButton => page.GetByTestId("filter-genre-add");
+    private RadixSlider RadiusSlider => new(page, page.GetByTestId("filter-radius-slider"), min: 1, max: 200);
+    private ILocator ApplyButton => page.GetByTestId("filter-apply");
+    private ILocator SearchResults => page.GetByTestId("search-results");
+    private ILocator HeaderCards => page.GetByTestId("header-card");
+    private ILocator QueryInput => page.GetByTestId("search-query");
 
     public Task GotoAsync() => page.GotoAsync(url);
 

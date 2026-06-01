@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace Concertable.Customer.Preference.Infrastructure.Data;
 
-internal class PreferenceDbContextFactory : IDesignTimeDbContextFactory<PreferenceDbContext>
+internal sealed class PreferenceDbContextFactory : IDesignTimeDbContextFactory<PreferenceDbContext>
 {
     public PreferenceDbContext CreateDbContext(string[] args)
     {

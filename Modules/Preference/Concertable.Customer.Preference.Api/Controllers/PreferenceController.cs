@@ -9,7 +9,7 @@ namespace Concertable.Customer.Preference.Api.Controllers;
 [Authorize(Policy = "Customer")]
 [ApiController]
 [Route("api/[controller]")]
-internal class PreferenceController : ControllerBase
+internal sealed class PreferenceController : ControllerBase
 {
     private readonly IPreferenceService preferenceService;
 

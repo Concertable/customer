@@ -1,6 +1,6 @@
 namespace Concertable.Customer.Preference.Infrastructure.Notifications;
 
-internal class ConcertPostedNotifier : IConcertPostedNotifier
+internal sealed class ConcertPostedNotifier : IConcertPostedNotifier
 {
     private readonly INotificationClient notificationClient;
 

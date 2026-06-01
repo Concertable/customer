@@ -2,7 +2,7 @@ using Concertable.Customer.User.Application.Mappers;
 
 namespace Concertable.Customer.User.Infrastructure;
 
-internal class UserModule : IUserModule
+internal sealed class UserModule : IUserModule
 {
     private readonly IUserRepository userRepository;
 

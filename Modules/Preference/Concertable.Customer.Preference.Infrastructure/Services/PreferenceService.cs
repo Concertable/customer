@@ -3,7 +3,7 @@ using Concertable.Kernel.Exceptions;
 
 namespace Concertable.Customer.Preference.Infrastructure.Services;
 
-internal class PreferenceService : IPreferenceService
+internal sealed class PreferenceService : IPreferenceService
 {
     private readonly IPreferenceRepository preferenceRepository;
     private readonly ICurrentUser currentUser;

@@ -3,7 +3,7 @@ using Concertable.Kernel.Identity;
 
 namespace Concertable.Customer.Review.Infrastructure.Services;
 
-internal class ArtistReviewService(
+internal sealed class ArtistReviewService(
     IArtistReviewRepository reviewRepository,
     IReviewValidator reviewValidator,
     ICurrentUser currentUser) : IArtistReviewService

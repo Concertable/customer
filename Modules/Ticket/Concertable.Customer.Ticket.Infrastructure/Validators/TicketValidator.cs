@@ -5,7 +5,7 @@ using FluentResults;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Validators;
 
-internal class TicketValidator : ITicketValidator
+internal sealed class TicketValidator : ITicketValidator
 {
     private readonly IConcertReadRepository concertRepository;
     private readonly TimeProvider timeProvider;

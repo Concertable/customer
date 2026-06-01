@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Review.Infrastructure.Data;
 
-internal class ReviewDbContext(
+internal sealed class ReviewDbContext(
     DbContextOptions<ReviewDbContext> options,
     ReviewConfigurationProvider provider)
     : DbContextBase(options)

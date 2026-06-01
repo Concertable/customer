@@ -29,7 +29,7 @@ using CustomerDevDbInitializer = Concertable.Customer.Web.DevDbInitializer;
 
 namespace Concertable.Customer.E2ETests;
 
-public class AppFixture : IAsyncLifetime
+public sealed class AppFixture : IAsyncLifetime
 {
     private DistributedApplication app = null!;
     private AspireResourceLogger resourceLogger = null!;

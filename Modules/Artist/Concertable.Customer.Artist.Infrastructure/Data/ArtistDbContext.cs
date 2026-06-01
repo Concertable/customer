@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Artist.Infrastructure.Data;
 
-internal class ArtistDbContext : DbContextBase
+internal sealed class ArtistDbContext : DbContextBase
 {
     private readonly ArtistConfigurationProvider provider;
 

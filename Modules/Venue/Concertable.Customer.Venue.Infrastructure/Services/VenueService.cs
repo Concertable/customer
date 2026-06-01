@@ -3,7 +3,7 @@ using Concertable.Customer.Venue.Application.Mappers;
 
 namespace Concertable.Customer.Venue.Infrastructure.Services;
 
-internal class VenueService : IVenueService
+internal sealed class VenueService : IVenueService
 {
     private readonly IVenueReadRepository repository;
 

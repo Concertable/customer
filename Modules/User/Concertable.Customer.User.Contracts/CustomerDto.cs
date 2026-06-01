@@ -2,7 +2,7 @@ using Concertable.Kernel.Identity;
 
 namespace Concertable.Customer.User.Contracts;
 
-public record CustomerDto : IUser
+public sealed record CustomerDto : IUser
 {
     public Guid Id { get; set; }
     public required string Email { get; set; }

@@ -1,6 +1,6 @@
 namespace Concertable.Customer.Ticket.Infrastructure.Services;
 
-internal class TicketNotifier : ITicketNotifier
+internal sealed class TicketNotifier : ITicketNotifier
 {
     private readonly INotificationClient notificationClient;
 

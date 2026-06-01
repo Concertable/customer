@@ -5,7 +5,7 @@ using Concertable.Messaging.Contracts;
 
 namespace Concertable.Customer.User.Infrastructure.Events;
 
-internal class UserCreationHandler : IIntegrationEventHandler<CredentialRegisteredEvent>
+internal sealed class UserCreationHandler : IIntegrationEventHandler<CredentialRegisteredEvent>
 {
     private readonly UserDbContext context;
 

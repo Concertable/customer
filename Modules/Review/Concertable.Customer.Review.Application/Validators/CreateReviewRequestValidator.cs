@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Concertable.Customer.Review.Application.Validators;
 
-internal class CreateReviewRequestValidator : AbstractValidator<CreateReviewRequest>
+internal sealed class CreateReviewRequestValidator : AbstractValidator<CreateReviewRequest>
 {
     public CreateReviewRequestValidator()
     {

@@ -3,7 +3,7 @@ using Concertable.Customer.Artist.Application.Mappers;
 
 namespace Concertable.Customer.Artist.Infrastructure.Services;
 
-internal class ArtistService : IArtistService
+internal sealed class ArtistService : IArtistService
 {
     private readonly IArtistReadRepository repository;
 

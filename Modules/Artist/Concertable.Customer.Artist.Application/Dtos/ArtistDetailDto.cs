@@ -1,6 +1,6 @@
 namespace Concertable.Customer.Artist.Application.Dtos;
 
-public record ArtistDetailDto(
+public sealed record ArtistDetailDto(
     int Id,
     string Name,
     string About,

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Data;
 
-internal class TicketDbContext(
+internal sealed class TicketDbContext(
     DbContextOptions<TicketDbContext> options,
     TicketConfigurationProvider provider)
     : DbContextBase(options)

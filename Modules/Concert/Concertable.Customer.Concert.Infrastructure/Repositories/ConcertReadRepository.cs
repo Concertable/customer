@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Concert.Infrastructure.Repositories;
 
-internal class ConcertReadRepository : ReadRepository<ConcertEntity>, IConcertReadRepository
+internal sealed class ConcertReadRepository : ReadRepository<ConcertEntity>, IConcertReadRepository
 {
     public ConcertReadRepository(ConcertDbContext context) : base(context) { }
 

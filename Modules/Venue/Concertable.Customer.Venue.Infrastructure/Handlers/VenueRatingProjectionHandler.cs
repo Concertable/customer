@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Venue.Infrastructure.Handlers;
 
-internal class VenueRatingProjectionHandler : IIntegrationEventHandler<VenueRatingUpdatedEvent>
+internal sealed class VenueRatingProjectionHandler : IIntegrationEventHandler<VenueRatingUpdatedEvent>
 {
     private readonly VenueDbContext context;
 
