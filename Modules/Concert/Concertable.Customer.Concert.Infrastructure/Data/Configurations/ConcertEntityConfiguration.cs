@@ -8,7 +8,7 @@ internal class ConcertEntityConfiguration : IEntityTypeConfiguration<ConcertEnti
 {
     public void Configure(EntityTypeBuilder<ConcertEntity> builder)
     {
-        builder.ToTable("Concerts", Schema.Name);
+        builder.ToTable(Schema.Tables.Concerts, Schema.Name);
         builder.Property(c => c.Id).ValueGeneratedNever();
 
         builder.OwnsOne(c => c.Period, p =>
@@ -27,7 +27,7 @@ internal class ConcertGenreEntityConfiguration : IEntityTypeConfiguration<Concer
 {
     public void Configure(EntityTypeBuilder<ConcertGenreEntity> builder)
     {
-        builder.ToTable("ConcertGenres", Schema.Name);
+        builder.ToTable(Schema.Tables.ConcertGenres, Schema.Name);
         builder.HasKey(x => new { x.ConcertId, x.Genre });
     }
 }
