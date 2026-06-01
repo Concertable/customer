@@ -27,5 +27,6 @@ builder.AddSearchWorkers<Projects.Concertable_Search_Workers>(searchDb, asb);
 builder.AddB2BSeedingSimulator<Projects.Concertable_B2B_Seed_Simulator>(asb);
 builder.AddCustomerSpa(customerWeb, customerWeb, auth);
 builder.AddMobileCustomer(customerWeb, auth);
+builder.AddStripeCli(paymentWeb);
 
 builder.Build().Run();
