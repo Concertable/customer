@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace Concertable.Customer.Concert.Infrastructure.Data;
 
-internal class ConcertDbContextFactory : IDesignTimeDbContextFactory<ConcertDbContext>
+internal sealed class ConcertDbContextFactory : IDesignTimeDbContextFactory<ConcertDbContext>
 {
     public ConcertDbContext CreateDbContext(string[] args)
     {

@@ -6,7 +6,7 @@ using Xunit;
 namespace Concertable.Customer.E2ETests.Payments;
 
 [Collection("E2E")]
-public class TicketPurchaseTests(AppFixture fixture) : IAsyncLifetime
+public sealed class TicketPurchaseTests(AppFixture fixture) : IAsyncLifetime
 {
     public async Task InitializeAsync() => await fixture.ResetAsync();
     public Task DisposeAsync() => Task.CompletedTask;
@@ -39,6 +39,6 @@ public class TicketPurchaseTests(AppFixture fixture) : IAsyncLifetime
             timeout: TimeSpan.FromSeconds(30));
     }
 
-    private record UpcomingTicket(Guid Id, UpcomingConcert Concert);
-    private record UpcomingConcert(int Id, string Name);
+    private sealed record UpcomingTicket(Guid Id, UpcomingConcert Concert);
+    private sealed record UpcomingConcert(int Id, string Name);
 }

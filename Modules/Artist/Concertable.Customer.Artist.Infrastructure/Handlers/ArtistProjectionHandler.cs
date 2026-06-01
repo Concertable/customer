@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Artist.Infrastructure.Handlers;
 
-internal class ArtistProjectionHandler : IIntegrationEventHandler<ArtistChangedEvent>
+internal sealed class ArtistProjectionHandler : IIntegrationEventHandler<ArtistChangedEvent>
 {
     private readonly ArtistDbContext context;
 

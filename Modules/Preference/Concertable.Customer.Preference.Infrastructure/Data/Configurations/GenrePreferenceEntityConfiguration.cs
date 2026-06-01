@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Concertable.Customer.Preference.Infrastructure.Data.Configurations;
 
-internal class GenrePreferenceEntityConfiguration : IEntityTypeConfiguration<GenrePreferenceEntity>
+internal sealed class GenrePreferenceEntityConfiguration : IEntityTypeConfiguration<GenrePreferenceEntity>
 {
     public void Configure(EntityTypeBuilder<GenrePreferenceEntity> builder)
     {

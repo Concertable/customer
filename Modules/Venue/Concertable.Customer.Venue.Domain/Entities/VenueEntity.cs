@@ -1,6 +1,6 @@
 ﻿namespace Concertable.Customer.Venue.Domain.Entities;
 
-public class VenueEntity : IIdEntity
+public sealed class VenueEntity : IIdEntity
 {
     public int Id { get; private set; }
     public Guid UserId { get; private set; }
@@ -30,19 +30,19 @@ public class VenueEntity : IIdEntity
         double latitude,
         double longitude,
         string email) => new()
-    {
-        Id = venueId,
-        UserId = userId,
-        Name = name,
-        About = about,
-        Avatar = avatar,
-        BannerUrl = bannerUrl,
-        County = county,
-        Town = town,
-        Latitude = latitude,
-        Longitude = longitude,
-        Email = email
-    };
+        {
+            Id = venueId,
+            UserId = userId,
+            Name = name,
+            About = about,
+            Avatar = avatar,
+            BannerUrl = bannerUrl,
+            County = county,
+            Town = town,
+            Latitude = latitude,
+            Longitude = longitude,
+            Email = email
+        };
 
     public void Update(
         Guid userId,

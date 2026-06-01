@@ -5,7 +5,7 @@ using Concertable.Messaging.Contracts;
 
 namespace Concertable.Customer.Review.Infrastructure.Events;
 
-internal class ReviewCreatedDomainEventHandler(IBus bus)
+internal sealed class ReviewCreatedDomainEventHandler(IBus bus)
     : IPreCommitDomainEventHandler<ReviewCreatedDomainEvent>
 {
     public Task HandleAsync(ReviewCreatedDomainEvent e, CancellationToken ct = default) =>

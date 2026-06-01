@@ -3,7 +3,7 @@ using QRCoder;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Services;
 
-internal class QrCodeService : IQrCodeService
+internal sealed class QrCodeService : IQrCodeService
 {
     private readonly QRCodeGenerator qrCodeGenerator;
     private readonly ITicketRepository ticketRepository;

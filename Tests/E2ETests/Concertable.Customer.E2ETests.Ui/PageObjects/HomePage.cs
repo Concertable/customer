@@ -1,6 +1,6 @@
 namespace Concertable.Customer.E2ETests.Ui.PageObjects;
 
-public class HomePage
+public sealed class HomePage
 {
     private readonly IPage page;
     private readonly string url;

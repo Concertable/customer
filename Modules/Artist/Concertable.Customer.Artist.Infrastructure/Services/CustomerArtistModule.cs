@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Artist.Infrastructure.Services;
 
-internal class CustomerArtistModule : ICustomerArtistModule
+internal sealed class CustomerArtistModule : ICustomerArtistModule
 {
     private readonly ArtistDbContext context;
 

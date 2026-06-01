@@ -2,7 +2,7 @@ using Concertable.Kernel;
 
 namespace Concertable.Customer.Ticket.Domain.Entities;
 
-public class TicketEntity : IGuidEntity
+public sealed class TicketEntity : IGuidEntity
 {
     public Guid Id { get; private set; }
     public Guid UserId { get; private set; }
@@ -36,18 +36,18 @@ public class TicketEntity : IGuidEntity
         string artistName,
         int venueId,
         string venueName) => new()
-    {
-        Id = id,
-        UserId = userId,
-        ConcertId = concertId,
-        QrCode = qrCode,
-        PurchaseDate = purchaseDate,
-        ConcertName = concertName,
-        Price = price,
-        Period = period,
-        ArtistId = artistId,
-        ArtistName = artistName,
-        VenueId = venueId,
-        VenueName = venueName
-    };
+        {
+            Id = id,
+            UserId = userId,
+            ConcertId = concertId,
+            QrCode = qrCode,
+            PurchaseDate = purchaseDate,
+            ConcertName = concertName,
+            Price = price,
+            Period = period,
+            ArtistId = artistId,
+            ArtistName = artistName,
+            VenueId = venueId,
+            VenueName = venueName
+        };
 }

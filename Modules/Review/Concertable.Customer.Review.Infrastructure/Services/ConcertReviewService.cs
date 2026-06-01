@@ -6,7 +6,7 @@ using Concertable.Kernel.Exceptions;
 
 namespace Concertable.Customer.Review.Infrastructure.Services;
 
-internal class ConcertReviewService(
+internal sealed class ConcertReviewService(
     IConcertReviewRepository reviewRepository,
     ITicketRepository ticketRepository,
     IReviewValidator reviewValidator,

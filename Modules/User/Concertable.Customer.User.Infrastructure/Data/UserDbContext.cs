@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.User.Infrastructure.Data;
 
-internal class UserDbContext(
+internal sealed class UserDbContext(
     DbContextOptions<UserDbContext> options,
     UserConfigurationProvider provider)
     : DbContextBase(options)

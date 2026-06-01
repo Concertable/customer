@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Repositories;
 
-internal class TicketRepository : Repository<TicketEntity, TicketDbContext, Guid>, ITicketRepository
+internal sealed class TicketRepository : Repository<TicketEntity, TicketDbContext, Guid>, ITicketRepository
 {
     private readonly TimeProvider timeProvider;
 

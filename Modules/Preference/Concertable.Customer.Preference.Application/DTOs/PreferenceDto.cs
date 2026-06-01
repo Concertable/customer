@@ -1,7 +1,7 @@
 
 namespace Concertable.Customer.Preference.Application.DTOs;
 
-internal record PreferenceDto
+internal sealed record PreferenceDto
 {
     public int Id { get; set; }
     public Guid UserId { get; set; }

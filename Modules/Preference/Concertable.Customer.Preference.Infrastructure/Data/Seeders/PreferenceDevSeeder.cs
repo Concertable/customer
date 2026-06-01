@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Preference.Infrastructure.Data.Seeders;
 
-internal class PreferenceDevSeeder : IDevSeeder
+internal sealed class PreferenceDevSeeder : IDevSeeder
 {
     public int Order => 7;
 

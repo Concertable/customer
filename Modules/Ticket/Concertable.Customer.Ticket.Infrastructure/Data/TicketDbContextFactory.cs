@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Data;
 
-internal class TicketDbContextFactory : IDesignTimeDbContextFactory<TicketDbContext>
+internal sealed class TicketDbContextFactory : IDesignTimeDbContextFactory<TicketDbContext>
 {
     public TicketDbContext CreateDbContext(string[] args)
     {

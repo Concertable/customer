@@ -5,7 +5,7 @@ using Xunit.Abstractions;
 namespace Concertable.Customer.Concert.IntegrationTests;
 
 [Collection("Integration")]
-public class ConcertApiTests : IAsyncLifetime
+public sealed class ConcertApiTests : IAsyncLifetime
 {
     private readonly ApiFixture fixture;
 

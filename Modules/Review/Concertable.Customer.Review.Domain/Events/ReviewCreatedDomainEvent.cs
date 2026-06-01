@@ -2,7 +2,7 @@ using Concertable.Kernel;
 
 namespace Concertable.Customer.Review.Domain.Events;
 
-public record ReviewCreatedDomainEvent(
+public sealed record ReviewCreatedDomainEvent(
     Guid TicketId,
     int ArtistId,
     int VenueId,

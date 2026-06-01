@@ -1,7 +1,7 @@
 
 namespace Concertable.Customer.Preference.Domain;
 
-public class PreferenceEntity : IIdEntity
+public sealed class PreferenceEntity : IIdEntity
 {
     private PreferenceEntity() { }
 

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Review.Infrastructure.Data.Seeders;
 
-internal class ReviewTestSeeder : ITestSeeder
+internal sealed class ReviewTestSeeder : ITestSeeder
 {
     public int Order => 6;
 

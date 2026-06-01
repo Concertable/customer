@@ -1,6 +1,6 @@
 namespace Concertable.Customer.Ticket.Application.Requests;
 
-internal class TicketPurchaseParams
+internal sealed class TicketPurchaseParams
 {
     public required string PaymentMethodId { get; set; }
     public int ConcertId { get; set; }

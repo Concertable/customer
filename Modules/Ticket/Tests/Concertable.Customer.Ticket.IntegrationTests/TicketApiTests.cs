@@ -7,7 +7,7 @@ using Xunit.Abstractions;
 namespace Concertable.Customer.Ticket.IntegrationTests;
 
 [Collection("Integration")]
-public class TicketApiTests : IAsyncLifetime
+public sealed class TicketApiTests : IAsyncLifetime
 {
     private readonly ApiFixture fixture;
 

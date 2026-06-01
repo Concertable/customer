@@ -6,7 +6,7 @@ using Xunit.Abstractions;
 namespace Concertable.Customer.Review.IntegrationTests;
 
 [Collection("Integration")]
-public class ReviewApiTests : IAsyncLifetime
+public sealed class ReviewApiTests : IAsyncLifetime
 {
     private readonly ApiFixture fixture;
 

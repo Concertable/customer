@@ -1,6 +1,6 @@
 namespace Concertable.Customer.E2ETests.Ui.PageObjects;
 
-public class ConcertDetailsPage
+public sealed class ConcertDetailsPage
 {
     private readonly IPage page;
 

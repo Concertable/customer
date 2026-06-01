@@ -4,7 +4,7 @@ using Concertable.Customer.Venue.Contracts;
 
 namespace Concertable.Customer.Concert.Infrastructure.Services;
 
-internal class ConcertService : IConcertService
+internal sealed class ConcertService : IConcertService
 {
     private readonly IConcertReadRepository concertRepository;
     private readonly ICustomerVenueModule venueModule;

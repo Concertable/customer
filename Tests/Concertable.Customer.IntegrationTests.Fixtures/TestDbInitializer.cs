@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.IntegrationTests.Fixtures;
 
-public class TestDbInitializer : IDbInitializer
+public sealed class TestDbInitializer : IDbInitializer
 {
     private readonly IEnumerable<ITestSeeder> seeders;
     private readonly InboxDbContext inboxDbContext;

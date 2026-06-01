@@ -5,7 +5,7 @@ using Xunit;
 namespace Concertable.Customer.E2ETests;
 
 [Collection("E2E")]
-public class SmokeTests(AppFixture fixture)
+public sealed class SmokeTests(AppFixture fixture)
 {
     [Fact]
     public void CustomerSeedHost_ResolvesDbInitializer()

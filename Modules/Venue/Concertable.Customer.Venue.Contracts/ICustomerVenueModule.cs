@@ -5,7 +5,7 @@ public interface ICustomerVenueModule
     Task<VenueSummary?> GetSummaryAsync(int venueId, CancellationToken ct = default);
 }
 
-public record VenueSummary(
+public sealed record VenueSummary(
     int Id,
     string Name,
     string County,

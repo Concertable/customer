@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Concertable.Customer.Review.Infrastructure.Data.Configurations;
 
-internal class ReviewEntityConfiguration : IEntityTypeConfiguration<ReviewEntity>
+internal sealed class ReviewEntityConfiguration : IEntityTypeConfiguration<ReviewEntity>
 {
     public void Configure(EntityTypeBuilder<ReviewEntity> builder)
     {
