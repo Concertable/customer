@@ -7,7 +7,7 @@ internal class PreferenceEntityConfiguration : IEntityTypeConfiguration<Preferen
 {
     public void Configure(EntityTypeBuilder<PreferenceEntity> builder)
     {
-        builder.ToTable("Preferences", Schema.Name);
+        builder.ToTable(Schema.Tables.Preferences, Schema.Name);
         builder.HasIndex(p => p.UserId).IsUnique();
     }
 }

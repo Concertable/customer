@@ -8,7 +8,7 @@ internal class VenueEntityConfiguration : IEntityTypeConfiguration<VenueEntity>
 {
     public void Configure(EntityTypeBuilder<VenueEntity> builder)
     {
-        builder.ToTable("Venues", Schema.Name);
+        builder.ToTable(Schema.Tables.Venues, Schema.Name);
         builder.Property(v => v.Id).ValueGeneratedNever();
     }
 }

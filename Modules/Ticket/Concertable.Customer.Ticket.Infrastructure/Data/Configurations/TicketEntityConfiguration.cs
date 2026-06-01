@@ -8,7 +8,7 @@ internal class TicketEntityConfiguration : IEntityTypeConfiguration<TicketEntity
 {
     public void Configure(EntityTypeBuilder<TicketEntity> builder)
     {
-        builder.ToTable("Tickets", Schema.Name);
+        builder.ToTable(Schema.Tables.Tickets, Schema.Name);
 
         builder.OwnsOne(t => t.Period, p =>
         {
