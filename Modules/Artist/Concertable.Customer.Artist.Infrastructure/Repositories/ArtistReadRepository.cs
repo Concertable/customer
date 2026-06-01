@@ -1,18 +1,13 @@
-﻿using Concertable.Customer.Artist.Domain.Entities;
+using Concertable.Customer.Artist.Domain.Entities;
 using Concertable.Customer.Artist.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Artist.Infrastructure.Repositories;
 
-internal class ArtistReadRepository : IArtistReadRepository
+internal class ArtistReadRepository : ReadRepository<ArtistEntity>, IArtistReadRepository
 {
-    private readonly ArtistDbContext context;
+    public ArtistReadRepository(ArtistDbContext context) : base(context) { }
 
-    public ArtistReadRepository(ArtistDbContext context)
-    {
-        this.context = context;
-    }
-
-    public Task<ArtistEntity?> GetByIdAsync(int artistId) =>
-        context.Artists.Include(a => a.Genres).FirstOrDefaultAsync(a => a.Id == artistId);
+    public override Task<ArtistEntity?> GetByIdAsync(int id) =>
+        context.Artists.Include(a => a.Genres).FirstOrDefaultAsync(a => a.Id == id);
 }

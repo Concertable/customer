@@ -1,20 +1,15 @@
-﻿using Concertable.Customer.Concert.Domain.Entities;
+using Concertable.Customer.Concert.Domain.Entities;
 using Concertable.Customer.Concert.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Concert.Infrastructure.Repositories;
 
-internal class ConcertReadRepository : IConcertReadRepository
+internal class ConcertReadRepository : ReadRepository<ConcertEntity>, IConcertReadRepository
 {
-    private readonly ConcertDbContext context;
+    public ConcertReadRepository(ConcertDbContext context) : base(context) { }
 
-    public ConcertReadRepository(ConcertDbContext context)
-    {
-        this.context = context;
-    }
-
-    public Task<ConcertEntity?> GetByIdAsync(int concertId) =>
-        context.Concerts.Include(c => c.Genres).FirstOrDefaultAsync(c => c.Id == concertId);
+    public override Task<ConcertEntity?> GetByIdAsync(int id) =>
+        context.Concerts.Include(c => c.Genres).FirstOrDefaultAsync(c => c.Id == id);
 
     public Task SaveChangesAsync() => context.SaveChangesAsync();
 }

@@ -3,7 +3,7 @@ using Concertable.DataAccess.Application;
 
 namespace Concertable.Customer.Ticket.Application.Interfaces;
 
-internal interface ITicketRepository : IGuidRepository<TicketEntity>
+internal interface ITicketRepository : IRepository<TicketEntity, Guid>
 {
     Task<byte[]?> GetQrCodeByIdAsync(Guid id);
     Task<IEnumerable<TicketEntity>> GetUpcomingByUserIdAsync(Guid id);
