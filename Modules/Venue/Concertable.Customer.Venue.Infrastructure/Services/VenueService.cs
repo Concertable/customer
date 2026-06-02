@@ -12,7 +12,7 @@ internal sealed class VenueService : IVenueService
         this.repository = repository;
     }
 
-    public async Task<VenueDetailDto?> GetByIdAsync(int venueId)
+    public async Task<VenueDetail?> GetByIdAsync(int venueId)
     {
         var venue = await repository.GetByIdAsync(venueId);
         return venue?.ToDetailDto();

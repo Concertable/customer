@@ -2,7 +2,7 @@ using Concertable.Contracts;
 
 namespace Concertable.Customer.Concert.Application.Dtos;
 
-public sealed record ConcertDetailDto(
+public sealed record ConcertDetail(
     int Id,
     string Name,
     string About,
@@ -15,11 +15,11 @@ public sealed record ConcertDetailDto(
     DateTime StartDate,
     DateTime EndDate,
     DateTime? DatePosted,
-    ConcertVenueDto Venue,
-    ConcertArtistDto Artist,
+    ConcertVenue Venue,
+    ConcertArtist Artist,
     IReadOnlyCollection<Genre> Genres);
 
-public sealed record ConcertVenueDto(
+public sealed record ConcertVenue(
     int Id,
     string Name,
     string County,
@@ -27,7 +27,7 @@ public sealed record ConcertVenueDto(
     double Latitude,
     double Longitude);
 
-public sealed record ConcertArtistDto(
+public sealed record ConcertArtist(
     int Id,
     string Name,
     string? Avatar,

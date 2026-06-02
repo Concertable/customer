@@ -12,7 +12,7 @@ internal static class TicketMappers
         QrCode = ticket.QrCode,
         UserId = ticket.UserId,
         UserEmail = email,
-        Concert = new TicketConcertDto
+        Concert = new TicketConcert
         {
             Id = ticket.ConcertId,
             Name = ticket.ConcertName,

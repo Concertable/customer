@@ -32,7 +32,7 @@ public sealed class ConcertApiTests : IAsyncLifetime
 
         // Assert
         await response.ShouldBe(HttpStatusCode.OK);
-        var dto = await response.Content.ReadAsync<ConcertDetailDto>();
+        var dto = await response.Content.ReadAsync<ConcertDetail>();
         Assert.NotNull(dto);
         Assert.Equal(concert.Id, dto.Id);
         Assert.Equal(concert.Name, dto.Name);

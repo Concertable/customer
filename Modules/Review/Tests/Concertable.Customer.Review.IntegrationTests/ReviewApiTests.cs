@@ -55,7 +55,7 @@ public sealed class ReviewApiTests : IAsyncLifetime
 
         // Assert
         await response.ShouldBe(HttpStatusCode.OK);
-        var summary = await response.Content.ReadAsync<ReviewSummaryDto>();
+        var summary = await response.Content.ReadAsync<ReviewSummary>();
         Assert.NotNull(summary);
         Assert.Equal(0, summary.TotalReviews);
         Assert.Null(summary.AverageRating);

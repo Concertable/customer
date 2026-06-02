@@ -83,7 +83,7 @@ internal sealed class TicketService : ITicketService
         });
     }
 
-    public async Task<Result<TicketPaymentResponse>> CompleteAsync(PurchaseCompleteDto purchaseCompleteDto)
+    public async Task<Result<TicketPaymentResponse>> CompleteAsync(PurchaseComplete purchaseCompleteDto)
     {
         var concert = await concertRepository.GetByIdAsync(purchaseCompleteDto.EntityId);
         if (concert is null)

@@ -4,5 +4,5 @@ namespace Concertable.Customer.Venue.Application.Interfaces;
 
 internal interface IVenueService
 {
-    Task<VenueDetailDto?> GetByIdAsync(int venueId);
+    Task<VenueDetail?> GetByIdAsync(int venueId);
 }
