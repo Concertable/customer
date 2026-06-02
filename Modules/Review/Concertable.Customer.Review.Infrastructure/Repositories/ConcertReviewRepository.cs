@@ -20,7 +20,7 @@ internal sealed class ConcertReviewRepository(
             .ToDto()
             .ToPaginationAsync(pageParams);
 
-    public async Task<ReviewSummaryDto> GetSummaryByConcertAsync(int concertId)
+    public async Task<ReviewSummary> GetSummaryByConcertAsync(int concertId)
     {
         var rows = await context.Reviews
             .AsNoTracking()
@@ -29,9 +29,9 @@ internal sealed class ConcertReviewRepository(
             .ToListAsync();
 
         if (rows.Count == 0)
-            return new ReviewSummaryDto(0, null);
+            return new ReviewSummary(0, null);
 
-        return new ReviewSummaryDto(rows.Count, Math.Round(rows.Average(), 1));
+        return new ReviewSummary(rows.Count, Math.Round(rows.Average(), 1));
     }
 
     public async Task<bool> CanUserReviewConcertAsync(Guid userId, int concertId)

@@ -18,7 +18,7 @@ internal sealed class ArtistController : ControllerBase
 
     [HttpGet("{id:int}")]
     [AllowAnonymous]
-    public async Task<ActionResult<ArtistDetailDto>> GetById(int id)
+    public async Task<ActionResult<ArtistDetail>> GetById(int id)
     {
         var artist = await artistService.GetByIdAsync(id);
         return artist is null ? NotFound() : Ok(artist);

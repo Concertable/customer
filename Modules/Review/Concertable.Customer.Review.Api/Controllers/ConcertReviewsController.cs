@@ -28,7 +28,7 @@ internal sealed class ConcertReviewsController : ControllerBase
         Ok(await reviewService.GetAsync(concertId, pageParams));
 
     [HttpGet("summary")]
-    public async Task<ActionResult<ReviewSummaryDto>> GetSummary(int concertId) =>
+    public async Task<ActionResult<ReviewSummary>> GetSummary(int concertId) =>
         Ok(await reviewService.GetSummaryAsync(concertId));
 
     [HttpGet("eligibility")]

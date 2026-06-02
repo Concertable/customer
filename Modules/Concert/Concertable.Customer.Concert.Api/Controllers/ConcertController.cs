@@ -18,7 +18,7 @@ internal sealed class ConcertController : ControllerBase
 
     [HttpGet("{id:int}")]
     [AllowAnonymous]
-    public async Task<ActionResult<ConcertDetailDto>> GetById(int id, CancellationToken ct)
+    public async Task<ActionResult<ConcertDetail>> GetById(int id, CancellationToken ct)
     {
         var concert = await concertService.GetByIdAsync(id, ct);
         return concert is null ? NotFound() : Ok(concert);

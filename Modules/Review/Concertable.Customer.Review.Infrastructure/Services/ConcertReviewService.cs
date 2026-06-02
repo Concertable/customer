@@ -15,7 +15,7 @@ internal sealed class ConcertReviewService(
     public Task<IPagination<ReviewDto>> GetAsync(int concertId, IPageParams pageParams) =>
         reviewRepository.GetByConcertAsync(concertId, pageParams);
 
-    public Task<ReviewSummaryDto> GetSummaryAsync(int concertId) =>
+    public Task<ReviewSummary> GetSummaryAsync(int concertId) =>
         reviewRepository.GetSummaryByConcertAsync(concertId);
 
     public Task<bool> CanCurrentUserReviewAsync(int concertId) =>

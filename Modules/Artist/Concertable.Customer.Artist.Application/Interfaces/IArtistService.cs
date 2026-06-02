@@ -4,5 +4,5 @@ namespace Concertable.Customer.Artist.Application.Interfaces;
 
 internal interface IArtistService
 {
-    Task<ArtistDetailDto?> GetByIdAsync(int artistId);
+    Task<ArtistDetail?> GetByIdAsync(int artistId);
 }

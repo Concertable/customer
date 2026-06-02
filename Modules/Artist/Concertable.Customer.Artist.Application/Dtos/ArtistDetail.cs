@@ -1,14 +1,15 @@
-namespace Concertable.Customer.Venue.Application.Dtos;
+namespace Concertable.Customer.Artist.Application.Dtos;
 
-public sealed record VenueDetailDto(
+public sealed record ArtistDetail(
     int Id,
     string Name,
     string About,
     string BannerUrl,
     string Avatar,
     double Rating,
+    IReadOnlyCollection<Genre> Genres,
+    string Email,
     string County,
     string Town,
-    string Email,
     double Latitude,
     double Longitude);

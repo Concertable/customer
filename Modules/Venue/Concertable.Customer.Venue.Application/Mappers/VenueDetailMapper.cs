@@ -5,7 +5,7 @@ namespace Concertable.Customer.Venue.Application.Mappers;
 
 internal static class VenueDetailMapper
 {
-    public static VenueDetailDto ToDetailDto(this VenueEntity venue) => new(
+    public static VenueDetail ToDetailDto(this VenueEntity venue) => new(
         venue.Id,
         venue.Name,
         venue.About,

@@ -20,7 +20,7 @@ internal sealed class ConcertService : IConcertService
         this.artistModule = artistModule;
     }
 
-    public async Task<ConcertDetailDto?> GetByIdAsync(int concertId, CancellationToken ct = default)
+    public async Task<ConcertDetail?> GetByIdAsync(int concertId, CancellationToken ct = default)
     {
         var concert = await concertRepository.GetByIdAsync(concertId);
         if (concert is null)
@@ -34,14 +34,14 @@ internal sealed class ConcertService : IConcertService
         var artist = artistTask.Result;
 
         var venueDto = venue is null
-            ? new ConcertVenueDto(concert.VenueId, concert.VenueName, "", "", 0, 0)
-            : new ConcertVenueDto(venue.Id, venue.Name, venue.County, venue.Town, venue.Latitude, venue.Longitude);
+            ? new ConcertVenue(concert.VenueId, concert.VenueName, "", "", 0, 0)
+            : new ConcertVenue(venue.Id, venue.Name, venue.County, venue.Town, venue.Latitude, venue.Longitude);
 
         var artistDto = artist is null
-            ? new ConcertArtistDto(concert.ArtistId, concert.ArtistName, null, 0, "", "", [])
-            : new ConcertArtistDto(artist.Id, artist.Name, artist.Avatar, artist.Rating, artist.County, artist.Town, artist.Genres);
+            ? new ConcertArtist(concert.ArtistId, concert.ArtistName, null, 0, "", "", [])
+            : new ConcertArtist(artist.Id, artist.Name, artist.Avatar, artist.Rating, artist.County, artist.Town, artist.Genres);
 
-        return new ConcertDetailDto(
+        return new ConcertDetail(
             concert.Id,
             concert.Name,
             concert.About,
