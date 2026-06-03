@@ -15,14 +15,19 @@ asb.Topology()
    .AddPaymentTopology();
 
 var auth = builder.AddAuth<Projects.Concertable_Auth>(authDb, b2bDb, asb);
+auth.WithEndpoint("https", endpoint => endpoint.Port = 7093);
+
 var paymentWeb = builder.AddPaymentWeb<Projects.Concertable_Payment_Web>(auth, paymentDb, asb);
+paymentWeb.WithEndpoint("https", endpoint => endpoint.Port = 7098);
+
 var customerWeb = builder.AddCustomerWeb<Projects.Concertable_Customer_Web>(auth, customerDb, asb, paymentWeb);
 
 auth.WithEnvironment("ServiceAuth__AuthClientId", "concertable-auth");
 auth.WithEnvironment("Services__CustomerApiUrl", customerWeb.GetEndpoint("https"));
 
 builder.AddPaymentWorkers<Projects.Concertable_Payment_Workers>(paymentDb, asb);
-builder.AddSearchWeb<Projects.Concertable_Search_Web>(auth, searchDb);
+var searchWeb = builder.AddSearchWeb<Projects.Concertable_Search_Web>(auth, searchDb);
+searchWeb.WithEndpoint("https", endpoint => endpoint.Port = 7097);
 builder.AddSearchWorkers<Projects.Concertable_Search_Workers>(searchDb, asb);
 builder.AddB2BSeedingSimulator<Projects.Concertable_B2B_Seed_Simulator>(asb);
 builder.AddCustomerSpa(customerWeb, customerWeb, auth);
