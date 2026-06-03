@@ -104,6 +104,10 @@ public sealed class AppFixture : IAsyncLifetime
             [customerWebUrl, searchWebUrl, paymentWebUrl],
             TimeSpan.FromMinutes(6));
 
+        await healthWaiter.WaitForAllServingAsync(
+            [customerSpaUrl],
+            TimeSpan.FromMinutes(3));
+
         DbFixture = new DbFixture(app);
         await DbFixture.InitializeAsync();
         await DbFixture.ResetAsync();
