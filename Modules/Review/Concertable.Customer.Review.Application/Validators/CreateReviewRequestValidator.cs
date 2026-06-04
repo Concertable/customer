@@ -7,7 +7,6 @@ internal sealed class CreateReviewRequestValidator : AbstractValidator<CreateRev
 {
     public CreateReviewRequestValidator()
     {
-        RuleFor(x => x.ConcertId).GreaterThan(0);
         RuleFor(x => x.Stars).InclusiveBetween((byte)1, (byte)5);
     }
 }

@@ -2,16 +2,19 @@ using Concertable.Contracts;
 using Concertable.Customer.Review.Domain.Entities;
 using Concertable.Customer.Review.Infrastructure.Data;
 using Concertable.Customer.Review.Infrastructure.Mappers;
-using Concertable.Customer.Ticket.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Review.Infrastructure.Repositories;
 
-internal sealed class ConcertReviewRepository(
-    ReviewDbContext context,
-    ITicketRepository ticketRepository,
-    TimeProvider timeProvider) : IConcertReviewRepository
+internal sealed class ConcertReviewRepository : IConcertReviewRepository
 {
+    private readonly ReviewDbContext context;
+
+    public ConcertReviewRepository(ReviewDbContext context)
+    {
+        this.context = context;
+    }
+
     public Task<IPagination<ReviewDto>> GetByConcertAsync(int concertId, IPageParams pageParams) =>
         context.Reviews
             .AsNoTracking()
@@ -34,16 +37,10 @@ internal sealed class ConcertReviewRepository(
         return new ReviewSummary(rows.Count, Math.Round(rows.Average(), 1));
     }
 
-    public async Task<bool> CanUserReviewConcertAsync(Guid userId, int concertId)
-    {
-        var ticket = await ticketRepository.GetByUserIdAndConcertIdAsync(userId, concertId);
-        if (ticket is null || ticket.Period.Start > timeProvider.GetUtcNow())
-            return false;
-
-        return !await context.Reviews
+    public Task<bool> HasReviewForTicketAsync(Guid ticketId) =>
+        context.Reviews
             .AsNoTracking()
-            .AnyAsync(r => r.TicketId == ticket.Id);
-    }
+            .AnyAsync(r => r.TicketId == ticketId);
 
     public async Task<ReviewEntity> AddAsync(ReviewEntity review)
     {

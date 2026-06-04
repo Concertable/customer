@@ -5,6 +5,7 @@ public static class CustomerTopology
             .Subscribe("event-concertchangedevent",          "customer-concert-changed",       "concertable-customer")
             .Subscribe("event-concertpostedevent",           "customer-concert-posted",         "concertable-customer")
             .Subscribe("event-customerreviewsubmittedevent", "customer-review-submitted",       "concertable-customer")
+            .Subscribe("event-ticketpurchasedevent",         "customer-ticket-purchased",       "concertable-customer")
             .Subscribe("event-artistchangedevent",           "customer-artist-changed",         "concertable-customer")
             .Subscribe("event-venuechangedevent",            "customer-venue-changed",          "concertable-customer")
             .Subscribe("event-artistratingupdatedevent",     "customer-artist-rating-updated",  "concertable-customer")

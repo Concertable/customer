@@ -1,5 +1,4 @@
-﻿using Concertable.Customer.Concert.Application.Interfaces;
-using Concertable.Customer.Concert.Domain.Entities;
+using Concertable.Customer.Concert.Contracts;
 using Concertable.Kernel.Exceptions;
 using FluentResults;
 
@@ -7,16 +6,16 @@ namespace Concertable.Customer.Ticket.Infrastructure.Validators;
 
 internal sealed class TicketValidator : ITicketValidator
 {
-    private readonly IConcertReadRepository concertRepository;
+    private readonly IConcertModule concertModule;
     private readonly TimeProvider timeProvider;
 
-    public TicketValidator(IConcertReadRepository concertRepository, TimeProvider timeProvider)
+    public TicketValidator(IConcertModule concertModule, TimeProvider timeProvider)
     {
-        this.concertRepository = concertRepository;
+        this.concertModule = concertModule;
         this.timeProvider = timeProvider;
     }
 
-    public Result CanBePurchased(ConcertEntity concert)
+    public Result CanBePurchased(ConcertDto concert)
     {
         var errors = new List<string>();
 
@@ -34,13 +33,13 @@ internal sealed class TicketValidator : ITicketValidator
 
     public async Task<Result> CanBePurchasedAsync(int concertId)
     {
-        var concert = await concertRepository.GetByIdAsync(concertId)
+        var concert = await concertModule.GetByIdAsync(concertId)
             ?? throw new NotFoundException("Concert not found");
 
         return CanBePurchased(concert);
     }
 
-    public Result CanPurchaseTickets(ConcertEntity concert, int quantity)
+    public Result CanPurchaseTickets(ConcertDto concert, int quantity)
     {
         var baseResult = CanBePurchased(concert);
         if (baseResult.IsFailed)

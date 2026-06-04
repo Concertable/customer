@@ -1,5 +1,4 @@
 using Concertable.Customer.Review.Application.Validators;
-using Concertable.Customer.Review.Contracts;
 using Concertable.Customer.Review.Domain.Events;
 using Concertable.Customer.Review.Infrastructure.Data;
 using Concertable.Customer.Review.Infrastructure.Data.Seeders;
@@ -38,7 +37,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IConcertReviewRepository, ConcertReviewRepository>();
         services.AddScoped<IArtistReviewRepository, ArtistReviewRepository>();
         services.AddScoped<IVenueReviewRepository, VenueReviewRepository>();
-        services.AddScoped<ICustomerReviewModule, CustomerReviewModule>();
 
         services.AddScoped<IDomainEventHandler<ReviewCreatedDomainEvent>, ReviewCreatedDomainEventHandler>();
 

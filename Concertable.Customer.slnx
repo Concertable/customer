@@ -3,6 +3,7 @@
   <Folder Name="/Modules/Concert/">
     <Project Path="Modules/Concert/Concertable.Customer.Concert.Api/Concertable.Customer.Concert.Api.csproj" />
     <Project Path="Modules/Concert/Concertable.Customer.Concert.Application/Concertable.Customer.Concert.Application.csproj" />
+    <Project Path="Modules/Concert/Concertable.Customer.Concert.Contracts/Concertable.Customer.Concert.Contracts.csproj" />
     <Project Path="Modules/Concert/Concertable.Customer.Concert.Domain/Concertable.Customer.Concert.Domain.csproj" />
     <Project Path="Modules/Concert/Concertable.Customer.Concert.Infrastructure/Concertable.Customer.Concert.Infrastructure.csproj" />
   </Folder>
@@ -34,6 +35,7 @@
   <Folder Name="/Modules/Ticket/">
     <Project Path="Modules/Ticket/Concertable.Customer.Ticket.Api/Concertable.Customer.Ticket.Api.csproj" />
     <Project Path="Modules/Ticket/Concertable.Customer.Ticket.Application/Concertable.Customer.Ticket.Application.csproj" />
+    <Project Path="Modules/Ticket/Concertable.Customer.Ticket.Contracts/Concertable.Customer.Ticket.Contracts.csproj" />
     <Project Path="Modules/Ticket/Concertable.Customer.Ticket.Domain/Concertable.Customer.Ticket.Domain.csproj" />
     <Project Path="Modules/Ticket/Concertable.Customer.Ticket.Infrastructure/Concertable.Customer.Ticket.Infrastructure.csproj" />
   </Folder>

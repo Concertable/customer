@@ -27,7 +27,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IArtistReadRepository, ArtistReadRepository>();
         services.AddScoped<IArtistService, ArtistService>();
-        services.AddScoped<ICustomerArtistModule, CustomerArtistModule>();
+        services.AddScoped<IArtistModule, ArtistModule>();
         services.AddScoped<IIntegrationEventHandler<ArtistChangedEvent>, ArtistProjectionHandler>();
         services.AddScoped<IIntegrationEventHandler<ArtistRatingUpdatedEvent>, ArtistRatingProjectionHandler>();
 

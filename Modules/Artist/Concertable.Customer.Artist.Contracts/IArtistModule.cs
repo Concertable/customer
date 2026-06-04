@@ -2,7 +2,7 @@ using Concertable.Contracts;
 
 namespace Concertable.Customer.Artist.Contracts;
 
-public interface ICustomerArtistModule
+public interface IArtistModule
 {
     Task<ArtistSummary?> GetSummaryAsync(int artistId, CancellationToken ct = default);
 }

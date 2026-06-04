@@ -128,7 +128,12 @@ public sealed class ApiFixture : IAsyncLifetime
 
     public HttpClient CreateClient() => factory.CreateClient();
 
-    public HttpClient CreateClient(UserEntity user) => CreateClient(user.Id);
+    public HttpClient CreateClient(UserEntity user)
+    {
+        var client = CreateClient(user.Id);
+        client.DefaultRequestHeaders.Add(TestAuthHandler.EmailHeader, user.Email);
+        return client;
+    }
 
     public HttpClient CreateClient(Guid userId)
     {

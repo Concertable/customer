@@ -33,7 +33,7 @@ All modules live under `Modules/`. Each follows the `Concertable.Customer.<Modul
 
 | Module | Canonical entities | Projects |
 |---|---|---|
-| **Ticket** | `TicketEntity` — Id (Guid), UserId, ConcertId, QrCode, PurchaseDate, plus purchase-time snapshot fields: ConcertName, Price, Period, ArtistId/Name, VenueId/Name, HasReview | Api, Application, Domain, Infrastructure, IntegrationTests, UnitTests — **no Contracts** (see TECH_DEBT) |
+| **Ticket** | `TicketEntity` — Id (Guid), UserId, ConcertId, QrCode, PurchaseDate, plus purchase-time snapshot fields: ConcertName, Price, Period, ArtistId/Name, VenueId/Name, HasReview. `TicketEntity.Purchase` raises `TicketPurchasedDomainEvent` → published as `TicketPurchasedEvent`. | Api, Application, **Contracts**, Domain, Infrastructure, IntegrationTests, UnitTests |
 | **Review** | `ReviewEntity` — TicketId, ConcertId, ArtistId, VenueId, Stars (1–5), Details. Raises `ReviewCreatedDomainEvent` → published as `CustomerReviewSubmittedEvent`. | Api, Application, **Contracts**, Domain, Infrastructure, IntegrationTests, UnitTests |
 | **Preference** | `PreferenceEntity` — UserId, RadiusKm, `HashSet<GenrePreferenceEntity>` | Api, Application, Domain, Infrastructure — **no Contracts** |
 | **User** | `UserEntity` — Id (Auth `sub`), Email, optional `Point Location`, optional `Address`. This is the customer profile — there is no separate `CustomerProfileEntity`. Created from `CredentialRegisteredEvent`. | Api, Application, **Contracts**, Domain, Infrastructure, IntegrationTests, UnitTests |
@@ -61,8 +61,9 @@ Transport: Azure Service Bus (`concertable-customer` service name). Wired in `Co
 | Event | Defined in | When raised |
 |---|---|---|
 | `CustomerReviewSubmittedEvent` | `Concertable.Customer.Review.Contracts.Events` | `ReviewCreatedDomainEvent` fires on `ReviewEntity` creation; in-process bridge publishes to bus |
+| `TicketPurchasedEvent` | `Concertable.Customer.Ticket.Contracts.Events` | `TicketPurchasedDomainEvent` fires on `TicketEntity.Purchase` (one per ticket); in-process bridge publishes to bus |
 
-**Not yet published (TECH_DEBT):** `TicketPurchasedEvent`, `TicketRefundedEvent`. The inverse-direction flow (Customer → B2B/Search for sold-count) is not wired.
+**Not yet published (TECH_DEBT):** `TicketRefundedEvent`. B2B/Search do not yet subscribe to `TicketPurchasedEvent` (the Customer → B2B/Search sold-count flow is not wired).
 
 ### Consumed
 
@@ -79,6 +80,7 @@ Transport: Azure Service Bus (`concertable-customer` service name). Wired in `Co
 | `PaymentSucceededEvent` | Payment | `TicketPaymentProcessor` |
 | `PaymentFailedEvent` | Payment | `TicketPaymentFailedProcessor` |
 | `CustomerReviewSubmittedEvent` | Self | Flips `TicketEntity.HasReview = true` |
+| `TicketPurchasedEvent` | Self | `TicketPurchasedHandler` (Concert) — decrements `ConcertEntity.AvailableTickets` |
 
 All consumed events use `InboxMessageEntity` deduplication keyed by `(MessageId, ConsumerName)`.
 
@@ -107,7 +109,7 @@ No sync calls to B2B. Browse/detail reads go to `Concertable.Search` from the SP
 
 Customer is a modular monolith inside the service. Rules in `api/docs/MODULAR_MONOLITH_RULES.md` apply:
 
-- Cross-module calls: `IXModule` facade only (in `<Module>.Contracts`) — except Concert/Ticket/Preference which have no Contracts project yet (TECH_DEBT)
+- Cross-module calls: `IXModule` facade only (in `<Module>.Contracts`) — except Preference which has no Contracts project yet (TECH_DEBT)
 - Per-module DbContext, owns its own tables
 - Intra-service events: in-process `IEventRaiser` — no bus involvement for intra-Customer flows
 - Module-owned `IEntityTypeConfiguration<T>` in `<Module>.Infrastructure/Data/Configurations/`

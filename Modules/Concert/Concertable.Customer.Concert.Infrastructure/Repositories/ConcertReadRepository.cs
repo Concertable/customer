@@ -1,5 +1,7 @@
+using Concertable.Customer.Concert.Contracts;
 using Concertable.Customer.Concert.Domain.Entities;
 using Concertable.Customer.Concert.Infrastructure.Data;
+using Concertable.Customer.Concert.Infrastructure.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Concert.Infrastructure.Repositories;
@@ -11,5 +13,9 @@ internal sealed class ConcertReadRepository : ReadRepository<ConcertEntity>, ICo
     public override Task<ConcertEntity?> GetByIdAsync(int id) =>
         context.Concerts.Include(c => c.Genres).FirstOrDefaultAsync(c => c.Id == id);
 
-    public Task SaveChangesAsync() => context.SaveChangesAsync();
+    public Task<ConcertDto?> GetDtoAsync(int concertId) =>
+        context.Concerts
+            .Where(c => c.Id == concertId)
+            .ToDto()
+            .FirstOrDefaultAsync();
 }

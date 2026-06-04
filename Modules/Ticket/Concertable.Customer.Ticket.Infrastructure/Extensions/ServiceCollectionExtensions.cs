@@ -1,10 +1,13 @@
 using Concertable.Customer.Ticket.Application.Validators;
+using Concertable.Customer.Ticket.Contracts;
+using Concertable.Customer.Ticket.Domain.Events;
 using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.Customer.Ticket.Infrastructure.Data.Seeders;
 using Concertable.Customer.Ticket.Infrastructure.Pdf;
 using Concertable.Customer.Ticket.Infrastructure.Repositories;
 using Concertable.Customer.Ticket.Infrastructure.Services;
 using Concertable.Customer.Review.Contracts.Events;
+using Concertable.Customer.Ticket.Infrastructure.Events;
 using Concertable.Customer.Ticket.Infrastructure.Services.Events;
 using Concertable.Customer.Ticket.Infrastructure.Services.Payment;
 using Concertable.Customer.Ticket.Infrastructure.Validators;
@@ -14,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Concertable.DataAccess.Application;
 using Concertable.DataAccess.Infrastructure.Data;
+using Concertable.Kernel;
 using Concertable.Messaging.Contracts;
 using Concertable.Seed.Shared;
 
@@ -36,6 +40,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITicketValidator, TicketValidator>();
         services.AddScoped<ITicketRepository, TicketRepository>();
         services.AddScoped<ITicketNotifier, TicketNotifier>();
+        services.AddScoped<ITicketModule, TicketModule>();
+
+        services.AddScoped<IDomainEventHandler<TicketPurchasedDomainEvent>, TicketPurchasedDomainEventHandler>();
 
         services.AddSingleton<QRCoder.QRCodeGenerator>();
         services.AddScoped<IQrCodeService, QrCodeService>();

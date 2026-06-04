@@ -6,22 +6,15 @@ When an item is fixed, update both this file and [`ARCHITECTURE.md`](./ARCHITECT
 
 ## HIGH
 
-### `TicketPurchasedEvent` / `TicketRefundedEvent` not published
+### `TicketPurchasedEvent` not consumed by B2B/Search; `TicketRefundedEvent` not published
 
-The inverse-direction event flow (Customer → B2B/Search) from plan §6 is not implemented. Customer's Ticket module processes payments via `TicketPaymentProcessor` but never publishes a `TicketPurchasedEvent`. As a result:
+`TicketPurchasedEvent : IIntegrationEvent` now exists in `Concertable.Customer.Ticket.Contracts` — `TicketEntity.Purchase` raises `TicketPurchasedDomainEvent` (one per ticket), bridged to the bus via the outbox, registered as `Publishes<TicketPurchasedEvent>()` in `Program.cs`. Customer's own Concert module consumes it (`TicketPurchasedHandler` decrements `AvailableTickets`). Still missing from plan §6:
 
-- B2B cannot build `ConcertSalesProjection` (sold-count / gross-revenue for dashboards + settlement math).
-- Search cannot show "X tickets left" counts.
+- B2B.Workers does not subscribe — no `ConcertSalesProjection` (sold-count / gross-revenue for dashboards + settlement math).
+- Search.Workers does not subscribe — no "X tickets left" counts.
+- `TicketRefundedEvent` does not exist (no refund flow yet).
 
-**Resolves when:** `TicketEntity.Create` raises a `TicketPurchasedDomainEvent`; an in-process handler bridges it to `TicketPurchasedEvent : IIntegrationEvent` defined in a new `Concertable.Customer.Ticket.Contracts` csproj; registered as `Publishes<TicketPurchasedEvent>()` in `Program.cs`; B2B.Workers and Search.Workers subscribe and handle.
-
----
-
-### Concert read-model written directly by `TicketService` through the query repo
-
-`IConcertReadRepository` exposes `SaveChangesAsync`, and `TicketService.CompleteAsync` calls `concert.DecrementAvailability(...)` then `concertRepository.SaveChangesAsync()` — an application service mutating an event-sourced read-model through its **query** repo. Every other read repo is read-only by omission (`IReadRepository<T>` declares no write method); this is the lone write surface leaking across a module boundary. It exists because `TicketService` (Ticket module) can't reach the `internal` `ConcertDbContext`, so the only available door was bolting `SaveChangesAsync` onto the read repo.
-
-**Resolves when:** `SaveChangesAsync` is removed from `IConcertReadRepository` / `ConcertReadRepository` (read repo becomes write-free, matching Venue/Artist), and the availability decrement moves onto the event path — the `TicketPurchasedEvent` above drives a Customer Concert projection handler that applies it via the concrete `ConcertDbContext` (handler-only write surface, same pattern as Search). Read-only is then enforced structurally: read interface with no write method + `internal` writable context reachable only by its own projection handlers.
+**Resolves when:** B2B.Workers and Search.Workers subscribe and handle (+ their topology subscriptions on `event-ticketpurchasedevent`), and a refund flow publishes `TicketRefundedEvent`.
 
 ---
 
@@ -48,11 +41,19 @@ Mirror of the B2B item in `api/Concertable.B2B/TECH_DEBT.md`. See [`plans/SPLIT_
 
 ## MED
 
-### Concert, Ticket, Preference modules lack `.Contracts` project
+### Concert detail aggregates via facade fan-out instead of module-local read models
 
-Cross-module access into these three modules is not behind an `IXModule` facade (per `api/docs/MODULAR_MONOLITH_RULES.md`). Any intra-Customer cross-module call reaches in directly.
+`ConcertService.GetByIdAsync` assembles `ConcertDetail` by loading the concert entity, then calling the Venue/Artist facades (`IVenueModule.GetSummaryAsync` / `IArtistModule.GetSummaryAsync`) via `Task.WhenAll`, with fallback defaults when a summary is missing. B2B's Concert module solves the identical need with **module-local read models** (`VenueReadModel`/`ArtistReadModel` in its own context) joined in a single repo query (`QueryableConcertMappers.ToDetails`) — its service is two lines. Same problem, two architectures; the B2B shape is the canonical one (restricted per-consumer projections).
 
-**Resolves when:** Each gains a `Concertable.Customer.<Module>.Contracts` csproj with `I<Module>Module` + summary DTOs; callers switch to the facade; internal types stay `internal`.
+**Resolves when:** Customer's Concert module owns slice read models in the `[concert]` schema — venue (`Name`, `County`, `Town`, `Latitude`, `Longitude`) and artist (`Name`, `Avatar`, `Rating`, `County`, `Town` + genres child table) — populated by Concert-module handlers for `VenueChangedEvent` / `ArtistChangedEvent` / `ArtistRatingUpdatedEvent` (own inbox rows per consumer); `IConcertReadRepository.GetDetailAsync` does the one-query joined projection; `ConcertService.GetByIdAsync` collapses to `return await concertRepository.GetDetailAsync(id) ?? throw new NotFoundException(...)`; the then-consumerless `IVenueModule`/`IArtistModule` facades are deleted. Requires `./initial-migrations.ps1` re-scaffold and a `ConcertProjectionTestSeeder` extension for the new tables.
+
+---
+
+### Preference module lacks `.Contracts` project
+
+Concert and Ticket gained their `.Contracts` projects (`IConcertModule`, `ITicketModule`); Preference is the last module without one. No cross-module caller reaches into Preference today, so this is latent.
+
+**Resolves when:** Preference gains a `Concertable.Customer.Preference.Contracts` csproj with `IPreferenceModule` + summary DTOs the moment another module needs it; internal types stay `internal`.
 
 ---
 
@@ -66,4 +67,8 @@ Cross-module access into these three modules is not behind an `IXModule` facade 
 
 ## LOW
 
-_(none)_
+### `TicketDto.UserEmail` is auth-context data threaded through the mapper
+
+`TicketService.GetUserUpcomingAsync` / `GetUserHistoryAsync` pass `currentUser.Email ?? string.Empty` into `tickets.ToDtos(...)`, stamping the caller's own email identically onto every row. Two smells: the email isn't ticket data (the SPA already knows the signed-in user's email from its OIDC session, and `/api/ticket/*/user` endpoints only ever return the caller's tickets), and the `?? string.Empty` masks a missing email claim with empty display data (read-path sibling of the fixed BUG12). Carrying the email through the mapper also forces the load-entities-then-map-in-memory shape — including hauling `QrCode byte[]` blobs for a list view — instead of a `QueryableTicketMappers` projection.
+
+**Resolves when:** `UserEmail` is dropped from `TicketDto` (frontend reads it from its auth state), the list reads become queryable projections (`ToDto()` on `IQueryable<TicketEntity>`, excluding `QrCode` — it has its own fetch path via `GetQrCodeByIdAsync`), and the mapper no longer takes an email parameter.
