@@ -1,9 +1,11 @@
 using Concertable.B2B.Concert.Contracts.Events;
+using Concertable.Customer.Concert.Contracts;
 using Concertable.Customer.Concert.Infrastructure.Data;
 using Concertable.Customer.Concert.Infrastructure.Data.Seeders;
 using Concertable.Customer.Concert.Infrastructure.Handlers;
 using Concertable.Customer.Concert.Infrastructure.Repositories;
 using Concertable.Customer.Concert.Infrastructure.Services;
+using Concertable.Customer.Ticket.Contracts.Events;
 using Concertable.DataAccess.Application;
 using Concertable.DataAccess.Infrastructure.Data;
 using Concertable.Messaging.Contracts;
@@ -29,8 +31,10 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IConcertReadRepository, ConcertReadRepository>();
         services.AddScoped<IConcertService, ConcertService>();
+        services.AddScoped<IConcertModule, ConcertModule>();
         services.AddScoped<IIntegrationEventHandler<ConcertChangedEvent>, ConcertProjectionHandler>();
         services.AddScoped<IIntegrationEventHandler<ConcertRatingUpdatedEvent>, ConcertRatingProjectionHandler>();
+        services.AddScoped<IIntegrationEventHandler<TicketPurchasedEvent>, TicketPurchasedHandler>();
 
         services.AddHealthChecks().AddCheck<ConcertProjectionHealthCheck>("concert-projection");
 

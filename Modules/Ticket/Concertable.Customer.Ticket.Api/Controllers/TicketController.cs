@@ -1,5 +1,4 @@
 using Concertable.Customer.Ticket.Application.Requests;
-using Concertable.Customer.Ticket.Application.Responses;
 using Concertable.Customer.User.Api.Authorization;
 using Concertable.Kernel;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +20,7 @@ internal sealed class TicketController : ControllerBase
     }
 
     [HttpPost("purchase")]
-    public async Task<ActionResult<TicketPaymentResponse>> Purchase([FromBody] TicketPurchaseParams purchaseParams)
+    public async Task<ActionResult<TicketPayment>> Purchase([FromBody] TicketPurchaseParams purchaseParams)
     {
         var result = await ticketService.PurchaseAsync(purchaseParams);
 

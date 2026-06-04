@@ -27,7 +27,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IVenueReadRepository, VenueReadRepository>();
         services.AddScoped<IVenueService, VenueService>();
-        services.AddScoped<ICustomerVenueModule, CustomerVenueModule>();
+        services.AddScoped<IVenueModule, VenueModule>();
         services.AddScoped<IIntegrationEventHandler<VenueChangedEvent>, VenueProjectionHandler>();
         services.AddScoped<IIntegrationEventHandler<VenueRatingUpdatedEvent>, VenueRatingProjectionHandler>();
 

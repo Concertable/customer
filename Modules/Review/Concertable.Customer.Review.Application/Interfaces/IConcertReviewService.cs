@@ -8,5 +8,5 @@ internal interface IConcertReviewService
     Task<IPagination<ReviewDto>> GetAsync(int concertId, IPageParams pageParams);
     Task<ReviewSummary> GetSummaryAsync(int concertId);
     Task<bool> CanCurrentUserReviewAsync(int concertId);
-    Task<ReviewDto> CreateAsync(CreateReviewRequest request);
+    Task<ReviewDto> CreateAsync(int concertId, CreateReviewRequest request);
 }
