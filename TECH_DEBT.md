@@ -67,6 +67,14 @@ Concert and Ticket gained their `.Contracts` projects (`IConcertModule`, `ITicke
 
 ## LOW
 
+### Read repositories don't default to no-tracking
+
+`ConcertReadRepository.GetDtoAsync` needed an ad-hoc `.AsNoTracking()` (EF throws when a projection carries a whole owned instance like `Period` on a tracking query), and the other read repos rely on projections happening to be untracked. Reads through a `ReadRepository<T>` should never track — the per-call opt-out is backwards.
+
+**Resolves when:** the `ReadRepository<T>` base applies `AsNoTracking` to its query root so every derived read repo inherits it, and the ad-hoc call in `ConcertReadRepository` is removed. NOT context-wide `UseQueryTrackingBehavior(NoTracking)` — the projection handlers write through the same module contexts and need tracked queries.
+
+---
+
 ### `TicketDto.UserEmail` is auth-context data threaded through the mapper
 
 `TicketService.GetUserUpcomingAsync` / `GetUserHistoryAsync` pass `currentUser.Email ?? string.Empty` into `tickets.ToDtos(...)`, stamping the caller's own email identically onto every row. Two smells: the email isn't ticket data (the SPA already knows the signed-in user's email from its OIDC session, and `/api/ticket/*/user` endpoints only ever return the caller's tickets), and the `?? string.Empty` masks a missing email claim with empty display data (read-path sibling of the fixed BUG12). Carrying the email through the mapper also forces the load-entities-then-map-in-memory shape — including hauling `QrCode byte[]` blobs for a list view — instead of a `QueryableTicketMappers` projection.
