@@ -15,6 +15,7 @@ internal sealed class ConcertReadRepository : ReadRepository<ConcertEntity>, ICo
 
     public Task<ConcertDto?> GetDtoAsync(int concertId) =>
         context.Concerts
+            .AsNoTracking()
             .Where(c => c.Id == concertId)
             .ToDto()
             .FirstOrDefaultAsync();
