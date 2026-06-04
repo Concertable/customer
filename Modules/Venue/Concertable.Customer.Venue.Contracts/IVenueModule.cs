@@ -1,6 +1,6 @@
 namespace Concertable.Customer.Venue.Contracts;
 
-public interface ICustomerVenueModule
+public interface IVenueModule
 {
     Task<VenueSummary?> GetSummaryAsync(int venueId, CancellationToken ct = default);
 }

@@ -9,7 +9,6 @@ global using Concertable.Payment.Contracts;
 global using Concertable.Payment.Contracts.Events;
 global using Concertable.B2B.User.Contracts;
 global using Concertable.Kernel.Notifications;
-global using Concertable.Customer.Concert.Domain;
 global using Concertable.Customer.Ticket.Domain;
 global using Concertable.Customer.Ticket.Application.Interfaces;
 global using Concertable.Customer.Ticket.Application.DTOs;

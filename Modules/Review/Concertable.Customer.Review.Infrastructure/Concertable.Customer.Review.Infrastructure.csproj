@@ -18,7 +18,7 @@
     <ProjectReference Include="..\Concertable.Customer.Review.Contracts\Concertable.Customer.Review.Contracts.csproj" />
     <ProjectReference Include="..\..\..\..\Concertable.DataAccess\Concertable.DataAccess.Infrastructure\Concertable.DataAccess.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\..\Concertable.B2B\Modules\Concert\Concertable.B2B.Concert.Contracts\Concertable.B2B.Concert.Contracts.csproj" />
-    <ProjectReference Include="..\..\Ticket\Concertable.Customer.Ticket.Application\Concertable.Customer.Ticket.Application.csproj" />
+    <ProjectReference Include="..\..\Ticket\Concertable.Customer.Ticket.Contracts\Concertable.Customer.Ticket.Contracts.csproj" />
     <ProjectReference Include="..\..\..\..\Shared\Concertable.Kernel\Concertable.Kernel.csproj" />
     <ProjectReference Include="..\..\..\..\Concertable.Messaging\Concertable.Messaging.Contracts\Concertable.Messaging.Contracts.csproj" />
     <ProjectReference Include="..\..\..\..\Concertable.Messaging\Concertable.Messaging.Domain\Concertable.Messaging.Domain.csproj" />

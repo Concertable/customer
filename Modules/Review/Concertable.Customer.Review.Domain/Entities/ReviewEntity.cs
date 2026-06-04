@@ -16,9 +16,9 @@ public sealed class ReviewEntity : IIdEntity, IEventRaiser
     public string Email { get; private set; } = null!;
     public string? Details { get; private set; }
 
-    private readonly EventRaiser _events = new();
-    public IReadOnlyList<IDomainEvent> DomainEvents => _events.DomainEvents;
-    public void ClearDomainEvents() => _events.Clear();
+    private readonly EventRaiser events = new();
+    public IReadOnlyList<IDomainEvent> DomainEvents => events.DomainEvents;
+    public void ClearDomainEvents() => events.Clear();
 
     private ReviewEntity() { }
 
@@ -42,7 +42,7 @@ public sealed class ReviewEntity : IIdEntity, IEventRaiser
             VenueId = venueId,
             ConcertId = concertId
         };
-        review._events.Raise(new ReviewCreatedDomainEvent(ticketId, artistId, venueId, concertId, stars, email, details));
+        review.events.Raise(new ReviewCreatedDomainEvent(ticketId, artistId, venueId, concertId, stars, email, details));
         return review;
     }
 

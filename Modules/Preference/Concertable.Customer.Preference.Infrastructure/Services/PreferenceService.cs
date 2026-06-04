@@ -22,7 +22,7 @@ internal sealed class PreferenceService : IPreferenceService
         this.geometryCalculator = geometryCalculator;
     }
 
-    public async Task<PreferenceDto> CreateAsync(CreatePreferenceRequest request, Guid? userId = null)
+    public async Task<PreferenceDto> CreateAsync(PreferenceRequest request, Guid? userId = null)
     {
         var resolvedUserId = userId ?? currentUser.GetId();
         var preference = PreferenceEntity.Create(resolvedUserId, request.RadiusKm, request.Genres);
@@ -47,15 +47,15 @@ internal sealed class PreferenceService : IPreferenceService
 
     public Task<PreferenceDto?> GetByUserAsync() => GetByUserIdAsync(currentUser.GetId());
 
-    public async Task<PreferenceDto> UpdateAsync(PreferenceDto preferenceDto)
+    public async Task<PreferenceDto> UpdateAsync(int id, PreferenceRequest request)
     {
-        var preference = await preferenceRepository.GetByIdAsync(preferenceDto.Id)
+        var preference = await preferenceRepository.GetByIdAsync(id)
             ?? throw new NotFoundException("Preference not found");
 
         if (currentUser.GetId() != preference.UserId)
             throw new UnauthorizedAccessException("You do not own this preference");
 
-        preference.Update(preferenceDto.RadiusKm, preferenceDto.Genres);
+        preference.Update(request.RadiusKm, request.Genres);
 
         preferenceRepository.Update(preference);
         await preferenceRepository.SaveChangesAsync();

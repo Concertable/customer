@@ -1,7 +1,6 @@
 using System.Net;
 using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Application.Requests;
-using Concertable.Customer.Ticket.Application.Responses;
 using Xunit.Abstractions;
 
 namespace Concertable.Customer.Ticket.IntegrationTests;
@@ -75,7 +74,7 @@ public sealed class TicketApiTests : IAsyncLifetime
 
         // Assert
         await response.ShouldBe(HttpStatusCode.OK);
-        var result = await response.Content.ReadAsync<TicketPaymentResponse>();
+        var result = await response.Content.ReadAsync<TicketPayment>();
         Assert.NotNull(result);
         Assert.Equal("pi_mock_pay", result.TransactionId);
         Assert.False(result.RequiresAction);

@@ -1,11 +1,11 @@
-﻿using Concertable.Customer.Concert.Domain.Entities;
+using Concertable.Customer.Concert.Contracts;
 using FluentResults;
 
 namespace Concertable.Customer.Ticket.Application.Interfaces;
 
 internal interface ITicketValidator
 {
-    Result CanBePurchased(ConcertEntity concert);
+    Result CanBePurchased(ConcertDto concert);
     Task<Result> CanBePurchasedAsync(int concertId);
-    Result CanPurchaseTickets(ConcertEntity concert, int quantity);
+    Result CanPurchaseTickets(ConcertDto concert, int quantity);
 }

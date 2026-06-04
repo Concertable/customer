@@ -7,13 +7,13 @@ namespace Concertable.Customer.Concert.Infrastructure.Services;
 internal sealed class ConcertService : IConcertService
 {
     private readonly IConcertReadRepository concertRepository;
-    private readonly ICustomerVenueModule venueModule;
-    private readonly ICustomerArtistModule artistModule;
+    private readonly IVenueModule venueModule;
+    private readonly IArtistModule artistModule;
 
     public ConcertService(
         IConcertReadRepository concertRepository,
-        ICustomerVenueModule venueModule,
-        ICustomerArtistModule artistModule)
+        IVenueModule venueModule,
+        IArtistModule artistModule)
     {
         this.concertRepository = concertRepository;
         this.venueModule = venueModule;

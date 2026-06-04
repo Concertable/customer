@@ -1,5 +1,7 @@
+using Concertable.Customer.Ticket.Contracts;
 using Concertable.Customer.Ticket.Domain.Entities;
 using Concertable.Customer.Ticket.Infrastructure.Data;
+using Concertable.Customer.Ticket.Infrastructure.Mappers;
 using Concertable.DataAccess.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,8 +40,11 @@ internal sealed class TicketRepository : Repository<TicketEntity, TicketDbContex
             .ToListAsync();
     }
 
-    public Task<TicketEntity?> GetByUserIdAndConcertIdAsync(Guid userId, int concertId) =>
-        context.Tickets.FirstOrDefaultAsync(t => t.UserId == userId && t.ConcertId == concertId);
+    public Task<TicketSummary?> GetSummaryByUserAndConcertAsync(Guid userId, int concertId) =>
+        context.Tickets
+            .Where(t => t.UserId == userId && t.ConcertId == concertId)
+            .ToSummary()
+            .FirstOrDefaultAsync();
 
     public Task<TicketEntity?> GetByIdForReviewAsync(Guid ticketId) =>
         context.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId);
