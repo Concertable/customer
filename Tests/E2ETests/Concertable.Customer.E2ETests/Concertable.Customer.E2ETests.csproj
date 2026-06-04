@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\..\Concertable.Customer.Web\Concertable.Customer.Web.csproj" />
     <ProjectReference Include="..\..\..\Modules\Concert\Concertable.Customer.Concert.Infrastructure\Concertable.Customer.Concert.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Modules\Preference\Concertable.Customer.Preference.Infrastructure\Concertable.Customer.Preference.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\Concertable.Search\Tests\E2ETests\Concertable.Search.E2ETests.Helpers\Concertable.Search.E2ETests.Helpers.csproj" />
   </ItemGroup>
 
   <ItemGroup>

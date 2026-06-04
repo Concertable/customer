@@ -83,6 +83,7 @@
   </Folder>
   <Folder Name="/Tests/E2ETests/">
     <Project Path="Tests/E2ETests/Concertable.Customer.E2ETests/Concertable.Customer.E2ETests.csproj" />
+    <Project Path="Tests/E2ETests/Concertable.Customer.E2ETests.Mobile/Concertable.Customer.E2ETests.Mobile.csproj" />
     <Project Path="Tests/E2ETests/Concertable.Customer.E2ETests.Ui/Concertable.Customer.E2ETests.Ui.csproj" />
   </Folder>
 </Solution>
