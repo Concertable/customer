@@ -24,7 +24,7 @@ public sealed class FindPage
     private ILocator HeaderCards => page.GetByTestId("header-card");
     private ILocator QueryInput => page.GetByTestId("search-query");
 
-    public Task GotoAsync() => page.GotoAsync(url);
+    public Task GotoAsync() => page.GotoSpaAsync(url);
 
     public async Task OpenFilterPanelAsync()
     {

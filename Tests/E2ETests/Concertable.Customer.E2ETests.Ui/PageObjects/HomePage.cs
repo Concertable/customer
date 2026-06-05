@@ -13,10 +13,10 @@ public sealed class HomePage
 
     private ILocator SignInLink => page.GetByTestId("header-login");
 
-    public Task GotoAsync() => page.GotoAsync(url, new() { WaitUntil = WaitUntilState.Load });
+    public Task GotoAsync() => page.GotoSpaAsync(url);
 
     public Task ClickSignInAsync() => SignInLink.ClickAsync();
 
     public Task WaitUntilLoadedAsync() =>
-        page.WaitForLoadStateAsync(LoadState.Load);
+        page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 }
