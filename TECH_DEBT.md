@@ -67,6 +67,14 @@ Concert and Ticket gained their `.Contracts` projects (`IConcertModule`, `ITicke
 
 ## LOW
 
+### `ConcertPostedNotificationHandler` silently skips when lat/long is null
+
+`ConcertPostedNotificationHandler` returns early when `e.Latitude is null || e.Longitude is null` — preference-matched "concert posted" notifications would be silently skipped with no log. The nullability is phantom: `ConcertPostedEvent`'s lat/long comes from B2B's venue location, which is domain-validated non-null (see `api/Concertable.B2B/TECH_DEBT.md`: "`ConcertPostedEvent` lat/long nullable").
+
+**Resolves when:** B2B's `ConcertPostedEvent` carries non-nullable `double Latitude/Longitude` and the early-return guard is deleted.
+
+---
+
 ### Read repositories don't default to no-tracking
 
 `ConcertReadRepository.GetDtoAsync` needed an ad-hoc `.AsNoTracking()` (EF throws when a projection carries a whole owned instance like `Period` on a tracking query), and the other read repos rely on projections happening to be untracked. Reads through a `ReadRepository<T>` should never track — the per-call opt-out is backwards.
