@@ -81,6 +81,21 @@ public sealed class ReviewApiTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task GetConcertReviewEligibility_ShouldReturn200False_WhenUnauthenticated()
+    {
+        // Arrange - no bearer token (a manager-app or anonymous caller)
+        var concert = fixture.SeedState.PastFlatFeeConcert;
+        var client = fixture.CreateClient();
+
+        // Act
+        var response = await client.GetAsync($"/api/concerts/{concert.Id}/reviews/eligibility");
+
+        // Assert
+        await response.ShouldBe(HttpStatusCode.OK);
+        Assert.False(await response.Content.ReadAsync<bool>());
+    }
+
+    [Fact]
     public async Task GetConcertReviewEligibility_ShouldReturn200False_WhenConcertHasNotHappenedYet()
     {
         // Arrange - Customer1 holds an upcoming ticket for this concert
