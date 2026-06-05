@@ -29,11 +29,8 @@ internal sealed class ConcertPostedNotificationHandler : IIntegrationEventHandle
 
         await context.SaveChangesAsync(ct);
 
-        if (e.Latitude is null || e.Longitude is null)
-            return;
-
         var userIds = await preferenceService.GetUserIdsByLocationAndGenresAsync(
-            e.Latitude.Value, e.Longitude.Value, e.Genres);
+            e.Latitude, e.Longitude, e.Genres);
 
         var payload = new
         {

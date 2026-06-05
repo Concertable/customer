@@ -3,20 +3,20 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
+namespace Concertable.Customer.Venue.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public sealed partial class InitialCreate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "artist");
+                name: "venue");
 
             migrationBuilder.CreateTable(
-                name: "Artists",
-                schema: "artist",
+                name: "Venues",
+                schema: "venue",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
@@ -35,27 +35,7 @@ namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Artists", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ArtistGenres",
-                schema: "artist",
-                columns: table => new
-                {
-                    ArtistId = table.Column<int>(type: "int", nullable: false),
-                    Genre = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ArtistGenres", x => new { x.ArtistId, x.Genre });
-                    table.ForeignKey(
-                        name: "FK_ArtistGenres_Artists_ArtistId",
-                        column: x => x.ArtistId,
-                        principalSchema: "artist",
-                        principalTable: "Artists",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_Venues", x => x.Id);
                 });
         }
 
@@ -63,12 +43,8 @@ namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ArtistGenres",
-                schema: "artist");
-
-            migrationBuilder.DropTable(
-                name: "Artists",
-                schema: "artist");
+                name: "Venues",
+                schema: "venue");
         }
     }
 }
