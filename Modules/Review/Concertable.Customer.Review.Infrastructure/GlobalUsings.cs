@@ -8,5 +8,3 @@ global using Concertable.Customer.Review.Domain;
 global using Concertable.Customer.Review.Application.Interfaces;
 global using Concertable.Customer.Review.Application.Mappers;
 global using Concertable.Customer.Review.Application.Requests;
-global using Concertable.DataAccess.Infrastructure;
-global using Concertable.DataAccess.Infrastructure;
