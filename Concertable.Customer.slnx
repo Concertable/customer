@@ -25,6 +25,7 @@
   <Folder Name="/Modules/Review/">
     <Project Path="Modules/Review/Concertable.Customer.Review.Api/Concertable.Customer.Review.Api.csproj" />
     <Project Path="Modules/Review/Concertable.Customer.Review.Application/Concertable.Customer.Review.Application.csproj" />
+    <Project Path="Modules/Review/Concertable.Customer.Review.Contracts/Concertable.Customer.Review.Contracts.csproj" />
     <Project Path="Modules/Review/Concertable.Customer.Review.Domain/Concertable.Customer.Review.Domain.csproj" />
     <Project Path="Modules/Review/Concertable.Customer.Review.Infrastructure/Concertable.Customer.Review.Infrastructure.csproj" />
   </Folder>
