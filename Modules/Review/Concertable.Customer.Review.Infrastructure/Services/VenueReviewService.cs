@@ -23,5 +23,7 @@ internal sealed class VenueReviewService : IVenueReviewService
         reviewRepository.GetByVenueAsync(venueId, pageParams);
 
     public Task<bool> CanCurrentUserReviewAsync(int venueId) =>
-        reviewValidator.CanUserReviewVenueAsync(currentUser.GetId(), venueId);
+        currentUser.IsAuthenticated
+            ? reviewValidator.CanUserReviewVenueAsync(currentUser.GetId(), venueId)
+            : Task.FromResult(false);
 }

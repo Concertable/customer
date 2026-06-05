@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { ActivityIndicator, View } from "react-native";
 import { useAuthInit } from "shared/auth/useAuthInit";
-import { CustomerTabs } from "shared/navigation/CustomerTabs";
+import { CustomerTabs } from "./CustomerTabs";
 
 export function RootNavigator() {
   const isReady = useAuthInit();

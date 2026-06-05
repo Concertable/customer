@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useAuth } from "react-oidc-context";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/features/auth";
-import customerApi from "@concertable/shared/lib/customerAxiosClient";
+import customerApi from "@customer/shared/lib/customerAxiosClient";
 import type { User } from "@/features/auth/types";
 
 async function getMe(): Promise<User> {
