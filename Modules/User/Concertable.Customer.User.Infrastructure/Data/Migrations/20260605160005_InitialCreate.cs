@@ -7,7 +7,7 @@ using NetTopologySuite.Geometries;
 namespace Concertable.Customer.User.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public sealed partial class InitialCreate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

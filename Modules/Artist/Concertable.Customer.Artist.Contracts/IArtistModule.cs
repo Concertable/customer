@@ -10,7 +10,7 @@ public interface IArtistModule
 public sealed record ArtistSummary(
     int Id,
     string Name,
-    string? Avatar,
+    string Avatar,
     double Rating,
     string County,
     string Town,
