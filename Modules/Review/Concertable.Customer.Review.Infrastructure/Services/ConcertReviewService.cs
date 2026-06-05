@@ -32,7 +32,9 @@ internal sealed class ConcertReviewService : IConcertReviewService
         reviewRepository.GetSummaryByConcertAsync(concertId);
 
     public Task<bool> CanCurrentUserReviewAsync(int concertId) =>
-        reviewValidator.CanUserReviewConcertAsync(currentUser.GetId(), concertId);
+        currentUser.IsAuthenticated
+            ? reviewValidator.CanUserReviewConcertAsync(currentUser.GetId(), concertId)
+            : Task.FromResult(false);
 
     public async Task<ReviewDto> CreateAsync(int concertId, CreateReviewRequest request)
     {
