@@ -1,26 +1,27 @@
 using Concertable.Customer.Review.Application.Interfaces;
 using Concertable.Customer.Review.Infrastructure.Validators;
 using Concertable.Customer.Ticket.Contracts;
-using Concertable.Testing;
+using Microsoft.Extensions.Time.Testing;
 using Moq;
 
 namespace Concertable.Customer.Review.UnitTests.Validators;
 
 public sealed class ReviewValidatorTests
 {
-    private static readonly DateTimeOffset Now = new FakeTimeProvider().GetUtcNow();
     private static readonly Guid UserId = Guid.NewGuid();
     private const int ConcertId = 1;
 
+    private readonly FakeTimeProvider timeProvider;
     private readonly Mock<IConcertReviewRepository> concertReviewRepository;
     private readonly Mock<ITicketModule> ticketModule;
     private readonly ReviewValidator sut;
 
     public ReviewValidatorTests()
     {
-        concertReviewRepository = new Mock<IConcertReviewRepository>();
-        ticketModule = new Mock<ITicketModule>();
-        sut = new ReviewValidator(concertReviewRepository.Object, ticketModule.Object, new FakeTimeProvider());
+        this.timeProvider = new FakeTimeProvider();
+        this.concertReviewRepository = new Mock<IConcertReviewRepository>();
+        this.ticketModule = new Mock<ITicketModule>();
+        this.sut = new ReviewValidator(concertReviewRepository.Object, ticketModule.Object, timeProvider);
     }
 
     private static TicketSummary NewTicket(DateTime periodStart) =>
@@ -30,7 +31,7 @@ public sealed class ReviewValidatorTests
     public async Task CanUserReviewConcertAsync_WithStartedConcertAndNoExistingReview_ReturnsTrue()
     {
         // Arrange
-        var ticket = NewTicket(periodStart: Now.UtcDateTime.AddDays(-1));
+        var ticket = NewTicket(periodStart: timeProvider.GetUtcNow().UtcDateTime.AddDays(-1));
         ticketModule.Setup(m => m.GetByUserAndConcertAsync(UserId, ConcertId)).ReturnsAsync(ticket);
         concertReviewRepository.Setup(r => r.HasReviewForTicketAsync(ticket.Id)).ReturnsAsync(false);
 
@@ -59,7 +60,7 @@ public sealed class ReviewValidatorTests
     public async Task CanUserReviewConcertAsync_WhenConcertNotStarted_ReturnsFalse()
     {
         // Arrange
-        var ticket = NewTicket(periodStart: Now.UtcDateTime.AddDays(1));
+        var ticket = NewTicket(periodStart: timeProvider.GetUtcNow().UtcDateTime.AddDays(1));
         ticketModule.Setup(m => m.GetByUserAndConcertAsync(UserId, ConcertId)).ReturnsAsync(ticket);
 
         // Act
@@ -74,7 +75,7 @@ public sealed class ReviewValidatorTests
     public async Task CanUserReviewConcertAsync_WhenTicketAlreadyReviewed_ReturnsFalse()
     {
         // Arrange
-        var ticket = NewTicket(periodStart: Now.UtcDateTime.AddDays(-1));
+        var ticket = NewTicket(periodStart: timeProvider.GetUtcNow().UtcDateTime.AddDays(-1));
         ticketModule.Setup(m => m.GetByUserAndConcertAsync(UserId, ConcertId)).ReturnsAsync(ticket);
         concertReviewRepository.Setup(r => r.HasReviewForTicketAsync(ticket.Id)).ReturnsAsync(true);
 

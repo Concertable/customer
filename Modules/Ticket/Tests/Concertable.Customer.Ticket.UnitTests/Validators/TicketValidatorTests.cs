@@ -2,26 +2,27 @@ using Concertable.Customer.Concert.Contracts;
 using Concertable.Customer.Ticket.Infrastructure.Validators;
 using Concertable.Kernel;
 using Concertable.Kernel.Exceptions;
-using Concertable.Testing;
+using Microsoft.Extensions.Time.Testing;
 using Moq;
 
 namespace Concertable.Customer.Ticket.UnitTests.Validators;
 
 public sealed class TicketValidatorTests
 {
-    private static readonly DateTimeOffset Now = new FakeTimeProvider().GetUtcNow();
     private static readonly Guid PayeeUserId = Guid.NewGuid();
 
+    private readonly FakeTimeProvider timeProvider;
     private readonly Mock<IConcertModule> concertModule;
     private readonly TicketValidator sut;
 
     public TicketValidatorTests()
     {
-        concertModule = new Mock<IConcertModule>();
-        sut = new TicketValidator(concertModule.Object, new FakeTimeProvider());
+        this.timeProvider = new FakeTimeProvider();
+        this.concertModule = new Mock<IConcertModule>();
+        this.sut = new TicketValidator(concertModule.Object, timeProvider);
     }
 
-    private static ConcertDto NewConcert(
+    private ConcertDto NewConcert(
         bool posted = true,
         int availableTickets = 10,
         DateRange? period = null) =>
@@ -29,8 +30,8 @@ public sealed class TicketValidatorTests
             1,
             "Concert",
             25m,
-            period ?? new DateRange(Now.UtcDateTime.AddDays(7), Now.UtcDateTime.AddDays(8)),
-            posted ? Now.UtcDateTime.AddDays(-30) : null,
+            period ?? new DateRange(timeProvider.GetUtcNow().UtcDateTime.AddDays(7), timeProvider.GetUtcNow().UtcDateTime.AddDays(8)),
+            posted ? timeProvider.GetUtcNow().UtcDateTime.AddDays(-30) : null,
             availableTickets,
             5,
             "Artist",
@@ -57,7 +58,7 @@ public sealed class TicketValidatorTests
     [Fact]
     public void CanBePurchased_WhenConcertAlreadyStarted_Fails()
     {
-        var started = new DateRange(Now.UtcDateTime.AddDays(-1), Now.UtcDateTime.AddDays(1));
+        var started = new DateRange(timeProvider.GetUtcNow().UtcDateTime.AddDays(-1), timeProvider.GetUtcNow().UtcDateTime.AddDays(1));
 
         var result = sut.CanBePurchased(NewConcert(period: started));
 
@@ -75,7 +76,7 @@ public sealed class TicketValidatorTests
     [Fact]
     public void CanBePurchased_AccumulatesAllFailures()
     {
-        var started = new DateRange(Now.UtcDateTime.AddDays(-1), Now.UtcDateTime.AddDays(1));
+        var started = new DateRange(timeProvider.GetUtcNow().UtcDateTime.AddDays(-1), timeProvider.GetUtcNow().UtcDateTime.AddDays(1));
 
         var result = sut.CanBePurchased(NewConcert(posted: false, availableTickets: 0, period: started));
 
