@@ -41,9 +41,9 @@ internal sealed class TicketValidator : ITicketValidator
 
     public Result CanPurchaseTickets(ConcertDto concert, int quantity)
     {
-        var baseResult = CanBePurchased(concert);
-        if (baseResult.IsFailed)
-            return baseResult;
+        var result = CanBePurchased(concert);
+        if (result.IsFailed)
+            return result;
 
         return concert.AvailableTickets - quantity < 0
             ? Result.Fail($"Not enough tickets available. Only {concert.AvailableTickets} tickets are available")
