@@ -1,0 +1,24 @@
+﻿using Concertable.Customer.Venue.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace Concertable.Customer.Venue.Infrastructure.Data;
+
+internal sealed class VenueDbContext : DbContextBase
+{
+    private readonly VenueConfigurationProvider provider;
+
+    public VenueDbContext(DbContextOptions<VenueDbContext> options, VenueConfigurationProvider provider)
+        : base(options)
+    {
+        this.provider = provider;
+    }
+
+    public DbSet<VenueEntity> Venues => Set<VenueEntity>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.HasDefaultSchema(Schema.Name);
+        provider.Configure(modelBuilder);
+    }
+}

@@ -4,7 +4,7 @@ const path = require("path");
 const qrcode = require("qrcode-terminal");
 
 const authUrl = process.env["services__auth__https__0"];
-const apiUrl = process.env["services__api__https__0"];
+const apiUrl = process.env["services__b2b_web__https__0"];
 if (authUrl) process.env["EXPO_PUBLIC_AUTH_AUTHORITY"] = authUrl;
 if (apiUrl) process.env["EXPO_PUBLIC_API_URL"] = apiUrl;
 process.env["EXPO_PUBLIC_OIDC_CLIENT_ID"] = "customer-mobile";
