@@ -1,0 +1,11 @@
+namespace Concertable.Customer.User.Infrastructure;
+
+internal static class Schema
+{
+    public const string Name = "user";
+
+    public static class Tables
+    {
+        public const string Users = "Users";
+    }
+}

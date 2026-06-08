@@ -3,12 +3,9 @@ import { useParams, useRouter } from "@tanstack/react-router";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { TicketPurchasedPayload } from "@/features/notifications";
-import {
-  useConcert,
-  useTicketCheckoutQuery,
-  type Concert,
-} from "@/features/concerts";
+import type { TicketPurchasedPayload } from "@customer/shared/features/notifications";
+import { useConcert, type Concert } from "@/features/concerts";
+import { useTicketCheckoutQuery } from "@customer/shared/features/tickets";
 import { useCheckoutFlow, type CheckoutFlowState } from "@/features/concerts/hooks/useCheckoutFlow";
 import { CheckoutLayout } from "@/features/concerts/components/checkout/CheckoutLayout";
 import { CheckoutSection } from "@/features/concerts/components/checkout/CheckoutSection";

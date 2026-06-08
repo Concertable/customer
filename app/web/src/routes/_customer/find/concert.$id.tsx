@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ConcertDetailsPage } from "@/features/concerts";
+import { AddReview } from "../../../features/reviews";
 
 export const Route = createFileRoute("/_customer/find/concert/$id")({
   params: {
@@ -8,6 +9,15 @@ export const Route = createFileRoute("/_customer/find/concert/$id")({
   },
   component: function () {
     const { id } = Route.useParams();
-    return <ConcertDetailsPage id={id} />;
+    const navigate = useNavigate();
+    return (
+      <ConcertDetailsPage
+        id={id}
+        addReviewSlot={<AddReview concertId={id} />}
+        onBuyTickets={() =>
+          void navigate({ to: "/concert/checkout/$id", params: { id } })
+        }
+      />
+    );
   },
 });
