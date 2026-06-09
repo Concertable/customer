@@ -22,7 +22,7 @@ public sealed class ConcertRatingProjectionHandlerTests
             10, 25m,
             new DateRange(Base.UtcDateTime.AddDays(30), Base.UtcDateTime.AddDays(31)),
             Base.UtcDateTime,
-            5, "Artist", 7, "Venue", Guid.NewGuid());
+            5, "Artist", 7, "Venue", Guid.NewGuid(), Guid.NewGuid());
 
     [Fact]
     public async Task HandleAsync_UpdatesRatingAndRecordsInbox()

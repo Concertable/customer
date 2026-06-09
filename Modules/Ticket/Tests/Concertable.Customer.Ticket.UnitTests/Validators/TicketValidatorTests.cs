@@ -10,6 +10,7 @@ namespace Concertable.Customer.Ticket.UnitTests.Validators;
 public sealed class TicketValidatorTests
 {
     private static readonly Guid PayeeUserId = Guid.NewGuid();
+    private static readonly Guid PayeeOwnerId = Guid.NewGuid();
 
     private readonly FakeTimeProvider timeProvider;
     private readonly Mock<IConcertModule> concertModule;
@@ -37,7 +38,8 @@ public sealed class TicketValidatorTests
             "Artist",
             7,
             "Venue",
-            PayeeUserId);
+            PayeeUserId,
+            PayeeOwnerId);
 
     [Fact]
     public void CanBePurchased_WithPostedUpcomingConcertInStock_Succeeds()

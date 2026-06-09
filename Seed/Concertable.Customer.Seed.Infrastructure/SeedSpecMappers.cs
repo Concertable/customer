@@ -33,7 +33,7 @@ public static class SeedSpecMappers
         var concert = ConcertEntity.Create(
             spec.ConcertId, spec.Name, spec.About, spec.BannerUrl, spec.Avatar,
             spec.TotalTickets, spec.Price, spec.Period, spec.DatePosted,
-            spec.ArtistId, spec.ArtistName, spec.VenueId, spec.VenueName, spec.PayeeUserId);
+            spec.ArtistId, spec.ArtistName, spec.VenueId, spec.VenueName, spec.PayeeUserId, spec.PayeeOwnerId);
 
         foreach (var genre in spec.Genres)
             concert.Genres.Add(new ConcertGenreEntity { ConcertId = spec.ConcertId, Genre = genre });

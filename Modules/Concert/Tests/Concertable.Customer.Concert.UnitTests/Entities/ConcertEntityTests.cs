@@ -6,6 +6,7 @@ namespace Concertable.Customer.Concert.UnitTests.Entities;
 public sealed class ConcertEntityTests
 {
     private static readonly Guid PayeeUserId = Guid.NewGuid();
+    private static readonly Guid PayeeOwnerId = Guid.NewGuid();
 
     private static ConcertEntity NewConcert(int totalTickets = 10) =>
         ConcertEntity.Create(
@@ -24,7 +25,8 @@ public sealed class ConcertEntityTests
             "Artist",
             7,
             "Venue",
-            PayeeUserId);
+            PayeeUserId,
+            PayeeOwnerId);
 
     [Fact]
     public void Create_SetsAvailableTicketsToTotal()
@@ -113,7 +115,7 @@ public sealed class ConcertEntityTests
         concert.Update(
             "Renamed", "About", "banner.png", "avatar.png",
             20, 30m, concert.Period, concert.DatePosted,
-            5, "Artist", 7, "Venue", PayeeUserId);
+            5, "Artist", 7, "Venue", PayeeUserId, PayeeOwnerId);
 
         Assert.Equal(20, concert.TotalTickets);
         Assert.Equal(17, concert.AvailableTickets);
@@ -129,7 +131,7 @@ public sealed class ConcertEntityTests
         concert.Update(
             "Concert", "About", "banner.png", "avatar.png",
             2, 25m, concert.Period, concert.DatePosted,
-            5, "Artist", 7, "Venue", PayeeUserId);
+            5, "Artist", 7, "Venue", PayeeUserId, PayeeOwnerId);
 
         Assert.Equal(2, concert.TotalTickets);
         Assert.Equal(0, concert.AvailableTickets);

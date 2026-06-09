@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ConcertDbContext))]
-    [Migration("20260606201033_InitialCreate")]
+    [Migration("20260609200526_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -60,6 +60,9 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PayeeOwnerId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("PayeeUserId")
                         .HasColumnType("uniqueidentifier");
