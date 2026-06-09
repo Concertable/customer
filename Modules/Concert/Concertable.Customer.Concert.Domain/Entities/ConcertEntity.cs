@@ -19,6 +19,7 @@ public sealed class ConcertEntity : IIdEntity
     public int VenueId { get; private set; }
     public string VenueName { get; private set; } = null!;
     public Guid PayeeUserId { get; private set; }
+    public Guid PayeeOwnerId { get; private set; }
     public double AverageRating { get; private set; }
     public int ReviewCount { get; private set; }
     public ICollection<ConcertGenreEntity> Genres { get; private set; } = [];
@@ -39,7 +40,8 @@ public sealed class ConcertEntity : IIdEntity
         string artistName,
         int venueId,
         string venueName,
-        Guid payeeUserId) => new()
+        Guid payeeUserId,
+        Guid payeeOwnerId) => new()
         {
             Id = concertId,
             Name = name,
@@ -55,7 +57,8 @@ public sealed class ConcertEntity : IIdEntity
             ArtistName = artistName,
             VenueId = venueId,
             VenueName = venueName,
-            PayeeUserId = payeeUserId
+            PayeeUserId = payeeUserId,
+            PayeeOwnerId = payeeOwnerId
         };
 
     public void Update(
@@ -71,7 +74,8 @@ public sealed class ConcertEntity : IIdEntity
         string artistName,
         int venueId,
         string venueName,
-        Guid payeeUserId)
+        Guid payeeUserId,
+        Guid payeeOwnerId)
     {
         var sold = TotalTickets - AvailableTickets;
         Name = name;
@@ -88,6 +92,7 @@ public sealed class ConcertEntity : IIdEntity
         VenueId = venueId;
         VenueName = venueName;
         PayeeUserId = payeeUserId;
+        PayeeOwnerId = payeeOwnerId;
     }
 
     public void UpdateRating(double averageRating, int reviewCount)

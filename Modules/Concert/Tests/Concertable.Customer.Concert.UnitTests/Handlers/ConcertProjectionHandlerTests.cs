@@ -13,6 +13,7 @@ public sealed class ConcertProjectionHandlerTests
 {
     private static readonly DateTimeOffset Base = new(2026, 6, 5, 12, 0, 0, TimeSpan.Zero);
     private static readonly Guid PayeeUserId = Guid.NewGuid();
+    private static readonly Guid PayeeOwnerId = Guid.NewGuid();
 
     private static ConcertDbContext NewContext(string dbName) =>
         new(new DbContextOptionsBuilder<ConcertDbContext>().UseInMemoryDatabase(dbName).Options,
@@ -41,7 +42,8 @@ public sealed class ConcertProjectionHandlerTests
             51.5,
             -0.1,
             genres ?? [Genre.Rock],
-            PayeeUserId);
+            PayeeUserId,
+            PayeeOwnerId);
 
     [Fact]
     public async Task HandleAsync_WhenConcertUnknown_CreatesProjection()
@@ -72,6 +74,7 @@ public sealed class ConcertProjectionHandlerTests
         Assert.Equal(e.VenueId, concert.VenueId);
         Assert.Equal(e.VenueName, concert.VenueName);
         Assert.Equal(e.PayeeUserId, concert.PayeeUserId);
+        Assert.Equal(e.PayeeOwnerId, concert.PayeeOwnerId);
         Assert.Equal([Genre.Rock, Genre.Pop], concert.Genres.Select(g => g.Genre).Order());
         Assert.True(await probe.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(ConcertProjectionHandler)));
     }
