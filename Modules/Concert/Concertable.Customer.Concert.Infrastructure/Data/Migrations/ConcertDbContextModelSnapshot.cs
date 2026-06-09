@@ -58,6 +58,9 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("PayeeOwnerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("PayeeUserId")
                         .HasColumnType("uniqueidentifier");
 
