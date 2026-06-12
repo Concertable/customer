@@ -15,6 +15,7 @@ internal static class DistributedApplicationBuilderExtensions
         string paymentBaseUrl)
     {
         builder.PinAuthService(authBaseUrl);
+        builder.PinAuthCustomerApi(customerApiBaseUrl);
         builder.PinCustomerWeb(customerApiBaseUrl, authBaseUrl, paymentBaseUrl);
         builder.AddSearchService(searchApiBaseUrl, authBaseUrl);
         builder.PinPaymentWeb(paymentBaseUrl, authBaseUrl);
@@ -22,6 +23,20 @@ internal static class DistributedApplicationBuilderExtensions
         builder.AddEphemeralSql();
         builder.PinStripeCli(paymentBaseUrl);
         return builder;
+    }
+
+    private static void PinAuthCustomerApi(
+        this IDistributedApplicationTestingBuilder builder,
+        string customerApiBaseUrl)
+    {
+        var auth = builder.Resources
+            .OfType<ProjectResource>()
+            .Single(r => r.Name == AppHostConstants.ResourceNames.Auth);
+
+        auth.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
+        {
+            context.EnvironmentVariables["Services__CustomerApiUrl"] = customerApiBaseUrl;
+        }));
     }
 
     private static void PinCustomerWeb(
