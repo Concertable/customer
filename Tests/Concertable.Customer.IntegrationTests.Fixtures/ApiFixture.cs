@@ -77,7 +77,7 @@ public sealed class ApiFixture : IAsyncLifetime
                     services.Remove(d);
 
                 services.Replace(ServiceDescriptor.Singleton<IBusTransport, MockBusTransport>());
-                services.Replace(ServiceDescriptor.Scoped<IGeocodingService, MockGeocodingService>());
+                services.Replace(ServiceDescriptor.Scoped<IGeocodingClient, MockGeocodingClient>());
                 services.AddScoped<ICustomerPaymentClient, MockCustomerPaymentClient>();
                 services.AddSingleton<IEmailSender, MockEmailSender>();
                 services.Replace(ServiceDescriptor.Singleton<INotificationClient>(NotificationClient));
