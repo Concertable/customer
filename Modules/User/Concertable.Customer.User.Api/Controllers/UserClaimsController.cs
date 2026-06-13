@@ -23,8 +23,8 @@ internal sealed class UserClaimsController : ControllerBase
         if (users.Count == 0)
             return Ok(Array.Empty<ClaimDto>());
 
-        // Every principal carries an `owner` claim so Payment can key payout accounts uniformly.
-        // A customer owns as themselves, so their owner key is their own user id.
+        /* Every principal carries an `owner` claim so Payment can key payout accounts uniformly;
+           a customer owns as themselves, so their owner key is their own user id. */
         return Ok(new[]
         {
             new ClaimDto("role", "Customer"),
