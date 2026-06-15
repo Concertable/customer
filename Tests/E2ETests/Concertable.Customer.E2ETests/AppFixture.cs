@@ -102,8 +102,8 @@ public sealed class AppFixture : IAsyncLifetime
 
         CustomerClient = new HttpClient { BaseAddress = new Uri(customerWebUrl) };
 
-        // 12 min, not 6: demo users are created via the async credential-registration event
-        // chain (Auth -> ASB -> handler), and the ASB emulator is markedly slower in CI.
+        // WORKAROUND (TECH_DEBT.md): 12 not 6 — demo users seed via the async credential-
+        // registration chain, slow on CI's ASB emulator. Revert to 6 once seed is faster.
         await healthWaiter.WaitForAllHealthyAsync(
             [customerWebUrl, searchWebUrl, paymentWebUrl],
             TimeSpan.FromMinutes(12));
