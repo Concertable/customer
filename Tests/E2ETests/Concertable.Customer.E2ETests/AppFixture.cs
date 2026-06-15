@@ -60,6 +60,7 @@ public sealed class AppFixture : IAsyncLifetime
     {
         loggerFactory = LoggerFactory.Create(b => b
             .AddSimpleConsole(o => o.SingleLine = true)
+            .AddProvider(new FileLoggerProvider(Path.Combine(AppContext.BaseDirectory, "e2e-diagnostics.log")))
             .SetMinimumLevel(LogLevel.Information));
         logger = loggerFactory.CreateLogger<AppFixture>();
         Polling = new PollingService(loggerFactory.CreateLogger<PollingService>());
@@ -95,7 +96,8 @@ public sealed class AppFixture : IAsyncLifetime
         builder.AddCustomerE2E(customerWebUrl, searchWebUrl, authUrl, paymentWebUrl);
 
         app = await builder.BuildAsync();
-        resourceLogger = new AspireResourceLogger(app.ResourceNotifications, logger);
+        resourceLogger = new AspireResourceLogger(
+            app.ResourceNotifications, app.Services.GetRequiredService<ResourceLoggerService>(), logger);
         await app.StartAsync();
 
         CustomerClient = new HttpClient { BaseAddress = new Uri(customerWebUrl) };
