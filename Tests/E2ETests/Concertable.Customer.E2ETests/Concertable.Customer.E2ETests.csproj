@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="appsettings.E2E.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('appsettings.E2E.json')" />
+    <Content Include="appsettings.E2E.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

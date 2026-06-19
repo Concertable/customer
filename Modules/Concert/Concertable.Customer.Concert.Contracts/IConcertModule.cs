@@ -18,4 +18,5 @@ public sealed record ConcertDto(
     string ArtistName,
     int VenueId,
     string VenueName,
-    Guid PayeeUserId);
+    Guid PayeeUserId,
+    Guid PayeeOwnerId);

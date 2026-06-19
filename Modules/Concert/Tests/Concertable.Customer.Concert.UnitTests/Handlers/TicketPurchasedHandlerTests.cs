@@ -12,6 +12,7 @@ public sealed class TicketPurchasedHandlerTests
 {
     private static readonly DateTimeOffset Base = new(2026, 6, 5, 12, 0, 0, TimeSpan.Zero);
     private static readonly Guid PayeeUserId = Guid.NewGuid();
+    private static readonly Guid PayeeOwnerId = Guid.NewGuid();
 
     private static ConcertDbContext NewContext(string dbName) =>
         new(new DbContextOptionsBuilder<ConcertDbContext>().UseInMemoryDatabase(dbName).Options,
@@ -23,7 +24,7 @@ public sealed class TicketPurchasedHandlerTests
             totalTickets, 25m,
             new DateRange(Base.UtcDateTime.AddDays(30), Base.UtcDateTime.AddDays(31)),
             Base.UtcDateTime,
-            5, "Artist", 7, "Venue", PayeeUserId);
+            5, "Artist", 7, "Venue", PayeeUserId, PayeeOwnerId);
 
     private static TicketPurchasedEvent NewEvent(int concertId = 1) =>
         new(Guid.NewGuid(), Guid.NewGuid(), concertId, 25m, Base.UtcDateTime);
