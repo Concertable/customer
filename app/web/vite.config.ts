@@ -18,7 +18,7 @@ export default defineConfig({
     'import.meta.env.VITE_API_URL': JSON.stringify('https://localhost:7090/api'),
     'import.meta.env.VITE_BASE_URL': JSON.stringify('https://localhost:7090'),
     'import.meta.env.VITE_SEARCH_API_URL': JSON.stringify('https://localhost:7097/api'),
-    'import.meta.env.VITE_PAYMENT_API_URL': JSON.stringify('https://localhost:7098/api'),
+    'import.meta.env.VITE_PAYMENT_API_URL': JSON.stringify('https://localhost:7088/api'),
   },
   resolve: {
     alias: [

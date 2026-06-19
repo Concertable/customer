@@ -17,5 +17,6 @@ internal static class QueryableConcertMappers
             c.ArtistName,
             c.VenueId,
             c.VenueName,
-            c.PayeeUserId));
+            c.PayeeUserId,
+            c.PayeeOwnerId));
 }

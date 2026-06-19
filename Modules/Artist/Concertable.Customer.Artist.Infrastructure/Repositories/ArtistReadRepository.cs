@@ -10,8 +10,8 @@ internal sealed class ArtistReadRepository : ReadRepository<ArtistEntity>, IArti
 {
     public ArtistReadRepository(ArtistDbContext context) : base(context) { }
 
-    public override Task<ArtistEntity?> GetByIdAsync(int id) =>
-        context.Artists.Include(a => a.Genres).FirstOrDefaultAsync(a => a.Id == id);
+    public override Task<ArtistEntity?> GetByIdAsync(int id, CancellationToken ct = default) =>
+        context.Artists.Include(a => a.Genres).FirstOrDefaultAsync(a => a.Id == id, ct);
 
     public Task<ArtistSummary?> GetSummaryAsync(int artistId) =>
         context.Artists

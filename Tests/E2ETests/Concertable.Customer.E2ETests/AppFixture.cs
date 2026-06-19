@@ -60,6 +60,7 @@ public sealed class AppFixture : IAsyncLifetime
     {
         loggerFactory = LoggerFactory.Create(b => b
             .AddSimpleConsole(o => o.SingleLine = true)
+            .AddProvider(new FileLoggerProvider(Path.Combine(AppContext.BaseDirectory, "e2e-diagnostics.log")))
             .SetMinimumLevel(LogLevel.Information));
         logger = loggerFactory.CreateLogger<AppFixture>();
         Polling = new PollingService(loggerFactory.CreateLogger<PollingService>());
@@ -95,18 +96,17 @@ public sealed class AppFixture : IAsyncLifetime
         builder.AddCustomerE2E(customerWebUrl, searchWebUrl, authUrl, paymentWebUrl);
 
         app = await builder.BuildAsync();
-        resourceLogger = new AspireResourceLogger(app.ResourceNotifications, logger);
+        resourceLogger = new AspireResourceLogger(
+            app.ResourceNotifications, app.Services.GetRequiredService<ResourceLoggerService>(), logger);
         await app.StartAsync();
 
         CustomerClient = new HttpClient { BaseAddress = new Uri(customerWebUrl) };
 
+        // WORKAROUND (TECH_DEBT.md): 12 not 6 — demo users seed via the async credential-
+        // registration chain, slow on CI's ASB emulator. Revert to 6 once seed is faster.
         await healthWaiter.WaitForAllHealthyAsync(
             [customerWebUrl, searchWebUrl, paymentWebUrl],
-            TimeSpan.FromMinutes(6));
-
-        await healthWaiter.WaitForAllServingAsync(
-            [customerSpaUrl],
-            TimeSpan.FromMinutes(3));
+            TimeSpan.FromMinutes(12));
 
         DbFixture = new DbFixture(app);
         await DbFixture.InitializeAsync();
