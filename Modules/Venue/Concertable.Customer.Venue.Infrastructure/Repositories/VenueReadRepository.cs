@@ -1,3 +1,4 @@
+using Concertable.Customer.Venue.Application.DTOs;
 using Concertable.Customer.Venue.Contracts;
 using Concertable.Customer.Venue.Domain.Entities;
 using Concertable.Customer.Venue.Infrastructure.Data;
@@ -14,5 +15,11 @@ internal sealed class VenueReadRepository : ReadRepository<VenueEntity>, IVenueR
         context.Venues
             .Where(v => v.Id == venueId)
             .ToSummary()
+            .FirstOrDefaultAsync();
+
+    public Task<VenueDetails?> GetDetailsByIdAsync(int venueId) =>
+        context.Venues
+            .Where(v => v.Id == venueId)
+            .ToDetails()
             .FirstOrDefaultAsync();
 }

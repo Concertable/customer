@@ -1,4 +1,5 @@
-using Concertable.Customer.Artist.Application.Dtos;
+using Concertable.Customer.Artist.Api.Mappers;
+using Concertable.Customer.Artist.Api.Responses;
 using Concertable.Customer.Artist.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,9 @@ internal sealed class ArtistController : ControllerBase
 
     [HttpGet("{id:int}")]
     [AllowAnonymous]
-    public async Task<ActionResult<ArtistDetail>> GetById(int id)
+    public async Task<ActionResult<ArtistDetailsResponse>> GetDetailsById(int id)
     {
-        var artist = await artistService.GetByIdAsync(id);
-        return artist is null ? NotFound() : Ok(artist);
+        var artist = await artistService.GetDetailsByIdAsync(id);
+        return artist is null ? NotFound() : Ok(artist.ToDetailsResponse());
     }
 }
