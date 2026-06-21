@@ -1,6 +1,6 @@
-namespace Concertable.Customer.Venue.Application.Dtos;
+namespace Concertable.Customer.Venue.Application.DTOs;
 
-public sealed record VenueDetail(
+public sealed record VenueDetails(
     int Id,
     string Name,
     string About,

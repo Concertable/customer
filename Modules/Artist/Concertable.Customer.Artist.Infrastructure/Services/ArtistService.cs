@@ -1,5 +1,4 @@
-using Concertable.Customer.Artist.Application.Dtos;
-using Concertable.Customer.Artist.Application.Mappers;
+using Concertable.Customer.Artist.Application.DTOs;
 
 namespace Concertable.Customer.Artist.Infrastructure.Services;
 
@@ -12,9 +11,6 @@ internal sealed class ArtistService : IArtistService
         this.repository = repository;
     }
 
-    public async Task<ArtistDetail?> GetByIdAsync(int artistId)
-    {
-        var artist = await repository.GetByIdAsync(artistId);
-        return artist?.ToDetailDto();
-    }
+    public Task<ArtistDetails?> GetDetailsByIdAsync(int artistId) =>
+        repository.GetDetailsByIdAsync(artistId);
 }

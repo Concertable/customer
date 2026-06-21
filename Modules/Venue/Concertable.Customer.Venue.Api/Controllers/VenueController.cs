@@ -1,4 +1,5 @@
-using Concertable.Customer.Venue.Application.Dtos;
+using Concertable.Customer.Venue.Api.Mappers;
+using Concertable.Customer.Venue.Api.Responses;
 using Concertable.Customer.Venue.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,9 @@ internal sealed class VenueController : ControllerBase
 
     [HttpGet("{id:int}")]
     [AllowAnonymous]
-    public async Task<ActionResult<VenueDetail>> GetById(int id)
+    public async Task<ActionResult<VenueDetailsResponse>> GetDetailsById(int id)
     {
-        var venue = await venueService.GetByIdAsync(id);
-        return venue is null ? NotFound() : Ok(venue);
+        var venue = await venueService.GetDetailsByIdAsync(id);
+        return venue is null ? NotFound() : Ok(venue.ToDetailsResponse());
     }
 }

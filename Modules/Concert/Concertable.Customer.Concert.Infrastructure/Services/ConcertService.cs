@@ -1,5 +1,6 @@
 using Concertable.Customer.Artist.Contracts;
-using Concertable.Customer.Concert.Application.Dtos;
+using Concertable.Customer.Concert.Application.DTOs;
+using Concertable.Customer.Concert.Application.Mappers;
 using Concertable.Customer.Venue.Contracts;
 
 namespace Concertable.Customer.Concert.Infrastructure.Services;
@@ -20,7 +21,7 @@ internal sealed class ConcertService : IConcertService
         this.artistModule = artistModule;
     }
 
-    public async Task<ConcertDetail?> GetByIdAsync(int concertId, CancellationToken ct = default)
+    public async Task<ConcertDetails?> GetDetailsByIdAsync(int concertId, CancellationToken ct = default)
     {
         var concert = await concertRepository.GetByIdAsync(concertId);
         if (concert is null)
@@ -41,21 +42,6 @@ internal sealed class ConcertService : IConcertService
             ? new ConcertArtist(concert.ArtistId, concert.ArtistName, null, 0, "", "", [])
             : new ConcertArtist(artist.Id, artist.Name, artist.Avatar, artist.Rating, artist.County, artist.Town, artist.Genres);
 
-        return new ConcertDetail(
-            concert.Id,
-            concert.Name,
-            concert.About,
-            concert.BannerUrl,
-            concert.Avatar,
-            concert.AverageRating,
-            concert.Price,
-            concert.TotalTickets,
-            concert.AvailableTickets,
-            concert.Period.Start,
-            concert.Period.End,
-            concert.DatePosted,
-            venueDto,
-            artistDto,
-            concert.Genres.Select(g => g.Genre).ToArray());
+        return concert.ToDetails(venueDto, artistDto);
     }
 }

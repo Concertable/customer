@@ -1,5 +1,5 @@
 using System.Net;
-using Concertable.Customer.Concert.Application.Dtos;
+using Concertable.Customer.Concert.Application.DTOs;
 using Xunit.Abstractions;
 
 namespace Concertable.Customer.Concert.IntegrationTests;
@@ -32,7 +32,7 @@ public sealed class ConcertApiTests : IAsyncLifetime
 
         // Assert
         await response.ShouldBe(HttpStatusCode.OK);
-        var dto = await response.Content.ReadAsync<ConcertDetail>();
+        var dto = await response.Content.ReadAsync<ConcertDetails>();
         Assert.NotNull(dto);
         Assert.Equal(concert.Id, dto.Id);
         Assert.Equal(concert.Name, dto.Name);
