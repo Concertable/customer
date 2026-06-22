@@ -14,7 +14,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Concertable.Customer.Venue.Domain\Concertable.Customer.Venue.Domain.csproj" />
     <ProjectReference Include="..\Concertable.Customer.Venue.Application\Concertable.Customer.Venue.Application.csproj" />
-    <ProjectReference Include="..\Concertable.Customer.Venue.Contracts\Concertable.Customer.Venue.Contracts.csproj" />
     <ProjectReference Include="..\..\..\..\Concertable.DataAccess\Concertable.DataAccess.Infrastructure\Concertable.DataAccess.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\..\Concertable.B2B\Modules\Venue\Concertable.B2B.Venue.Contracts\Concertable.B2B.Venue.Contracts.csproj" />
     <ProjectReference Include="..\..\..\..\Shared\Concertable.Kernel\Concertable.Kernel.csproj" />

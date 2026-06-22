@@ -1,4 +1,5 @@
 ﻿using Concertable.Customer.Artist.Domain.Entities;
+using Concertable.Kernel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,6 +11,8 @@ internal sealed class ArtistEntityConfiguration : IEntityTypeConfiguration<Artis
     {
         builder.ToTable(Schema.Tables.Artists, Schema.Name);
         builder.Property(a => a.Id).ValueGeneratedNever();
+
+        builder.OwnsAddress(a => a.Address);
 
         builder.HasMany(a => a.Genres)
             .WithOne(g => g.Artist)

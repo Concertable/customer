@@ -1,4 +1,3 @@
-using Concertable.Customer.Venue.Contracts;
 using Concertable.Customer.Venue.Infrastructure.Data;
 using Concertable.Customer.Venue.Infrastructure.Data.Seeders;
 using Concertable.Customer.Venue.Infrastructure.Handlers;
@@ -27,7 +26,6 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IVenueReadRepository, VenueReadRepository>();
         services.AddScoped<IVenueService, VenueService>();
-        services.AddScoped<IVenueModule, VenueModule>();
         services.AddScoped<IIntegrationEventHandler<VenueChangedEvent>, VenueProjectionHandler>();
         services.AddScoped<IIntegrationEventHandler<VenueRatingUpdatedEvent>, VenueRatingProjectionHandler>();
 

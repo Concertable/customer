@@ -1,3 +1,5 @@
+using Concertable.Kernel;
+
 namespace Concertable.Customer.Venue.Application.DTOs;
 
 public sealed record VenueDetails(
@@ -11,4 +13,4 @@ public sealed record VenueDetails(
     string Town,
     string Email,
     double Latitude,
-    double Longitude);
+    double Longitude) : IAddress;

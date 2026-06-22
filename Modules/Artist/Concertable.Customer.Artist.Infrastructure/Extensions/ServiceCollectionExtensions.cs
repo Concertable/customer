@@ -1,5 +1,4 @@
 using Concertable.B2B.Artist.Contracts.Events;
-using Concertable.Customer.Artist.Contracts;
 using Concertable.Customer.Artist.Infrastructure.Data;
 using Concertable.Customer.Artist.Infrastructure.Data.Seeders;
 using Concertable.Customer.Artist.Infrastructure.Handlers;
@@ -27,7 +26,6 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IArtistReadRepository, ArtistReadRepository>();
         services.AddScoped<IArtistService, ArtistService>();
-        services.AddScoped<IArtistModule, ArtistModule>();
         services.AddScoped<IIntegrationEventHandler<ArtistChangedEvent>, ArtistProjectionHandler>();
         services.AddScoped<IIntegrationEventHandler<ArtistRatingUpdatedEvent>, ArtistRatingProjectionHandler>();
 
