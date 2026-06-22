@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Concertable.Customer.Venue.Domain\Concertable.Customer.Venue.Domain.csproj" />
-    <ProjectReference Include="..\Concertable.Customer.Venue.Contracts\Concertable.Customer.Venue.Contracts.csproj" />
     <ProjectReference Include="..\..\..\..\Shared\Concertable.Kernel\Concertable.Kernel.csproj" />
     <ProjectReference Include="..\..\..\..\Concertable.DataAccess\Concertable.DataAccess.Application\Concertable.DataAccess.Application.csproj" />
   </ItemGroup>

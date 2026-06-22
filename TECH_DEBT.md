@@ -41,14 +41,6 @@ Mirror of the B2B item in `api/Concertable.B2B/TECH_DEBT.md`. See [`plans/SPLIT_
 
 ## MED
 
-### Concert detail aggregates via facade fan-out instead of module-local read models
-
-`ConcertService.GetByIdAsync` assembles `ConcertDetails` by loading the concert entity, then calling the Venue/Artist facades (`IVenueModule.GetSummaryAsync` / `IArtistModule.GetSummaryAsync`) via `Task.WhenAll`, with fallback defaults when a summary is missing. Those fallbacks **fabricate** a blank venue/artist — `new ConcertVenue(..., "", "", 0, 0)` / `new ConcertArtist(..., "", "", [])` — masking a missing read-model row with empty counties/towns, a real-looking lat/long of (0, 0), and banned `""` literals. B2B's Concert module solves the identical need with **module-local read models** (`VenueReadModel`/`ArtistReadModel` in its own context) joined in a single repo query (`QueryableConcertMappers.ToDetails`) — its service is two lines. Same problem, two architectures; the B2B shape is the canonical one (restricted per-consumer projections).
-
-**Resolves when:** Customer's Concert module owns slice read models in the `[concert]` schema — venue (`Name`, `County`, `Town`, `Latitude`, `Longitude`) and artist (`Name`, `Avatar`, `Rating`, `County`, `Town` + genres child table) — populated by Concert-module handlers for `VenueChangedEvent` / `ArtistChangedEvent` / `ArtistRatingUpdatedEvent` (own inbox rows per consumer); `IConcertReadRepository.GetDetailAsync` does the one-query joined projection; `ConcertService.GetByIdAsync` collapses to `return await concertRepository.GetDetailAsync(id) ?? throw new NotFoundException(...)`; the then-consumerless `IVenueModule`/`IArtistModule` facades are deleted. Requires `./initial-migrations.ps1` re-scaffold and a `ConcertProjectionTestSeeder` extension for the new tables.
-
----
-
 ### Preference module lacks `.Contracts` project
 
 Concert and Ticket gained their `.Contracts` projects (`IConcertModule`, `ITicketModule`); Preference is the last module without one. No cross-module caller reaches into Preference today, so this is latent.

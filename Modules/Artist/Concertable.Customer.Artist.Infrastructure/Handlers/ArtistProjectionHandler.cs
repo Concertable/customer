@@ -1,6 +1,7 @@
 ﻿using Concertable.B2B.Artist.Contracts.Events;
 using Concertable.Customer.Artist.Domain.Entities;
 using Concertable.Customer.Artist.Infrastructure.Data;
+using Concertable.Kernel;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Artist.Infrastructure.Handlers;
@@ -34,8 +35,7 @@ internal sealed class ArtistProjectionHandler : IIntegrationEventHandler<ArtistC
                 e.About,
                 e.Avatar,
                 e.BannerUrl,
-                e.County,
-                e.Town,
+                new Address(e.County, e.Town),
                 e.Latitude,
                 e.Longitude,
                 e.Email);
@@ -53,8 +53,7 @@ internal sealed class ArtistProjectionHandler : IIntegrationEventHandler<ArtistC
                 e.About,
                 e.Avatar,
                 e.BannerUrl,
-                e.County,
-                e.Town,
+                new Address(e.County, e.Town),
                 e.Latitude,
                 e.Longitude,
                 e.Email);

@@ -1,4 +1,4 @@
-﻿namespace Concertable.Customer.Artist.Domain.Entities;
+namespace Concertable.Customer.Artist.Domain.Entities;
 
 public sealed class ArtistEntity : IIdEntity
 {
@@ -8,8 +8,7 @@ public sealed class ArtistEntity : IIdEntity
     public string About { get; private set; } = null!;
     public string Avatar { get; private set; } = null!;
     public string BannerUrl { get; private set; } = null!;
-    public string County { get; private set; } = null!;
-    public string Town { get; private set; } = null!;
+    public Address Address { get; private set; } = null!;
     public double Latitude { get; private set; }
     public double Longitude { get; private set; }
     public string Email { get; private set; } = null!;
@@ -26,8 +25,7 @@ public sealed class ArtistEntity : IIdEntity
         string about,
         string avatar,
         string bannerUrl,
-        string county,
-        string town,
+        Address address,
         double latitude,
         double longitude,
         string email) => new()
@@ -38,8 +36,7 @@ public sealed class ArtistEntity : IIdEntity
             About = about,
             Avatar = avatar,
             BannerUrl = bannerUrl,
-            County = county,
-            Town = town,
+            Address = address,
             Latitude = latitude,
             Longitude = longitude,
             Email = email
@@ -51,8 +48,7 @@ public sealed class ArtistEntity : IIdEntity
         string about,
         string avatar,
         string bannerUrl,
-        string county,
-        string town,
+        Address address,
         double latitude,
         double longitude,
         string email)
@@ -62,8 +58,7 @@ public sealed class ArtistEntity : IIdEntity
         About = about;
         Avatar = avatar;
         BannerUrl = bannerUrl;
-        County = county;
-        Town = town;
+        Address = address;
         Latitude = latitude;
         Longitude = longitude;
         Email = email;

@@ -1,4 +1,5 @@
 ﻿using Concertable.Customer.Venue.Domain.Entities;
+using Concertable.Kernel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,5 +11,6 @@ internal sealed class VenueEntityConfiguration : IEntityTypeConfiguration<VenueE
     {
         builder.ToTable(Schema.Tables.Venues, Schema.Name);
         builder.Property(v => v.Id).ValueGeneratedNever();
+        builder.OwnsAddress(v => v.Address);
     }
 }

@@ -43,10 +43,6 @@ namespace Concertable.Customer.Venue.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("County")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -63,10 +59,6 @@ namespace Concertable.Customer.Venue.Infrastructure.Data.Migrations
 
                     b.Property<int>("ReviewCount")
                         .HasColumnType("int");
-
-                    b.Property<string>("Town")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -143,6 +135,35 @@ namespace Concertable.Customer.Venue.Infrastructure.Data.Migrations
                         {
                             t.ExcludeFromMigrations();
                         });
+                });
+
+            modelBuilder.Entity("Concertable.Customer.Venue.Domain.Entities.VenueEntity", b =>
+                {
+                    b.OwnsOne("Concertable.Kernel.Address", "Address", b1 =>
+                        {
+                            b1.Property<int>("VenueEntityId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("County")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("County");
+
+                            b1.Property<string>("Town")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("Town");
+
+                            b1.HasKey("VenueEntityId");
+
+                            b1.ToTable("Venues", "venue");
+
+                            b1.WithOwner()
+                                .HasForeignKey("VenueEntityId");
+                        });
+
+                    b.Navigation("Address")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
