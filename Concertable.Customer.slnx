@@ -53,14 +53,12 @@
   <Folder Name="/Modules/Venue/">
     <Project Path="Modules/Venue/Concertable.Customer.Venue.Api/Concertable.Customer.Venue.Api.csproj" />
     <Project Path="Modules/Venue/Concertable.Customer.Venue.Application/Concertable.Customer.Venue.Application.csproj" />
-    <Project Path="Modules/Venue/Concertable.Customer.Venue.Contracts/Concertable.Customer.Venue.Contracts.csproj" />
     <Project Path="Modules/Venue/Concertable.Customer.Venue.Domain/Concertable.Customer.Venue.Domain.csproj" />
     <Project Path="Modules/Venue/Concertable.Customer.Venue.Infrastructure/Concertable.Customer.Venue.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/Modules/Artist/">
     <Project Path="Modules/Artist/Concertable.Customer.Artist.Api/Concertable.Customer.Artist.Api.csproj" />
     <Project Path="Modules/Artist/Concertable.Customer.Artist.Application/Concertable.Customer.Artist.Application.csproj" />
-    <Project Path="Modules/Artist/Concertable.Customer.Artist.Contracts/Concertable.Customer.Artist.Contracts.csproj" />
     <Project Path="Modules/Artist/Concertable.Customer.Artist.Domain/Concertable.Customer.Artist.Domain.csproj" />
     <Project Path="Modules/Artist/Concertable.Customer.Artist.Infrastructure/Concertable.Customer.Artist.Infrastructure.csproj" />
   </Folder>

@@ -1,8 +1,8 @@
-using Concertable.Customer.Concert.Application.Dtos;
+using Concertable.Customer.Concert.Application.DTOs;
 
 namespace Concertable.Customer.Concert.Application.Interfaces;
 
 internal interface IConcertService
 {
-    Task<ConcertDetail?> GetByIdAsync(int concertId, CancellationToken ct = default);
+    Task<ConcertDetails?> GetDetailsByIdAsync(int concertId, CancellationToken ct = default);
 }

@@ -1,4 +1,5 @@
-using Concertable.Customer.Concert.Application.Dtos;
+using Concertable.Customer.Concert.Api.Mappers;
+using Concertable.Customer.Concert.Api.Responses;
 using Concertable.Customer.Concert.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,9 @@ internal sealed class ConcertController : ControllerBase
 
     [HttpGet("{id:int}")]
     [AllowAnonymous]
-    public async Task<ActionResult<ConcertDetail>> GetById(int id, CancellationToken ct)
+    public async Task<ActionResult<ConcertDetailsResponse>> GetDetailsById(int id, CancellationToken ct)
     {
-        var concert = await concertService.GetByIdAsync(id, ct);
-        return concert is null ? NotFound() : Ok(concert);
+        var concert = await concertService.GetDetailsByIdAsync(id, ct);
+        return concert is null ? NotFound() : Ok(concert.ToDetailsResponse());
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Concertable.B2B.Seed.Contracts.Specs;
+using Concertable.Kernel;
 using Concertable.Customer.Artist.Domain.Entities;
 using Concertable.Customer.Concert.Domain.Entities;
 using Concertable.Customer.Seed.Infrastructure.Factories;
@@ -12,14 +13,14 @@ public static class SeedSpecMappers
     public static VenueEntity ToEntity(this VenueSeedSpec spec) =>
         VenueEntity.Create(
             spec.VenueId, spec.UserId, spec.Name, spec.About,
-            spec.Avatar, spec.BannerUrl, spec.County, spec.Town,
+            spec.Avatar, spec.BannerUrl, new Address(spec.County, spec.Town),
             spec.Latitude, spec.Longitude, spec.Email);
 
     public static ArtistEntity ToEntity(this ArtistSeedSpec spec)
     {
         var artist = ArtistEntity.Create(
             spec.ArtistId, spec.UserId, spec.Name, spec.About,
-            spec.Avatar, spec.BannerUrl, spec.County, spec.Town,
+            spec.Avatar, spec.BannerUrl, new Address(spec.County, spec.Town),
             spec.Latitude, spec.Longitude, spec.Email);
 
         foreach (var genre in spec.Genres)

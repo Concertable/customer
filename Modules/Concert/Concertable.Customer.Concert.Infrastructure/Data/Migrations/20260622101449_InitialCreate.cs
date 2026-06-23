@@ -15,6 +15,24 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                 name: "concert");
 
             migrationBuilder.CreateTable(
+                name: "ArtistReadModels",
+                schema: "concert",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AverageRating = table.Column<double>(type: "float", nullable: false),
+                    ReviewCount = table.Column<int>(type: "int", nullable: false),
+                    County = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Town = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArtistReadModels", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Concerts",
                 schema: "concert",
                 columns: table => new
@@ -45,6 +63,43 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "VenueReadModels",
+                schema: "concert",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    County = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Town = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Latitude = table.Column<double>(type: "float", nullable: false),
+                    Longitude = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VenueReadModels", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ArtistReadModelGenres",
+                schema: "concert",
+                columns: table => new
+                {
+                    ArtistReadModelId = table.Column<int>(type: "int", nullable: false),
+                    Genre = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArtistReadModelGenres", x => new { x.ArtistReadModelId, x.Genre });
+                    table.ForeignKey(
+                        name: "FK_ArtistReadModelGenres_ArtistReadModels_ArtistReadModelId",
+                        column: x => x.ArtistReadModelId,
+                        principalSchema: "concert",
+                        principalTable: "ArtistReadModels",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ConcertGenres",
                 schema: "concert",
                 columns: table => new
@@ -69,7 +124,19 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ArtistReadModelGenres",
+                schema: "concert");
+
+            migrationBuilder.DropTable(
                 name: "ConcertGenres",
+                schema: "concert");
+
+            migrationBuilder.DropTable(
+                name: "VenueReadModels",
+                schema: "concert");
+
+            migrationBuilder.DropTable(
+                name: "ArtistReadModels",
                 schema: "concert");
 
             migrationBuilder.DropTable(

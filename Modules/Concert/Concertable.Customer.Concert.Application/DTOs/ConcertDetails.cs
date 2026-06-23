@@ -1,8 +1,8 @@
 using Concertable.Contracts;
 
-namespace Concertable.Customer.Concert.Application.Dtos;
+namespace Concertable.Customer.Concert.Application.DTOs;
 
-public sealed record ConcertDetail(
+public sealed record ConcertDetails(
     int Id,
     string Name,
     string About,
