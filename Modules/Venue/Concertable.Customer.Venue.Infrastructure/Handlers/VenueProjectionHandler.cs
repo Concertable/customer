@@ -1,5 +1,6 @@
 ﻿using Concertable.Customer.Venue.Infrastructure.Data;
 using Concertable.B2B.Venue.Contracts.Events;
+using Concertable.Kernel;
 using Microsoft.EntityFrameworkCore;
 using Concertable.Customer.Venue.Domain.Entities;
 
@@ -32,8 +33,7 @@ internal sealed class VenueProjectionHandler : IIntegrationEventHandler<VenueCha
                 e.About,
                 e.Avatar,
                 e.BannerUrl,
-                e.County,
-                e.Town,
+                new Address(e.County, e.Town),
                 e.Latitude,
                 e.Longitude,
                 e.Email);
@@ -47,8 +47,7 @@ internal sealed class VenueProjectionHandler : IIntegrationEventHandler<VenueCha
                 e.About,
                 e.Avatar,
                 e.BannerUrl,
-                e.County,
-                e.Town,
+                new Address(e.County, e.Town),
                 e.Latitude,
                 e.Longitude,
                 e.Email);

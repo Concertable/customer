@@ -1,3 +1,4 @@
+using Concertable.Customer.Concert.Application.DTOs;
 using Concertable.Customer.Concert.Contracts;
 using Concertable.Customer.Concert.Domain.Entities;
 using Concertable.Customer.Concert.Infrastructure.Data;
@@ -19,4 +20,11 @@ internal sealed class ConcertReadRepository : ReadRepository<ConcertEntity>, ICo
             .Where(c => c.Id == concertId)
             .ToDto()
             .FirstOrDefaultAsync();
+
+    public Task<ConcertDetails?> GetDetailsAsync(int concertId, CancellationToken ct = default) =>
+        context.Concerts
+            .AsNoTracking()
+            .Where(c => c.Id == concertId)
+            .ToDetails(context.VenueReadModels, context.ArtistReadModels)
+            .FirstOrDefaultAsync(ct);
 }

@@ -1,5 +1,4 @@
-using Concertable.Customer.Venue.Application.Dtos;
-using Concertable.Customer.Venue.Application.Mappers;
+using Concertable.Customer.Venue.Application.DTOs;
 
 namespace Concertable.Customer.Venue.Infrastructure.Services;
 
@@ -12,9 +11,6 @@ internal sealed class VenueService : IVenueService
         this.repository = repository;
     }
 
-    public async Task<VenueDetail?> GetByIdAsync(int venueId)
-    {
-        var venue = await repository.GetByIdAsync(venueId);
-        return venue?.ToDetailDto();
-    }
+    public Task<VenueDetails?> GetDetailsByIdAsync(int venueId) =>
+        repository.GetDetailsByIdAsync(venueId);
 }

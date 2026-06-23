@@ -109,7 +109,7 @@ No sync calls to B2B. Browse/detail reads go to `Concertable.Search` from the SP
 
 Customer is a modular monolith inside the service. Rules in `api/docs/MODULAR_MONOLITH_RULES.md` apply:
 
-- Cross-module calls: `IXModule` facade only (in `<Module>.Contracts`) — except Preference which has no Contracts project yet (TECH_DEBT)
+- Cross-module calls: `IXModule` facade only (in `<Module>.Contracts`). Modules with no cross-module consumer carry no Contracts project: Preference (latent — TECH_DEBT), and Venue/Artist (the Concert module owns its own venue/artist read-model slices in the `[concert]` schema rather than fanning out to them at read time)
 - Per-module DbContext, owns its own tables
 - Intra-service events: in-process `IEventRaiser` — no bus involvement for intra-Customer flows
 - Module-owned `IEntityTypeConfiguration<T>` in `<Module>.Infrastructure/Data/Configurations/`

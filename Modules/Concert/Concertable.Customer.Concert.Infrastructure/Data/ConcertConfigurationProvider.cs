@@ -10,5 +10,8 @@ internal sealed class ConcertConfigurationProvider : IEntityTypeConfigurationPro
     {
         modelBuilder.ApplyConfiguration(new ConcertEntityConfiguration());
         modelBuilder.ApplyConfiguration(new ConcertGenreEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new VenueReadModelConfiguration());
+        modelBuilder.ApplyConfiguration(new ArtistReadModelConfiguration());
+        modelBuilder.ApplyConfiguration(new ArtistReadModelGenreConfiguration());
     }
 }

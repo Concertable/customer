@@ -43,10 +43,6 @@ namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("County")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -63,10 +59,6 @@ namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
 
                     b.Property<int>("ReviewCount")
                         .HasColumnType("int");
-
-                    b.Property<string>("Town")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -156,6 +148,35 @@ namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
                         {
                             t.ExcludeFromMigrations();
                         });
+                });
+
+            modelBuilder.Entity("Concertable.Customer.Artist.Domain.Entities.ArtistEntity", b =>
+                {
+                    b.OwnsOne("Concertable.Kernel.Address", "Address", b1 =>
+                        {
+                            b1.Property<int>("ArtistEntityId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("County")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("County");
+
+                            b1.Property<string>("Town")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("Town");
+
+                            b1.HasKey("ArtistEntityId");
+
+                            b1.ToTable("Artists", "artist");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ArtistEntityId");
+                        });
+
+                    b.Navigation("Address")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Concertable.Customer.Artist.Domain.Entities.ArtistGenreEntity", b =>

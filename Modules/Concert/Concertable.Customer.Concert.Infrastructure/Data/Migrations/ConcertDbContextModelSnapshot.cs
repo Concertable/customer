@@ -98,6 +98,63 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                     b.ToTable("ConcertGenres", "concert");
                 });
 
+            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ReadModels.ArtistReadModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Avatar")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("AverageRating")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReviewCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ArtistReadModels", "concert");
+                });
+
+            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ReadModels.ArtistReadModelGenre", b =>
+                {
+                    b.Property<int>("ArtistReadModelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Genre")
+                        .HasColumnType("int");
+
+                    b.HasKey("ArtistReadModelId", "Genre");
+
+                    b.ToTable("ArtistReadModelGenres", "concert");
+                });
+
+            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ReadModels.VenueReadModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VenueReadModels", "concert");
+                });
+
             modelBuilder.Entity("Concertable.Messaging.Domain.InboxMessageEntity", b =>
                 {
                     b.Property<Guid>("MessageId")
@@ -205,7 +262,81 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                     b.Navigation("Concert");
                 });
 
+            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ReadModels.ArtistReadModel", b =>
+                {
+                    b.OwnsOne("Concertable.Kernel.Address", "Address", b1 =>
+                        {
+                            b1.Property<int>("ArtistReadModelId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("County")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("County");
+
+                            b1.Property<string>("Town")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("Town");
+
+                            b1.HasKey("ArtistReadModelId");
+
+                            b1.ToTable("ArtistReadModels", "concert");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ArtistReadModelId");
+                        });
+
+                    b.Navigation("Address")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ReadModels.ArtistReadModelGenre", b =>
+                {
+                    b.HasOne("Concertable.Customer.Concert.Domain.ReadModels.ArtistReadModel", "Artist")
+                        .WithMany("Genres")
+                        .HasForeignKey("ArtistReadModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Artist");
+                });
+
+            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ReadModels.VenueReadModel", b =>
+                {
+                    b.OwnsOne("Concertable.Kernel.Address", "Address", b1 =>
+                        {
+                            b1.Property<int>("VenueReadModelId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("County")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("County");
+
+                            b1.Property<string>("Town")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("Town");
+
+                            b1.HasKey("VenueReadModelId");
+
+                            b1.ToTable("VenueReadModels", "concert");
+
+                            b1.WithOwner()
+                                .HasForeignKey("VenueReadModelId");
+                        });
+
+                    b.Navigation("Address")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Concertable.Customer.Concert.Domain.Entities.ConcertEntity", b =>
+                {
+                    b.Navigation("Genres");
+                });
+
+            modelBuilder.Entity("Concertable.Customer.Concert.Domain.ReadModels.ArtistReadModel", b =>
                 {
                     b.Navigation("Genres");
                 });

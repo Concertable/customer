@@ -1,8 +1,8 @@
-using Concertable.Customer.Venue.Application.Dtos;
+using Concertable.Customer.Venue.Application.DTOs;
 
 namespace Concertable.Customer.Venue.Application.Interfaces;
 
 internal interface IVenueService
 {
-    Task<VenueDetail?> GetByIdAsync(int venueId);
+    Task<VenueDetails?> GetDetailsByIdAsync(int venueId);
 }

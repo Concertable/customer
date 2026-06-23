@@ -1,6 +1,8 @@
-namespace Concertable.Customer.Artist.Application.Dtos;
+using Concertable.Kernel;
 
-public sealed record ArtistDetail(
+namespace Concertable.Customer.Artist.Application.DTOs;
+
+public sealed record ArtistDetails(
     int Id,
     string Name,
     string About,
@@ -12,4 +14,4 @@ public sealed record ArtistDetail(
     string County,
     string Town,
     double Latitude,
-    double Longitude);
+    double Longitude) : IAddress;
