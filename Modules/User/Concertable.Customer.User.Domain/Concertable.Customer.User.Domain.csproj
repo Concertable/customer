@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Shared\Concertable.Kernel\Concertable.Kernel.csproj" />
-    <ProjectReference Include="..\..\..\..\Shared\Seed\Concertable.Seed.Identity\Concertable.Seed.Identity.csproj" />
+    <PackageReference Include="Concertable.Kernel" />
+    <PackageReference Include="Concertable.Seed.Identity" />
   </ItemGroup>
 
 </Project>
