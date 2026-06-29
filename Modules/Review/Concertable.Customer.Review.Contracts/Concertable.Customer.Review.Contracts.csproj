@@ -8,8 +8,8 @@
     <Description>Concertable Customer Review contracts: the cross-service review contract surface — the CustomerReviewSubmittedEvent integration event consumed by B2B (the one reverse data-flow from Customer back to B2B).</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Shared\Concertable.Contracts\Concertable.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\..\Concertable.Messaging\Concertable.Messaging.Contracts\Concertable.Messaging.Contracts.csproj" />
+    <PackageReference Include="Concertable.Contracts" />
+    <PackageReference Include="Concertable.Messaging.Contracts" />
   </ItemGroup>
 
 </Project>

@@ -9,8 +9,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Concertable.Customer.Concert.Domain\Concertable.Customer.Concert.Domain.csproj" />
     <ProjectReference Include="..\Concertable.Customer.Concert.Contracts\Concertable.Customer.Concert.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\..\Shared\Concertable.Kernel\Concertable.Kernel.csproj" />
-    <ProjectReference Include="..\..\..\..\Concertable.DataAccess\Concertable.DataAccess.Application\Concertable.DataAccess.Application.csproj" />
+    <PackageReference Include="Concertable.Kernel" />
+    <PackageReference Include="Concertable.DataAccess.Application" />
   </ItemGroup>
 
   <ItemGroup>

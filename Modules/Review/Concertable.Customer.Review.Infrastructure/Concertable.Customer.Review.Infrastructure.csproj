@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -16,14 +16,14 @@
     <ProjectReference Include="..\Concertable.Customer.Review.Domain\Concertable.Customer.Review.Domain.csproj" />
     <ProjectReference Include="..\Concertable.Customer.Review.Application\Concertable.Customer.Review.Application.csproj" />
     <ProjectReference Include="..\Concertable.Customer.Review.Contracts\Concertable.Customer.Review.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\..\Concertable.DataAccess\Concertable.DataAccess.Infrastructure\Concertable.DataAccess.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\..\..\Concertable.B2B\Modules\Concert\Concertable.B2B.Concert.Contracts\Concertable.B2B.Concert.Contracts.csproj" />
+    <PackageReference Include="Concertable.DataAccess.Infrastructure" />
+    <PackageReference Include="Concertable.B2B.Concert.Contracts" />
     <ProjectReference Include="..\..\Ticket\Concertable.Customer.Ticket.Contracts\Concertable.Customer.Ticket.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\..\Shared\Concertable.Kernel\Concertable.Kernel.csproj" />
-    <ProjectReference Include="..\..\..\..\Concertable.Messaging\Concertable.Messaging.Contracts\Concertable.Messaging.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\..\Concertable.Messaging\Concertable.Messaging.Domain\Concertable.Messaging.Domain.csproj" />
-    <ProjectReference Include="..\..\..\..\Shared\Seed\Concertable.Seed.Shared\Concertable.Seed.Shared.csproj" />
-    <ProjectReference Include="..\..\..\..\Concertable.Customer\Seed\Concertable.Customer.Seed.Infrastructure\Concertable.Customer.Seed.Infrastructure.csproj" />
+    <PackageReference Include="Concertable.Kernel" />
+    <PackageReference Include="Concertable.Messaging.Contracts" />
+    <PackageReference Include="Concertable.Messaging.Domain" />
+    <PackageReference Include="Concertable.Seed.Shared" />
+    <ProjectReference Include="..\..\..\Seed\Concertable.Customer.Seed.Infrastructure\Concertable.Customer.Seed.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
