@@ -4,6 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+    <Description>Concertable Customer Review contracts: the cross-service review contract surface — the CustomerReviewSubmittedEvent integration event consumed by B2B (the one reverse data-flow from Customer back to B2B).</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Shared\Concertable.Contracts\Concertable.Contracts.csproj" />
