@@ -22,7 +22,7 @@ them needs a GitHub [personal access token](https://github.com/settings/tokens) 
 
 ```sh
 export GITHUB_PACKAGES_TOKEN=<your read:packages PAT>
-dotnet build Concertable.Customer.Web/Concertable.Customer.Web.csproj
+dotnet build src/Concertable.Customer.Web/Concertable.Customer.Web.csproj
 ```
 
 Building the host project pulls the whole deployable closure. (In the monorepo's CI the same
