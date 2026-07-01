@@ -6,7 +6,7 @@ fan / ticket-buyer obligations recorded now so the picture is complete; none are
 until the marketplace is actually being built.
 
 **These are a separate system from B2B.** Keep them here — do not merge into B2B's
-[`../Concertable.B2B/Modules/Contract/LEGAL_REQUIREMENTS.md`](../Concertable.B2B/Modules/Contract/LEGAL_REQUIREMENTS.md).
+[`../Concertable.B2B/src/Modules/Contract/LEGAL_REQUIREMENTS.md`](../Concertable.B2B/src/Modules/Contract/LEGAL_REQUIREMENTS.md).
 B2B covers venue↔artist; this covers fan→seller.
 
 ---
