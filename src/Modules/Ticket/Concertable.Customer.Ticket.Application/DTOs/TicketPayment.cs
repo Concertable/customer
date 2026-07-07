@@ -1,8 +1,8 @@
-using Concertable.Payment.Client;
+using Concertable.Payment.Contracts;
 
 namespace Concertable.Customer.Ticket.Application.DTOs;
 
-internal sealed record TicketPayment : PaymentResponse
+internal sealed record TicketPayment : PaymentOutcome
 {
     public IReadOnlyList<Guid> TicketIds { get; init; } = [];
     public int ConcertId { get; init; }
