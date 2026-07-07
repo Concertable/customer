@@ -13,6 +13,7 @@
     <PackageReference Include="Respawn" />
     <PackageReference Include="Testcontainers.MsSql" />
     <PackageReference Include="xunit" />
+    <PackageReference Include="Concertable.Payment.Client" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +21,6 @@
     <ProjectReference Include="..\..\..\Concertable.Shared\tests\Concertable.Testing\Concertable.Testing.csproj" />
     <ProjectReference Include="..\..\..\Concertable.Shared\tests\Concertable.Testing.Integration\Concertable.Testing.Integration.csproj" />
     <ProjectReference Include="..\..\src\Seed\Concertable.Customer.Seed.Infrastructure\Concertable.Customer.Seed.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\..\Concertable.Payment\src\Concertable.Payment.Client\Concertable.Payment.Client.csproj" />
   </ItemGroup>
 
 </Project>
