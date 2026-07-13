@@ -5,6 +5,8 @@ public sealed class PreferenceEntity : IIdEntity
 {
     private PreferenceEntity() { }
 
+    public static string DisplayName => "Preference";
+
     public int Id { get; private set; }
     public Guid UserId { get; private set; }
     public double RadiusKm { get; private set; }
