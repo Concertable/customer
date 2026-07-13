@@ -24,6 +24,6 @@ internal sealed class QrCodeService : IQrCodeService
     public async Task<byte[]> GetByTicketIdAsync(Guid ticketId)
     {
         return await ticketRepository.GetQrCodeByIdAsync(ticketId)
-            ?? throw new NotFoundException("QR Code not found");
+            .OrNotFound("QR Code");
     }
 }
