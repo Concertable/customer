@@ -50,7 +50,7 @@ internal sealed class PreferenceService : IPreferenceService
     public async Task<PreferenceDto> UpdateAsync(int id, PreferenceRequest request)
     {
         var preference = await preferenceRepository.GetByIdAsync(id)
-            ?? throw new NotFoundException("Preference not found");
+            .OrNotFound();
 
         if (currentUser.GetId() != preference.UserId)
             throw new UnauthorizedAccessException("You do not own this preference");
