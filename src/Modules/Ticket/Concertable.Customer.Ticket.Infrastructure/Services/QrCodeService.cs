@@ -1,3 +1,4 @@
+using Concertable.Customer.Ticket.Contracts;
 using Concertable.Kernel.Exceptions;
 using QRCoder;
 
@@ -24,6 +25,6 @@ internal sealed class QrCodeService : IQrCodeService
     public async Task<byte[]> GetByTicketIdAsync(Guid ticketId)
     {
         return await ticketRepository.GetQrCodeByIdAsync(ticketId)
-            .OrNotFound("QR Code");
+            .OrNotFound(DisplayNames.QrCode);
     }
 }

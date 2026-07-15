@@ -1,8 +1,9 @@
 using System.ComponentModel;
+using Concertable.Customer.Preference.Contracts;
 
 namespace Concertable.Customer.Preference.Domain;
 
-[DisplayName("Preference")]
+[DisplayName(DisplayNames.Preference)]
 public sealed class PreferenceEntity : IIdEntity
 {
     private PreferenceEntity() { }
