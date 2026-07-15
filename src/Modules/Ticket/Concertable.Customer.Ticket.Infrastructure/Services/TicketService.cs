@@ -50,7 +50,7 @@ internal sealed class TicketService : ITicketService
     public async Task<Result<TicketPayment>> PurchaseAsync(TicketPurchaseParams purchaseParams)
     {
         var concert = await concertModule.GetByIdAsync(purchaseParams.ConcertId)
-            .OrNotFound("Concert");
+            .OrNotFound();
 
         var validationResult = ticketValidator.CanPurchaseTickets(concert, purchaseParams.Quantity);
         if (validationResult.IsFailed)
@@ -124,7 +124,7 @@ internal sealed class TicketService : ITicketService
     public async Task<Result<TicketCheckout>> CheckoutAsync(int concertId, int quantity)
     {
         var concert = await concertModule.GetByIdAsync(concertId)
-            .OrNotFound("Concert");
+            .OrNotFound();
 
         var validationResult = ticketValidator.CanPurchaseTickets(concert, quantity);
         if (validationResult.IsFailed)
