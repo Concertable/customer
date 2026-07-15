@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Concertable.Customer.Preference.Contracts\Concertable.Customer.Preference.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Concertable.Kernel" />
   </ItemGroup>
 
