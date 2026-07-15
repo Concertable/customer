@@ -34,7 +34,7 @@ internal sealed class TicketValidator : ITicketValidator
     public async Task<Result> CanBePurchasedAsync(int concertId)
     {
         var concert = await concertModule.GetByIdAsync(concertId)
-            .OrNotFound("Concert");
+            .OrNotFound();
 
         return CanBePurchased(concert);
     }
