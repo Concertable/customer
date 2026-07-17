@@ -1,3 +1,4 @@
+using Concertable.Customer.Seed.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -7,8 +8,7 @@ internal sealed class VenueDbContextFactory : IDesignTimeDbContextFactory<VenueD
 {
     public VenueDbContext CreateDbContext(string[] args)
     {
-        var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__CustomerDb")
-            ?? "Server=localhost,1433;Database=concertable-customer;User Id=sa;Password=Password11!;TrustServerCertificate=True";
+        var connectionString = DesignTimeConnectionString.Customer();
         var options = new DbContextOptionsBuilder<VenueDbContext>()
             .UseSqlServer(connectionString)
             .Options;
