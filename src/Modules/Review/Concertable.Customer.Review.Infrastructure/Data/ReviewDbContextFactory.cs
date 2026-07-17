@@ -1,17 +1,10 @@
+using Concertable.Customer.Seed.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 
 namespace Concertable.Customer.Review.Infrastructure.Data;
 
-internal sealed class ReviewDbContextFactory : IDesignTimeDbContextFactory<ReviewDbContext>
+internal sealed class ReviewDbContextFactory : CustomerDesignTimeDbContextFactory<ReviewDbContext>
 {
-    public ReviewDbContext CreateDbContext(string[] args)
-    {
-        var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__CustomerDb")
-            ?? "Server=localhost,1433;Database=concertable-customer;User Id=sa;Password=Password11!;TrustServerCertificate=True";
-        var options = new DbContextOptionsBuilder<ReviewDbContext>()
-            .UseSqlServer(connectionString)
-            .Options;
-        return new ReviewDbContext(options, new ReviewConfigurationProvider());
-    }
+    protected override ReviewDbContext Create(DbContextOptions<ReviewDbContext> options) =>
+        new(options, new ReviewConfigurationProvider());
 }

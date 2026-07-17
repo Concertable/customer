@@ -1,17 +1,14 @@
+using Concertable.Customer.Seed.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Concertable.Customer.User.Infrastructure.Data;
 
-internal sealed class UserDbContextFactory : IDesignTimeDbContextFactory<UserDbContext>
+internal sealed class UserDbContextFactory : CustomerDesignTimeDbContextFactory<UserDbContext>
 {
-    public UserDbContext CreateDbContext(string[] args)
-    {
-        var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__CustomerDb")
-            ?? "Server=localhost,1433;Database=concertable-customer;User Id=sa;Password=Password11!;TrustServerCertificate=True";
-        var options = new DbContextOptionsBuilder<UserDbContext>()
-            .UseSqlServer(connectionString, o => o.UseNetTopologySuite())
-            .Options;
-        return new UserDbContext(options, new UserConfigurationProvider());
-    }
+    protected override UserDbContext Create(DbContextOptions<UserDbContext> options) =>
+        new(options, new UserConfigurationProvider());
+
+    protected override void ConfigureSqlServer(SqlServerDbContextOptionsBuilder sql) =>
+        sql.UseNetTopologySuite();
 }
