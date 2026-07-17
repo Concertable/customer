@@ -59,6 +59,20 @@ Concert and Ticket gained their `.Contracts` projects (`IConcertModule`, `ITicke
 
 ## LOW
 
+### Customer has no DataAccess layer — design-time conn-string helper parked in Seed.Infrastructure
+
+B2B has `Concertable.B2B.DataAccess.Infrastructure` (referenced by every B2B module's Infrastructure
+project); Customer has no equivalent — its module Infrastructure projects reference the shared
+`Concertable.DataAccess.Infrastructure` package directly plus the in-closure
+`Concertable.Customer.Seed.Infrastructure`. So the Phase-1 `DesignTimeConnectionString.Customer()`
+helper (single-sourcing the 7 Customer factory fallbacks) landed in `Seed.Infrastructure` — the only
+Customer-wide in-closure home available in one PR — which is a semantic mismatch (it's not seeding).
+
+**Resolves when:** Customer gains a `Concertable.Customer.DataAccess.Infrastructure` (mirroring B2B) and
+`DesignTimeConnectionString` moves there. See `plans/CONFIG_AND_DEPLOYMENT.md` Phase 1a.
+
+---
+
 ### Read repositories don't default to no-tracking
 
 `ConcertReadRepository.GetDtoAsync` needed an ad-hoc `.AsNoTracking()` (EF throws when a projection carries a whole owned instance like `Period` on a tracking query), and the other read repos rely on projections happening to be untracked. Reads through a `ReadRepository<T>` should never track — the per-call opt-out is backwards.
