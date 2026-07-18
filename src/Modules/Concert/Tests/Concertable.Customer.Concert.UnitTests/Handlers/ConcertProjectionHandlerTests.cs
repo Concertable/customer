@@ -1,9 +1,9 @@
 using Concertable.B2B.Concert.Contracts.Events;
-using Concertable.Contracts;
+using Concertable.Contracts.Enums;
 using Concertable.Customer.Concert.Domain.Entities;
 using Concertable.Customer.Concert.Infrastructure.Data;
 using Concertable.Customer.Concert.Infrastructure.Handlers;
-using Concertable.Kernel;
+using Concertable.Kernel.ValueObjects;
 using Concertable.Messaging.Contracts;
 using Microsoft.EntityFrameworkCore;
 

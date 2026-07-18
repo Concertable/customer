@@ -152,7 +152,7 @@ namespace Concertable.Customer.Artist.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Concertable.Customer.Artist.Domain.Entities.ArtistEntity", b =>
                 {
-                    b.OwnsOne("Concertable.Kernel.Address", "Address", b1 =>
+                    b.OwnsOne("Concertable.Kernel.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<int>("ArtistEntityId")
                                 .HasColumnType("int");
