@@ -5,7 +5,7 @@ using Concertable.Customer.Concert.Infrastructure.Extensions;
 using Concertable.Customer.Preference.Infrastructure.Extensions;
 using Concertable.Customer.Review.Infrastructure.Extensions;
 using Concertable.Customer.Ticket.Infrastructure.Extensions;
-using Concertable.Customer.User.Domain;
+using Concertable.Customer.User.Domain.Entities;
 using Concertable.Customer.User.Infrastructure.Extensions;
 using Concertable.Customer.Venue.Infrastructure.Extensions;
 using Concertable.DataAccess.Application;
