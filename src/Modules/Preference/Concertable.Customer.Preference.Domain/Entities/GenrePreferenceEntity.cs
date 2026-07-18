@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Concertable.Customer.Preference.Domain;
+namespace Concertable.Customer.Preference.Domain.Entities;
 
 [Table("GenrePreferences")]
 public sealed class GenrePreferenceEntity : IIdEntity
