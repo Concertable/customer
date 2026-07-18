@@ -2,7 +2,7 @@ using Concertable.Customer.Concert.Domain.Entities;
 using Concertable.Customer.Concert.Infrastructure.Data;
 using Concertable.Customer.Concert.Infrastructure.Handlers;
 using Concertable.Customer.Ticket.Contracts.Events;
-using Concertable.Kernel;
+using Concertable.Kernel.ValueObjects;
 using Concertable.Messaging.Contracts;
 using Microsoft.EntityFrameworkCore;
 

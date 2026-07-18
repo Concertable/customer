@@ -1,4 +1,4 @@
-using Concertable.Contracts;
+using Concertable.Contracts.Enums;
 using Concertable.Customer.Concert.Application.DTOs;
 
 namespace Concertable.Customer.Concert.Api.Responses;

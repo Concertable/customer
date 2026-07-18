@@ -226,7 +226,7 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Concertable.Customer.Concert.Domain.Entities.ConcertEntity", b =>
                 {
-                    b.OwnsOne("Concertable.Kernel.DateRange", "Period", b1 =>
+                    b.OwnsOne("Concertable.Kernel.ValueObjects.DateRange", "Period", b1 =>
                         {
                             b1.Property<int>("ConcertEntityId")
                                 .HasColumnType("int");
@@ -264,7 +264,7 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Concertable.Customer.Concert.Domain.ReadModels.ArtistReadModel", b =>
                 {
-                    b.OwnsOne("Concertable.Kernel.Address", "Address", b1 =>
+                    b.OwnsOne("Concertable.Kernel.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<int>("ArtistReadModelId")
                                 .HasColumnType("int");
@@ -304,7 +304,7 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Concertable.Customer.Concert.Domain.ReadModels.VenueReadModel", b =>
                 {
-                    b.OwnsOne("Concertable.Kernel.Address", "Address", b1 =>
+                    b.OwnsOne("Concertable.Kernel.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<int>("VenueReadModelId")
                                 .HasColumnType("int");

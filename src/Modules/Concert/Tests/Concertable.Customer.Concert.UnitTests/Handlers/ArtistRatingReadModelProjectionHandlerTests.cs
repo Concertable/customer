@@ -2,7 +2,7 @@ using Concertable.B2B.Artist.Contracts.Events;
 using Concertable.Customer.Concert.Domain.ReadModels;
 using Concertable.Customer.Concert.Infrastructure.Data;
 using Concertable.Customer.Concert.Infrastructure.Handlers;
-using Concertable.Kernel;
+using Concertable.Kernel.ValueObjects;
 using Concertable.Messaging.Contracts;
 using Microsoft.EntityFrameworkCore;
 
