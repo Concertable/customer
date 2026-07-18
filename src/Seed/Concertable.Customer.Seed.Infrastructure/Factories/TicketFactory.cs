@@ -1,5 +1,5 @@
 using Concertable.Customer.Ticket.Domain.Entities;
-using Concertable.Kernel;
+using Concertable.Kernel.ValueObjects;
 
 namespace Concertable.Customer.Seed.Infrastructure.Factories;
 

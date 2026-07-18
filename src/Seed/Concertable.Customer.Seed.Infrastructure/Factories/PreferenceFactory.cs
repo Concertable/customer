@@ -1,4 +1,4 @@
-using Concertable.Contracts;
+using Concertable.Contracts.Enums;
 using Concertable.Customer.Preference.Domain;
 
 namespace Concertable.Customer.Seed.Infrastructure.Factories;

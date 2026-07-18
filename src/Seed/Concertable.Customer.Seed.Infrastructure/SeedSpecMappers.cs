@@ -1,5 +1,5 @@
 ﻿using Concertable.B2B.Seed.Contracts.Specs;
-using Concertable.Kernel;
+using Concertable.Kernel.ValueObjects;
 using Concertable.Customer.Artist.Domain.Entities;
 using Concertable.Customer.Concert.Domain.Entities;
 using Concertable.Customer.Seed.Infrastructure.Factories;
