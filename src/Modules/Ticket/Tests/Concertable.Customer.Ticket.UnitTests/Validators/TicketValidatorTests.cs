@@ -1,6 +1,6 @@
 using Concertable.Customer.Concert.Contracts;
 using Concertable.Customer.Ticket.Infrastructure.Validators;
-using Concertable.Kernel;
+using Concertable.Kernel.ValueObjects;
 using Concertable.Kernel.Exceptions;
 using Microsoft.Extensions.Time.Testing;
 using Moq;

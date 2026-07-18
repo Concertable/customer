@@ -3,7 +3,7 @@ using Concertable.Customer.Ticket.Application.Interfaces;
 using Concertable.Customer.Ticket.Domain.Entities;
 using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.Customer.Ticket.Infrastructure.Services.Events;
-using Concertable.Kernel;
+using Concertable.Kernel.ValueObjects;
 using Concertable.Messaging.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
