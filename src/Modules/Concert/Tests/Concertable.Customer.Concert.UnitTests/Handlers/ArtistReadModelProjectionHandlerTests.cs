@@ -1,5 +1,5 @@
 using Concertable.B2B.Artist.Contracts.Events;
-using Concertable.Contracts;
+using Concertable.Contracts.Enums;
 using Concertable.Customer.Concert.Infrastructure.Data;
 using Concertable.Customer.Concert.Infrastructure.Handlers;
 using Concertable.Messaging.Contracts;

@@ -139,7 +139,7 @@ namespace Concertable.Customer.Venue.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Concertable.Customer.Venue.Domain.Entities.VenueEntity", b =>
                 {
-                    b.OwnsOne("Concertable.Kernel.Address", "Address", b1 =>
+                    b.OwnsOne("Concertable.Kernel.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<int>("VenueEntityId")
                                 .HasColumnType("int");

@@ -1,5 +1,5 @@
 using Concertable.Customer.User.Domain;
-using Concertable.Kernel;
+using Concertable.Kernel.ValueObjects;
 using NetTopologySuite.Geometries;
 
 namespace Concertable.Customer.User.UnitTests;

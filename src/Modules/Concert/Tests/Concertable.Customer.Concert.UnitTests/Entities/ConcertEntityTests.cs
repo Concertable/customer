@@ -1,5 +1,6 @@
 using Concertable.Customer.Concert.Domain.Entities;
 using Concertable.Kernel;
+using Concertable.Kernel.ValueObjects;
 
 namespace Concertable.Customer.Concert.UnitTests.Entities;
 

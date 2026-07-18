@@ -142,7 +142,7 @@ namespace Concertable.Customer.Ticket.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Concertable.Customer.Ticket.Domain.Entities.TicketEntity", b =>
                 {
-                    b.OwnsOne("Concertable.Kernel.DateRange", "Period", b1 =>
+                    b.OwnsOne("Concertable.Kernel.ValueObjects.DateRange", "Period", b1 =>
                         {
                             b1.Property<Guid>("TicketEntityId")
                                 .HasColumnType("uniqueidentifier");

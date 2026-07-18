@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Concertable.Customer.Venue.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(VenueDbContext))]
-    [Migration("20260716112129_InitialCreate")]
+    [Migration("20260718203003_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -142,7 +142,7 @@ namespace Concertable.Customer.Venue.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Concertable.Customer.Venue.Domain.Entities.VenueEntity", b =>
                 {
-                    b.OwnsOne("Concertable.Kernel.Address", "Address", b1 =>
+                    b.OwnsOne("Concertable.Kernel.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<int>("VenueEntityId")
                                 .HasColumnType("int");
