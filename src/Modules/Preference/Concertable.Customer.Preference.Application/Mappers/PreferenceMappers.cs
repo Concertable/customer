@@ -1,5 +1,5 @@
 using Concertable.Customer.Preference.Application.DTOs;
-using Concertable.Customer.Preference.Domain;
+using Concertable.Customer.Preference.Domain.Entities;
 
 namespace Concertable.Customer.Preference.Application.Mappers;
 

@@ -1,11 +1,11 @@
 ﻿using Concertable.B2B.Seed.Contracts;
 using Concertable.Customer.Artist.Domain.Entities;
 using Concertable.Customer.Concert.Domain.Entities;
-using Concertable.Customer.Preference.Domain;
+using Concertable.Customer.Preference.Domain.Entities;
 using Concertable.Customer.Review.Domain.Entities;
 using Concertable.Customer.Seed.Infrastructure.Factories;
 using Concertable.Customer.Ticket.Domain.Entities;
-using Concertable.Customer.User.Domain;
+using Concertable.Customer.User.Domain.Entities;
 using Concertable.Customer.User.Domain.Factories;
 using Concertable.Customer.Venue.Domain.Entities;
 using Concertable.Contracts.Enums;
