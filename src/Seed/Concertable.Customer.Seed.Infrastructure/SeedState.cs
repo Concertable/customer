@@ -8,7 +8,7 @@ using Concertable.Customer.Ticket.Domain.Entities;
 using Concertable.Customer.User.Domain;
 using Concertable.Customer.User.Domain.Factories;
 using Concertable.Customer.Venue.Domain.Entities;
-using Concertable.Contracts;
+using Concertable.Contracts.Enums;
 using Concertable.Seed.Identity;
 
 namespace Concertable.Customer.Seed.Infrastructure;
