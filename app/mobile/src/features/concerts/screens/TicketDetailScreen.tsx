@@ -23,7 +23,7 @@ export function TicketDetailScreen() {
 
   const { data: upcoming } = useUpcomingTicketsQuery();
   const { data: history } = useTicketHistoryQuery();
-  const userEmail = useAuthStore((s) => s.user?.email);
+  const user = useAuthStore((s) => s.user);
 
   const ticket = [...(upcoming ?? []), ...(history ?? [])].find((t) => t.id === ticketId);
 
@@ -82,7 +82,7 @@ export function TicketDetailScreen() {
           <DetailRow icon={MapPin} label={ticket.concert.venueName} />
           <DetailRow icon={CalendarDays} label={dayjs(ticket.concert.startDate).format("ddd D MMM YYYY")} />
           <DetailRow icon={Ticket} label={`£${ticket.concert.price.toFixed(2)}`} />
-          {userEmail ? <DetailRow icon={Mail} label={userEmail} /> : null}
+          {user && <DetailRow icon={Mail} label={user.email} />}
           <DetailRow icon={Hash} label={ticket.id} last />
         </View>
       </ScrollView>
