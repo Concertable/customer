@@ -1,4 +1,4 @@
-using Concertable.Customer.User.Domain;
+using Concertable.Customer.User.Domain.Entities;
 using Concertable.Kernel.ValueObjects;
 using NetTopologySuite.Geometries;
 
