@@ -1,5 +1,5 @@
 using Concertable.Customer.User.Contracts;
-using Concertable.Customer.User.Domain;
+using Concertable.Customer.User.Domain.Entities;
 
 namespace Concertable.Customer.User.Application.Mappers;
 
