@@ -147,13 +147,13 @@ internal sealed class TicketService : ITicketService
     public async Task<IEnumerable<TicketDto>> GetUserUpcomingAsync()
     {
         var tickets = await ticketRepository.GetUpcomingByUserIdAsync(currentUser.GetId());
-        return tickets.ToDtos(currentUser.Email ?? string.Empty);
+        return tickets.ToDtos();
     }
 
     public async Task<IEnumerable<TicketDto>> GetUserHistoryAsync()
     {
         var tickets = await ticketRepository.GetHistoryByUserIdAsync(currentUser.GetId());
-        return tickets.ToDtos(currentUser.Email ?? string.Empty);
+        return tickets.ToDtos();
     }
 
     private TicketEntity BuildTicket(Guid userId, ConcertDto concert)

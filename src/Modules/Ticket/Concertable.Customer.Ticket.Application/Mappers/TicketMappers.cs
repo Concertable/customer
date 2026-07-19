@@ -5,13 +5,12 @@ namespace Concertable.Customer.Ticket.Application.Mappers;
 
 internal static class TicketMappers
 {
-    public static TicketDto ToDto(this TicketEntity ticket, string email) => new()
+    public static TicketDto ToDto(this TicketEntity ticket) => new()
     {
         Id = ticket.Id,
         PurchaseDate = ticket.PurchaseDate,
         QrCode = ticket.QrCode,
         UserId = ticket.UserId,
-        UserEmail = email,
         Concert = new TicketConcert
         {
             Id = ticket.ConcertId,
@@ -24,6 +23,6 @@ internal static class TicketMappers
         }
     };
 
-    public static IEnumerable<TicketDto> ToDtos(this IEnumerable<TicketEntity> tickets, string email) =>
-        tickets.Select(t => t.ToDto(email));
+    public static IEnumerable<TicketDto> ToDtos(this IEnumerable<TicketEntity> tickets) =>
+        tickets.Select(t => t.ToDto());
 }
