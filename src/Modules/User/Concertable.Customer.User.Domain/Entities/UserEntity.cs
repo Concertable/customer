@@ -1,7 +1,7 @@
 using Concertable.Kernel;
 using NetTopologySuite.Geometries;
 
-namespace Concertable.Customer.User.Domain;
+namespace Concertable.Customer.User.Domain.Entities;
 
 public sealed class UserEntity : IGuidEntity
 {

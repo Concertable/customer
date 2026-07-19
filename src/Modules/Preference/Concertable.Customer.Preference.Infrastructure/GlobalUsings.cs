@@ -14,5 +14,5 @@ global using Concertable.Customer.Preference.Application.DTOs;
 global using Concertable.Customer.Preference.Application.Interfaces;
 global using Concertable.Customer.Preference.Application.Mappers;
 global using Concertable.Customer.Preference.Application.Requests;
-global using Concertable.Customer.Preference.Domain;
+global using Concertable.Customer.Preference.Domain.Entities;
 global using Concertable.Customer.User.Contracts;

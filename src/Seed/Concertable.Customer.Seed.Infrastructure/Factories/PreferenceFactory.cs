@@ -1,5 +1,5 @@
 using Concertable.Contracts.Enums;
-using Concertable.Customer.Preference.Domain;
+using Concertable.Customer.Preference.Domain.Entities;
 
 namespace Concertable.Customer.Seed.Infrastructure.Factories;
 
