@@ -1,4 +1,4 @@
-using Concertable.Customer.Preference.Domain;
+using Concertable.Customer.Preference.Domain.Entities;
 using Concertable.DataAccess;
 
 namespace Concertable.Customer.Preference.Application.Interfaces;

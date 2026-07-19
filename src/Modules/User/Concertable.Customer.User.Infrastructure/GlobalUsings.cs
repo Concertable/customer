@@ -8,4 +8,4 @@ global using Concertable.DataAccess;
 global using Concertable.DataAccess.Infrastructure;
 global using Concertable.Customer.User.Application.Interfaces;
 global using Concertable.Customer.User.Contracts;
-global using Concertable.Customer.User.Domain;
+global using Concertable.Customer.User.Domain.Entities;

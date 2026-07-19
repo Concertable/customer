@@ -1,6 +1,6 @@
 using Concertable.Auth.Contracts;
 using Concertable.Auth.Contracts.Events;
-using Concertable.Customer.User.Domain;
+using Concertable.Customer.User.Domain.Entities;
 using Concertable.Customer.User.Infrastructure.Data;
 using Concertable.Customer.User.Infrastructure.Events;
 using Concertable.Messaging.Contracts;

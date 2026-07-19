@@ -23,7 +23,7 @@ namespace Concertable.Customer.Preference.Infrastructure.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Concertable.Customer.Preference.Domain.GenrePreferenceEntity", b =>
+            modelBuilder.Entity("Concertable.Customer.Preference.Domain.Entities.GenrePreferenceEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -45,7 +45,7 @@ namespace Concertable.Customer.Preference.Infrastructure.Data.Migrations
                     b.ToTable("GenrePreferences", "preference");
                 });
 
-            modelBuilder.Entity("Concertable.Customer.Preference.Domain.PreferenceEntity", b =>
+            modelBuilder.Entity("Concertable.Customer.Preference.Domain.Entities.PreferenceEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -136,9 +136,9 @@ namespace Concertable.Customer.Preference.Infrastructure.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Concertable.Customer.Preference.Domain.GenrePreferenceEntity", b =>
+            modelBuilder.Entity("Concertable.Customer.Preference.Domain.Entities.GenrePreferenceEntity", b =>
                 {
-                    b.HasOne("Concertable.Customer.Preference.Domain.PreferenceEntity", "Preference")
+                    b.HasOne("Concertable.Customer.Preference.Domain.Entities.PreferenceEntity", "Preference")
                         .WithMany("GenrePreferences")
                         .HasForeignKey("PreferenceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -147,7 +147,7 @@ namespace Concertable.Customer.Preference.Infrastructure.Data.Migrations
                     b.Navigation("Preference");
                 });
 
-            modelBuilder.Entity("Concertable.Customer.Preference.Domain.PreferenceEntity", b =>
+            modelBuilder.Entity("Concertable.Customer.Preference.Domain.Entities.PreferenceEntity", b =>
                 {
                     b.Navigation("GenrePreferences");
                 });
