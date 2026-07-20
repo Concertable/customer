@@ -75,8 +75,12 @@ services.AddSharedInfrastructure(builder.Configuration);
 services.AddGeometry();
 services.AddClientCredentials(opts =>
 {
-    opts.Authority = builder.Configuration["Auth:Authority"] ?? builder.Configuration["services__auth__https__0"] ?? "";
-    opts.ClientId = builder.Configuration["ServiceAuth:ClientId"] ?? "";
+    opts.Authority = builder.Configuration["Auth:Authority"] ?? builder.Configuration["services__auth__https__0"]
+        ?? (builder.Environment.IsEnvironment("Testing") ? null!
+            : throw new InvalidOperationException("Auth:Authority is required (no explicit key and no service-discovery fallback)."));
+    opts.ClientId = builder.Configuration["ServiceAuth:ClientId"]
+        ?? (builder.Environment.IsEnvironment("Testing") ? null!
+            : throw new InvalidOperationException("ServiceAuth:ClientId is required."));
     // genuine optional — secret-less local client (dev/E2E/Testing); do NOT fail-fast
     opts.ClientSecret = builder.Configuration["ServiceAuth:ClientSecret"] ?? string.Empty;
 });
@@ -86,7 +90,8 @@ services.AddSharedPdf();
 services.AddAzureServiceBusTransport(
     opts =>
     {
-        opts.ConnectionString = builder.Configuration.GetConnectionString("asb") ?? "";
+        opts.ConnectionString = builder.Configuration.GetConnectionString("asb")
+            ?? throw new InvalidOperationException("Connection string 'asb' is required.");
         opts.ServiceName = "concertable-customer";
     },
     reg =>
