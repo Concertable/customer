@@ -6,10 +6,10 @@ This is the customer-product sibling of `@concertable/shared` (which stays platf
 product-agnostic). Everything here makes Customer-service-authenticated calls or models
 customer-only domain concepts:
 
-- `lib/customerAxiosClient` — the Customer service axios instance + `configureCustomerApi`.
-  Each customer app wraps it with its own token/401 interceptors (web: OIDC `userManager`;
-  mobile: token storage). A 401 handler clearing the session is correct here — on a customer
-  app, the only session it can clear is the customer's own stale one.
+- `lib/customerClient` — the bare Customer-service axios instance. Each customer app enhances it
+  with `configureClient(...).withAuth(...)` — web via OIDC `userManager`, mobile via token storage.
+  A 401 handler clearing the session is correct here — on a customer app, the only session it can
+  clear is the customer's own stale one.
 - `features/tickets` — purchase/checkout/upcoming/history + `Ticket`/`TicketCheckout` types.
 - `features/preferences` — preference CRUD (talks to the own-app `api`, which for customer
   apps IS the Customer service).
