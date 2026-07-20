@@ -1,9 +1,9 @@
 import { useSyncUser as useSyncSharedUser } from "@/features/user";
-import customerApi from "@customer/shared/lib/customerAxiosClient";
+import { customerClient } from "@customer/shared/lib/customerClient";
 import type { User } from "@/features/auth/types";
 
 async function getMe(): Promise<User> {
-  const { data } = await customerApi.get<User>("/user/me");
+  const { data } = await customerClient.get<User>("/user/me");
   return data;
 }
 
