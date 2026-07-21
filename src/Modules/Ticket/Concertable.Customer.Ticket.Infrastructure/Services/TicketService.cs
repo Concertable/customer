@@ -5,6 +5,7 @@ using Concertable.Customer.Ticket.Domain.Entities;
 using Concertable.Customer.Ticket.Infrastructure;
 using Concertable.Kernel.Identity;
 using Concertable.Kernel.Exceptions;
+using Concertable.Shared.QrCode.Application;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 
@@ -15,7 +16,7 @@ internal sealed class TicketService : ITicketService
     private readonly ITicketRepository ticketRepository;
     private readonly ITicketValidator ticketValidator;
     private readonly ITicketEmailSender ticketEmailSender;
-    private readonly IQrCodeService qrCodeService;
+    private readonly IQrCodeGenerator qrCodeGenerator;
     private readonly ICurrentUser currentUser;
     private readonly IConcertModule concertModule;
     private readonly ICustomerPaymentClient customerPaymentClient;
@@ -27,7 +28,7 @@ internal sealed class TicketService : ITicketService
         ITicketRepository ticketRepository,
         ITicketValidator ticketValidator,
         ITicketEmailSender ticketEmailSender,
-        IQrCodeService qrCodeService,
+        IQrCodeGenerator qrCodeGenerator,
         ICurrentUser currentUser,
         IConcertModule concertModule,
         ICustomerPaymentClient customerPaymentClient,
@@ -38,7 +39,7 @@ internal sealed class TicketService : ITicketService
         this.ticketRepository = ticketRepository;
         this.ticketValidator = ticketValidator;
         this.ticketEmailSender = ticketEmailSender;
-        this.qrCodeService = qrCodeService;
+        this.qrCodeGenerator = qrCodeGenerator;
         this.currentUser = currentUser;
         this.concertModule = concertModule;
         this.customerPaymentClient = customerPaymentClient;
@@ -159,7 +160,7 @@ internal sealed class TicketService : ITicketService
     private TicketEntity BuildTicket(Guid userId, ConcertDto concert)
     {
         var ticketId = Guid.CreateVersion7();
-        var qrCode = qrCodeService.GenerateFromTicketId(ticketId);
+        var qrCode = qrCodeGenerator.Generate(ticketId.ToString());
         return TicketEntity.Purchase(
             ticketId,
             userId,

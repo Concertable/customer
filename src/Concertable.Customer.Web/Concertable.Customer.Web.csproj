@@ -24,6 +24,7 @@
     <PackageReference Include="Concertable.Shared.Geocoding.Infrastructure" />
     <PackageReference Include="Concertable.Shared.Imaging.Infrastructure" />
     <PackageReference Include="Concertable.Shared.Pdf.Infrastructure" />
+    <PackageReference Include="Concertable.Shared.QrCode.Infrastructure" />
     <PackageReference Include="Concertable.Shared.Notification.Infrastructure" />
     <PackageReference Include="Concertable.Payment.Client" />
     <ProjectReference Include="..\Modules\Concert\Concertable.Customer.Concert.Api\Concertable.Customer.Concert.Api.csproj" />
