@@ -9,6 +9,7 @@ import * as Brightness from "expo-brightness";
 import { CalendarDays, Hash, Mail, MapPin, Music, Share2, Ticket } from "lucide-react-native";
 import type { LucideIcon } from "lucide-react-native";
 import { useUpcomingTicketsQuery, useTicketHistoryQuery } from "@customer/shared/features/tickets";
+import { useAuthStore } from "@concertable/shared/features/auth";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { theme } from "shared/lib/theme";
 import dayjs from "dayjs";
@@ -22,6 +23,7 @@ export function TicketDetailScreen() {
 
   const { data: upcoming } = useUpcomingTicketsQuery();
   const { data: history } = useTicketHistoryQuery();
+  const user = useAuthStore((s) => s.user);
 
   const ticket = [...(upcoming ?? []), ...(history ?? [])].find((t) => t.id === ticketId);
 
@@ -80,7 +82,7 @@ export function TicketDetailScreen() {
           <DetailRow icon={MapPin} label={ticket.concert.venueName} />
           <DetailRow icon={CalendarDays} label={dayjs(ticket.concert.startDate).format("ddd D MMM YYYY")} />
           <DetailRow icon={Ticket} label={`£${ticket.concert.price.toFixed(2)}`} />
-          <DetailRow icon={Mail} label={ticket.userEmail} />
+          {user && <DetailRow icon={Mail} label={user.email} />}
           <DetailRow icon={Hash} label={ticket.id} last />
         </View>
       </ScrollView>
