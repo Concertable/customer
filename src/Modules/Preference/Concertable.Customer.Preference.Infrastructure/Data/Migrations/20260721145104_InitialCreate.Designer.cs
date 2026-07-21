@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Concertable.Customer.Preference.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(PreferenceDbContext))]
-    [Migration("20260718234112_InitialCreate")]
+    [Migration("20260721145104_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
