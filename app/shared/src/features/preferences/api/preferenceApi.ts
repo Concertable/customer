@@ -1,16 +1,16 @@
-import api from "@concertable/shared/lib/axiosClient";
+import { apiClient } from "@concertable/shared/lib/apiClient";
 import type { Preference, CreatePreferenceRequest } from "../types";
 
 const preferenceApi = {
   getMyPreference: async (): Promise<Preference> => {
-    const { data } = await api.get<Preference>("/preference/user");
+    const { data } = await apiClient.get<Preference>("/preference/user");
     return data;
   },
 
   createPreference: async (
     request: CreatePreferenceRequest,
   ): Promise<Preference> => {
-    const { data } = await api.post<Preference>("/preference", request);
+    const { data } = await apiClient.post<Preference>("/preference", request);
     return data;
   },
 
@@ -18,7 +18,7 @@ const preferenceApi = {
     id: number,
     preference: Preference,
   ): Promise<Preference> => {
-    const { data } = await api.put<Preference>(`/preference/${id}`, preference);
+    const { data } = await apiClient.put<Preference>(`/preference/${id}`, preference);
     return data;
   },
 };
