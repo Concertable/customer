@@ -119,7 +119,7 @@ Customer is a modular monolith inside the service. Rules in `api/docs/MODULAR_MO
 
 ## Tech stack
 
-.NET 9 · EF Core + SQL Server · Azure Service Bus (emulator in dev) · `Concertable.Messaging` (Outbox/Inbox/Transport) · NetTopologySuite (geometry) · Aspire (`Concertable.ServiceDefaults`) · QRCoder + QuestPDF (`Ticket.Infrastructure` — ticket QR and PDF generation) · `Concertable.Shared.{Blob,Email,Geocoding,Imaging,Pdf}`
+.NET 9 · EF Core + SQL Server · Azure Service Bus (emulator in dev) · `Concertable.Messaging` (Outbox/Inbox/Transport) · NetTopologySuite (geometry) · Aspire (`Concertable.ServiceDefaults`) · QuestPDF (`Ticket.Infrastructure` — ticket PDF generation) · `Concertable.Shared.{Blob,Email,Geocoding,Imaging,Pdf,QrCode}`
 
 ---
 
