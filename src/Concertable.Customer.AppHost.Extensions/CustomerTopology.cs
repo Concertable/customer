@@ -13,5 +13,6 @@ public static class CustomerTopology
             .Subscribe("event-concertratingupdatedevent",    "customer-concert-rating-updated", "concertable-customer")
             .Subscribe("event-credentialregisteredevent",    "customer-credential-registered",  "concertable-customer")
             .Subscribe("event-paymentsucceededevent",        "customer-payment-succeeded",      "concertable-customer")
-            .Subscribe("event-paymentfailedevent",           "customer-payment-failed",         "concertable-customer");
+            .Subscribe("event-paymentfailedevent",           "customer-payment-failed",         "concertable-customer")
+            .Queue("command-concertable-customer-sendticketemailcommand");
 }

@@ -1,12 +1,14 @@
 using Concertable.Customer.Concert.Contracts;
+using Concertable.Customer.Ticket.Application.Commands;
 using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Application.Requests;
 using Concertable.Customer.Ticket.Domain.Entities;
-using Concertable.Customer.Ticket.Infrastructure;
+using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.Kernel.Identity;
 using Concertable.Kernel.Exceptions;
+using Concertable.Messaging.Contracts;
+using Concertable.Messaging.Infrastructure.Outbox;
 using FluentResults;
-using Microsoft.Extensions.Logging;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Services;
 
@@ -14,37 +16,37 @@ internal sealed class TicketService : ITicketService
 {
     private readonly ITicketRepository ticketRepository;
     private readonly ITicketValidator ticketValidator;
-    private readonly ITicketEmailSender ticketEmailSender;
     private readonly IQrCodeService qrCodeService;
     private readonly ICurrentUser currentUser;
     private readonly IConcertModule concertModule;
     private readonly ICustomerPaymentClient customerPaymentClient;
-    private readonly IUnitOfWork unitOfWork;
+    private readonly TicketDbContext context;
+    private readonly IDbContextAccessor contextAccessor;
+    private readonly IBus bus;
     private readonly TimeProvider timeProvider;
-    private readonly ILogger<TicketService> logger;
 
     public TicketService(
         ITicketRepository ticketRepository,
         ITicketValidator ticketValidator,
-        ITicketEmailSender ticketEmailSender,
         IQrCodeService qrCodeService,
         ICurrentUser currentUser,
         IConcertModule concertModule,
         ICustomerPaymentClient customerPaymentClient,
-        IUnitOfWork unitOfWork,
-        TimeProvider timeProvider,
-        ILogger<TicketService> logger)
+        TicketDbContext context,
+        IDbContextAccessor contextAccessor,
+        IBus bus,
+        TimeProvider timeProvider)
     {
         this.ticketRepository = ticketRepository;
         this.ticketValidator = ticketValidator;
-        this.ticketEmailSender = ticketEmailSender;
         this.qrCodeService = qrCodeService;
         this.currentUser = currentUser;
         this.concertModule = concertModule;
         this.customerPaymentClient = customerPaymentClient;
-        this.unitOfWork = unitOfWork;
+        this.context = context;
+        this.contextAccessor = contextAccessor;
+        this.bus = bus;
         this.timeProvider = timeProvider;
-        this.logger = logger;
     }
 
     public async Task<Result<TicketPayment>> PurchaseAsync(TicketPurchaseParams purchaseParams)
@@ -97,17 +99,17 @@ internal sealed class TicketService : ITicketService
             tickets.Add(ticket);
         }
 
-        await unitOfWork.SaveChangesAsync();
-
         var ticketIds = tickets.Select(t => t.Id).ToList();
 
         try
         {
-            await ticketEmailSender.SendTicketsAsync(purchaseCompleteDto.FromEmail, ticketIds);
+            contextAccessor.Context = context;
+            await bus.SendAsync(new SendTicketEmailCommand(purchaseCompleteDto.FromEmail, ticketIds));
+            await context.SaveChangesAsync();
         }
-        catch (Exception ex)
+        finally
         {
-            logger.TicketEmailFailed(ex, purchaseCompleteDto.FromEmail, ticketIds);
+            contextAccessor.Context = null;
         }
 
         return Result.Ok(new TicketPayment

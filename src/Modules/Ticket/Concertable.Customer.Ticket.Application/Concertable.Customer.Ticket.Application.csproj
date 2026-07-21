@@ -13,6 +13,7 @@
     <ProjectReference Include="..\..\Concert\Concertable.Customer.Concert.Contracts\Concertable.Customer.Concert.Contracts.csproj" />
     <PackageReference Include="Concertable.Kernel" />
     <PackageReference Include="Concertable.DataAccess.Application" />
+    <PackageReference Include="Concertable.Messaging.Contracts" />
   </ItemGroup>
 
   <ItemGroup>
