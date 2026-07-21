@@ -1,23 +1,10 @@
 import customerApi from "../../../lib/customerAxiosClient";
-import type { Ticket, TicketCheckout } from "../types";
-
-interface TicketPurchaseRequest {
-  concertId: number;
-  quantity: number;
-  paymentMethodId: string;
-}
-
-export interface TicketPurchaseResponse {
-  requiresAction: boolean;
-  clientSecret?: string;
-  transactionId?: string;
-  ticketIds: string[];
-  concertId: number;
-  amount: number;
-  currency?: string;
-  purchaseDate: string;
-  userEmail?: string;
-}
+import type {
+  Ticket,
+  TicketCheckout,
+  TicketPurchaseRequest,
+  TicketPurchaseResponse,
+} from "../types";
 
 const ticketApi = {
   purchase: async (

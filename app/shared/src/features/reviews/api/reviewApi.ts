@@ -1,11 +1,6 @@
 import customerApi from "../../../lib/customerAxiosClient";
 import type { Review, ReviewEntityType } from "@concertable/shared/features/reviews";
-
-interface CreateReviewRequest {
-  concertId: number;
-  stars: number;
-  details?: string;
-}
+import type { CreateReviewRequest } from "../types";
 
 const basePath = (type: ReviewEntityType, id: number) =>
   `/${type}s/${id}/reviews`;
