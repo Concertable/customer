@@ -1,4 +1,4 @@
-import customerApi from "../../../lib/customerAxiosClient";
+import { customerClient } from "../../../lib/customerClient";
 import type { Review, ReviewEntityType } from "@concertable/shared/features/reviews";
 
 interface CreateReviewRequest {
@@ -12,13 +12,13 @@ const basePath = (type: ReviewEntityType, id: number) =>
 
 const reviewApi = {
   canReview: async (type: ReviewEntityType, id: number): Promise<boolean> => {
-    const { data } = await customerApi.get<boolean>(`${basePath(type, id)}/eligibility`);
+    const { data } = await customerClient.get<boolean>(`${basePath(type, id)}/eligibility`);
     return data;
   },
 
   createReview: async (request: CreateReviewRequest): Promise<Review> => {
     const { concertId, ...body } = request;
-    const { data } = await customerApi.post<Review>(`${basePath("concert", concertId)}`, body);
+    const { data } = await customerClient.post<Review>(`${basePath("concert", concertId)}`, body);
     return data;
   },
 };
