@@ -45,8 +45,6 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                     TotalTickets = table.Column<int>(type: "int", nullable: false),
                     AvailableTickets = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Period_Start = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Period_End = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DatePosted = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ArtistId = table.Column<int>(type: "int", nullable: false),
                     ArtistName = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -55,7 +53,9 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                     PayeeUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PayeeOwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AverageRating = table.Column<double>(type: "float", nullable: false),
-                    ReviewCount = table.Column<int>(type: "int", nullable: false)
+                    ReviewCount = table.Column<int>(type: "int", nullable: false),
+                    Period_End = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Period_Start = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
