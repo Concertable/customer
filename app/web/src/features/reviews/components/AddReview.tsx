@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { toast } from "sonner";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,34 +16,28 @@ interface Props {
 }
 
 export function AddReview({ concertId }: Readonly<Props>) {
-  const { canReview, isLoading, mutation } = useAddReview(concertId);
+  const { canReview, isLoading, submit, isPending } = useAddReview(concertId);
   const [open, setOpen] = useState(false);
   const [stars, setStars] = useState(0);
   const [hovered, setHovered] = useState(0);
   const [details, setDetails] = useState("");
-  const [touched, setTouched] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (isLoading || !canReview) return null;
 
-  const error = touched && stars === 0 ? "Please select a star rating" : null;
+  function selectStars(value: number) {
+    setStars(value);
+    setError(null);
+  }
 
   function handleSubmit() {
-    if (stars === 0) {
-      setTouched(true);
-      return;
-    }
-    mutation.mutate(
-      { stars, details: details || undefined },
-      {
-        onSuccess: () => {
-          toast.success("Review submitted");
-          setOpen(false);
-          setStars(0);
-          setDetails("");
-          setTouched(false);
-        },
-      },
-    );
+    const parsed = submit({ stars, details }, () => {
+      setOpen(false);
+      setStars(0);
+      setDetails("");
+      setError(null);
+    });
+    if (!parsed.success) setError(parsed.error.issues[0].message);
   }
 
   return (
@@ -67,7 +60,7 @@ export function AddReview({ concertId }: Readonly<Props>) {
                     type="button"
                     onMouseEnter={() => setHovered(i + 1)}
                     onMouseLeave={() => setHovered(0)}
-                    onClick={() => setStars(i + 1)}
+                    onClick={() => selectStars(i + 1)}
                   >
                     <Star
                       className={`size-6 transition-colors ${
@@ -99,10 +92,10 @@ export function AddReview({ concertId }: Readonly<Props>) {
 
             <Button
               onClick={handleSubmit}
-              disabled={mutation.isPending}
+              disabled={isPending}
               className="w-full"
             >
-              {mutation.isPending ? "Submitting..." : "Submit"}
+              {isPending ? "Submitting..." : "Submit"}
             </Button>
           </div>
         </DialogContent>
