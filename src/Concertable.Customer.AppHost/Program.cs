@@ -11,7 +11,8 @@ var asb = builder.AddServiceBus();
 asb.Topology()
    .AddCustomerTopology()
    .AddSearchTopology()
-   .AddPaymentTopology();
+   .AddPaymentTopology()
+   .AddAuthTopology();
 
 var auth = builder.AddAuth<Projects.Concertable_Auth>(authDb, b2bDb, asb);
 auth.WithEndpoint("https", endpoint => endpoint.Port = 7093);
