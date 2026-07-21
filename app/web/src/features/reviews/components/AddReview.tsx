@@ -22,23 +22,29 @@ export function AddReview({ concertId }: Readonly<Props>) {
   const [stars, setStars] = useState(0);
   const [hovered, setHovered] = useState(0);
   const [details, setDetails] = useState("");
+  const [touched, setTouched] = useState(false);
 
   if (isLoading || !canReview) return null;
 
-  async function handleSubmit() {
+  const error = touched && stars === 0 ? "Please select a star rating" : null;
+
+  function handleSubmit() {
     if (stars === 0) {
-      toast.error("Please select a star rating");
+      setTouched(true);
       return;
     }
-    try {
-      await mutation.mutateAsync({ stars, details: details || undefined });
-      toast.success("Review submitted");
-      setOpen(false);
-      setStars(0);
-      setDetails("");
-    } catch {
-      toast.error("Failed to submit review");
-    }
+    mutation.mutate(
+      { stars, details: details || undefined },
+      {
+        onSuccess: () => {
+          toast.success("Review submitted");
+          setOpen(false);
+          setStars(0);
+          setDetails("");
+          setTouched(false);
+        },
+      },
+    );
   }
 
   return (
@@ -73,6 +79,11 @@ export function AddReview({ concertId }: Readonly<Props>) {
                   </button>
                 ))}
               </div>
+              {error && (
+                <p className="text-destructive text-xs" data-testid="review-rating-error">
+                  {error}
+                </p>
+              )}
             </div>
 
             <div className="space-y-1">
@@ -87,7 +98,7 @@ export function AddReview({ concertId }: Readonly<Props>) {
             </div>
 
             <Button
-              onClick={() => void handleSubmit()}
+              onClick={handleSubmit}
               disabled={mutation.isPending}
               className="w-full"
             >
