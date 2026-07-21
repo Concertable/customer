@@ -1,4 +1,4 @@
-import customerApi from "../../../lib/customerAxiosClient";
+import { customerClient } from "../../../lib/customerClient";
 import type { Ticket, TicketCheckout } from "../types";
 
 interface TicketPurchaseRequest {
@@ -23,25 +23,25 @@ const ticketApi = {
   purchase: async (
     request: TicketPurchaseRequest,
   ): Promise<TicketPurchaseResponse> => {
-    const { data } = await customerApi.post<TicketPurchaseResponse>(
+    const { data } = await customerClient.post<TicketPurchaseResponse>(
       "/ticket/purchase",
       request,
     );
     return data;
   },
   checkout: async (concertId: number, quantity: number): Promise<TicketCheckout> => {
-    const { data } = await customerApi.post<TicketCheckout>("/ticket/checkout", {
+    const { data } = await customerClient.post<TicketCheckout>("/ticket/checkout", {
       concertId,
       quantity,
     });
     return data;
   },
   getUpcoming: async (): Promise<Ticket[]> => {
-    const { data } = await customerApi.get<Ticket[]>("/ticket/upcoming/user");
+    const { data } = await customerClient.get<Ticket[]>("/ticket/upcoming/user");
     return data;
   },
   getHistory: async (): Promise<Ticket[]> => {
-    const { data } = await customerApi.get<Ticket[]>("/ticket/history/user");
+    const { data } = await customerClient.get<Ticket[]>("/ticket/history/user");
     return data;
   },
 };
