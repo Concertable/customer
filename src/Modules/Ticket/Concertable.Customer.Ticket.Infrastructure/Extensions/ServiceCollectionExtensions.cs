@@ -1,3 +1,4 @@
+using Concertable.Customer.Ticket.Application.Commands;
 using Concertable.Customer.Ticket.Application.Validators;
 using Concertable.Customer.Ticket.Contracts;
 using Concertable.Customer.Ticket.Domain.Events;
@@ -47,7 +48,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<QRCoder.QRCodeGenerator>();
         services.AddScoped<IQrCodeService, QrCodeService>();
         services.AddScoped<ITicketPdfService, TicketPdfService>();
-        services.AddScoped<ITicketEmailSender, TicketEmailSender>();
+        services.AddScoped<IIntegrationCommandHandler<SendTicketEmailCommand>, SendTicketEmailCommandHandler>();
 
         services.AddScoped<IIntegrationEventHandler<PaymentSucceededEvent>, TicketPaymentProcessor>();
         services.AddScoped<IIntegrationEventHandler<PaymentFailedEvent>, TicketPaymentFailedProcessor>();
