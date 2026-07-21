@@ -1,1 +1,1 @@
-export { default as customerApi, configureCustomerApi } from "./customerAxiosClient";
+export { customerClient } from "./customerClient";
