@@ -4,18 +4,18 @@ namespace Concertable.Customer.Ticket.Infrastructure.Pdf;
 
 internal sealed class TicketPdfService : ITicketPdfService
 {
-    private readonly IPdfService pdfService;
+    private readonly IPdfRenderer pdfRenderer;
     private readonly IQrCodeService qrCodeService;
 
-    public TicketPdfService(IPdfService pdfService, IQrCodeService qrCodeService)
+    public TicketPdfService(IPdfRenderer pdfRenderer, IQrCodeService qrCodeService)
     {
-        this.pdfService = pdfService;
+        this.pdfRenderer = pdfRenderer;
         this.qrCodeService = qrCodeService;
     }
 
     public async Task<byte[]> RenderTicketReceiptAsync(string email, Guid ticketId)
     {
         byte[] qrCode = await qrCodeService.GetByTicketIdAsync(ticketId);
-        return pdfService.Render(new TicketReceiptDocument(email, ticketId, qrCode));
+        return pdfRenderer.Render(new TicketReceiptDocument(email, ticketId, qrCode));
     }
 }
