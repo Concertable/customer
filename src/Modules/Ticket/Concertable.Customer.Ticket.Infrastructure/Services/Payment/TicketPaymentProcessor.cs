@@ -47,7 +47,7 @@ internal sealed class TicketPaymentProcessor : IIntegrationEventHandler<PaymentS
             {
                 EntityId = int.Parse(meta["concertId"]),
                 FromUserId = Guid.Parse(meta["fromUserId"]),
-                FromEmail = meta.GetValueOrDefault("fromUserEmail", string.Empty),
+                FromEmail = meta["fromUserEmail"],
                 Quantity = meta.TryGetValue("quantity", out var q) ? int.Parse(q) : null
             });
 
