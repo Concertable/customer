@@ -7,7 +7,7 @@ export interface TicketPurchaseRequest {
   paymentMethodId: string;
 }
 
-export interface TicketPurchaseResponse extends PaymentOutcome {
+export interface TicketPurchase extends PaymentOutcome {
   ticketIds: string[];
   concertId: number;
   amount: number;
