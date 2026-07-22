@@ -6,26 +6,41 @@ using Concertable.Customer.Concert.Infrastructure.Handlers;
 using Concertable.Kernel.ValueObjects;
 using Concertable.Messaging.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Xunit.Abstractions;
 
-namespace Concertable.Customer.Concert.UnitTests.Handlers;
+namespace Concertable.Customer.Concert.IntegrationTests;
 
-public sealed class ConcertProjectionHandlerTests
+[Collection("Integration")]
+public sealed class ConcertProjectionHandlerTests : IAsyncLifetime
 {
+    private const int ConcertId = 90001;
     private static readonly DateTimeOffset Base = new(2026, 6, 5, 12, 0, 0, TimeSpan.Zero);
     private static readonly Guid PayeeUserId = Guid.NewGuid();
     private static readonly Guid PayeeOwnerId = Guid.NewGuid();
 
-    private static ConcertDbContext NewContext(string dbName) =>
-        new(new DbContextOptionsBuilder<ConcertDbContext>().UseInMemoryDatabase(dbName).Options,
-            new ConcertConfigurationProvider());
+    private readonly ApiFixture fixture;
+
+    public ConcertProjectionHandlerTests(ApiFixture fixture, ITestOutputHelper output)
+    {
+        this.fixture = fixture;
+        fixture.AttachOutput(output);
+    }
+
+    public Task InitializeAsync() => fixture.ResetAsync();
+
+    public Task DisposeAsync()
+    {
+        fixture.DetachOutput();
+        return Task.CompletedTask;
+    }
 
     private static ConcertChangedEvent NewEvent(
-        int concertId = 1,
         string name = "Concert",
         int totalTickets = 10,
         IReadOnlyCollection<Genre>? genres = null) =>
         new(
-            concertId,
+            ConcertId,
             name,
             "About",
             "avatar.png",
@@ -45,21 +60,39 @@ public sealed class ConcertProjectionHandlerTests
             PayeeUserId,
             PayeeOwnerId);
 
+    private async Task HandleAsync(ConcertChangedEvent e, MessageEnvelope envelope)
+    {
+        using var scope = fixture.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<ConcertDbContext>();
+        await new ConcertProjectionHandler(context).HandleAsync(e, envelope);
+    }
+
+    private async Task<ConcertEntity> GetConcertAsync()
+    {
+        using var scope = fixture.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<ConcertDbContext>();
+        return await context.Concerts.Include(c => c.Genres).SingleAsync(c => c.Id == ConcertId);
+    }
+
+    private async Task<bool> IsProcessedAsync(MessageEnvelope envelope)
+    {
+        using var scope = fixture.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<ConcertDbContext>();
+        return await context.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(ConcertProjectionHandler));
+    }
+
     [Fact]
     public async Task HandleAsync_WhenConcertUnknown_CreatesProjection()
     {
         // Arrange
-        var dbName = Guid.NewGuid().ToString();
         var envelope = MessageEnvelope.Create<ConcertChangedEvent>(Base);
         var e = NewEvent(totalTickets: 10, genres: [Genre.Rock, Genre.Pop]);
 
         // Act
-        await using (var context = NewContext(dbName))
-            await new ConcertProjectionHandler(context).HandleAsync(e, envelope);
+        await HandleAsync(e, envelope);
 
         // Assert
-        await using var probe = NewContext(dbName);
-        var concert = await probe.Concerts.Include(c => c.Genres).SingleAsync();
+        var concert = await GetConcertAsync();
         Assert.Equal(e.ConcertId, concert.Id);
         Assert.Equal(e.Name, concert.Name);
         Assert.Equal(e.About, concert.About);
@@ -76,33 +109,32 @@ public sealed class ConcertProjectionHandlerTests
         Assert.Equal(e.PayeeUserId, concert.PayeeUserId);
         Assert.Equal(e.PayeeOwnerId, concert.PayeeOwnerId);
         Assert.Equal([Genre.Rock, Genre.Pop], concert.Genres.Select(g => g.Genre).Order());
-        Assert.True(await probe.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(ConcertProjectionHandler)));
+        Assert.True(await IsProcessedAsync(envelope));
     }
 
     [Fact]
     public async Task HandleAsync_WhenConcertExists_UpdatesPreservingSoldAndSyncsGenres()
     {
         // Arrange — 3 of 10 already sold; genres start as Rock+Pop
-        var dbName = Guid.NewGuid().ToString();
-        await using (var seed = NewContext(dbName))
+        await HandleAsync(
+            NewEvent(totalTickets: 10, genres: [Genre.Rock, Genre.Pop]),
+            MessageEnvelope.Create<ConcertChangedEvent>(Base));
+
+        using (var scope = fixture.Services.CreateScope())
         {
-            await new ConcertProjectionHandler(seed).HandleAsync(
-                NewEvent(totalTickets: 10, genres: [Genre.Rock, Genre.Pop]),
-                MessageEnvelope.Create<ConcertChangedEvent>(Base));
-            var seeded = await seed.Concerts.SingleAsync();
+            var context = scope.ServiceProvider.GetRequiredService<ConcertDbContext>();
+            var seeded = await context.Concerts.SingleAsync(c => c.Id == ConcertId);
             seeded.DecrementAvailability(3);
-            await seed.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
-        var envelope = MessageEnvelope.Create<ConcertChangedEvent>(Base);
-        var e = NewEvent(name: "Renamed", totalTickets: 20, genres: [Genre.Pop, Genre.Jazz]);
 
         // Act
-        await using (var context = NewContext(dbName))
-            await new ConcertProjectionHandler(context).HandleAsync(e, envelope);
+        await HandleAsync(
+            NewEvent(name: "Renamed", totalTickets: 20, genres: [Genre.Pop, Genre.Jazz]),
+            MessageEnvelope.Create<ConcertChangedEvent>(Base));
 
         // Assert
-        await using var probe = NewContext(dbName);
-        var concert = await probe.Concerts.Include(c => c.Genres).SingleAsync();
+        var concert = await GetConcertAsync();
         Assert.Equal("Renamed", concert.Name);
         Assert.Equal(20, concert.TotalTickets);
         Assert.Equal(17, concert.AvailableTickets);
@@ -113,24 +145,21 @@ public sealed class ConcertProjectionHandlerTests
     public async Task HandleAsync_WhenMessageAlreadyProcessed_DoesNotApplyChanges()
     {
         // Arrange
-        var dbName = Guid.NewGuid().ToString();
         var envelope = MessageEnvelope.Create<ConcertChangedEvent>(Base);
-        await using (var seed = NewContext(dbName))
+        await HandleAsync(NewEvent(name: "Original"), MessageEnvelope.Create<ConcertChangedEvent>(Base));
+
+        using (var scope = fixture.Services.CreateScope())
         {
-            await new ConcertProjectionHandler(seed).HandleAsync(
-                NewEvent(name: "Original"),
-                MessageEnvelope.Create<ConcertChangedEvent>(Base));
-            seed.AddInboxMessage(envelope, nameof(ConcertProjectionHandler));
-            await seed.SaveChangesAsync();
+            var context = scope.ServiceProvider.GetRequiredService<ConcertDbContext>();
+            context.AddInboxMessage(envelope, nameof(ConcertProjectionHandler));
+            await context.SaveChangesAsync();
         }
 
         // Act
-        await using (var context = NewContext(dbName))
-            await new ConcertProjectionHandler(context).HandleAsync(NewEvent(name: "Renamed"), envelope);
+        await HandleAsync(NewEvent(name: "Renamed"), envelope);
 
         // Assert
-        await using var probe = NewContext(dbName);
-        var concert = await probe.Concerts.SingleAsync();
+        var concert = await GetConcertAsync();
         Assert.Equal("Original", concert.Name);
     }
 }
