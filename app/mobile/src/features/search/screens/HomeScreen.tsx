@@ -4,7 +4,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { useHeaderAmountQuery } from "@concertable/shared/features/search";
 import type { ConcertHeader, ArtistHeader, VenueHeader } from "@concertable/shared/features/search";
-import { useImageUrl } from "@concertable/shared/hooks";
+import { useImageUrlQuery } from "@concertable/shared/hooks";
 import { useSearchFiltersStore } from "@concertable/shared/features/search";
 import { Image } from "expo-image";
 import { MapPin } from "lucide-react-native";
@@ -148,7 +148,7 @@ interface ConcertCardProps {
 }
 
 function ConcertCard({ concert, onPress }: Readonly<ConcertCardProps>) {
-  const { data: src } = useImageUrl(concert.imageUrl);
+  const { data: src } = useImageUrlQuery(concert.imageUrl);
   return (
     <Pressable onPress={onPress} className="w-44" testID="concert-card">
       <View className="bg-card rounded-2xl border border-border overflow-hidden">
@@ -185,7 +185,7 @@ interface ArtistCardProps {
 }
 
 function ArtistCard({ artist, onPress }: Readonly<ArtistCardProps>) {
-  const { data: src } = useImageUrl(artist.imageUrl);
+  const { data: src } = useImageUrlQuery(artist.imageUrl);
   return (
     <Pressable onPress={onPress} className="w-36">
       <View className="bg-card rounded-2xl border border-border overflow-hidden items-center p-4 gap-2">
@@ -215,7 +215,7 @@ interface VenueCardProps {
 }
 
 function VenueCard({ venue, onPress }: Readonly<VenueCardProps>) {
-  const { data: src } = useImageUrl(venue.imageUrl);
+  const { data: src } = useImageUrlQuery(venue.imageUrl);
   return (
     <Pressable onPress={onPress} className="w-44">
       <View className="bg-card rounded-2xl border border-border overflow-hidden">
