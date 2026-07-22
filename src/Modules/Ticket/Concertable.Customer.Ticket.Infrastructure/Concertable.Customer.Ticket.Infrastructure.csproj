@@ -10,7 +10,6 @@
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
-    <PackageReference Include="QRCoder" />
     <PackageReference Include="QuestPDF" />
   </ItemGroup>
 
@@ -26,6 +25,7 @@
     <PackageReference Include="Concertable.Kernel" />
     <PackageReference Include="Concertable.Shared.Email.Application" />
     <PackageReference Include="Concertable.Shared.Pdf.Application" />
+    <PackageReference Include="Concertable.Shared.QrCode.Application" />
     <PackageReference Include="Concertable.Messaging.Contracts" />
     <PackageReference Include="Concertable.Seed.Shared" />
     <ProjectReference Include="..\..\..\Seed\Concertable.Customer.Seed.Infrastructure\Concertable.Customer.Seed.Infrastructure.csproj" />
