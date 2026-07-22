@@ -74,6 +74,26 @@ the design-time factory base + `DesignTimeConfiguration` move there. See `plans/
 
 ---
 
+### `DateRange` mapped as `ComplexProperty` on Ticket but `OwnsOne` elsewhere
+
+`DateRange` is a value object (no identity), so it belongs as a `ComplexProperty` — as the repo already
+maps its other value objects (`ESignature`, `InvoiceAmounts`, `InvoiceParty`). `TicketEntity.Period`
+was moved to `ComplexProperty` to fix a real bug: `OwnsOne` models it as an owned *entity*, and
+`TicketService.CompleteAsync` hands the same `concert.Period` instance to every ticket in a
+multi-ticket purchase — EF forbids one owned instance having N owners, so the 2nd+ ticket saved with
+NULL `Period_Start` and the purchase 500'd. The other four `DateRange` mappings (B2B
+Concert/Contract/Opportunity, Customer Concert) stay `OwnsOne`: they never share an instance so they
+don't hit the bug, and converting them breaks their projection-handler unit tests, which use the EF
+**InMemory** provider — it can't materialize a complex type (`KeyNotFoundException` on
+`Period#DateRange.Start` in its query shaper).
+
+**Resolves when:** the InMemory-based projection-handler unit tests (Customer Concert, B2B Concert)
+move to a provider that supports complex types (SQLite in-memory); then all `DateRange` mappings become
+`ComplexProperty` and no value object is mapped as an owned entity. Same root cause as the `AsNoTracking`
+item below.
+
+---
+
 ### Read repositories don't default to no-tracking
 
 `ConcertReadRepository.GetDtoAsync` needed an ad-hoc `.AsNoTracking()` (EF throws when a projection carries a whole owned instance like `Period` on a tracking query), and the other read repos rely on projections happening to be untracked. Reads through a `ReadRepository<T>` should never track — the per-call opt-out is backwards.
