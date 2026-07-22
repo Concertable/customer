@@ -45,8 +45,6 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IDomainEventHandler<TicketPurchasedDomainEvent>, TicketPurchasedDomainEventHandler>();
 
-        services.AddSingleton<QRCoder.QRCodeGenerator>();
-        services.AddScoped<IQrCodeService, QrCodeService>();
         services.AddScoped<ITicketPdfService, TicketPdfService>();
         services.AddScoped<IIntegrationCommandHandler<SendTicketEmailCommand>, SendTicketEmailCommandHandler>();
 
