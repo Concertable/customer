@@ -31,6 +31,7 @@ using Concertable.Auth.Contracts.Events;
 using Concertable.Shared.Email.Infrastructure.Extensions;
 using Concertable.Shared.Geocoding.Infrastructure.Extensions;
 using Concertable.Shared.Pdf.Infrastructure.Extensions;
+using Concertable.Shared.QrCode.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -88,6 +89,7 @@ services.AddClientCredentials(opts =>
 services.AddSharedEmail(builder.Configuration);
 services.AddSharedGeocoding();
 services.AddSharedPdf();
+services.AddQrCode();
 services.AddAzureServiceBusTransport(
     opts =>
     {
