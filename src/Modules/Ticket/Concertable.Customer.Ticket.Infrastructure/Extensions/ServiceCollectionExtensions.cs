@@ -36,6 +36,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUnitOfWorkBehavior, UnitOfWorkBehavior>();
+        services.AddScoped<IOutboxUnitOfWorkBehavior, OutboxUnitOfWorkBehavior>();
 
         services.AddScoped<ITicketService, TicketService>();
         services.AddScoped<ITicketValidator, TicketValidator>();

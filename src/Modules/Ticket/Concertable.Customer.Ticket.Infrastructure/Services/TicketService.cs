@@ -3,11 +3,9 @@ using Concertable.Customer.Ticket.Application.Commands;
 using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Application.Requests;
 using Concertable.Customer.Ticket.Domain.Entities;
-using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.Kernel.Identity;
 using Concertable.Kernel.Exceptions;
 using Concertable.Messaging.Contracts;
-using Concertable.Messaging.Infrastructure.Outbox;
 using Concertable.Shared.QrCode.Application;
 using FluentResults;
 
@@ -21,8 +19,7 @@ internal sealed class TicketService : ITicketService
     private readonly ICurrentUser currentUser;
     private readonly IConcertModule concertModule;
     private readonly ICustomerPaymentClient customerPaymentClient;
-    private readonly TicketDbContext context;
-    private readonly IDbContextAccessor contextAccessor;
+    private readonly IOutboxUnitOfWorkBehavior outboxBehavior;
     private readonly IBus bus;
     private readonly TimeProvider timeProvider;
 
@@ -33,8 +30,7 @@ internal sealed class TicketService : ITicketService
         ICurrentUser currentUser,
         IConcertModule concertModule,
         ICustomerPaymentClient customerPaymentClient,
-        TicketDbContext context,
-        IDbContextAccessor contextAccessor,
+        IOutboxUnitOfWorkBehavior outboxBehavior,
         IBus bus,
         TimeProvider timeProvider)
     {
@@ -44,8 +40,7 @@ internal sealed class TicketService : ITicketService
         this.currentUser = currentUser;
         this.concertModule = concertModule;
         this.customerPaymentClient = customerPaymentClient;
-        this.context = context;
-        this.contextAccessor = contextAccessor;
+        this.outboxBehavior = outboxBehavior;
         this.bus = bus;
         this.timeProvider = timeProvider;
     }
@@ -93,25 +88,19 @@ internal sealed class TicketService : ITicketService
         int quantity = purchaseCompleteDto.Quantity ?? 1;
         var tickets = new List<TicketEntity>();
 
-        for (int i = 0; i < quantity; i++)
+        var ticketIds = await outboxBehavior.ExecuteAsync(async () =>
         {
-            var ticket = BuildTicket(purchaseCompleteDto.FromUserId, concert);
-            await ticketRepository.AddAsync(ticket);
-            tickets.Add(ticket);
-        }
+            for (int i = 0; i < quantity; i++)
+            {
+                var ticket = BuildTicket(purchaseCompleteDto.FromUserId, concert);
+                await ticketRepository.AddAsync(ticket);
+                tickets.Add(ticket);
+            }
 
-        var ticketIds = tickets.Select(t => t.Id).ToList();
-
-        try
-        {
-            contextAccessor.Context = context;
-            await bus.SendAsync(new SendTicketEmailCommand(purchaseCompleteDto.FromEmail, ticketIds));
-            await context.SaveChangesAsync();
-        }
-        finally
-        {
-            contextAccessor.Context = null;
-        }
+            var ids = tickets.Select(t => t.Id).ToList();
+            await bus.SendAsync(new SendTicketEmailCommand(purchaseCompleteDto.FromEmail, ids));
+            return ids;
+        });
 
         return Result.Ok(new TicketPayment
         {
