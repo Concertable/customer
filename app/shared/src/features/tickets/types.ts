@@ -31,7 +31,6 @@ export interface Ticket {
   purchaseDate: string;
   qrCode: string;
   userId: string;
-  userEmail: string;
   concert: TicketConcert;
 }
 
