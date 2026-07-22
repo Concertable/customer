@@ -1,29 +1,16 @@
 import { customerClient } from "../../../lib/customerClient";
-import type { Ticket, TicketCheckout } from "../types";
-
-interface TicketPurchaseRequest {
-  concertId: number;
-  quantity: number;
-  paymentMethodId: string;
-}
-
-export interface TicketPurchaseResponse {
-  requiresAction: boolean;
-  clientSecret?: string;
-  transactionId?: string;
-  ticketIds: string[];
-  concertId: number;
-  amount: number;
-  currency?: string;
-  purchaseDate: string;
-  userEmail?: string;
-}
+import type {
+  Ticket,
+  TicketCheckout,
+  TicketPurchaseRequest,
+  TicketPurchase,
+} from "../types";
 
 const ticketApi = {
   purchase: async (
     request: TicketPurchaseRequest,
-  ): Promise<TicketPurchaseResponse> => {
-    const { data } = await customerClient.post<TicketPurchaseResponse>(
+  ): Promise<TicketPurchase> => {
+    const { data } = await customerClient.post<TicketPurchase>(
       "/ticket/purchase",
       request,
     );
