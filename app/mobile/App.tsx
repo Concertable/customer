@@ -1,5 +1,5 @@
 import "../shared/global.css";
-import "./src/lib/customerAxios";
+import "./src/lib/customerClient";
 import {
   useFonts,
   Geist_400Regular,
