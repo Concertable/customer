@@ -9,5 +9,5 @@ export type {
   TicketConcert,
   TicketCheckout,
   TicketPurchaseRequest,
-  TicketPurchaseResponse,
+  TicketPurchase,
 } from "./types";
