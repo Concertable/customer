@@ -1,4 +1,20 @@
 import type { CheckoutSession } from "@concertable/shared/features/concerts";
+import type { PaymentOutcome } from "@concertable/shared/features/payments";
+
+export interface TicketPurchaseRequest {
+  concertId: number;
+  quantity: number;
+  paymentMethodId: string;
+}
+
+export interface TicketPurchase extends PaymentOutcome {
+  ticketIds: string[];
+  concertId: number;
+  amount: number;
+  currency?: string;
+  purchaseDate: string;
+  userEmail?: string;
+}
 
 export interface TicketConcert {
   id: number;
