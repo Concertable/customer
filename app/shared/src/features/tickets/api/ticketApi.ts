@@ -3,14 +3,14 @@ import type {
   Ticket,
   TicketCheckout,
   TicketPurchaseRequest,
-  TicketPurchaseResponse,
+  TicketPurchase,
 } from "../types";
 
 const ticketApi = {
   purchase: async (
     request: TicketPurchaseRequest,
-  ): Promise<TicketPurchaseResponse> => {
-    const { data } = await customerApi.post<TicketPurchaseResponse>(
+  ): Promise<TicketPurchase> => {
+    const { data } = await customerApi.post<TicketPurchase>(
       "/ticket/purchase",
       request,
     );
