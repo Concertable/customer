@@ -59,9 +59,9 @@ internal sealed class TicketService : ITicketService
 
         var metadata = new Dictionary<string, string>
         {
-            ["type"] = TransactionTypes.Ticket,
-            ["concertId"] = concert.Id.ToString(),
-            ["quantity"] = purchaseParams.Quantity.ToString()
+            [PaymentMetadataKeys.Type] = TransactionTypes.Ticket,
+            [PaymentMetadataKeys.ConcertId] = concert.Id.ToString(),
+            [PaymentMetadataKeys.Quantity] = purchaseParams.Quantity.ToString()
         };
 
         var paymentResult = await customerPaymentClient.PayAsync(
@@ -133,11 +133,11 @@ internal sealed class TicketService : ITicketService
 
         var metadata = new Dictionary<string, string>
         {
-            ["type"] = TransactionTypes.Ticket,
-            ["concertId"] = concert.Id.ToString(),
-            ["quantity"] = quantity.ToString(),
-            ["amount"] = ((long)(concert.Price * quantity * 100)).ToString(),
-            ["currency"] = "gbp"
+            [PaymentMetadataKeys.Type] = TransactionTypes.Ticket,
+            [PaymentMetadataKeys.ConcertId] = concert.Id.ToString(),
+            [PaymentMetadataKeys.Quantity] = quantity.ToString(),
+            [PaymentMetadataKeys.Amount] = ((long)(concert.Price * quantity * 100)).ToString(),
+            [PaymentMetadataKeys.Currency] = "gbp"
         };
 
         var session = await customerPaymentClient.CreatePaymentSessionAsync(currentUser.GetId(), concert.Id, concert.PayeeOwnerId, metadata);

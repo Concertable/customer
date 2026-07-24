@@ -24,11 +24,11 @@ public sealed class TicketPurchaseCompletionTests(ApiFixture fixture, ITestOutpu
         var envelope = MessageEnvelope.Create<PaymentSucceededEvent>(TestTime.Now);
         var @event = new PaymentSucceededEvent("pi_test_multi", new Dictionary<string, string>
         {
-            ["type"] = TransactionTypes.Ticket,
-            ["concertId"] = concert.Id.ToString(),
-            ["fromUserId"] = buyer.Id.ToString(),
-            ["fromUserEmail"] = buyer.Email,
-            ["quantity"] = "2"
+            [PaymentMetadataKeys.Type] = TransactionTypes.Ticket,
+            [PaymentMetadataKeys.ConcertId] = concert.Id.ToString(),
+            [PaymentMetadataKeys.FromUserId] = buyer.Id.ToString(),
+            [PaymentMetadataKeys.FromUserEmail] = buyer.Email,
+            [PaymentMetadataKeys.Quantity] = "2"
         });
 
         await DispatchAsync(@event, envelope);

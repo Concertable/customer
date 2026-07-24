@@ -29,7 +29,7 @@ internal sealed class TicketPaymentProcessor : IIntegrationEventHandler<PaymentS
 
     public async Task HandleAsync(PaymentSucceededEvent @event, MessageEnvelope envelope, CancellationToken ct = default)
     {
-        if (@event.Metadata.GetValueOrDefault("type") != TransactionTypes.Ticket)
+        if (@event.Metadata.GetValueOrDefault(PaymentMetadataKeys.Type) != TransactionTypes.Ticket)
             return;
 
         if (await context.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(TicketPaymentProcessor), ct))
@@ -37,7 +37,7 @@ internal sealed class TicketPaymentProcessor : IIntegrationEventHandler<PaymentS
 
         var meta = @event.Metadata;
 
-        logger.TicketPaymentProcessing(meta["fromUserId"]);
+        logger.TicketPaymentProcessing(meta.GetValue(PaymentMetadataKeys.FromUserId));
 
         context.AddInboxMessage(envelope, nameof(TicketPaymentProcessor));
 
@@ -45,16 +45,16 @@ internal sealed class TicketPaymentProcessor : IIntegrationEventHandler<PaymentS
         {
             var result = await ticketService.CompleteAsync(new()
             {
-                EntityId = int.Parse(meta["concertId"]),
-                FromUserId = Guid.Parse(meta["fromUserId"]),
-                FromEmail = meta["fromUserEmail"],
-                Quantity = meta.TryGetValue("quantity", out var q) ? int.Parse(q) : null
+                EntityId = meta.GetValueAs<int>(PaymentMetadataKeys.ConcertId),
+                FromUserId = meta.GetValueAs<Guid>(PaymentMetadataKeys.FromUserId),
+                FromEmail = meta.GetValue(PaymentMetadataKeys.FromUserEmail),
+                Quantity = meta.TryGetValue(PaymentMetadataKeys.Quantity, out var q) ? int.Parse(q) : null
             });
 
             if (result.IsFailed)
                 throw new BadRequestException(result.Errors);
 
-            await notifier.TicketPurchasedAsync(meta["fromUserId"], result.Value);
+            await notifier.TicketPurchasedAsync(meta.GetValue(PaymentMetadataKeys.FromUserId), result.Value);
         }
         catch (DbUpdateException ex) when (ex.IsDuplicateKey())
         {
