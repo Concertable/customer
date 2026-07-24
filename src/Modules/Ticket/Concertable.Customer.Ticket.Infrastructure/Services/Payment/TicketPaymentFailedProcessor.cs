@@ -25,13 +25,13 @@ internal sealed class TicketPaymentFailedProcessor : IIntegrationEventHandler<Pa
 
     public async Task HandleAsync(PaymentFailedEvent @event, MessageEnvelope envelope, CancellationToken ct = default)
     {
-        if (@event.Metadata.GetValueOrDefault("type") != TransactionTypes.Ticket)
+        if (@event.Metadata.GetValueOrDefault(PaymentMetadataKeys.Type) != TransactionTypes.Ticket)
             return;
 
         if (await context.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(TicketPaymentFailedProcessor), ct))
             return;
 
-        var fromUserId = @event.Metadata["fromUserId"];
+        var fromUserId = @event.Metadata.GetValue(PaymentMetadataKeys.FromUserId);
         logger.TicketPaymentFailed(fromUserId, @event.FailureCode, @event.FailureMessage);
 
         await notifier.TicketPurchaseFailedAsync(fromUserId, new { @event.FailureCode, @event.FailureMessage });
