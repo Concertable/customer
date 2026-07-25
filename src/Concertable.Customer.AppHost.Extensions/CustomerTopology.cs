@@ -1,17 +1,25 @@
+using Concertable.Auth.Contracts.Events;
+using Concertable.B2B.Artist.Contracts.Events;
+using Concertable.B2B.Concert.Contracts.Events;
+using Concertable.B2B.Venue.Contracts.Events;
+using Concertable.Customer.Review.Contracts.Events;
+using Concertable.Customer.Ticket.Contracts.Events;
+using Concertable.Payment.Contracts.Events;
+
 public static class CustomerTopology
 {
     public static AsbTopology AddCustomerTopology(this AsbTopology topology) =>
         topology
-            .Subscribe("event-concertchangedevent",          "customer-concert-changed",       "concertable-customer")
-            .Subscribe("event-concertpostedevent",           "customer-concert-posted",         "concertable-customer")
-            .Subscribe("event-customerreviewsubmittedevent", "customer-review-submitted",       "concertable-customer")
-            .Subscribe("event-ticketpurchasedevent",         "customer-ticket-purchased",       "concertable-customer")
-            .Subscribe("event-artistchangedevent",           "customer-artist-changed",         "concertable-customer")
-            .Subscribe("event-venuechangedevent",            "customer-venue-changed",          "concertable-customer")
-            .Subscribe("event-artistratingupdatedevent",     "customer-artist-rating-updated",  "concertable-customer")
-            .Subscribe("event-venueratingupdatedevent",      "customer-venue-rating-updated",   "concertable-customer")
-            .Subscribe("event-concertratingupdatedevent",    "customer-concert-rating-updated", "concertable-customer")
-            .Subscribe("event-credentialregisteredevent",    "customer-credential-registered",  "concertable-customer")
-            .Subscribe("event-paymentsucceededevent",        "customer-payment-succeeded",      "concertable-customer")
-            .Subscribe("event-paymentfailedevent",           "customer-payment-failed",         "concertable-customer");
+            .Subscribe<ConcertChangedEvent>("customer-concert-changed",       "concertable-customer")
+            .Subscribe<ConcertPostedEvent>("customer-concert-posted",         "concertable-customer")
+            .Subscribe<CustomerReviewSubmittedEvent>("customer-review-submitted",       "concertable-customer")
+            .Subscribe<TicketPurchasedEvent>("customer-ticket-purchased",       "concertable-customer")
+            .Subscribe<ArtistChangedEvent>("customer-artist-changed",         "concertable-customer")
+            .Subscribe<VenueChangedEvent>("customer-venue-changed",          "concertable-customer")
+            .Subscribe<ArtistRatingUpdatedEvent>("customer-artist-rating-updated",  "concertable-customer")
+            .Subscribe<VenueRatingUpdatedEvent>("customer-venue-rating-updated",   "concertable-customer")
+            .Subscribe<ConcertRatingUpdatedEvent>("customer-concert-rating-updated", "concertable-customer")
+            .Subscribe<CredentialRegisteredEvent>("customer-credential-registered",  "concertable-customer")
+            .Subscribe<PaymentSucceededEvent>("customer-payment-succeeded",      "concertable-customer")
+            .Subscribe<PaymentFailedEvent>("customer-payment-failed",         "concertable-customer");
 }
