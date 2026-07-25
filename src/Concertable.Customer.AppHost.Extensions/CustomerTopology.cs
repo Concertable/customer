@@ -9,17 +9,18 @@ using Concertable.Payment.Contracts.Events;
 public static class CustomerTopology
 {
     public static AsbTopology AddCustomerTopology(this AsbTopology topology) =>
-        topology
-            .Subscribe<ConcertChangedEvent>("customer-concert-changed",       "concertable-customer")
-            .Subscribe<ConcertPostedEvent>("customer-concert-posted",         "concertable-customer")
-            .Subscribe<CustomerReviewSubmittedEvent>("customer-review-submitted",       "concertable-customer")
-            .Subscribe<TicketPurchasedEvent>("customer-ticket-purchased",       "concertable-customer")
-            .Subscribe<ArtistChangedEvent>("customer-artist-changed",         "concertable-customer")
-            .Subscribe<VenueChangedEvent>("customer-venue-changed",          "concertable-customer")
-            .Subscribe<ArtistRatingUpdatedEvent>("customer-artist-rating-updated",  "concertable-customer")
-            .Subscribe<VenueRatingUpdatedEvent>("customer-venue-rating-updated",   "concertable-customer")
-            .Subscribe<ConcertRatingUpdatedEvent>("customer-concert-rating-updated", "concertable-customer")
-            .Subscribe<CredentialRegisteredEvent>("customer-credential-registered",  "concertable-customer")
-            .Subscribe<PaymentSucceededEvent>("customer-payment-succeeded",      "concertable-customer")
-            .Subscribe<PaymentFailedEvent>("customer-payment-failed",         "concertable-customer");
+        topology.ForService(AppHostConstants.ServiceNames.Customer)
+            .Subscribe<ConcertChangedEvent>()
+            .Subscribe<ConcertPostedEvent>()
+            .Subscribe<CustomerReviewSubmittedEvent>()
+            .Subscribe<TicketPurchasedEvent>()
+            .Subscribe<ArtistChangedEvent>()
+            .Subscribe<VenueChangedEvent>()
+            .Subscribe<ArtistRatingUpdatedEvent>()
+            .Subscribe<VenueRatingUpdatedEvent>()
+            .Subscribe<ConcertRatingUpdatedEvent>()
+            .Subscribe<CredentialRegisteredEvent>()
+            .Subscribe<PaymentSucceededEvent>()
+            .Subscribe<PaymentFailedEvent>()
+            .Topology;
 }
