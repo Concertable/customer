@@ -38,6 +38,7 @@ using Concertable.ServiceDefaults;
 using Concertable.DataAccess.Infrastructure.Data;
 using Concertable.Messaging.Application.Extensions;
 using Concertable.Messaging.AzureServiceBus.Extensions;
+using Concertable.Messaging.AzureServiceBus.Options;
 using Concertable.Kernel.Extensions;
 using Concertable.Shared.Notification.Infrastructure.Hubs;
 using Concertable.Shared.Notification.Infrastructure.Extensions;
@@ -95,7 +96,9 @@ services.AddAzureServiceBusTransport(
         opts.ConnectionString = builder.Configuration.GetConnectionString("asb")
             ?? (builder.Environment.IsEnvironment("Testing") ? null!
                 : throw new InvalidOperationException("Connection string 'asb' is required."));
-        opts.ServiceName = "concertable-customer";
+        opts.ServiceName = builder.Configuration[AzureServiceBusOptions.ServiceNameConfigKey]
+            ?? (builder.Environment.IsEnvironment("Testing") ? "concertable-customer"
+                : throw new InvalidOperationException($"Configuration '{AzureServiceBusOptions.ServiceNameConfigKey}' is required."));
     },
     reg =>
     {
