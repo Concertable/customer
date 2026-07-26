@@ -9,18 +9,17 @@ using Concertable.Payment.Contracts.Events;
 public static class CustomerTopology
 {
     public static AsbTopology AddCustomerTopology(this AsbTopology topology) =>
-        topology.ForService(AppHostConstants.ServiceNames.Customer)
-            .Subscribe<ConcertChangedEvent>()
-            .Subscribe<ConcertPostedEvent>()
-            .Subscribe<CustomerReviewSubmittedEvent>()
-            .Subscribe<TicketPurchasedEvent>()
-            .Subscribe<ArtistChangedEvent>()
-            .Subscribe<VenueChangedEvent>()
-            .Subscribe<ArtistRatingUpdatedEvent>()
-            .Subscribe<VenueRatingUpdatedEvent>()
-            .Subscribe<ConcertRatingUpdatedEvent>()
-            .Subscribe<CredentialRegisteredEvent>()
-            .Subscribe<PaymentSucceededEvent>()
-            .Subscribe<PaymentFailedEvent>()
-            .Topology;
+        topology
+            .Subscribe<ConcertChangedEvent>(AppHostConstants.ServiceNames.Customer)
+            .Subscribe<ConcertPostedEvent>(AppHostConstants.ServiceNames.Customer)
+            .Subscribe<CustomerReviewSubmittedEvent>(AppHostConstants.ServiceNames.Customer)
+            .Subscribe<TicketPurchasedEvent>(AppHostConstants.ServiceNames.Customer)
+            .Subscribe<ArtistChangedEvent>(AppHostConstants.ServiceNames.Customer)
+            .Subscribe<VenueChangedEvent>(AppHostConstants.ServiceNames.Customer)
+            .Subscribe<ArtistRatingUpdatedEvent>(AppHostConstants.ServiceNames.Customer)
+            .Subscribe<VenueRatingUpdatedEvent>(AppHostConstants.ServiceNames.Customer)
+            .Subscribe<ConcertRatingUpdatedEvent>(AppHostConstants.ServiceNames.Customer)
+            .Subscribe<CredentialRegisteredEvent>(AppHostConstants.ServiceNames.Customer)
+            .Subscribe<PaymentSucceededEvent>(AppHostConstants.ServiceNames.Customer)
+            .Subscribe<PaymentFailedEvent>(AppHostConstants.ServiceNames.Customer);
 }
