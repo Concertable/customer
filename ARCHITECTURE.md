@@ -1,7 +1,7 @@
 # Concertable.Customer — Architecture
 
 > Cross-service plan and design rationale: [`api/docs/MICROSERVICES_ARCHITECTURE.md`](../docs/MICROSERVICES_ARCHITECTURE.md)
-> Internal module rules: [`api/docs/MODULAR_MONOLITH_RULES.md`](../docs/MODULAR_MONOLITH_RULES.md)
+> Internal module rules: [`api/agents/MODULAR_MONOLITH_RULES.md`](../agents/MODULAR_MONOLITH_RULES.md)
 > Outstanding gaps: [`TECH_DEBT.md`](./TECH_DEBT.md)
 
 ---
@@ -40,7 +40,7 @@ All modules live under `Modules/`. Each follows the `Concertable.Customer.<Modul
 
 ### Replica modules (event-synced from B2B; no canonical writes)
 
-These hold Customer's own model of upstream B2B concepts. In Customer's isolated context they *are* the entity — there is no other representation — so they're named `*Entity`, not `*ReadModel` (that suffix is reserved for a denormalized projection sitting beside an authoritative write model in the same system, which is B2B's case, not Customer's). The distinguishing invariant is **how they're populated**: each row is written only by an `XChangedEvent` handler. They have **no canonical write path** and must never be seeded or mutated directly — drive the upstream event instead (see `api/docs/SEEDING_CONVENTIONS.md`).
+These hold Customer's own model of upstream B2B concepts. In Customer's isolated context they *are* the entity — there is no other representation — so they're named `*Entity`, not `*ReadModel` (that suffix is reserved for a denormalized projection sitting beside an authoritative write model in the same system, which is B2B's case, not Customer's). The distinguishing invariant is **how they're populated**: each row is written only by an `XChangedEvent` handler. They have **no canonical write path** and must never be seeded or mutated directly — drive the upstream event instead (see `api/agents/SEEDING_CONVENTIONS.md`).
 
 | Module | Replica entities | Event handlers |
 |---|---|---|
@@ -107,7 +107,7 @@ No sync calls to B2B. Browse/detail reads go to `Concertable.Search` from the SP
 
 ## Internal architecture
 
-Customer is a modular monolith inside the service. Rules in `api/docs/MODULAR_MONOLITH_RULES.md` apply:
+Customer is a modular monolith inside the service. Rules in `api/agents/MODULAR_MONOLITH_RULES.md` apply:
 
 - Cross-module calls: `IXModule` facade only (in `<Module>.Contracts`). Modules with no cross-module consumer carry no Contracts project: Preference (latent — TECH_DEBT), and Venue/Artist (the Concert module owns its own venue/artist read-model slices in the `[concert]` schema rather than fanning out to them at read time)
 - Per-module DbContext, owns its own tables
