@@ -95,7 +95,9 @@ services.AddAzureServiceBusTransport(
         opts.ConnectionString = builder.Configuration.GetConnectionString("asb")
             ?? (builder.Environment.IsEnvironment("Testing") ? null!
                 : throw new InvalidOperationException("Connection string 'asb' is required."));
-        opts.ServiceName = "concertable-customer";
+        opts.ServiceName = builder.Configuration["ServiceBus:ServiceName"]
+            ?? (builder.Environment.IsEnvironment("Testing") ? "concertable-customer"
+                : throw new InvalidOperationException("Configuration 'ServiceBus:ServiceName' is required."));
     },
     reg =>
     {
