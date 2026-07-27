@@ -11,7 +11,7 @@ only through `*.Contracts` integration events, never their runtime. It depends o
 Development happens in the **monorepo** ([`Concertable/concertable`](https://github.com/Concertable/concertable)),
 under `api/Concertable.Customer/`. That folder is **automatically mirrored** to the read-only repo
 [`Concertable/customer`](https://github.com/Concertable/customer) on every
-push to `master`. **Don't open PRs against the mirror** — nothing flows back from it.
+push to `main`. **Don't open PRs against the mirror** — nothing flows back from it.
 
 ## Building standalone
 
