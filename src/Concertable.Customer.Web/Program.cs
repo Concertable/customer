@@ -2,6 +2,7 @@ using Concertable.B2B.Artist.Contracts.Events;
 using Concertable.B2B.Concert.Contracts.Events;
 using Concertable.B2B.Seed.Contracts;
 using Concertable.Customer.Review.Contracts.Events;
+using Concertable.Customer.Ticket.Application.Commands;
 using Concertable.Customer.Ticket.Contracts.Events;
 using Concertable.Customer.Web;
 using Concertable.Customer.Artist.Infrastructure.Data;
@@ -106,6 +107,8 @@ services.AddAzureServiceBusTransport(
 
         reg.Publishes<TicketPurchasedEvent>();
         reg.SubscribeTo<TicketPurchasedEvent>();
+
+        reg.HandleCommand<SendTicketEmailCommand>();
 
         reg.SubscribeTo<ConcertChangedEvent>();
         reg.SubscribeTo<ConcertPostedEvent>();
