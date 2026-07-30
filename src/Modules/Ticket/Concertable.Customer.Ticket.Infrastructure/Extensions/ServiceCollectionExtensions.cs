@@ -1,3 +1,4 @@
+using Concertable.Customer.Ticket.Application.Commands;
 using Concertable.Customer.Ticket.Application.Validators;
 using Concertable.Customer.Ticket.Contracts;
 using Concertable.Customer.Ticket.Domain.Events;
@@ -35,6 +36,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUnitOfWorkBehavior, UnitOfWorkBehavior>();
+        services.AddScoped<IOutboxUnitOfWorkBehavior, OutboxUnitOfWorkBehavior>();
 
         services.AddScoped<ITicketService, TicketService>();
         services.AddScoped<ITicketValidator, TicketValidator>();
@@ -45,7 +47,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDomainEventHandler<TicketPurchasedDomainEvent>, TicketPurchasedDomainEventHandler>();
 
         services.AddScoped<ITicketPdfService, TicketPdfService>();
-        services.AddScoped<ITicketEmailSender, TicketEmailSender>();
+        services.AddScoped<IIntegrationCommandHandler<SendTicketEmailCommand>, SendTicketEmailCommandHandler>();
 
         services.AddScoped<IIntegrationEventHandler<PaymentSucceededEvent>, TicketPaymentProcessor>();
         services.AddScoped<IIntegrationEventHandler<PaymentFailedEvent>, TicketPaymentFailedProcessor>();
