@@ -27,6 +27,7 @@
     <PackageReference Include="Concertable.Shared.Pdf.Application" />
     <PackageReference Include="Concertable.Shared.QrCode.Application" />
     <PackageReference Include="Concertable.Messaging.Contracts" />
+    <PackageReference Include="Concertable.Messaging.Infrastructure" />
     <PackageReference Include="Concertable.Seed.Shared" />
     <ProjectReference Include="..\..\..\Seed\Concertable.Customer.Seed.Infrastructure\Concertable.Customer.Seed.Infrastructure.csproj" />
   </ItemGroup>
