@@ -59,21 +59,6 @@ Concert and Ticket gained their `.Contracts` projects (`IConcertModule`, `ITicke
 
 ## LOW
 
-### Customer has no DataAccess layer — design-time factory base parked in Seed.Infrastructure
-
-B2B has `Concertable.B2B.DataAccess.Infrastructure` (referenced by every B2B module's Infrastructure
-project); Customer has no equivalent — its module Infrastructure projects reference the shared
-`Concertable.DataAccess.Infrastructure` package directly plus the in-closure
-`Concertable.Customer.Seed.Infrastructure`. So the design-time `DesignTimeConfiguration` +
-`CustomerDesignTimeDbContextFactory` base (single-sourcing the 7 Customer factories, and pulling a
-`Microsoft.EntityFrameworkCore.SqlServer` ref into the seed project) landed in `Seed.Infrastructure` —
-the only Customer-wide in-closure home available — which is a semantic mismatch (it's not seeding).
-
-**Resolves when:** Customer gains a `Concertable.Customer.DataAccess.Infrastructure` (mirroring B2B) and
-the design-time factory base + `DesignTimeConfiguration` move there. See `plans/CONFIG_AND_DEPLOYMENT.md`.
-
----
-
 ### `DateRange` mapped as `ComplexProperty` on Ticket but `OwnsOne` elsewhere
 
 `DateRange` is a value object (no identity), so it belongs as a `ComplexProperty` — as the repo already
