@@ -17,7 +17,6 @@
     <PackageReference Include="Concertable.B2B.Seed.Contracts" />
     <PackageReference Include="Concertable.Kernel" />
     <PackageReference Include="Concertable.Seed.Identity" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
   </ItemGroup>
 
 </Project>
