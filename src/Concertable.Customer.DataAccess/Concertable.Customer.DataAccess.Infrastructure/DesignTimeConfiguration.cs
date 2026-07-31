@@ -1,7 +1,5 @@
-namespace Concertable.Customer.Seed.Infrastructure;
+namespace Concertable.Customer.DataAccess.Infrastructure;
 
-// Design-time only: the connection string `dotnet ef` uses to build the model (it never opens it).
-// Resolved from ConnectionStrings__CustomerDb; throws if absent — ./initial-migrations.ps1 exports it locally.
 internal static class DesignTimeConfiguration
 {
     private const string ConnectionStringName = "CustomerDb";
