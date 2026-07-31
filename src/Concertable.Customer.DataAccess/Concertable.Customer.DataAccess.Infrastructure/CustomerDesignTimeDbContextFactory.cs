@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace Concertable.Customer.Seed.Infrastructure;
+namespace Concertable.Customer.DataAccess.Infrastructure;
 
 public abstract class CustomerDesignTimeDbContextFactory<TContext> : IDesignTimeDbContextFactory<TContext>
     where TContext : DbContext

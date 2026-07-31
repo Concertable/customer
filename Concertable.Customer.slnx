@@ -74,6 +74,9 @@
   <Project Path="../Concertable.Payment/src/Concertable.Payment.Workers/Concertable.Payment.Workers.csproj" />
   <Project Path="../Concertable.Search/src/Concertable.Search.Web/Concertable.Search.Web.csproj" />
   <Project Path="../Concertable.Search/src/Concertable.Search.Workers/Concertable.Search.Workers.csproj" />
+  <Folder Name="/DataAccess/">
+    <Project Path="src/Concertable.Customer.DataAccess/Concertable.Customer.DataAccess.Infrastructure/Concertable.Customer.DataAccess.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/Seed/">
     <Project Path="src/Seed/Concertable.Customer.Seed.Infrastructure/Concertable.Customer.Seed.Infrastructure.csproj" />
   </Folder>
