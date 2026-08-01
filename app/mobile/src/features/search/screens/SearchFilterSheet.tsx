@@ -5,7 +5,7 @@ import { Calendar } from "react-native-calendars";
 import { MapPin, X } from "lucide-react-native";
 import { useCurrentLocation } from "shared/hooks/useCurrentLocation";
 import { useSearchFiltersStore, useGenresQuery } from "@concertable/shared/features/search";
-import type { HeaderType, SearchFilters } from "@concertable/shared/features/search";
+import type { HeaderType, SearchFilters, SortField } from "@concertable/shared/features/search";
 import type { Genre } from "@concertable/shared/types";
 import { GenreChips } from "@/components/ui/GenreChips";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,10 +21,7 @@ const SNAP_POINTS = ["90%"];
 const SORT_OPTIONS = [
   { value: "date" as const, label: "Date" },
   { value: "name" as const, label: "Name" },
-  { value: "distance" as const, label: "Distance" },
 ];
-
-type SortValue = "date" | "name" | "distance";
 
 interface Props {}
 
@@ -51,7 +48,7 @@ export const SearchFilterSheet = forwardRef<BottomSheetModal, Props>(function Se
   const [lng, setLng] = useState<number | undefined>();
   const [locationLabel, setLocationLabel] = useState<string | undefined>();
   const [radius, setRadius] = useState(25);
-  const [sortOrder, setSortOrder] = useState<SortValue>("date");
+  const [sortOrder, setSortOrder] = useState<SortField>("date");
   const { requestLocation, locating } = useCurrentLocation();
 
   const filtersRef = useRef(filters);
@@ -70,7 +67,7 @@ export const SearchFilterSheet = forwardRef<BottomSheetModal, Props>(function Se
       setLng(f.lng);
       setLocationLabel(f.locationLabel);
       setRadius(f.radius ?? 25);
-      setSortOrder((f.orderBy as SortValue | undefined) ?? "date");
+      setSortOrder(f.orderBy ?? "date");
     }
   }, []);
 
@@ -266,7 +263,7 @@ export const SearchFilterSheet = forwardRef<BottomSheetModal, Props>(function Se
         </Section>
 
         <Section title="Sort By">
-          <Tabs value={sortOrder} onValueChange={(v) => setSortOrder(v as SortValue)}>
+          <Tabs value={sortOrder} onValueChange={(v) => setSortOrder(v as SortField)}>
             <TabsList className="w-full">
               {SORT_OPTIONS.map((opt) => (
                 <TabsTrigger key={opt.value} value={opt.value} className="flex-1">
