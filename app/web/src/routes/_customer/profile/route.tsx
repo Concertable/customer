@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
-import { requireRole } from "@/features/auth";
+import { requireAuth } from "@/features/auth";
 import {
   Sidebar,
   SidebarContent,
@@ -66,6 +66,6 @@ function ProfileLayout() {
 }
 
 export const Route = createFileRoute("/_customer/profile")({
-  beforeLoad: ({ location }) => requireRole("Customer", { location }),
+  beforeLoad: ({ location }) => requireAuth({ location }),
   component: ProfileLayout,
 });
