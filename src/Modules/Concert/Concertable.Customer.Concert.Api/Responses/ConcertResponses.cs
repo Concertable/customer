@@ -3,7 +3,7 @@ using Concertable.Customer.Concert.Application.DTOs;
 
 namespace Concertable.Customer.Concert.Api.Responses;
 
-public sealed record ConcertDetailsResponse
+public sealed record DetailsResponse
 {
     public int Id { get; init; }
     public required string Name { get; init; }
