@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { useUpcomingTicketsQuery } from "@concertable/customer-shared/features/tickets";
+import { useUpcomingTicketsQuery } from "@concertable/customer/shared/features/tickets";
 import { TicketCard } from "../components/tickets/TicketCard";
 
 export function UpcomingTicketsPage() {

@@ -1,5 +1,5 @@
-import { useTicketPurchasedHandler } from "@concertable/customer-shared/features/notifications";
-import type { TicketPurchasedPayload } from "@concertable/customer-shared/features/notifications";
+import { useTicketPurchasedHandler } from "@concertable/customer/shared/features/notifications";
+import type { TicketPurchasedPayload } from "@concertable/customer/shared/features/notifications";
 import { notificationConnection } from "shared/lib/signalr";
 import { logger } from "shared/lib/logger";
 import { notify } from "shared/lib/toast";
