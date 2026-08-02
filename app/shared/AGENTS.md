@@ -1,4 +1,4 @@
-# @customer/shared — customer-only cross-platform core
+# @concertable/customer-shared — customer-only cross-platform core
 
 ## Consumed ONLY by web-customer and mobile-customer. Never by a manager/business app. Ever.
 
