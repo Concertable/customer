@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@concertable/shared": "*",
-    "@concertable/customer-shared": "*"
+    "@concertable/customer": "*"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.0",
