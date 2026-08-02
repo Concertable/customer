@@ -19,7 +19,7 @@ internal sealed class VenueController : ControllerBase
 
     [HttpGet("{id:int}")]
     [AllowAnonymous]
-    public async Task<ActionResult<VenueDetailsResponse>> GetDetailsById(int id)
+    public async Task<ActionResult<DetailsResponse>> GetDetailsById(int id)
     {
         var venue = await venueService.GetDetailsByIdAsync(id);
         return venue is null ? NotFound() : Ok(venue.ToDetailsResponse());
