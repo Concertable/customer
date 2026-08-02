@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "react-oidc-context";
-import { reviewApi } from "@customer/shared/features/reviews";
+import { reviewApi } from "@concertable/customer-shared/features/reviews";
 import type { ReviewEntityType } from "@/features/reviews";
 
 export function useCanReviewQuery(type: ReviewEntityType, id: number) {

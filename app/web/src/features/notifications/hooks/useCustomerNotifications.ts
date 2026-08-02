@@ -1,9 +1,9 @@
 import { useCallback, useEffect } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { useTicketPurchasedHandler } from "@customer/shared/features/notifications";
+import { useTicketPurchasedHandler } from "@concertable/customer-shared/features/notifications";
 import { notificationConnection } from "@/lib/signalr";
-import type { TicketPurchasedPayload } from "@customer/shared/features/notifications";
+import type { TicketPurchasedPayload } from "@concertable/customer-shared/features/notifications";
 import type { ConcertPostedPayload } from "@/features/notifications";
 
 export function useCustomerNotifications() {
