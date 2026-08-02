@@ -1,2 +1,2 @@
 export { useCustomerNotifications } from "./hooks/useNotifications";
-export type { TicketPurchasedPayload } from "@concertable/customer-shared/features/notifications";
+export type { TicketPurchasedPayload } from "@concertable/customer/shared/features/notifications";
