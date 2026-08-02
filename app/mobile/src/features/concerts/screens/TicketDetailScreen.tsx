@@ -8,7 +8,7 @@ import QRCode from "react-native-qrcode-svg";
 import * as Brightness from "expo-brightness";
 import { CalendarDays, Hash, Mail, MapPin, Music, Share2, Ticket } from "lucide-react-native";
 import type { LucideIcon } from "lucide-react-native";
-import { useUpcomingTicketsQuery, useTicketHistoryQuery } from "@customer/shared/features/tickets";
+import { useUpcomingTicketsQuery, useTicketHistoryQuery } from "@concertable/customer-shared/features/tickets";
 import { useAuthStore } from "@concertable/shared/features/auth";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { theme } from "shared/lib/theme";
