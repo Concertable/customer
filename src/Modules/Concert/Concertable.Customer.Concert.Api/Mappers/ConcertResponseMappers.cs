@@ -5,7 +5,7 @@ namespace Concertable.Customer.Concert.Api.Mappers;
 
 internal static class ConcertResponseMappers
 {
-    public static ConcertDetailsResponse ToDetailsResponse(this ConcertDetails dto) => new()
+    public static DetailsResponse ToDetailsResponse(this ConcertDetails dto) => new()
     {
         Id = dto.Id,
         Name = dto.Name,
