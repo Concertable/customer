@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { reviewApi } from "@customer/shared/features/reviews";
+import { reviewApi } from "@concertable/customer/shared/features/reviews";
 import {
   createReviewRequestSchema,
   type CreateReviewRequest,

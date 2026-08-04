@@ -2,7 +2,7 @@ using Concertable.Contracts.Enums;
 
 namespace Concertable.Customer.Artist.Api.Responses;
 
-public sealed record ArtistDetailsResponse
+public sealed record DetailsResponse
 {
     public int Id { get; init; }
     public required string Name { get; init; }
