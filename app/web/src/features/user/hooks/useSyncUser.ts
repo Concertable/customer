@@ -1,5 +1,5 @@
 import { useSyncUser as useSyncSharedUser } from "@/features/user";
-import { customerClient } from "@customer/shared/lib/customerClient";
+import { customerClient } from "@concertable/customer/shared/lib/customerClient";
 import type { User } from "@/features/auth/types";
 
 async function getMe(): Promise<User> {
