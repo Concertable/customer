@@ -53,6 +53,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.Configuration.AddEnvironmentVariables();
 
+builder.Services.AddProblemDetails();
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(Concertable.Shared.Api.Controllers.GenreController).Assembly)
     .AddJsonOptions(opts => opts.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
@@ -152,7 +153,6 @@ if (!builder.Environment.IsEnvironment("Testing"))
     services.AddPaymentClient(builder.Configuration);
 
 services.AddExceptionHandler<GlobalExceptionHandler>();
-services.AddProblemDetails();
 
 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opts =>

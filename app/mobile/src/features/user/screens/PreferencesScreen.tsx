@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { useMyPreferenceQuery, useUpdateMyPreferenceMutation, useCreateMyPreferenceMutation } from "@customer/shared/features/preferences";
+import { useMyPreferenceQuery, useUpdateMyPreferenceMutation, useCreateMyPreferenceMutation } from "@concertable/customer/shared/features/preferences";
 import { useGenresQuery } from "@concertable/shared/features/search";
 import type { Genre } from "@concertable/shared/types";
 import { GenreChips } from "@/components/ui/GenreChips";
