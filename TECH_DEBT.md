@@ -35,7 +35,7 @@ stub Payment (stubbing defeats E2E); the fix is to split tiers by *where they ru
   `AddContainer("payment", "<registry>/payment:<version>")`), and moves out of Customer's repo into a
   system/deployment pipeline.
 
-Mirror of the B2B item in `api/Concertable.B2B/TECH_DEBT.md`. See [`plans/SPLIT_TIME_E2E_STRATEGY.md`](../../plans/SPLIT_TIME_E2E_STRATEGY.md).
+Mirror of the B2B item in `api/Concertable.B2B/TECH_DEBT.md`. See [`plans/platform/SPLIT_TIME_E2E_STRATEGY.md`](../../plans/platform/SPLIT_TIME_E2E_STRATEGY.md).
 
 ---
 
