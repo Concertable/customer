@@ -1,8 +1,8 @@
 import { ActivityIndicator, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Check } from "lucide-react-native";
-import { Text } from "@concertable/mobile/shared/components/ui/text";
-import { theme } from "@concertable/mobile/shared/lib/theme";
+import { Text } from "@concertable/mobile/components/ui/text";
+import { theme } from "@concertable/mobile/lib/theme";
 
 type StepStatus = "done" | "active" | "pending";
 
