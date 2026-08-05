@@ -1,5 +1,7 @@
+using Concertable.Customer.Preference.Application.DTOs;
 using Concertable.Customer.Preference.Application.Interfaces;
 using Concertable.Customer.Preference.Application.Requests;
+using Concertable.Shared.Api.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,17 +20,23 @@ internal sealed class PreferenceController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] PreferenceRequest request)
+    public async Task<ActionResult<PreferenceDto>> Create([FromBody] PreferenceRequest request)
     {
-        await preferenceService.CreateAsync(request);
-        return Created();
+        var result = await preferenceService.CreateAsync(request);
+        return result.ToActionResult(_ => Created());
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] PreferenceRequest request) =>
-        Ok(await preferenceService.UpdateAsync(id, request));
+    public async Task<ActionResult<PreferenceDto>> Update(int id, [FromBody] PreferenceRequest request)
+    {
+        var result = await preferenceService.UpdateAsync(id, request);
+        return result.ToOkActionResult();
+    }
 
     [HttpGet("user")]
-    public async Task<IActionResult> GetByUser() =>
-        Ok(await preferenceService.GetByUserAsync());
+    public async Task<IActionResult> GetByUser()
+    {
+        var preference = await preferenceService.GetByUserAsync();
+        return preference.Match<IActionResult>(Ok, NoContent);
+    }
 }
