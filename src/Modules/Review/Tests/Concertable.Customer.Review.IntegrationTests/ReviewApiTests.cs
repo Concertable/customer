@@ -130,6 +130,24 @@ public sealed class ReviewApiTests : IAsyncLifetime
     #region CreateConcertReview
 
     [Fact]
+    public async Task CreateConcertReview_ShouldReturn401_WhenUnauthenticated()
+    {
+        // Arrange - no bearer token; the write path must reject at the auth boundary, not reach the service
+        var concert = fixture.SeedState.PastFlatFeeConcert;
+        var client = fixture.CreateClient();
+
+        // Act
+        var response = await client.PostAsync($"/api/concerts/{concert.Id}/reviews", new CreateReviewRequest
+        {
+            Stars = 4,
+            Details = "Great concert"
+        });
+
+        // Assert
+        await response.ShouldBe(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
     public async Task CreateConcertReview_ShouldReturn404_WhenUserHasNoTicket()
     {
         // Arrange - Customer2 holds no tickets
