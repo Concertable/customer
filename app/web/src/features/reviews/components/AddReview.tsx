@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@concertable/web/shared/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+} from "@concertable/web/shared/components/ui/dialog";
+import { Textarea } from "@concertable/web/shared/components/ui/textarea";
+import { Label } from "@concertable/web/shared/components/ui/label";
 import { useAddReview } from "../hooks/useAddReview";
 
 interface Props {
