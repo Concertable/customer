@@ -19,37 +19,37 @@
     "prepack": "npm run build"
   },
   "exports": {
-    "./shared": {
+    ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
-    "./shared/lib": {
+    "./lib": {
       "types": "./dist/lib/index.d.ts",
       "import": "./dist/lib/index.js",
       "default": "./dist/lib/index.js"
     },
-    "./shared/features/tickets": {
+    "./features/tickets": {
       "types": "./dist/features/tickets/index.d.ts",
       "import": "./dist/features/tickets/index.js",
       "default": "./dist/features/tickets/index.js"
     },
-    "./shared/features/preferences": {
+    "./features/preferences": {
       "types": "./dist/features/preferences/index.d.ts",
       "import": "./dist/features/preferences/index.js",
       "default": "./dist/features/preferences/index.js"
     },
-    "./shared/features/reviews": {
+    "./features/reviews": {
       "types": "./dist/features/reviews/index.d.ts",
       "import": "./dist/features/reviews/index.js",
       "default": "./dist/features/reviews/index.js"
     },
-    "./shared/features/notifications": {
+    "./features/notifications": {
       "types": "./dist/features/notifications/index.d.ts",
       "import": "./dist/features/notifications/index.js",
       "default": "./dist/features/notifications/index.js"
     },
-    "./shared/lib/*": {
+    "./lib/*": {
       "types": "./dist/lib/*.d.ts",
       "import": "./dist/lib/*.js",
       "default": "./dist/lib/*.js"
