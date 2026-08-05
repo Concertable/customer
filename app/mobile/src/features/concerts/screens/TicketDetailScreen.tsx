@@ -10,8 +10,8 @@ import { CalendarDays, Hash, Mail, MapPin, Music, Share2, Ticket } from "lucide-
 import type { LucideIcon } from "lucide-react-native";
 import { useUpcomingTicketsQuery, useTicketHistoryQuery } from "@concertable/customer/shared/features/tickets";
 import { useAuthStore } from "@concertable/shared/features/auth";
-import { ErrorState } from "@/components/ui/ErrorState";
-import { theme } from "shared/lib/theme";
+import { ErrorState } from "@concertable/mobile/shared/components/ui/ErrorState";
+import { theme } from "@concertable/mobile/shared/lib/theme";
 import dayjs from "dayjs";
 import type { TicketsStackParamList } from "../../../navigation/types";
 

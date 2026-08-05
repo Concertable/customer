@@ -1,7 +1,7 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ConcertDetailScreen } from "shared/features/concerts/screens/ConcertDetailScreen";
+import { ConcertDetailScreen } from "@concertable/mobile/shared/features/concerts/screens/ConcertDetailScreen";
 import type { CustomerConcertNavParamList } from "../../../navigation/types";
 
 type ConcertNav = NativeStackNavigationProp<CustomerConcertNavParamList>;

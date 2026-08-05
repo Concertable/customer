@@ -1,6 +1,6 @@
 import { TicketsScreen } from "../features/concerts/screens/TicketsScreen";
 import { TicketDetailScreen } from "../features/concerts/screens/TicketDetailScreen";
-import { createAppStack } from "shared/navigation/createAppStack";
+import { createAppStack } from "@concertable/mobile/shared/navigation/createAppStack";
 import type { TicketsStackParamList } from "./types";
 
 const Stack = createAppStack<TicketsStackParamList>();
