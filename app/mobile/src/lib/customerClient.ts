@@ -1,6 +1,6 @@
-import { customerClient } from "@concertable/customer/shared/lib/customerClient";
-import Config from "@concertable/mobile/shared/lib/config";
-import { configureMobileClient } from "@concertable/mobile/shared/lib/configureMobileClient";
+import { customerClient } from "@concertable/customer/lib/customerClient";
+import Config from "@concertable/mobile/lib/config";
+import { configureMobileClient } from "@concertable/mobile/lib/configureMobileClient";
 
 configureMobileClient(customerClient, `${Config.customerApiUrl}/api`);
 
