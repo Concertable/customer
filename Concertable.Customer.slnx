@@ -50,6 +50,10 @@
     <Project Path="src/Modules/Preference/Concertable.Customer.Preference.Domain/Concertable.Customer.Preference.Domain.csproj" />
     <Project Path="src/Modules/Preference/Concertable.Customer.Preference.Infrastructure/Concertable.Customer.Preference.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/Modules/Preference/Tests/">
+    <Project Path="src/Modules/Preference/Tests/Concertable.Customer.Preference.IntegrationTests/Concertable.Customer.Preference.IntegrationTests.csproj" />
+    <Project Path="src/Modules/Preference/Tests/Concertable.Customer.Preference.UnitTests/Concertable.Customer.Preference.UnitTests.csproj" />
+  </Folder>
   <Folder Name="/Modules/Venue/">
     <Project Path="src/Modules/Venue/Concertable.Customer.Venue.Api/Concertable.Customer.Venue.Api.csproj" />
     <Project Path="src/Modules/Venue/Concertable.Customer.Venue.Application/Concertable.Customer.Venue.Application.csproj" />
