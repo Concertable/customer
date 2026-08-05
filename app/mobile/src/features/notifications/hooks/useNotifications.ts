@@ -1,8 +1,8 @@
-import { useTicketPurchasedHandler } from "@concertable/customer/shared/features/notifications";
-import type { TicketPurchasedPayload } from "@concertable/customer/shared/features/notifications";
-import { notificationConnection } from "@concertable/mobile/shared/lib/signalr";
-import { logger } from "@concertable/mobile/shared/lib/logger";
-import { notify } from "@concertable/mobile/shared/lib/toast";
+import { useTicketPurchasedHandler } from "@concertable/customer/features/notifications";
+import type { TicketPurchasedPayload } from "@concertable/customer/features/notifications";
+import { notificationConnection } from "@concertable/mobile/lib/signalr";
+import { logger } from "@concertable/mobile/lib/logger";
+import { notify } from "@concertable/mobile/lib/toast";
 
 export function useCustomerNotifications() {
   logger.log("[useCustomerNotifications] mount", {
