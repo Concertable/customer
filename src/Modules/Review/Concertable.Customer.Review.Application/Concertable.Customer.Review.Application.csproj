@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Concertable.Customer.Review.Domain\Concertable.Customer.Review.Domain.csproj" />
+    <ProjectReference Include="..\..\Ticket\Concertable.Customer.Ticket.Contracts\Concertable.Customer.Ticket.Contracts.csproj" />
     <PackageReference Include="Concertable.Contracts" />
     <PackageReference Include="Concertable.Kernel" />
   </ItemGroup>
