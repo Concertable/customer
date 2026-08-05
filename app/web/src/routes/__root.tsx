@@ -1,6 +1,6 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@concertable/web/shared/components/ui/sonner";
 import { useSyncUser } from "../features/user/hooks/useSyncUser";
 
 function RootLayout() {

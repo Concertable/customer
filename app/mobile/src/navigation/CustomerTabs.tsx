@@ -4,10 +4,10 @@ import { HomeStack } from "./HomeStack";
 import { SearchStack } from "./SearchStack";
 import { TicketsStack } from "./TicketsStack";
 import { ProfileStack } from "./ProfileStack";
-import { MessagesScreen } from "shared/features/user/screens/MessagesScreen";
+import { MessagesScreen } from "@concertable/mobile/shared/features/user/screens/MessagesScreen";
 import { useCustomerNotifications } from "../features/notifications";
-import { logger } from "shared/lib/logger";
-import { theme } from "shared/lib/theme";
+import { logger } from "@concertable/mobile/shared/lib/logger";
+import { theme } from "@concertable/mobile/shared/lib/theme";
 import type { CustomerTabParamList } from "./types";
 
 const Tab = createBottomTabNavigator<CustomerTabParamList>();

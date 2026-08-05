@@ -1,20 +1,20 @@
 import { useState } from "react";
 import { useParams, useRouter } from "@tanstack/react-router";
 import dayjs from "dayjs";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@concertable/web/shared/components/ui/button";
+import { Skeleton } from "@concertable/web/shared/components/ui/skeleton";
 import type { TicketPurchasedPayload } from "@concertable/customer/shared/features/notifications";
-import { useConcert, type Concert } from "@/features/concerts";
+import { useConcert, type Concert } from "@concertable/web/shared/features/concerts";
 import { useTicketCheckoutQuery } from "@concertable/customer/shared/features/tickets";
-import { useCheckoutFlow, type CheckoutFlowState } from "@/features/concerts/hooks/useCheckoutFlow";
-import { CheckoutLayout } from "@/features/concerts/components/checkout/CheckoutLayout";
-import { CheckoutSection } from "@/features/concerts/components/checkout/CheckoutSection";
-import { CheckoutEventBanner } from "@/features/concerts/components/checkout/CheckoutEventBanner";
-import { OrderSummaryCard } from "@/features/concerts/components/checkout/OrderSummaryCard";
-import { QuantitySelector } from "@/features/concerts/components/checkout/QuantitySelector";
-import { CheckoutSuccess } from "@/features/concerts/components/checkout/CheckoutSuccess";
-import { CheckoutFlow } from "@/features/concerts/components/checkout/CheckoutFlow";
-import { StripePaymentForm } from "@/features/concerts/components/checkout/StripePaymentForm";
+import { useCheckoutFlow, type CheckoutFlowState } from "@concertable/web/shared/features/concerts/hooks/useCheckoutFlow";
+import { CheckoutLayout } from "@concertable/web/shared/features/concerts/components/checkout/CheckoutLayout";
+import { CheckoutSection } from "@concertable/web/shared/features/concerts/components/checkout/CheckoutSection";
+import { CheckoutEventBanner } from "@concertable/web/shared/features/concerts/components/checkout/CheckoutEventBanner";
+import { OrderSummaryCard } from "@concertable/web/shared/features/concerts/components/checkout/OrderSummaryCard";
+import { QuantitySelector } from "@concertable/web/shared/features/concerts/components/checkout/QuantitySelector";
+import { CheckoutSuccess } from "@concertable/web/shared/features/concerts/components/checkout/CheckoutSuccess";
+import { CheckoutFlow } from "@concertable/web/shared/features/concerts/components/checkout/CheckoutFlow";
+import { StripePaymentForm } from "@concertable/web/shared/features/concerts/components/checkout/StripePaymentForm";
 
 export function TicketCheckoutPage() {
   const { id } = useParams({ from: "/_customer/concert/checkout/$id" });
