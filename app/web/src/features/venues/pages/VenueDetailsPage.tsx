@@ -1,6 +1,6 @@
-import { DetailsLayout } from "@/components/details/DetailsLayout";
-import { DetailsPageSkeleton } from "@/components/skeletons/DetailsPageSkeleton";
-import { useVenue, VenueHero, venueSections } from "@/features/venues";
+import { DetailsLayout } from "@concertable/web/shared/components/details/DetailsLayout";
+import { DetailsPageSkeleton } from "@concertable/web/shared/components/skeletons/DetailsPageSkeleton";
+import { useVenue, VenueHero, venueSections } from "@concertable/web/shared/features/venues";
 
 interface Props {
   id: number;
