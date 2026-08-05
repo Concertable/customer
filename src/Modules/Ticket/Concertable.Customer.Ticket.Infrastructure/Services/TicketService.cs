@@ -5,6 +5,7 @@ using Concertable.Customer.Ticket.Application.Requests;
 using Concertable.Customer.Ticket.Domain.Entities;
 using Concertable.Kernel.Identity;
 using Concertable.Kernel.Exceptions;
+using Concertable.Kernel.ValueObjects;
 using Concertable.Messaging.Contracts;
 using Concertable.Shared.QrCode.Application;
 using FluentResults;
@@ -127,7 +128,7 @@ internal sealed class TicketService : ITicketService
             [PaymentMetadataKeys.Type] = TransactionTypes.Ticket,
             [PaymentMetadataKeys.ConcertId] = concert.Id.ToString(),
             [PaymentMetadataKeys.Quantity] = quantity.ToString(),
-            [PaymentMetadataKeys.Amount] = ((long)(concert.Price * quantity * 100)).ToString(),
+            [PaymentMetadataKeys.Amount] = Money.Gbp(concert.Price * quantity).ToMinorUnits().ToString(),
             [PaymentMetadataKeys.Currency] = "gbp"
         };
 
