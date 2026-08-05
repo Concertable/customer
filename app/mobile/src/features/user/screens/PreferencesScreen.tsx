@@ -5,12 +5,12 @@ import { useNavigation } from "@react-navigation/native";
 import { useMyPreferenceQuery, useUpdateMyPreferenceMutation, useCreateMyPreferenceMutation } from "@concertable/customer/shared/features/preferences";
 import { useGenresQuery } from "@concertable/shared/features/search";
 import type { Genre } from "@concertable/shared/types";
-import { GenreChips } from "@/components/ui/GenreChips";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Text } from "@/components/ui/text";
-import { notify } from "shared/lib/toast";
-import { theme } from "shared/lib/theme";
+import { GenreChips } from "@concertable/mobile/shared/components/ui/GenreChips";
+import { Button } from "@concertable/mobile/shared/components/ui/button";
+import { Skeleton } from "@concertable/mobile/shared/components/ui/skeleton";
+import { Text } from "@concertable/mobile/shared/components/ui/text";
+import { notify } from "@concertable/mobile/shared/lib/toast";
+import { theme } from "@concertable/mobile/shared/lib/theme";
 
 const RADIUS_PRESETS = [5, 10, 25, 50, 100] as const;
 

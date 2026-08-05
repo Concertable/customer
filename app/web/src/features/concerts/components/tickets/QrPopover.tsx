@@ -3,7 +3,7 @@ import {
   DialogContent,
   DialogTrigger,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@concertable/web/shared/components/ui/dialog";
 
 interface Props {
   qrCode: string;
