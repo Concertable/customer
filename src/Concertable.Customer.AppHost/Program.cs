@@ -2,7 +2,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var sql = builder.AddSqlServerContainer("concertable-customer-sql-data");
 var authDb = sql.AddDatabase("AuthDb");
-var customerDb = sql.AddDatabase("CustomerDb");
+var customerDb = sql.AddDatabase(CustomerConstants.Database);
 var paymentDb = sql.AddDatabase("PaymentDb");
 var b2bDb = sql.AddDatabase("B2BDb");
 
