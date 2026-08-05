@@ -1,4 +1,4 @@
-# @concertable/customer/shared — customer-only cross-platform core
+# @concertable/customer — customer-only cross-platform core
 
 Published as package `@concertable/customer`; every public entry point is beneath its `./shared` export.
 
