@@ -1,5 +1,5 @@
-import { Skeleton } from "@concertable/web/shared/components/ui/skeleton";
-import { useTicketHistoryQuery } from "@concertable/customer/shared/features/tickets";
+import { Skeleton } from "@concertable/web/components/ui/skeleton";
+import { useTicketHistoryQuery } from "@concertable/customer/features/tickets";
 import { TicketCard } from "../components/tickets/TicketCard";
 
 export function TicketHistoryPage() {
