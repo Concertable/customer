@@ -11,17 +11,17 @@ public static class CustomerTopology
 {
     public static AsbTopology AddCustomerTopology(this AsbTopology topology) =>
         topology
-            .Subscribe<ConcertChangedEvent>(AppHostConstants.ServiceNames.Customer)
-            .Subscribe<ConcertPostedEvent>(AppHostConstants.ServiceNames.Customer)
-            .Subscribe<CustomerReviewSubmittedEvent>(AppHostConstants.ServiceNames.Customer)
-            .Subscribe<TicketPurchasedEvent>(AppHostConstants.ServiceNames.Customer)
-            .Subscribe<ArtistChangedEvent>(AppHostConstants.ServiceNames.Customer)
-            .Subscribe<VenueChangedEvent>(AppHostConstants.ServiceNames.Customer)
-            .Subscribe<ArtistRatingUpdatedEvent>(AppHostConstants.ServiceNames.Customer)
-            .Subscribe<VenueRatingUpdatedEvent>(AppHostConstants.ServiceNames.Customer)
-            .Subscribe<ConcertRatingUpdatedEvent>(AppHostConstants.ServiceNames.Customer)
-            .Subscribe<CredentialRegisteredEvent>(AppHostConstants.ServiceNames.Customer)
-            .Subscribe<PaymentSucceededEvent>(AppHostConstants.ServiceNames.Customer)
-            .Subscribe<PaymentFailedEvent>(AppHostConstants.ServiceNames.Customer)
-            .Queue<SendTicketEmailCommand>(AppHostConstants.ServiceNames.Customer);
+            .Subscribe<ConcertChangedEvent>(CustomerConstants.ServiceName)
+            .Subscribe<ConcertPostedEvent>(CustomerConstants.ServiceName)
+            .Subscribe<CustomerReviewSubmittedEvent>(CustomerConstants.ServiceName)
+            .Subscribe<TicketPurchasedEvent>(CustomerConstants.ServiceName)
+            .Subscribe<ArtistChangedEvent>(CustomerConstants.ServiceName)
+            .Subscribe<VenueChangedEvent>(CustomerConstants.ServiceName)
+            .Subscribe<ArtistRatingUpdatedEvent>(CustomerConstants.ServiceName)
+            .Subscribe<VenueRatingUpdatedEvent>(CustomerConstants.ServiceName)
+            .Subscribe<ConcertRatingUpdatedEvent>(CustomerConstants.ServiceName)
+            .Subscribe<CredentialRegisteredEvent>(CustomerConstants.ServiceName)
+            .Subscribe<PaymentSucceededEvent>(CustomerConstants.ServiceName)
+            .Subscribe<PaymentFailedEvent>(CustomerConstants.ServiceName)
+            .Queue<SendTicketEmailCommand>(CustomerConstants.ServiceName);
 }
