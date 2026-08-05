@@ -1,10 +1,10 @@
 import { useCallback, useEffect } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { useTicketPurchasedHandler } from "@concertable/customer/shared/features/notifications";
-import { notificationConnection } from "@concertable/web/shared/lib/signalr";
-import type { TicketPurchasedPayload } from "@concertable/customer/shared/features/notifications";
-import type { ConcertPostedPayload } from "@concertable/web/shared/features/notifications";
+import { useTicketPurchasedHandler } from "@concertable/customer/features/notifications";
+import { notificationConnection } from "@concertable/web/lib/signalr";
+import type { TicketPurchasedPayload } from "@concertable/customer/features/notifications";
+import type { ConcertPostedPayload } from "@concertable/web/features/notifications";
 
 export function useCustomerNotifications() {
   const router = useRouter();
