@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@concertable/web/shared/components/ui/skeleton";
 import { useUpcomingTicketsQuery } from "@concertable/customer/shared/features/tickets";
 import { TicketCard } from "../components/tickets/TicketCard";
 
