@@ -1,4 +1,6 @@
+using Concertable.Customer.Review.Application.Errors;
 using Concertable.Customer.Ticket.Contracts;
+using Concertable.Kernel.Functional;
 
 namespace Concertable.Customer.Review.Infrastructure.Validators;
 
@@ -18,13 +20,28 @@ internal sealed class ReviewValidator : IReviewValidator
         this.timeProvider = timeProvider;
     }
 
-    public async Task<bool> CanUserReviewConcertAsync(Guid userId, int concertId)
+    public async Task<Result<TicketSummary, CreateReviewError>> GetReviewableTicketAsync(
+        Guid userId,
+        int concertId)
     {
         var ticket = await ticketModule.GetByUserAndConcertAsync(userId, concertId);
-        if (ticket is null || ticket.PeriodStart > timeProvider.GetUtcNow())
-            return false;
+        if (ticket is null)
+            return Result.Failure<TicketSummary, CreateReviewError>(CreateReviewError.TicketNotFound);
 
-        return !await concertReviewRepository.HasReviewForTicketAsync(ticket.Id);
+        if (ticket.PeriodStart > timeProvider.GetUtcNow())
+            return Result.Failure<TicketSummary, CreateReviewError>(CreateReviewError.ConcertNotReviewableYet);
+
+        if (await concertReviewRepository.HasReviewForTicketAsync(ticket.Id))
+            return Result.Failure<TicketSummary, CreateReviewError>(CreateReviewError.ReviewAlreadyExists);
+
+        return Result.Success<TicketSummary, CreateReviewError>(ticket);
+    }
+
+    public async Task<bool> CanUserReviewConcertAsync(Guid userId, int concertId)
+    {
+        var result = await GetReviewableTicketAsync(userId, concertId);
+
+        return result.IsSuccess;
     }
 
     public Task<bool> CanUserReviewArtistAsync(Guid userId, int artistId) =>
