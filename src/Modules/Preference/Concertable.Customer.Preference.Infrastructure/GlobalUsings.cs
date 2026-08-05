@@ -1,4 +1,5 @@
 global using Concertable.Kernel;
+global using Concertable.Kernel.Functional;
 global using Concertable.Kernel.ValueObjects;
 global using Concertable.Contracts;
 global using Concertable.Contracts.Enums;
@@ -11,6 +12,7 @@ global using Concertable.DataAccess.Infrastructure;
 global using Concertable.DataAccess.Infrastructure.Data;
 global using Concertable.Messaging.Contracts;
 global using Concertable.Customer.Preference.Application.DTOs;
+global using Concertable.Customer.Preference.Application.Errors;
 global using Concertable.Customer.Preference.Application.Interfaces;
 global using Concertable.Customer.Preference.Application.Mappers;
 global using Concertable.Customer.Preference.Application.Requests;

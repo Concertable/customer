@@ -1,5 +1,4 @@
 using Concertable.Kernel.Geometry;
-using Concertable.Kernel.Exceptions;
 
 namespace Concertable.Customer.Preference.Infrastructure.Services;
 
@@ -22,54 +21,65 @@ internal sealed class PreferenceService : IPreferenceService
         this.geometryCalculator = geometryCalculator;
     }
 
-    public async Task<PreferenceDto> CreateAsync(PreferenceRequest request, Guid? userId = null)
+    public async Task<Result<PreferenceDto, CreatePreferenceError>> CreateAsync(
+        PreferenceRequest request,
+        Guid? userId = null)
     {
         var resolvedUserId = userId ?? currentUser.GetId();
+        var existing = await preferenceRepository.GetByUserIdAsync(resolvedUserId);
+        if (existing is not null)
+            return Result.Failure<PreferenceDto, CreatePreferenceError>(
+                CreatePreferenceError.PreferenceAlreadyExists);
+
         var preference = PreferenceEntity.Create(resolvedUserId, request.RadiusKm, request.Genres);
 
         await preferenceRepository.AddAsync(preference);
         await preferenceRepository.SaveChangesAsync();
 
-        return preference.ToDto();
+        return Result.Success<PreferenceDto, CreatePreferenceError>(preference.ToDto());
     }
 
-    public async Task<IEnumerable<PreferenceDto>> GetAsync()
+    public async Task<IReadOnlyList<PreferenceDto>> GetAsync()
     {
         var preferences = await preferenceRepository.GetAllAsync();
         return preferences.ToDtos();
     }
 
-    public async Task<PreferenceDto?> GetByUserIdAsync(Guid userId)
+    public async Task<Option<PreferenceDto>> GetByUserIdAsync(Guid userId)
     {
         var preference = await preferenceRepository.GetByUserIdAsync(userId);
-        return preference?.ToDto();
+        return preference.ToOption().Map(value => value.ToDto());
     }
 
-    public Task<PreferenceDto?> GetByUserAsync() => GetByUserIdAsync(currentUser.GetId());
+    public Task<Option<PreferenceDto>> GetByUserAsync() => GetByUserIdAsync(currentUser.GetId());
 
-    public async Task<PreferenceDto> UpdateAsync(int id, PreferenceRequest request)
+    public async Task<Result<PreferenceDto, UpdatePreferenceError>> UpdateAsync(
+        int id,
+        PreferenceRequest request)
     {
-        var preference = await preferenceRepository.GetByIdAsync(id)
-            .OrNotFound();
+        var preference = await preferenceRepository.GetByIdAsync(id);
+        if (preference is null)
+            return Result.Failure<PreferenceDto, UpdatePreferenceError>(
+                UpdatePreferenceError.PreferenceNotFound);
 
         if (currentUser.GetId() != preference.UserId)
-            throw new UnauthorizedAccessException("You do not own this preference");
+            return Result.Failure<PreferenceDto, UpdatePreferenceError>(
+                UpdatePreferenceError.PreferenceNotOwned);
 
         preference.Update(request.RadiusKm, request.Genres);
 
         preferenceRepository.Update(preference);
         await preferenceRepository.SaveChangesAsync();
 
-        var updated = await preferenceRepository.GetByIdAsync(preference.Id);
-        return updated!.ToDto();
+        return Result.Success<PreferenceDto, UpdatePreferenceError>(preference.ToDto());
     }
 
-    public async Task<IReadOnlyCollection<Guid>> GetUserIdsByLocationAndGenresAsync(
+    public async Task<IReadOnlyList<Guid>> GetUserIdsByLocationAndGenresAsync(
         double latitude,
         double longitude,
         IEnumerable<Genre> genres)
     {
-        var preferences = (await preferenceRepository.GetByMatchingGenresAsync(genres)).ToList();
+        var preferences = await preferenceRepository.GetByMatchingGenresAsync(genres);
         if (preferences.Count == 0) return [];
 
         var users = await userModule.GetByIdsAsync(preferences.Select(p => p.UserId));

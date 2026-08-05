@@ -28,7 +28,7 @@ internal sealed class PreferenceRepository : Repository<PreferenceEntity>, IPref
             .FirstOrDefaultAsync(p => p.UserId == id);
     }
 
-    public async Task<IEnumerable<PreferenceEntity>> GetByMatchingGenresAsync(IEnumerable<Genre> genres)
+    public async Task<IReadOnlyList<PreferenceEntity>> GetByMatchingGenresAsync(IEnumerable<Genre> genres)
     {
         var target = genres.ToArray();
         return await context.Preferences
