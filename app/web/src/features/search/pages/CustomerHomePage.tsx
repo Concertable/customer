@@ -2,7 +2,7 @@ import {
   ConcertHeaderCarousel,
   ArtistHeaderCarousel,
   VenueHeaderCarousel,
-} from "@concertable/web/shared/features/search";
+} from "@concertable/web/features/search";
 
 export function CustomerHomePage() {
   return (
