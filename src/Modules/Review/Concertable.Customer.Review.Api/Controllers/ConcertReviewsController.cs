@@ -1,4 +1,5 @@
 using Concertable.Contracts;
+using Concertable.Shared.Api.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Concertable.Customer.Review.Api.Controllers;
@@ -15,11 +16,11 @@ internal sealed class ConcertReviewsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(int concertId, [FromBody] CreateReviewRequest request)
+    public async Task<ActionResult<ReviewDto>> Create(int concertId, [FromBody] CreateReviewRequest request)
     {
-        var review = await reviewService.CreateAsync(concertId, request);
+        var result = await reviewService.CreateAsync(concertId, request);
 
-        return CreatedAtAction(nameof(GetByConcertId), new { concertId }, review);
+        return result.ToCreatedAtActionResult(nameof(GetByConcertId), new { concertId });
     }
 
     [HttpGet]

@@ -1,26 +1,24 @@
 using Concertable.Contracts;
+using Concertable.Customer.Review.Application.Errors;
 using Concertable.Customer.Review.Domain.Entities;
 using Concertable.Customer.Ticket.Contracts;
+using Concertable.Kernel.Functional;
 using Concertable.Kernel.Identity;
-using Concertable.Kernel.Exceptions;
 
 namespace Concertable.Customer.Review.Infrastructure.Services;
 
 internal sealed class ConcertReviewService : IConcertReviewService
 {
     private readonly IConcertReviewRepository reviewRepository;
-    private readonly ITicketModule ticketModule;
     private readonly IReviewValidator reviewValidator;
     private readonly ICurrentUser currentUser;
 
     public ConcertReviewService(
         IConcertReviewRepository reviewRepository,
-        ITicketModule ticketModule,
         IReviewValidator reviewValidator,
         ICurrentUser currentUser)
     {
         this.reviewRepository = reviewRepository;
-        this.ticketModule = ticketModule;
         this.reviewValidator = reviewValidator;
         this.currentUser = currentUser;
     }
@@ -36,12 +34,19 @@ internal sealed class ConcertReviewService : IConcertReviewService
             ? reviewValidator.CanUserReviewConcertAsync(currentUser.GetId(), concertId)
             : Task.FromResult(false);
 
-    public async Task<ReviewDto> CreateAsync(int concertId, CreateReviewRequest request)
+    public Task<Result<ReviewDto, CreateReviewError>> CreateAsync(int concertId, CreateReviewRequest request)
     {
         var userId = currentUser.GetId();
-        var ticket = await ticketModule.GetByUserAndConcertAsync(userId, concertId)
-            ?? throw new NotFoundException("Cannot find ticket");
 
+        return reviewValidator
+            .GetReviewableTicketAsync(userId, concertId)
+            .BindAsync(ticket => CreateAsync(ticket, request));
+    }
+
+    private async Task<Result<ReviewDto, CreateReviewError>> CreateAsync(
+        TicketSummary ticket,
+        CreateReviewRequest request)
+    {
         var email = currentUser.Email
             ?? throw new UnauthorizedAccessException("User email claim missing.");
 
@@ -57,6 +62,6 @@ internal sealed class ConcertReviewService : IConcertReviewService
         await reviewRepository.AddAsync(review);
         await reviewRepository.SaveChangesAsync();
 
-        return review.ToDto();
+        return Result.Success<ReviewDto, CreateReviewError>(review.ToDto());
     }
 }
