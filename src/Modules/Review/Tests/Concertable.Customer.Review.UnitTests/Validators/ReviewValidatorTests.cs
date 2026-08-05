@@ -1,3 +1,4 @@
+using Concertable.Customer.Review.Application.Errors;
 using Concertable.Customer.Review.Application.Interfaces;
 using Concertable.Customer.Review.Infrastructure.Validators;
 using Concertable.Customer.Ticket.Contracts;
@@ -26,6 +27,106 @@ public sealed class ReviewValidatorTests
 
     private static TicketSummary NewTicket(DateTime periodStart) =>
         new(Guid.NewGuid(), ConcertId, 5, 7, periodStart);
+
+    [Fact]
+    public async Task GetReviewableTicketAsync_MissingTicket_ReturnsTicketNotFound()
+    {
+        this.ticketModule
+            .Setup(module => module.GetByUserAndConcertAsync(UserId, ConcertId))
+            .ReturnsAsync((TicketSummary?)null);
+
+        var result = await this.sut.GetReviewableTicketAsync(UserId, ConcertId);
+
+        Assert.True(result.TryGetError(out var error));
+        Assert.Same(CreateReviewError.TicketNotFound, error);
+        this.concertReviewRepository.Verify(
+            repository => repository.HasReviewForTicketAsync(It.IsAny<Guid>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task GetReviewableTicketAsync_FutureConcert_ReturnsConcertNotReviewableYet()
+    {
+        var ticket = NewTicket(this.timeProvider.GetUtcNow().UtcDateTime.AddDays(1));
+        this.ticketModule
+            .Setup(module => module.GetByUserAndConcertAsync(UserId, ConcertId))
+            .ReturnsAsync(ticket);
+
+        var result = await this.sut.GetReviewableTicketAsync(UserId, ConcertId);
+
+        Assert.True(result.TryGetError(out var error));
+        Assert.Same(CreateReviewError.ConcertNotReviewableYet, error);
+        this.concertReviewRepository.Verify(
+            repository => repository.HasReviewForTicketAsync(It.IsAny<Guid>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task GetReviewableTicketAsync_ReviewedTicket_ReturnsReviewAlreadyExists()
+    {
+        var ticket = NewTicket(this.timeProvider.GetUtcNow().UtcDateTime.AddDays(-1));
+        this.ticketModule
+            .Setup(module => module.GetByUserAndConcertAsync(UserId, ConcertId))
+            .ReturnsAsync(ticket);
+        this.concertReviewRepository
+            .Setup(repository => repository.HasReviewForTicketAsync(ticket.Id))
+            .ReturnsAsync(true);
+
+        var result = await this.sut.GetReviewableTicketAsync(UserId, ConcertId);
+
+        Assert.True(result.TryGetError(out var error));
+        Assert.Same(CreateReviewError.ReviewAlreadyExists, error);
+    }
+
+    [Fact]
+    public async Task GetReviewableTicketAsync_EligibleTicket_ReturnsTicket()
+    {
+        var ticket = NewTicket(this.timeProvider.GetUtcNow().UtcDateTime.AddDays(-1));
+        this.ticketModule
+            .Setup(module => module.GetByUserAndConcertAsync(UserId, ConcertId))
+            .ReturnsAsync(ticket);
+        this.concertReviewRepository
+            .Setup(repository => repository.HasReviewForTicketAsync(ticket.Id))
+            .ReturnsAsync(false);
+
+        var result = await this.sut.GetReviewableTicketAsync(UserId, ConcertId);
+
+        Assert.True(result.TryGetValue(out var reviewableTicket));
+        Assert.Same(ticket, reviewableTicket);
+    }
+
+    [Fact]
+    public async Task GetReviewableTicketAsync_TicketModuleFault_Propagates()
+    {
+        var expected = new InvalidOperationException();
+        this.ticketModule
+            .Setup(module => module.GetByUserAndConcertAsync(UserId, ConcertId))
+            .ThrowsAsync(expected);
+
+        var actual = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => this.sut.GetReviewableTicketAsync(UserId, ConcertId));
+
+        Assert.Same(expected, actual);
+    }
+
+    [Fact]
+    public async Task GetReviewableTicketAsync_CancelledRepositoryQuery_PropagatesCancellation()
+    {
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        var ticket = NewTicket(this.timeProvider.GetUtcNow().UtcDateTime.AddDays(-1));
+        this.ticketModule
+            .Setup(module => module.GetByUserAndConcertAsync(UserId, ConcertId))
+            .ReturnsAsync(ticket);
+        this.concertReviewRepository
+            .Setup(repository => repository.HasReviewForTicketAsync(ticket.Id))
+            .Returns(Task.FromCanceled<bool>(cancellation.Token));
+
+        var exception = await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => this.sut.GetReviewableTicketAsync(UserId, ConcertId));
+
+        Assert.Equal(cancellation.Token, exception.CancellationToken);
+    }
 
     [Fact]
     public async Task CanUserReviewConcertAsync_WithStartedConcertAndNoExistingReview_ReturnsTrue()
