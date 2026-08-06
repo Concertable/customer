@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
-import { requireAuth } from "@concertable/web/shared/features/auth";
+import { requireAuth } from "@concertable/web/features/auth";
 import {
   Sidebar,
   SidebarContent,
@@ -11,7 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-} from "@concertable/web/shared/components/ui/sidebar";
+} from "@concertable/web/components/ui/sidebar";
 
 const links = [
   { label: "Profile", to: "/profile" },
