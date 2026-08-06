@@ -64,7 +64,7 @@ internal sealed class TicketService : ITicketService
 
         var paymentResult = await customerPaymentClient.PayAsync(
             currentUser.GetId(), concert.Id, concert.PayeeOwnerId,
-            concert.Price * purchaseParams.Quantity,
+            Money.Gbp(concert.Price * purchaseParams.Quantity),
             metadata,
             purchaseParams.PaymentMethodId);
 
