@@ -29,7 +29,8 @@ internal sealed class UserController : ControllerBase
     public async Task<ActionResult<CustomerDto>> Me()
     {
         var user = await userService.GetMeAsync();
-        if (user is null) return Unauthorized();
-        return Ok(user);
+        return user.Match<ActionResult<CustomerDto>>(
+            value => Ok(value),
+            () => Unauthorized());
     }
 }
