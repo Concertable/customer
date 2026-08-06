@@ -63,6 +63,8 @@ public sealed class UserApiTests : IAsyncLifetime
         Assert.NotNull(user);
         Assert.Equal(customer.Id, user.Id);
         Assert.Equal(customer.Email, user.Email);
+        Assert.Null(user.Latitude);
+        Assert.Null(user.Longitude);
     }
 
     #endregion
@@ -110,6 +112,8 @@ public sealed class UserApiTests : IAsyncLifetime
         Assert.NotNull(user);
         Assert.Equal(51.5074, user.Latitude);
         Assert.Equal(-0.1278, user.Longitude);
+        Assert.Equal("Test County", user.County);
+        Assert.Equal("Test Town", user.Town);
     }
 
     #endregion
