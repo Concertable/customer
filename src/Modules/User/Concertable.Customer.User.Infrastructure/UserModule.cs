@@ -11,7 +11,7 @@ internal sealed class UserModule : IUserModule
         this.userRepository = userRepository;
     }
 
-    public async Task<IReadOnlyCollection<CustomerDto>> GetByIdsAsync(IEnumerable<Guid> ids)
+    public async Task<IReadOnlyList<CustomerDto>> GetByIdsAsync(IEnumerable<Guid> ids)
     {
         var users = await userRepository.GetByIdsAsync(ids);
         return users.Select(u => u.ToDto()).ToList();
