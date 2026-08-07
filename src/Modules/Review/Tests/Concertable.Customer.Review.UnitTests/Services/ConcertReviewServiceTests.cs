@@ -45,12 +45,12 @@ public sealed class ConcertReviewServiceTests
         this.reviewValidator
             .Setup(validator => validator.GetReviewableTicketAsync(UserId, ConcertId))
             .ReturnsAsync(Result.Failure<TicketSummary, CreateReviewError>(
-                CreateReviewError.ConcertNotReviewableYet));
+                new CreateReviewError.ConcertNotReviewableYet()));
 
         var result = await this.sut.CreateAsync(ConcertId, NewRequest());
 
         Assert.True(result.TryGetError(out var error));
-        Assert.Same(CreateReviewError.ConcertNotReviewableYet, error);
+        Assert.IsType<CreateReviewError.ConcertNotReviewableYet>(error);
         this.reviewRepository.Verify(
             repository => repository.AddAsync(It.IsAny<ReviewEntity>()),
             Times.Never);

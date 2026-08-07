@@ -22,6 +22,8 @@ internal sealed class VenueController : ControllerBase
     public async Task<ActionResult<DetailsResponse>> GetDetailsById(int id)
     {
         var venue = await venueService.GetDetailsByIdAsync(id);
-        return venue is null ? NotFound() : Ok(venue.ToDetailsResponse());
+        return venue.Match<ActionResult<DetailsResponse>>(
+            value => Ok(value.ToDetailsResponse()),
+            () => NotFound());
     }
 }
