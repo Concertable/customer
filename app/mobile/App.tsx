@@ -1,4 +1,4 @@
-import "../shared/global.css";
+import "@concertable/mobile/global.css";
 import "./src/lib/customerClient";
 import {
   useFonts,
