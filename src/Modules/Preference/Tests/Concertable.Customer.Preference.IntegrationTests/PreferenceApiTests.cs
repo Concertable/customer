@@ -5,6 +5,7 @@ using Concertable.Customer.Preference.Application.DTOs;
 using Concertable.Customer.Preference.Application.Interfaces;
 using Concertable.Customer.Preference.Application.Requests;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Xunit.Abstractions;
 
 namespace Concertable.Customer.Preference.IntegrationTests;
@@ -39,11 +40,10 @@ public sealed class PreferenceApiTests : IAsyncLifetime
         var response = await client.GetAsync("/api/preference/user");
 
         await response.ShouldBe(HttpStatusCode.OK);
-        var preference = await response.Content.ReadAsync<PreferenceDto>();
-        Assert.NotNull(preference);
-        Assert.Equal(user.Id, preference.UserId);
-        Assert.Equal(10, preference.RadiusKm);
-        Assert.Equal([Genre.Rock], preference.Genres);
+        var preference = (await response.Content.ReadAsync<PreferenceDto>()).ShouldNotBeNull();
+        preference.UserId.ShouldBe(user.Id);
+        preference.RadiusKm.ShouldBe(10);
+        preference.Genres.ShouldBe([Genre.Rock]);
     }
 
     [Fact]
@@ -88,15 +88,14 @@ public sealed class PreferenceApiTests : IAsyncLifetime
         var response = await client.PostAsync("/api/preference", NewRequest());
 
         await response.ShouldBe(HttpStatusCode.Created);
-        Assert.Equal(string.Empty, await response.Content.ReadAsStringAsync());
+        (await response.Content.ReadAsStringAsync()).ShouldBe(string.Empty);
 
         var getResponse = await client.GetAsync("/api/preference/user");
         await getResponse.ShouldBe(HttpStatusCode.OK);
-        var preference = await getResponse.Content.ReadAsync<PreferenceDto>();
-        Assert.NotNull(preference);
-        Assert.Equal(user.Id, preference.UserId);
-        Assert.Equal(30, preference.RadiusKm);
-        Assert.Equal([Genre.Rock, Genre.Jazz], preference.Genres.Order());
+        var preference = (await getResponse.Content.ReadAsync<PreferenceDto>()).ShouldNotBeNull();
+        preference.UserId.ShouldBe(user.Id);
+        preference.RadiusKm.ShouldBe(30);
+        preference.Genres.Order().ShouldBe([Genre.Rock, Genre.Jazz]);
     }
 
     #endregion
@@ -148,12 +147,11 @@ public sealed class PreferenceApiTests : IAsyncLifetime
             NewRequest());
 
         await response.ShouldBe(HttpStatusCode.OK);
-        var preference = await response.Content.ReadAsync<PreferenceDto>();
-        Assert.NotNull(preference);
-        Assert.Equal(preferenceId, preference.Id);
-        Assert.Equal(user.Id, preference.UserId);
-        Assert.Equal(30, preference.RadiusKm);
-        Assert.Equal([Genre.Rock, Genre.Jazz], preference.Genres.Order());
+        var preference = (await response.Content.ReadAsync<PreferenceDto>()).ShouldNotBeNull();
+        preference.Id.ShouldBe(preferenceId);
+        preference.UserId.ShouldBe(user.Id);
+        preference.RadiusKm.ShouldBe(30);
+        preference.Genres.Order().ShouldBe([Genre.Rock, Genre.Jazz]);
     }
 
     #endregion
@@ -162,8 +160,7 @@ public sealed class PreferenceApiTests : IAsyncLifetime
     {
         using var scope = fixture.Services.CreateScope();
         var repository = scope.ServiceProvider.GetRequiredService<IPreferenceRepository>();
-        var preference = await repository.GetByUserIdAsync(userId);
-        Assert.NotNull(preference);
+        var preference = (await repository.GetByUserIdAsync(userId)).ShouldNotBeNull();
         return preference.Id;
     }
 
@@ -171,8 +168,7 @@ public sealed class PreferenceApiTests : IAsyncLifetime
     {
         using var scope = fixture.Services.CreateScope();
         var repository = scope.ServiceProvider.GetRequiredService<IPreferenceRepository>();
-        var preference = await repository.GetByUserIdAsync(userId);
-        Assert.NotNull(preference);
+        var preference = (await repository.GetByUserIdAsync(userId)).ShouldNotBeNull();
         repository.Remove(preference);
         await repository.SaveChangesAsync();
     }
@@ -194,9 +190,9 @@ public sealed class PreferenceApiTests : IAsyncLifetime
             await response.Content.ReadAsStreamAsync());
         var problem = document.RootElement;
 
-        Assert.Equal((int)status, problem.GetProperty("status").GetInt32());
-        Assert.Equal(title, problem.GetProperty("title").GetString());
-        Assert.Equal(detail, problem.GetProperty("detail").GetString());
-        Assert.Equal(code, problem.GetProperty("code").GetString());
+        problem.GetProperty("status").GetInt32().ShouldBe((int)status);
+        problem.GetProperty("title").GetString().ShouldBe(title);
+        problem.GetProperty("detail").GetString().ShouldBe(detail);
+        problem.GetProperty("code").GetString().ShouldBe(code);
     }
 }

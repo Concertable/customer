@@ -2,6 +2,7 @@ using System.Net;
 using System.Text.Json;
 using Concertable.Contracts;
 using Concertable.Customer.Review.Application.Requests;
+using Shouldly;
 using Xunit.Abstractions;
 
 namespace Concertable.Customer.Review.IntegrationTests;
@@ -232,7 +233,7 @@ public sealed class ReviewApiTests : IAsyncLifetime
         var response = await client.GetAsync($"/api/concerts/{concert.Id}/reviews/eligibility");
 
         await response.ShouldBe(HttpStatusCode.OK);
-        Assert.False(await response.Content.ReadAsync<bool>());
+        (await response.Content.ReadAsync<bool>()).ShouldBeFalse();
     }
 
     [Fact]
@@ -270,9 +271,9 @@ public sealed class ReviewApiTests : IAsyncLifetime
             await response.Content.ReadAsStreamAsync());
         var problem = document.RootElement;
 
-        Assert.Equal((int)status, problem.GetProperty("status").GetInt32());
-        Assert.Equal(title, problem.GetProperty("title").GetString());
-        Assert.Equal(detail, problem.GetProperty("detail").GetString());
-        Assert.Equal(code, problem.GetProperty("code").GetString());
+        problem.GetProperty("status").GetInt32().ShouldBe((int)status);
+        problem.GetProperty("title").GetString().ShouldBe(title);
+        problem.GetProperty("detail").GetString().ShouldBe(detail);
+        problem.GetProperty("code").GetString().ShouldBe(code);
     }
 }
