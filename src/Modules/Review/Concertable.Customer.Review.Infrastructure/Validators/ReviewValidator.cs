@@ -26,13 +26,13 @@ internal sealed class ReviewValidator : IReviewValidator
     {
         var ticket = await ticketModule.GetByUserAndConcertAsync(userId, concertId);
         if (ticket is null)
-            return Result.Failure<TicketSummary, CreateReviewError>(CreateReviewError.TicketNotFound);
+            return Result.Failure<TicketSummary, CreateReviewError>(new CreateReviewError.TicketNotFound());
 
         if (ticket.PeriodStart > timeProvider.GetUtcNow())
-            return Result.Failure<TicketSummary, CreateReviewError>(CreateReviewError.ConcertNotReviewableYet);
+            return Result.Failure<TicketSummary, CreateReviewError>(new CreateReviewError.ConcertNotReviewableYet());
 
         if (await concertReviewRepository.HasReviewForTicketAsync(ticket.Id))
-            return Result.Failure<TicketSummary, CreateReviewError>(CreateReviewError.ReviewAlreadyExists);
+            return Result.Failure<TicketSummary, CreateReviewError>(new CreateReviewError.ReviewAlreadyExists());
 
         return Result.Success<TicketSummary, CreateReviewError>(ticket);
     }

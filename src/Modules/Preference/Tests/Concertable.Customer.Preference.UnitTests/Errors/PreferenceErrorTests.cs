@@ -8,7 +8,7 @@ public sealed class PreferenceErrorTests
     [Fact]
     public void PreferenceAlreadyExists_Definition_IsStable()
     {
-        var definition = CreatePreferenceError.PreferenceAlreadyExists.Definition;
+        var definition = new CreatePreferenceError.PreferenceAlreadyExists().Definition;
 
         Assert.Equal("preference.already_exists", definition.Code);
         Assert.Equal("A preference already exists for this user.", definition.Message);
@@ -18,7 +18,7 @@ public sealed class PreferenceErrorTests
     [Fact]
     public void PreferenceNotFound_Definition_IsStable()
     {
-        var definition = UpdatePreferenceError.PreferenceNotFound.Definition;
+        var definition = new UpdatePreferenceError.PreferenceNotFound().Definition;
 
         Assert.Equal("preference.not_found", definition.Code);
         Assert.Equal("Preference not found.", definition.Message);
@@ -28,7 +28,7 @@ public sealed class PreferenceErrorTests
     [Fact]
     public void PreferenceNotOwned_Definition_IsStable()
     {
-        var definition = UpdatePreferenceError.PreferenceNotOwned.Definition;
+        var definition = new UpdatePreferenceError.PreferenceNotOwned().Definition;
 
         Assert.Equal("preference.not_owned", definition.Code);
         Assert.Equal("You do not own this preference.", definition.Message);

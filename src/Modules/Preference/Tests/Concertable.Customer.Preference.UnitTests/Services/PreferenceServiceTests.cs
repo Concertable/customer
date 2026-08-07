@@ -130,7 +130,7 @@ public sealed class PreferenceServiceTests
         var result = await this.sut.CreateAsync(NewRequest());
 
         Assert.True(result.TryGetError(out var error));
-        Assert.Same(CreatePreferenceError.PreferenceAlreadyExists, error);
+        Assert.IsType<CreatePreferenceError.PreferenceAlreadyExists>(error);
         this.preferenceRepository.Verify(
             repository => repository.AddAsync(
                 It.IsAny<PreferenceEntity>(),
@@ -209,7 +209,7 @@ public sealed class PreferenceServiceTests
         var result = await this.sut.UpdateAsync(42, NewRequest());
 
         Assert.True(result.TryGetError(out var error));
-        Assert.Same(UpdatePreferenceError.PreferenceNotFound, error);
+        Assert.IsType<UpdatePreferenceError.PreferenceNotFound>(error);
         this.preferenceRepository.Verify(
             repository => repository.Update(It.IsAny<PreferenceEntity>()),
             Times.Never);
@@ -225,7 +225,7 @@ public sealed class PreferenceServiceTests
         var result = await this.sut.UpdateAsync(42, NewRequest());
 
         Assert.True(result.TryGetError(out var error));
-        Assert.Same(UpdatePreferenceError.PreferenceNotOwned, error);
+        Assert.IsType<UpdatePreferenceError.PreferenceNotOwned>(error);
         this.preferenceRepository.Verify(
             repository => repository.Update(It.IsAny<PreferenceEntity>()),
             Times.Never);

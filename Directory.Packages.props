@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageVersion Include="Appium.WebDriver" Version="5.2.0" />
     <PackageVersion Include="Aspire.Hosting.Azure.ServiceBus" Version="13.3.2" />
+    <PackageVersion Include="Dunet" Version="1.16.2" />
     <PackageVersion Include="FluentResults" Version="4.0.0" />
     <PackageVersion Include="FluentValidation" Version="11.11.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />

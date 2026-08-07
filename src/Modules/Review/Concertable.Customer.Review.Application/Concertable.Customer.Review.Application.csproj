@@ -11,6 +11,7 @@
     <ProjectReference Include="..\..\Ticket\Concertable.Customer.Ticket.Contracts\Concertable.Customer.Ticket.Contracts.csproj" />
     <PackageReference Include="Concertable.Contracts" />
     <PackageReference Include="Concertable.Kernel" />
+    <PackageReference Include="Dunet" />
   </ItemGroup>
 
   <ItemGroup>

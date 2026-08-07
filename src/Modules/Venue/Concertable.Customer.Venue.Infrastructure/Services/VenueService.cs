@@ -1,4 +1,5 @@
 using Concertable.Customer.Venue.Application.DTOs;
+using Concertable.Kernel.Functional;
 
 namespace Concertable.Customer.Venue.Infrastructure.Services;
 
@@ -11,6 +12,9 @@ internal sealed class VenueService : IVenueService
         this.repository = repository;
     }
 
-    public Task<VenueDetails?> GetDetailsByIdAsync(int venueId) =>
-        repository.GetDetailsByIdAsync(venueId);
+    public async Task<Option<VenueDetails>> GetDetailsByIdAsync(int venueId)
+    {
+        var venue = await repository.GetDetailsByIdAsync(venueId);
+        return venue.ToOption();
+    }
 }

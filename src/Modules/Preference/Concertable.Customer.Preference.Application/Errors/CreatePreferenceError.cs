@@ -1,11 +1,17 @@
 using Concertable.Kernel.Errors;
+using Dunet;
 
 namespace Concertable.Customer.Preference.Application.Errors;
 
-internal sealed record CreatePreferenceError(ErrorDefinition Definition) : IError
+[Union(EnableImplicitConversions = false)]
+internal abstract partial record CreatePreferenceError : IError
 {
-    public static readonly CreatePreferenceError PreferenceAlreadyExists = new(
-        ErrorDefinition.Conflict(
-            "preference.already_exists",
-            "A preference already exists for this user."));
+    public ErrorDefinition Definition => this switch
+    {
+        PreferenceAlreadyExists => ErrorDefinition.Conflict<PreferenceAlreadyExists>(
+            "A preference already exists for this user.")
+    };
+
+    [ErrorCode("preference.already_exists")]
+    public partial record PreferenceAlreadyExists;
 }
