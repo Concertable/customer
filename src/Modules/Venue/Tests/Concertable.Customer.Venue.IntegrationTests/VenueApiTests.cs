@@ -1,5 +1,6 @@
 using System.Net;
 using Concertable.Customer.Venue.Api.Responses;
+using Shouldly;
 using Xunit.Abstractions;
 
 namespace Concertable.Customer.Venue.IntegrationTests;
@@ -32,10 +33,9 @@ public sealed class VenueApiTests : IAsyncLifetime
         var response = await client.GetAsync($"/api/venue/{venue.Id}");
 
         await response.ShouldBe(HttpStatusCode.OK);
-        var details = await response.Content.ReadAsync<DetailsResponse>();
-        Assert.NotNull(details);
-        Assert.Equal(venue.Id, details.Id);
-        Assert.Equal(venue.Name, details.Name);
+        var details = (await response.Content.ReadAsync<DetailsResponse>()).ShouldNotBeNull();
+        details.Id.ShouldBe(venue.Id);
+        details.Name.ShouldBe(venue.Name);
     }
 
     [Fact]
