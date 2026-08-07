@@ -38,7 +38,7 @@ public sealed class ReviewValidatorTests
         var result = await this.sut.GetReviewableTicketAsync(UserId, ConcertId);
 
         Assert.True(result.TryGetError(out var error));
-        Assert.Same(CreateReviewError.TicketNotFound, error);
+        Assert.IsType<CreateReviewError.TicketNotFound>(error);
         this.concertReviewRepository.Verify(
             repository => repository.HasReviewForTicketAsync(It.IsAny<Guid>()),
             Times.Never);
@@ -55,7 +55,7 @@ public sealed class ReviewValidatorTests
         var result = await this.sut.GetReviewableTicketAsync(UserId, ConcertId);
 
         Assert.True(result.TryGetError(out var error));
-        Assert.Same(CreateReviewError.ConcertNotReviewableYet, error);
+        Assert.IsType<CreateReviewError.ConcertNotReviewableYet>(error);
         this.concertReviewRepository.Verify(
             repository => repository.HasReviewForTicketAsync(It.IsAny<Guid>()),
             Times.Never);
@@ -75,7 +75,7 @@ public sealed class ReviewValidatorTests
         var result = await this.sut.GetReviewableTicketAsync(UserId, ConcertId);
 
         Assert.True(result.TryGetError(out var error));
-        Assert.Same(CreateReviewError.ReviewAlreadyExists, error);
+        Assert.IsType<CreateReviewError.ReviewAlreadyExists>(error);
     }
 
     [Fact]

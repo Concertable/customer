@@ -1,21 +1,26 @@
 using Concertable.Kernel.Errors;
+using Dunet;
 
 namespace Concertable.Customer.Review.Application.Errors;
 
-internal sealed record CreateReviewError(ErrorDefinition Definition) : IError
+[Union(EnableImplicitConversions = false)]
+internal abstract partial record CreateReviewError : IError
 {
-    public static readonly CreateReviewError TicketNotFound = new(
-        ErrorDefinition.NotFound(
-            "review.ticket_not_found",
-            "Ticket not found."));
+    public ErrorDefinition Definition => this switch
+    {
+        TicketNotFound => ErrorDefinition.NotFound<TicketNotFound>(),
+        ConcertNotReviewableYet =>
+            ErrorDefinition.Conflict<ConcertNotReviewableYet>("The concert is not reviewable yet."),
+        ReviewAlreadyExists =>
+            ErrorDefinition.Conflict<ReviewAlreadyExists>("A review already exists for this ticket.")
+    };
 
-    public static readonly CreateReviewError ConcertNotReviewableYet = new(
-        ErrorDefinition.Conflict(
-            "review.concert_not_reviewable_yet",
-            "The concert is not reviewable yet."));
+    [ErrorCode("review.ticket_not_found")]
+    public partial record TicketNotFound;
 
-    public static readonly CreateReviewError ReviewAlreadyExists = new(
-        ErrorDefinition.Conflict(
-            "review.already_exists",
-            "A review already exists for this ticket."));
+    [ErrorCode("review.concert_not_reviewable_yet")]
+    public partial record ConcertNotReviewableYet;
+
+    [ErrorCode("review.already_exists")]
+    public partial record ReviewAlreadyExists;
 }
