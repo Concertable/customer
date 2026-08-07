@@ -1,5 +1,6 @@
 using System.Net;
 using Concertable.Customer.Artist.Api.Responses;
+using Shouldly;
 using Xunit.Abstractions;
 
 namespace Concertable.Customer.Artist.IntegrationTests;
@@ -32,10 +33,9 @@ public sealed class ArtistApiTests : IAsyncLifetime
         var response = await client.GetAsync($"/api/artist/{artist.Id}");
 
         await response.ShouldBe(HttpStatusCode.OK);
-        var details = await response.Content.ReadAsync<DetailsResponse>();
-        Assert.NotNull(details);
-        Assert.Equal(artist.Id, details.Id);
-        Assert.Equal(artist.Name, details.Name);
+        var details = (await response.Content.ReadAsync<DetailsResponse>()).ShouldNotBeNull();
+        details.Id.ShouldBe(artist.Id);
+        details.Name.ShouldBe(artist.Name);
     }
 
     [Fact]
