@@ -19,7 +19,7 @@ internal sealed class TicketService : ITicketService
     private readonly IQrCodeGenerator qrCodeGenerator;
     private readonly ICurrentUser currentUser;
     private readonly IConcertModule concertModule;
-    private readonly ICustomerPaymentClient customerPaymentClient;
+    private readonly ICustomerPaymentOperationsClient customerPaymentClient;
     private readonly IOutboxUnitOfWorkBehavior outboxBehavior;
     private readonly IBus bus;
     private readonly TimeProvider timeProvider;
@@ -30,7 +30,7 @@ internal sealed class TicketService : ITicketService
         IQrCodeGenerator qrCodeGenerator,
         ICurrentUser currentUser,
         IConcertModule concertModule,
-        ICustomerPaymentClient customerPaymentClient,
+        ICustomerPaymentOperationsClient customerPaymentClient,
         IOutboxUnitOfWorkBehavior outboxBehavior,
         IBus bus,
         TimeProvider timeProvider)
@@ -68,14 +68,17 @@ internal sealed class TicketService : ITicketService
             metadata,
             purchaseParams.PaymentMethodId);
 
-        if (paymentResult.IsFailed)
-            return Result.Fail(paymentResult.Errors);
+        if (!paymentResult.TryGetValue(out var payment))
+        {
+            paymentResult.TryGetError(out var error);
+            return Result.Fail(error!.Definition.Message);
+        }
 
         return Result.Ok(new TicketPayment
         {
-            RequiresAction = paymentResult.Value.RequiresAction,
-            TransactionId = paymentResult.Value.TransactionId,
-            ClientSecret = paymentResult.Value.ClientSecret,
+            RequiresAction = payment.RequiresAction,
+            TransactionId = payment.TransactionId,
+            ClientSecret = payment.ClientSecret,
             UserEmail = currentUser.Email
         });
     }
