@@ -2,7 +2,7 @@ using Concertable.Contracts;
 using Concertable.Customer.Review.Application.Errors;
 using Concertable.Customer.Review.Domain.Entities;
 using Concertable.Customer.Ticket.Contracts;
-using Concertable.Kernel.Functional;
+using Reunion;
 using Concertable.Kernel.Identity;
 
 namespace Concertable.Customer.Review.Infrastructure.Services;

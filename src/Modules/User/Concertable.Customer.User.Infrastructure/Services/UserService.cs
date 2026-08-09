@@ -1,6 +1,6 @@
 using Concertable.Customer.User.Application.Mappers;
 using Concertable.Customer.User.Contracts;
-using Concertable.Kernel.Functional;
+using Reunion;
 using Concertable.Kernel.Geometry;
 using Concertable.Kernel.Identity;
 using Concertable.Kernel.Services.Geometry;

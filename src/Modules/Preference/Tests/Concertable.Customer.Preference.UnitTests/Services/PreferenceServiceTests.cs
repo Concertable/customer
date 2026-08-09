@@ -5,9 +5,9 @@ using Concertable.Customer.Preference.Application.Requests;
 using Concertable.Customer.Preference.Domain.Entities;
 using Concertable.Customer.Preference.Infrastructure.Services;
 using Concertable.Customer.User.Contracts;
-using Concertable.Kernel.Functional;
 using Concertable.Kernel.Geometry;
 using Concertable.Kernel.Identity;
+using Reunion;
 using Moq;
 
 namespace Concertable.Customer.Preference.UnitTests.Services;

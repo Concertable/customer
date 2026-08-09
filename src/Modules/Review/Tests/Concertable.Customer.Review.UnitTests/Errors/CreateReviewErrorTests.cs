@@ -1,5 +1,5 @@
 using Concertable.Customer.Review.Application.Errors;
-using Concertable.Kernel.Errors;
+using Reunion.Errors;
 
 namespace Concertable.Customer.Review.UnitTests.Errors;
 
