@@ -1,14 +1,16 @@
 using Concertable.Customer.Concert.Contracts;
 using Concertable.Customer.Ticket.Application.Commands;
 using Concertable.Customer.Ticket.Application.DTOs;
+using Concertable.Customer.Ticket.Application.Errors;
 using Concertable.Customer.Ticket.Application.Requests;
 using Concertable.Customer.Ticket.Domain.Entities;
 using Concertable.Kernel.Identity;
-using Concertable.Kernel.Exceptions;
 using Concertable.Kernel.ValueObjects;
 using Concertable.Messaging.Contracts;
+using Concertable.Payment.Contracts.Errors;
 using Concertable.Shared.QrCode.Application;
-using FluentResults;
+using Reunion;
+using Reunion.Errors;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Services;
 
@@ -46,14 +48,17 @@ internal sealed class TicketService : ITicketService
         this.timeProvider = timeProvider;
     }
 
-    public async Task<Result<TicketPayment>> PurchaseAsync(TicketPurchaseParams purchaseParams)
+    public async Task<Result<TicketPayment, PurchaseError>> PurchaseAsync(TicketPurchaseParams purchaseParams)
     {
-        var concert = await concertModule.GetByIdAsync(purchaseParams.ConcertId)
-            .OrNotFound();
+        var concert = await concertModule.GetByIdAsync(purchaseParams.ConcertId);
+        if (concert is null)
+            return Result<TicketPayment, PurchaseError>.Failure(
+                new PurchaseError.ConcertNotFound(purchaseParams.ConcertId));
 
         var validationResult = ticketValidator.CanPurchaseTickets(concert, purchaseParams.Quantity);
-        if (validationResult.IsFailed)
-            throw new BadRequestException(validationResult.Errors);
+        if (validationResult.TryGetError(out var errors))
+            return Result<TicketPayment, PurchaseError>.Failure(
+                new PurchaseError.Invalid(CreateValidationErrors("purchase", errors)));
 
         var metadata = new Dictionary<string, string>
         {
@@ -68,26 +73,23 @@ internal sealed class TicketService : ITicketService
             metadata,
             purchaseParams.PaymentMethodId);
 
-        if (!paymentResult.TryGetValue(out var payment))
-        {
-            paymentResult.TryGetError(out var error);
-            return Result.Fail(error!.Definition.Message);
-        }
-
-        return Result.Ok(new TicketPayment
-        {
-            RequiresAction = payment.RequiresAction,
-            TransactionId = payment.TransactionId,
-            ClientSecret = payment.ClientSecret,
-            UserEmail = currentUser.Email
-        });
+        return paymentResult.Match(
+            payment => Result<TicketPayment, PurchaseError>.Success(new TicketPayment
+            {
+                RequiresAction = payment.RequiresAction,
+                TransactionId = payment.TransactionId,
+                ClientSecret = payment.ClientSecret,
+                UserEmail = currentUser.Email
+            }),
+            error => Result<TicketPayment, PurchaseError>.Failure(ToPurchaseError(error)));
     }
 
-    public async Task<Result<TicketPayment>> CompleteAsync(PurchaseComplete purchaseCompleteDto)
+    public async Task<TicketPayment> CompleteAsync(PurchaseComplete purchaseCompleteDto)
     {
         var concert = await concertModule.GetByIdAsync(purchaseCompleteDto.EntityId);
         if (concert is null)
-            return Result.Fail("Concert not found");
+            throw new InvalidOperationException(
+                $"Concert {purchaseCompleteDto.EntityId} was not found while completing a ticket purchase.");
 
         int quantity = purchaseCompleteDto.Quantity ?? 1;
         var tickets = new List<TicketEntity>();
@@ -106,7 +108,7 @@ internal sealed class TicketService : ITicketService
             return ids;
         });
 
-        return Result.Ok(new TicketPayment
+        return new TicketPayment
         {
             TicketIds = ticketIds,
             ConcertId = purchaseCompleteDto.EntityId,
@@ -114,17 +116,19 @@ internal sealed class TicketService : ITicketService
             Amount = concert.Price,
             Currency = "GBP",
             UserEmail = purchaseCompleteDto.FromEmail
-        });
+        };
     }
 
-    public async Task<Result<TicketCheckout>> CheckoutAsync(int concertId, int quantity)
+    public async Task<Result<TicketCheckout, CheckoutError>> CheckoutAsync(int concertId, int quantity)
     {
-        var concert = await concertModule.GetByIdAsync(concertId)
-            .OrNotFound();
+        var concert = await concertModule.GetByIdAsync(concertId);
+        if (concert is null)
+            return Result<TicketCheckout, CheckoutError>.Failure(new CheckoutError.ConcertNotFound(concertId));
 
         var validationResult = ticketValidator.CanPurchaseTickets(concert, quantity);
-        if (validationResult.IsFailed)
-            return Result.Fail(validationResult.Errors);
+        if (validationResult.TryGetError(out var errors))
+            return Result<TicketCheckout, CheckoutError>.Failure(
+                new CheckoutError.Invalid(CreateValidationErrors("checkout", errors)));
 
         var metadata = new Dictionary<string, string>
         {
@@ -137,7 +141,8 @@ internal sealed class TicketService : ITicketService
 
         var session = await customerPaymentClient.CreatePaymentSessionAsync(currentUser.GetId(), concert.Id, concert.PayeeOwnerId, metadata);
 
-        return Result.Ok(new TicketCheckout(session, concert.Price, concert.Id, quantity));
+        return Result<TicketCheckout, CheckoutError>.Success(
+            new TicketCheckout(session, concert.Price, concert.Id, quantity));
     }
 
     public async Task<IEnumerable<TicketDto>> GetUserUpcomingAsync()
@@ -170,4 +175,12 @@ internal sealed class TicketService : ITicketService
             concert.VenueId,
             concert.VenueName);
     }
+
+    private static PurchaseError ToPurchaseError(PaymentError error) =>
+        error is PaymentError.PaymentRejected
+            ? new PurchaseError.PaymentRejected()
+            : new PurchaseError.PaymentFailure(error);
+
+    private static ValidationErrors CreateValidationErrors(string field, IReadOnlyList<string> messages) =>
+        new(new Dictionary<string, string[]> { [field] = messages.ToArray() });
 }
