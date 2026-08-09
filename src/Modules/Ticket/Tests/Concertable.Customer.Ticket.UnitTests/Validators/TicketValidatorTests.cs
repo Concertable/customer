@@ -1,7 +1,7 @@
 using Concertable.Customer.Concert.Contracts;
+using Concertable.Customer.Ticket.Application.Errors;
 using Concertable.Customer.Ticket.Infrastructure.Validators;
 using Concertable.Kernel.ValueObjects;
-using Concertable.Kernel.Exceptions;
 using Microsoft.Extensions.Time.Testing;
 using Moq;
 
@@ -46,7 +46,7 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanBePurchased(NewConcert());
 
-        Assert.True(result.IsSuccess);
+        Assert.True(result);
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanBePurchased(NewConcert(posted: false));
 
-        Assert.True(result.IsFailed);
+        Assert.False(result);
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public sealed class TicketValidatorTests
 
         var result = sut.CanBePurchased(NewConcert(period: started));
 
-        Assert.True(result.IsFailed);
+        Assert.False(result);
     }
 
     [Fact]
@@ -72,18 +72,20 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanBePurchased(NewConcert(availableTickets: 0));
 
-        Assert.True(result.IsFailed);
+        Assert.False(result);
     }
 
     [Fact]
-    public void CanBePurchased_AccumulatesAllFailures()
+    public void CanPurchaseTickets_WithSeveralBaseFailures_AccumulatesAllFailures()
     {
         var started = new DateRange(timeProvider.GetUtcNow().UtcDateTime.AddDays(-1), timeProvider.GetUtcNow().UtcDateTime.AddDays(1));
 
-        var result = sut.CanBePurchased(NewConcert(posted: false, availableTickets: 0, period: started));
+        var result = sut.CanPurchaseTickets(
+            NewConcert(posted: false, availableTickets: 0, period: started),
+            quantity: 1);
 
-        Assert.True(result.IsFailed);
-        Assert.Equal(3, result.Errors.Count);
+        Assert.True(result.TryGetError(out var errors));
+        Assert.Equal(3, errors.Count);
     }
 
     [Fact]
@@ -99,7 +101,7 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanPurchaseTickets(NewConcert(availableTickets: 10), quantity: 11);
 
-        Assert.True(result.IsFailed);
+        Assert.True(result.IsFailure);
     }
 
     [Fact]
@@ -107,31 +109,31 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanPurchaseTickets(NewConcert(posted: false), quantity: 1);
 
-        Assert.True(result.IsFailed);
+        Assert.True(result.IsFailure);
     }
 
     [Fact]
-    public async Task CanBePurchasedAsync_WhenConcertMissing_ThrowsNotFound()
+    public async Task CanBePurchasedAsync_WhenConcertMissing_ReturnsConcertNotFound()
     {
-        // Arrange
         concertModule.Setup(m => m.GetByIdAsync(999, It.IsAny<CancellationToken>()))
             .ReturnsAsync((ConcertDto?)null);
 
-        // Act + Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => sut.CanBePurchasedAsync(999));
+        var result = await sut.CanBePurchasedAsync(999);
+
+        Assert.True(result.TryGetError(out var error));
+        var notFound = Assert.IsType<EligibilityError.ConcertNotFound>(error);
+        Assert.Equal(999, notFound.ConcertId);
     }
 
     [Fact]
     public async Task CanBePurchasedAsync_ValidatesFetchedConcert()
     {
-        // Arrange
         concertModule.Setup(m => m.GetByIdAsync(1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(NewConcert());
 
-        // Act
         var result = await sut.CanBePurchasedAsync(1);
 
-        // Assert
-        Assert.True(result.IsSuccess);
+        Assert.True(result.TryGetValue(out var canBePurchased));
+        Assert.True(canBePurchased);
     }
 }

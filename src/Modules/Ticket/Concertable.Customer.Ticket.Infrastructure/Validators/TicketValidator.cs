@@ -1,6 +1,6 @@
 using Concertable.Customer.Concert.Contracts;
-using Concertable.Kernel.Exceptions;
-using FluentResults;
+using Concertable.Customer.Ticket.Application.Errors;
+using Reunion;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Validators;
 
@@ -15,7 +15,30 @@ internal sealed class TicketValidator : ITicketValidator
         this.timeProvider = timeProvider;
     }
 
-    public Result CanBePurchased(ConcertDto concert)
+    public bool CanBePurchased(ConcertDto concert) => GetPurchaseErrors(concert).Count == 0;
+
+    public async Task<Result<bool, EligibilityError>> CanBePurchasedAsync(int concertId)
+    {
+        var concert = await concertModule.GetByIdAsync(concertId);
+        if (concert is null)
+            return Result<bool, EligibilityError>.Failure(new EligibilityError.ConcertNotFound(concertId));
+
+        return Result<bool, EligibilityError>.Success(CanBePurchased(concert));
+    }
+
+    public UnitResult<IReadOnlyList<string>> CanPurchaseTickets(ConcertDto concert, int quantity)
+    {
+        var errors = GetPurchaseErrors(concert);
+        if (errors.Count > 0)
+            return UnitResult<IReadOnlyList<string>>.Failure(errors);
+
+        return concert.AvailableTickets - quantity < 0
+            ? UnitResult<IReadOnlyList<string>>.Failure(
+                [$"Not enough tickets available. Only {concert.AvailableTickets} tickets are available"])
+            : UnitResult<IReadOnlyList<string>>.Success();
+    }
+
+    private IReadOnlyList<string> GetPurchaseErrors(ConcertDto concert)
     {
         var errors = new List<string>();
 
@@ -28,25 +51,6 @@ internal sealed class TicketValidator : ITicketValidator
         if (concert.AvailableTickets <= 0)
             errors.Add("No Tickets Available for Concert");
 
-        return errors.Count > 0 ? Result.Fail(errors) : Result.Ok();
-    }
-
-    public async Task<Result> CanBePurchasedAsync(int concertId)
-    {
-        var concert = await concertModule.GetByIdAsync(concertId)
-            .OrNotFound();
-
-        return CanBePurchased(concert);
-    }
-
-    public Result CanPurchaseTickets(ConcertDto concert, int quantity)
-    {
-        var result = CanBePurchased(concert);
-        if (result.IsFailed)
-            return result;
-
-        return concert.AvailableTickets - quantity < 0
-            ? Result.Fail($"Not enough tickets available. Only {concert.AvailableTickets} tickets are available")
-            : Result.Ok();
+        return errors;
     }
 }
