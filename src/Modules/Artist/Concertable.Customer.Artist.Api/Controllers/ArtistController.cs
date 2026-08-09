@@ -3,6 +3,7 @@ using Concertable.Customer.Artist.Api.Responses;
 using Concertable.Customer.Artist.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Reunion.AspNetCore.Mvc;
 
 namespace Concertable.Customer.Artist.Api.Controllers;
 
@@ -22,8 +23,6 @@ internal sealed class ArtistController : ControllerBase
     public async Task<ActionResult<DetailsResponse>> GetDetailsById(int id)
     {
         var artist = await artistService.GetDetailsByIdAsync(id);
-        return artist.Match<ActionResult<DetailsResponse>>(
-            value => Ok(value.ToDetailsResponse()),
-            () => NotFound());
+        return artist.Map(value => value.ToDetailsResponse()).ToOkOrNotFound();
     }
 }

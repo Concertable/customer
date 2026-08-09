@@ -1,7 +1,7 @@
 using Concertable.Contracts;
 using Concertable.Customer.Review.Application.Errors;
 using Concertable.Customer.Review.Application.Requests;
-using Concertable.Kernel.Functional;
+using Reunion;
 
 namespace Concertable.Customer.Review.Application.Interfaces;
 
