@@ -4,8 +4,8 @@ using Concertable.Customer.Review.Application.Requests;
 using Concertable.Customer.Review.Domain.Entities;
 using Concertable.Customer.Review.Infrastructure.Services;
 using Concertable.Customer.Ticket.Contracts;
-using Concertable.Kernel.Functional;
 using Concertable.Kernel.Identity;
+using Reunion;
 using Moq;
 
 namespace Concertable.Customer.Review.UnitTests.Services;

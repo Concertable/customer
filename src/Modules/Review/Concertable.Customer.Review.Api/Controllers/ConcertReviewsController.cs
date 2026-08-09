@@ -1,7 +1,7 @@
 using Concertable.Contracts;
-using Concertable.Shared.Api.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Reunion.AspNetCore.Mvc;
 
 namespace Concertable.Customer.Review.Api.Controllers;
 
@@ -22,7 +22,7 @@ internal sealed class ConcertReviewsController : ControllerBase
     {
         var result = await reviewService.CreateAsync(concertId, request);
 
-        return result.ToCreatedAtActionResult(nameof(GetByConcertId), new { concertId });
+        return result.ToActionResult(value => CreatedAtAction(nameof(GetByConcertId), new { concertId }, value));
     }
 
     [HttpGet]

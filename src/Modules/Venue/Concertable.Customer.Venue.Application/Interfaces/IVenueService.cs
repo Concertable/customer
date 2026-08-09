@@ -1,5 +1,5 @@
 using Concertable.Customer.Venue.Application.DTOs;
-using Concertable.Kernel.Functional;
+using Reunion;
 
 namespace Concertable.Customer.Venue.Application.Interfaces;
 
