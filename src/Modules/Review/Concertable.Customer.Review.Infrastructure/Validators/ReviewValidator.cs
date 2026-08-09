@@ -1,6 +1,6 @@
 using Concertable.Customer.Review.Application.Errors;
 using Concertable.Customer.Ticket.Contracts;
-using Concertable.Kernel.Functional;
+using Reunion;
 
 namespace Concertable.Customer.Review.Infrastructure.Validators;
 

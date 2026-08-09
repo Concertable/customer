@@ -1,5 +1,5 @@
 using Concertable.Customer.User.Contracts;
-using Concertable.Kernel.Functional;
+using Reunion;
 
 namespace Concertable.Customer.User.Application.Interfaces;
 

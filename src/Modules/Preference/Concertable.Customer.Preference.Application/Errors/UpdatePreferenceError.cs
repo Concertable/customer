@@ -1,16 +1,19 @@
-using Concertable.Kernel.Errors;
 using Dunet;
+using Reunion.Errors;
 
 namespace Concertable.Customer.Preference.Application.Errors;
 
 [Union(EnableImplicitConversions = false)]
 internal abstract partial record UpdatePreferenceError : IError
 {
+    private static readonly ErrorDefinitions<UpdatePreferenceError> Definitions =
+        ErrorDefinition.For<UpdatePreferenceError>();
+
     public ErrorDefinition Definition => this switch
     {
-        PreferenceNotFound => ErrorDefinition.NotFound<PreferenceNotFound>(),
+        PreferenceNotFound => Definitions.NotFound<PreferenceNotFound>(),
         PreferenceNotOwned =>
-            ErrorDefinition.Forbidden<PreferenceNotOwned>("You do not own this preference.")
+            Definitions.Forbidden<PreferenceNotOwned>("You do not own this preference.")
     };
 
     [ErrorCode("preference.not_found")]

@@ -1,9 +1,9 @@
 using Concertable.Customer.Preference.Application.DTOs;
 using Concertable.Customer.Preference.Application.Interfaces;
 using Concertable.Customer.Preference.Application.Requests;
-using Concertable.Shared.Api.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Reunion.AspNetCore.Mvc;
 
 namespace Concertable.Customer.Preference.Api.Controllers;
 
@@ -30,13 +30,13 @@ internal sealed class PreferenceController : ControllerBase
     public async Task<ActionResult<PreferenceDto>> Update(int id, [FromBody] PreferenceRequest request)
     {
         var result = await preferenceService.UpdateAsync(id, request);
-        return result.ToOkActionResult();
+        return result.ToOkOrProblem();
     }
 
     [HttpGet("user")]
-    public async Task<IActionResult> GetByUser()
+    public async Task<ActionResult<PreferenceDto>> GetByUser()
     {
         var preference = await preferenceService.GetByUserAsync();
-        return preference.Match<IActionResult>(Ok, NoContent);
+        return preference.ToOkOrNoContent();
     }
 }

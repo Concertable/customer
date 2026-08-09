@@ -23,6 +23,7 @@
     <PackageReference Include="Concertable.Messaging.Contracts" />
     <PackageReference Include="Concertable.Messaging.Domain" />
     <PackageReference Include="Concertable.Seed.Shared" />
+    <PackageReference Include="Reunion" />
     <ProjectReference Include="..\..\..\Concertable.Customer.DataAccess\Concertable.Customer.DataAccess.Infrastructure\Concertable.Customer.DataAccess.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Seed\Concertable.Customer.Seed.Infrastructure\Concertable.Customer.Seed.Infrastructure.csproj" />
   </ItemGroup>
