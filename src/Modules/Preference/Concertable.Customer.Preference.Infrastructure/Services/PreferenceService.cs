@@ -26,15 +26,11 @@ internal sealed class PreferenceService : IPreferenceService
         Guid? userId = null)
     {
         var resolvedUserId = userId ?? currentUser.GetId();
-        var existing = await preferenceRepository.GetByUserIdAsync(resolvedUserId);
-        if (existing is not null)
-            return Result.Failure<PreferenceDto, CreatePreferenceError>(
-                new CreatePreferenceError.PreferenceAlreadyExists());
-
         var preference = PreferenceEntity.Create(resolvedUserId, request.RadiusKm, request.Genres);
 
-        await preferenceRepository.AddAsync(preference);
-        await preferenceRepository.SaveChangesAsync();
+        if (!await preferenceRepository.TryAddAsync(preference))
+            return Result.Failure<PreferenceDto, CreatePreferenceError>(
+                new CreatePreferenceError.PreferenceAlreadyExists());
 
         return Result.Success<PreferenceDto, CreatePreferenceError>(preference.ToDto());
     }
