@@ -6,16 +6,14 @@ namespace Concertable.Customer.Review.Application.Errors;
 [Union(EnableImplicitConversions = false)]
 internal abstract partial record CreateReviewError : IError
 {
-    private static readonly ErrorDefinitions<CreateReviewError> Definitions =
-        ErrorDefinition.For<CreateReviewError>();
-
     public ErrorDefinition Definition => this switch
     {
-        TicketNotFound => Definitions.NotFound<TicketNotFound>(),
+        TicketNotFound => ErrorDefinition.NotFound<TicketNotFound>(),
         ConcertNotReviewableYet =>
-            Definitions.Conflict<ConcertNotReviewableYet>("The concert is not reviewable yet."),
+            ErrorDefinition.Conflict<ConcertNotReviewableYet>("The concert is not reviewable yet."),
         ReviewAlreadyExists =>
-            Definitions.Conflict<ReviewAlreadyExists>("A review already exists for this ticket.")
+            ErrorDefinition.Conflict<ReviewAlreadyExists>("A review already exists for this ticket."),
+        Invalid(var errors) => ErrorDefinition.Validation<Invalid>("The review is invalid.", errors)
     };
 
     [ErrorCode("review.ticket_not_found")]
@@ -26,4 +24,7 @@ internal abstract partial record CreateReviewError : IError
 
     [ErrorCode("review.already_exists")]
     public partial record ReviewAlreadyExists;
+
+    [ErrorCode("review.invalid")]
+    public partial record Invalid(ValidationErrors Errors);
 }

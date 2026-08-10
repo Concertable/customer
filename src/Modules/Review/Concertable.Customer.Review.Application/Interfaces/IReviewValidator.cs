@@ -1,13 +1,12 @@
-using Concertable.Customer.Review.Application.Errors;
 using Concertable.Customer.Ticket.Contracts;
-using Reunion;
+using Reunion.Validation;
 
 namespace Concertable.Customer.Review.Application.Interfaces;
 
 internal interface IReviewValidator
 {
-    Task<Result<TicketSummary, CreateReviewError>> GetReviewableTicketAsync(Guid userId, int concertId);
-    Task<bool> CanUserReviewConcertAsync(Guid userId, int concertId);
-    Task<bool> CanUserReviewArtistAsync(Guid userId, int artistId);
-    Task<bool> CanUserReviewVenueAsync(Guid userId, int venueId);
+    ValidationResult ValidateReviewPeriod(TicketSummary ticket);
+    Task<ValidationResult> ValidateTicketNotReviewedAsync(Guid ticketId);
+    Task<ValidationResult> ValidateArtistAsync(Guid userId, int artistId);
+    Task<ValidationResult> ValidateVenueAsync(Guid userId, int venueId);
 }

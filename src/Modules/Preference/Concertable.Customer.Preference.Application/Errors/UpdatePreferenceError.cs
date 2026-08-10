@@ -6,14 +6,11 @@ namespace Concertable.Customer.Preference.Application.Errors;
 [Union(EnableImplicitConversions = false)]
 internal abstract partial record UpdatePreferenceError : IError
 {
-    private static readonly ErrorDefinitions<UpdatePreferenceError> Definitions =
-        ErrorDefinition.For<UpdatePreferenceError>();
-
     public ErrorDefinition Definition => this switch
     {
-        PreferenceNotFound => Definitions.NotFound<PreferenceNotFound>(),
+        PreferenceNotFound => ErrorDefinition.NotFound<PreferenceNotFound>(),
         PreferenceNotOwned =>
-            Definitions.Forbidden<PreferenceNotOwned>("You do not own this preference.")
+            ErrorDefinition.Forbidden<PreferenceNotOwned>("You do not own this preference.")
     };
 
     [ErrorCode("preference.not_found")]
