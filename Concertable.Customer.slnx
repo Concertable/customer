@@ -63,7 +63,7 @@
     <Project Path="src/Modules/Artist/Concertable.Customer.Artist.Infrastructure/Concertable.Customer.Artist.Infrastructure.csproj" />
   </Folder>
   <Project Path="src/Concertable.Customer.AppHost/Concertable.Customer.AppHost.csproj" />
-  <Project Path="src/Concertable.Customer.AppHost.Extensions/Concertable.Customer.AppHost.Extensions.csproj" />
+  <Project Path="src/Concertable.Customer.Hosting/Concertable.Customer.Hosting.csproj" />
   <Project Path="../Concertable.Search/src/Concertable.Search.Hosting/Concertable.Search.Hosting.csproj" />
   <Project Path="../Concertable.Payment/src/Concertable.Payment.Hosting/Concertable.Payment.Hosting.csproj" />
   <Project Path="../Concertable.ServiceDefaults/Concertable.ServiceDefaults.csproj" />
