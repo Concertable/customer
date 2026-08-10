@@ -27,6 +27,7 @@
     <PackageVersion Include="Reqnroll.Microsoft.Extensions.DependencyInjection" Version="3.3.4" />
     <PackageVersion Include="Reqnroll.xUnit" Version="3.3.4" />
     <PackageVersion Include="Respawn" Version="7.0.0" />
+    <PackageVersion Include="Reunion" Version="0.1.0-alpha.1" />
     <PackageVersion Include="Testcontainers.MsSql" Version="4.1.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <PackageVersion Include="xunit" Version="2.9.3" />
