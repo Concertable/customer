@@ -109,7 +109,11 @@ public sealed class TicketApiTests : IAsyncLifetime
             Quantity = concert.AvailableTickets + 1
         });
 
-        await AssertProblemCodeAsync(response, HttpStatusCode.BadRequest, "ticket.purchase_invalid");
+        var problem = await AssertValidationProblemAsync(
+            response,
+            "ticket.purchase_invalid",
+            "purchase");
+        Assert.StartsWith("Not enough tickets available.", Assert.Single(problem.Errors["purchase"]));
     }
 
     #endregion
@@ -185,7 +189,11 @@ public sealed class TicketApiTests : IAsyncLifetime
             "/api/ticket/checkout",
             new TicketCheckoutRequest(concert.Id, concert.AvailableTickets + 1));
 
-        await AssertProblemCodeAsync(response, HttpStatusCode.BadRequest, "ticket.checkout_invalid");
+        var problem = await AssertValidationProblemAsync(
+            response,
+            "ticket.checkout_invalid",
+            "checkout");
+        Assert.StartsWith("Not enough tickets available.", Assert.Single(problem.Errors["checkout"]));
     }
 
     #endregion
@@ -357,5 +365,18 @@ public sealed class TicketApiTests : IAsyncLifetime
         var problem = await response.Content.ReadAsync<ProblemDetails>();
         Assert.NotNull(problem);
         Assert.Equal(code, problem.Extensions["code"]?.ToString());
+    }
+
+    private static async Task<ValidationProblemDetails> AssertValidationProblemAsync(
+        HttpResponseMessage response,
+        string code,
+        string field)
+    {
+        await response.ShouldBe(HttpStatusCode.BadRequest);
+        var problem = await response.Content.ReadAsync<ValidationProblemDetails>();
+        Assert.NotNull(problem);
+        Assert.Equal(code, problem.Extensions["code"]?.ToString());
+        Assert.Equal([field], problem.Errors.Keys);
+        return problem;
     }
 }
