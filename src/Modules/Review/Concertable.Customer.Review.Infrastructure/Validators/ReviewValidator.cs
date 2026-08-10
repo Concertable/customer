@@ -1,6 +1,6 @@
-using Concertable.Customer.Review.Application.Errors;
 using Concertable.Customer.Ticket.Contracts;
-using Reunion;
+using Reunion.Errors;
+using Reunion.Validation;
 
 namespace Concertable.Customer.Review.Infrastructure.Validators;
 
@@ -20,33 +20,26 @@ internal sealed class ReviewValidator : IReviewValidator
         this.timeProvider = timeProvider;
     }
 
-    public async Task<Result<TicketSummary, CreateReviewError>> GetReviewableTicketAsync(
-        Guid userId,
-        int concertId)
-    {
-        var ticket = await ticketModule.GetByUserAndConcertAsync(userId, concertId);
-        if (ticket is null)
-            return Result.Failure<TicketSummary, CreateReviewError>(new CreateReviewError.TicketNotFound());
+    public ValidationResult ValidateReviewPeriod(TicketSummary ticket) =>
+        ticket.PeriodStart <= timeProvider.GetUtcNow()
+            ? ValidationResult.Valid()
+            : Invalid("ConcertId", "The concert is not reviewable yet.");
 
-        if (ticket.PeriodStart > timeProvider.GetUtcNow())
-            return Result.Failure<TicketSummary, CreateReviewError>(new CreateReviewError.ConcertNotReviewableYet());
+    public async Task<ValidationResult> ValidateTicketNotReviewedAsync(Guid ticketId) =>
+        await concertReviewRepository.HasReviewForTicketAsync(ticketId)
+            ? Invalid("TicketId", "A review already exists for this ticket.")
+            : ValidationResult.Valid();
 
-        if (await concertReviewRepository.HasReviewForTicketAsync(ticket.Id))
-            return Result.Failure<TicketSummary, CreateReviewError>(new CreateReviewError.ReviewAlreadyExists());
+    public async Task<ValidationResult> ValidateArtistAsync(Guid userId, int artistId) =>
+        await ticketModule.CanReviewArtistAsync(userId, artistId)
+            ? ValidationResult.Valid()
+            : Invalid("ArtistId", "No reviewable ticket exists for this artist.");
 
-        return Result.Success<TicketSummary, CreateReviewError>(ticket);
-    }
+    public async Task<ValidationResult> ValidateVenueAsync(Guid userId, int venueId) =>
+        await ticketModule.CanReviewVenueAsync(userId, venueId)
+            ? ValidationResult.Valid()
+            : Invalid("VenueId", "No reviewable ticket exists for this venue.");
 
-    public async Task<bool> CanUserReviewConcertAsync(Guid userId, int concertId)
-    {
-        var result = await GetReviewableTicketAsync(userId, concertId);
-
-        return result.IsSuccess;
-    }
-
-    public Task<bool> CanUserReviewArtistAsync(Guid userId, int artistId) =>
-        ticketModule.CanReviewArtistAsync(userId, artistId);
-
-    public Task<bool> CanUserReviewVenueAsync(Guid userId, int venueId) =>
-        ticketModule.CanReviewVenueAsync(userId, venueId);
+    private static ValidationResult Invalid(string field, string message) =>
+        ValidationResult.Invalid(new ValidationErrors([new(field, message)]));
 }

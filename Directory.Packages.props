@@ -29,7 +29,8 @@
     <PackageVersion Include="Reqnroll.xUnit" Version="3.3.4" />
     <PackageVersion Include="Reunion" Version="0.1.0-alpha.1" />
     <PackageVersion Include="Reunion.AspNetCore" Version="0.1.0-alpha.1" />
-    <PackageVersion Include="Reunion.Errors" Version="0.1.0-alpha.1" />
+    <PackageVersion Include="Reunion.Errors" Version="0.1.0-alpha.2" />
+    <PackageVersion Include="Reunion.Validation" Version="0.1.0-alpha.1" />
     <PackageVersion Include="Respawn" Version="7.0.0" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="Testcontainers.MsSql" Version="4.1.0" />
