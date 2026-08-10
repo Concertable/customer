@@ -1,8 +1,8 @@
-using Reunion;
 using Concertable.Kernel.ValueObjects;
 using Concertable.Payment.Client;
 using Concertable.Payment.Contracts;
 using Concertable.Payment.Contracts.Errors;
+using Reunion;
 
 namespace Concertable.Customer.IntegrationTests.Fixtures;
 
