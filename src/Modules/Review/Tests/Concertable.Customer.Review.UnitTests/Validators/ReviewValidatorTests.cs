@@ -1,16 +1,17 @@
-using Concertable.Customer.Review.Application.Errors;
 using Concertable.Customer.Review.Application.Interfaces;
 using Concertable.Customer.Review.Infrastructure.Validators;
 using Concertable.Customer.Ticket.Contracts;
 using Microsoft.Extensions.Time.Testing;
 using Moq;
+using Reunion.Validation;
 
 namespace Concertable.Customer.Review.UnitTests.Validators;
 
 public sealed class ReviewValidatorTests
 {
     private static readonly Guid UserId = Guid.NewGuid();
-    private const int ConcertId = 1;
+    private const int ArtistId = 5;
+    private const int VenueId = 7;
 
     private readonly FakeTimeProvider timeProvider;
     private readonly Mock<IConcertReviewRepository> concertReviewRepository;
@@ -22,198 +23,160 @@ public sealed class ReviewValidatorTests
         this.timeProvider = new FakeTimeProvider();
         this.concertReviewRepository = new Mock<IConcertReviewRepository>();
         this.ticketModule = new Mock<ITicketModule>();
-        this.sut = new ReviewValidator(concertReviewRepository.Object, ticketModule.Object, timeProvider);
+        this.sut = new ReviewValidator(
+            this.concertReviewRepository.Object,
+            this.ticketModule.Object,
+            this.timeProvider);
     }
 
-    private static TicketSummary NewTicket(DateTime periodStart) =>
-        new(Guid.NewGuid(), ConcertId, 5, 7, periodStart);
+    #region ValidateReviewPeriod
 
     [Fact]
-    public async Task GetReviewableTicketAsync_MissingTicket_ReturnsTicketNotFound()
+    public void ValidateReviewPeriod_StartedConcert_ReturnsValid()
     {
-        this.ticketModule
-            .Setup(module => module.GetByUserAndConcertAsync(UserId, ConcertId))
-            .ReturnsAsync((TicketSummary?)null);
+        var ticket = NewTicket(this.timeProvider.GetUtcNow().UtcDateTime.AddDays(-1));
 
-        var result = await this.sut.GetReviewableTicketAsync(UserId, ConcertId);
+        var result = this.sut.ValidateReviewPeriod(ticket);
 
-        Assert.True(result.TryGetError(out var error));
-        Assert.IsType<CreateReviewError.TicketNotFound>(error);
-        this.concertReviewRepository.Verify(
-            repository => repository.HasReviewForTicketAsync(It.IsAny<Guid>()),
-            Times.Never);
+        Assert.True(result.IsValid);
     }
 
     [Fact]
-    public async Task GetReviewableTicketAsync_FutureConcert_ReturnsConcertNotReviewableYet()
+    public void ValidateReviewPeriod_FutureConcert_ReturnsStructuredInvalid()
     {
         var ticket = NewTicket(this.timeProvider.GetUtcNow().UtcDateTime.AddDays(1));
-        this.ticketModule
-            .Setup(module => module.GetByUserAndConcertAsync(UserId, ConcertId))
-            .ReturnsAsync(ticket);
 
-        var result = await this.sut.GetReviewableTicketAsync(UserId, ConcertId);
+        var result = this.sut.ValidateReviewPeriod(ticket);
 
-        Assert.True(result.TryGetError(out var error));
-        Assert.IsType<CreateReviewError.ConcertNotReviewableYet>(error);
-        this.concertReviewRepository.Verify(
-            repository => repository.HasReviewForTicketAsync(It.IsAny<Guid>()),
-            Times.Never);
+        AssertInvalid(result, "ConcertId", "The concert is not reviewable yet.");
     }
 
-    [Fact]
-    public async Task GetReviewableTicketAsync_ReviewedTicket_ReturnsReviewAlreadyExists()
-    {
-        var ticket = NewTicket(this.timeProvider.GetUtcNow().UtcDateTime.AddDays(-1));
-        this.ticketModule
-            .Setup(module => module.GetByUserAndConcertAsync(UserId, ConcertId))
-            .ReturnsAsync(ticket);
-        this.concertReviewRepository
-            .Setup(repository => repository.HasReviewForTicketAsync(ticket.Id))
-            .ReturnsAsync(true);
+    #endregion
 
-        var result = await this.sut.GetReviewableTicketAsync(UserId, ConcertId);
-
-        Assert.True(result.TryGetError(out var error));
-        Assert.IsType<CreateReviewError.ReviewAlreadyExists>(error);
-    }
+    #region ValidateTicketNotReviewedAsync
 
     [Fact]
-    public async Task GetReviewableTicketAsync_EligibleTicket_ReturnsTicket()
+    public async Task ValidateTicketNotReviewedAsync_UnreviewedTicket_ReturnsValid()
     {
-        var ticket = NewTicket(this.timeProvider.GetUtcNow().UtcDateTime.AddDays(-1));
-        this.ticketModule
-            .Setup(module => module.GetByUserAndConcertAsync(UserId, ConcertId))
-            .ReturnsAsync(ticket);
+        var ticketId = Guid.NewGuid();
         this.concertReviewRepository
-            .Setup(repository => repository.HasReviewForTicketAsync(ticket.Id))
+            .Setup(repository => repository.HasReviewForTicketAsync(ticketId))
             .ReturnsAsync(false);
 
-        var result = await this.sut.GetReviewableTicketAsync(UserId, ConcertId);
+        var result = await this.sut.ValidateTicketNotReviewedAsync(ticketId);
 
-        Assert.True(result.TryGetValue(out var reviewableTicket));
-        Assert.Same(ticket, reviewableTicket);
+        Assert.True(result.IsValid);
     }
 
     [Fact]
-    public async Task GetReviewableTicketAsync_TicketModuleFault_Propagates()
+    public async Task ValidateTicketNotReviewedAsync_ReviewedTicket_ReturnsStructuredInvalid()
+    {
+        var ticketId = Guid.NewGuid();
+        this.concertReviewRepository
+            .Setup(repository => repository.HasReviewForTicketAsync(ticketId))
+            .ReturnsAsync(true);
+
+        var result = await this.sut.ValidateTicketNotReviewedAsync(ticketId);
+
+        AssertInvalid(result, "TicketId", "A review already exists for this ticket.");
+    }
+
+    [Fact]
+    public async Task ValidateTicketNotReviewedAsync_RepositoryFault_Propagates()
     {
         var expected = new InvalidOperationException();
-        this.ticketModule
-            .Setup(module => module.GetByUserAndConcertAsync(UserId, ConcertId))
+        this.concertReviewRepository
+            .Setup(repository => repository.HasReviewForTicketAsync(It.IsAny<Guid>()))
             .ThrowsAsync(expected);
 
         var actual = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => this.sut.GetReviewableTicketAsync(UserId, ConcertId));
+            () => this.sut.ValidateTicketNotReviewedAsync(Guid.NewGuid()));
 
         Assert.Same(expected, actual);
     }
 
     [Fact]
-    public async Task GetReviewableTicketAsync_CancelledRepositoryQuery_PropagatesCancellation()
+    public async Task ValidateTicketNotReviewedAsync_CancelledQuery_PropagatesCancellation()
     {
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
-        var ticket = NewTicket(this.timeProvider.GetUtcNow().UtcDateTime.AddDays(-1));
-        this.ticketModule
-            .Setup(module => module.GetByUserAndConcertAsync(UserId, ConcertId))
-            .ReturnsAsync(ticket);
         this.concertReviewRepository
-            .Setup(repository => repository.HasReviewForTicketAsync(ticket.Id))
+            .Setup(repository => repository.HasReviewForTicketAsync(It.IsAny<Guid>()))
             .Returns(Task.FromCanceled<bool>(cancellation.Token));
 
         var exception = await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => this.sut.GetReviewableTicketAsync(UserId, ConcertId));
+            () => this.sut.ValidateTicketNotReviewedAsync(Guid.NewGuid()));
 
         Assert.Equal(cancellation.Token, exception.CancellationToken);
     }
 
-    [Fact]
-    public async Task CanUserReviewConcertAsync_WithStartedConcertAndNoExistingReview_ReturnsTrue()
-    {
-        // Arrange
-        var ticket = NewTicket(periodStart: timeProvider.GetUtcNow().UtcDateTime.AddDays(-1));
-        ticketModule.Setup(m => m.GetByUserAndConcertAsync(UserId, ConcertId)).ReturnsAsync(ticket);
-        concertReviewRepository.Setup(r => r.HasReviewForTicketAsync(ticket.Id)).ReturnsAsync(false);
+    #endregion
 
-        // Act
-        var result = await sut.CanUserReviewConcertAsync(UserId, ConcertId);
-
-        // Assert
-        Assert.True(result);
-    }
+    #region ValidateArtistAsync
 
     [Fact]
-    public async Task CanUserReviewConcertAsync_WhenUserHasNoTicket_ReturnsFalse()
+    public async Task ValidateArtistAsync_ReviewableArtist_ReturnsValid()
     {
-        // Arrange
-        ticketModule.Setup(m => m.GetByUserAndConcertAsync(UserId, ConcertId)).ReturnsAsync((TicketSummary?)null);
+        this.ticketModule
+            .Setup(module => module.CanReviewArtistAsync(UserId, ArtistId))
+            .ReturnsAsync(true);
 
-        // Act
-        var result = await sut.CanUserReviewConcertAsync(UserId, ConcertId);
+        var result = await this.sut.ValidateArtistAsync(UserId, ArtistId);
 
-        // Assert
-        Assert.False(result);
-        concertReviewRepository.Verify(r => r.HasReviewForTicketAsync(It.IsAny<Guid>()), Times.Never);
+        Assert.True(result.IsValid);
     }
 
     [Fact]
-    public async Task CanUserReviewConcertAsync_WhenConcertNotStarted_ReturnsFalse()
+    public async Task ValidateArtistAsync_UnreviewableArtist_ReturnsStructuredInvalid()
     {
-        // Arrange
-        var ticket = NewTicket(periodStart: timeProvider.GetUtcNow().UtcDateTime.AddDays(1));
-        ticketModule.Setup(m => m.GetByUserAndConcertAsync(UserId, ConcertId)).ReturnsAsync(ticket);
+        this.ticketModule
+            .Setup(module => module.CanReviewArtistAsync(UserId, ArtistId))
+            .ReturnsAsync(false);
 
-        // Act
-        var result = await sut.CanUserReviewConcertAsync(UserId, ConcertId);
+        var result = await this.sut.ValidateArtistAsync(UserId, ArtistId);
 
-        // Assert
-        Assert.False(result);
-        concertReviewRepository.Verify(r => r.HasReviewForTicketAsync(It.IsAny<Guid>()), Times.Never);
+        AssertInvalid(result, "ArtistId", "No reviewable ticket exists for this artist.");
+    }
+
+    #endregion
+
+    #region ValidateVenueAsync
+
+    [Fact]
+    public async Task ValidateVenueAsync_ReviewableVenue_ReturnsValid()
+    {
+        this.ticketModule
+            .Setup(module => module.CanReviewVenueAsync(UserId, VenueId))
+            .ReturnsAsync(true);
+
+        var result = await this.sut.ValidateVenueAsync(UserId, VenueId);
+
+        Assert.True(result.IsValid);
     }
 
     [Fact]
-    public async Task CanUserReviewConcertAsync_WhenTicketAlreadyReviewed_ReturnsFalse()
+    public async Task ValidateVenueAsync_UnreviewableVenue_ReturnsStructuredInvalid()
     {
-        // Arrange
-        var ticket = NewTicket(periodStart: timeProvider.GetUtcNow().UtcDateTime.AddDays(-1));
-        ticketModule.Setup(m => m.GetByUserAndConcertAsync(UserId, ConcertId)).ReturnsAsync(ticket);
-        concertReviewRepository.Setup(r => r.HasReviewForTicketAsync(ticket.Id)).ReturnsAsync(true);
+        this.ticketModule
+            .Setup(module => module.CanReviewVenueAsync(UserId, VenueId))
+            .ReturnsAsync(false);
 
-        // Act
-        var result = await sut.CanUserReviewConcertAsync(UserId, ConcertId);
+        var result = await this.sut.ValidateVenueAsync(UserId, VenueId);
 
-        // Assert
-        Assert.False(result);
+        AssertInvalid(result, "VenueId", "No reviewable ticket exists for this venue.");
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task CanUserReviewArtistAsync_DelegatesToTicketModule(bool canReview)
+    #endregion
+
+    private static TicketSummary NewTicket(DateTime periodStart) =>
+        new(Guid.NewGuid(), 1, ArtistId, VenueId, periodStart);
+
+    private static void AssertInvalid(
+        ValidationResult result,
+        string field,
+        string message)
     {
-        // Arrange
-        ticketModule.Setup(m => m.CanReviewArtistAsync(UserId, 5)).ReturnsAsync(canReview);
-
-        // Act
-        var result = await sut.CanUserReviewArtistAsync(UserId, 5);
-
-        // Assert
-        Assert.Equal(canReview, result);
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task CanUserReviewVenueAsync_DelegatesToTicketModule(bool canReview)
-    {
-        // Arrange
-        ticketModule.Setup(m => m.CanReviewVenueAsync(UserId, 7)).ReturnsAsync(canReview);
-
-        // Act
-        var result = await sut.CanUserReviewVenueAsync(UserId, 7);
-
-        // Assert
-        Assert.Equal(canReview, result);
+        Assert.True(result.TryGetErrors(out var errors));
+        Assert.Equal([message], errors.Errors[field]);
     }
 }
