@@ -2,6 +2,7 @@ using Concertable.Contracts;
 using Concertable.Customer.Review.Domain.Entities;
 using Concertable.Customer.Review.Infrastructure.Data;
 using Concertable.Customer.Review.Infrastructure.Mappers;
+using Concertable.DataAccess.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Review.Infrastructure.Repositories;
@@ -42,11 +43,19 @@ internal sealed class ConcertReviewRepository : IConcertReviewRepository
             .AsNoTracking()
             .AnyAsync(r => r.TicketId == ticketId);
 
-    public async Task<ReviewEntity> AddAsync(ReviewEntity review)
+    public async Task<bool> TryAddAsync(ReviewEntity review)
     {
-        await context.Reviews.AddAsync(review);
-        return review;
-    }
+        context.Reviews.Add(review);
 
-    public Task SaveChangesAsync() => context.SaveChangesAsync();
+        try
+        {
+            await context.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException ex) when (ex.IsDuplicateKey())
+        {
+            ex.DiscardFailedChanges();
+            return false;
+        }
+    }
 }

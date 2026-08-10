@@ -43,11 +43,8 @@ public sealed class ConcertReviewServiceTests
             .Setup(validator => validator.ValidateTicketNotReviewedAsync(this.ticket.Id))
             .ReturnsAsync(ValidationResult.Valid());
         this.reviewRepository
-            .Setup(repository => repository.AddAsync(It.IsAny<ReviewEntity>()))
-            .ReturnsAsync((ReviewEntity review) => review);
-        this.reviewRepository
-            .Setup(repository => repository.SaveChangesAsync())
-            .Returns(Task.CompletedTask);
+            .Setup(repository => repository.TryAddAsync(It.IsAny<ReviewEntity>()))
+            .ReturnsAsync(true);
         this.sut = new ConcertReviewService(
             this.reviewRepository.Object,
             this.ticketModule.Object,
@@ -72,7 +69,7 @@ public sealed class ConcertReviewServiceTests
             validator => validator.ValidateReviewPeriod(It.IsAny<TicketSummary>()),
             Times.Never);
         this.reviewRepository.Verify(
-            repository => repository.AddAsync(It.IsAny<ReviewEntity>()),
+            repository => repository.TryAddAsync(It.IsAny<ReviewEntity>()),
             Times.Never);
     }
 
@@ -104,7 +101,7 @@ public sealed class ConcertReviewServiceTests
         Assert.True(result.TryGetError(out var error));
         Assert.IsType<CreateReviewError.ReviewAlreadyExists>(error);
         this.reviewRepository.Verify(
-            repository => repository.AddAsync(It.IsAny<ReviewEntity>()),
+            repository => repository.TryAddAsync(It.IsAny<ReviewEntity>()),
             Times.Never);
     }
 
@@ -119,7 +116,7 @@ public sealed class ConcertReviewServiceTests
             ["Stars must be between 1 and 5."],
             invalid.Errors.Errors["Stars"]);
         this.reviewRepository.Verify(
-            repository => repository.AddAsync(It.IsAny<ReviewEntity>()),
+            repository => repository.TryAddAsync(It.IsAny<ReviewEntity>()),
             Times.Never);
     }
 
@@ -136,13 +133,54 @@ public sealed class ConcertReviewServiceTests
             module => module.GetByUserAndConcertAsync(UserId, ConcertId),
             Times.Once);
         this.reviewRepository.Verify(
-            repository => repository.AddAsync(It.Is<ReviewEntity>(entity =>
+            repository => repository.TryAddAsync(It.Is<ReviewEntity>(entity =>
                 entity.TicketId == this.ticket.Id
                 && entity.ConcertId == this.ticket.ConcertId
                 && entity.ArtistId == this.ticket.ArtistId
                 && entity.VenueId == this.ticket.VenueId)),
             Times.Once);
-        this.reviewRepository.Verify(repository => repository.SaveChangesAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task CreateAsync_DuplicateInsert_ReturnsReviewAlreadyExists()
+    {
+        this.reviewRepository
+            .Setup(repository => repository.TryAddAsync(It.IsAny<ReviewEntity>()))
+            .ReturnsAsync(false);
+
+        var result = await this.sut.CreateAsync(ConcertId, NewRequest());
+
+        Assert.True(result.TryGetError(out var error));
+        Assert.IsType<CreateReviewError.ReviewAlreadyExists>(error);
+    }
+
+    [Fact]
+    public async Task CreateAsync_PersistenceFault_Propagates()
+    {
+        var expected = new InvalidOperationException();
+        this.reviewRepository
+            .Setup(repository => repository.TryAddAsync(It.IsAny<ReviewEntity>()))
+            .ThrowsAsync(expected);
+
+        var actual = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => this.sut.CreateAsync(ConcertId, NewRequest()));
+
+        Assert.Same(expected, actual);
+    }
+
+    [Fact]
+    public async Task CreateAsync_CancelledPersistence_PropagatesCancellation()
+    {
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        this.reviewRepository
+            .Setup(repository => repository.TryAddAsync(It.IsAny<ReviewEntity>()))
+            .Returns(Task.FromCanceled<bool>(cancellation.Token));
+
+        var exception = await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => this.sut.CreateAsync(ConcertId, NewRequest()));
+
+        Assert.Equal(cancellation.Token, exception.CancellationToken);
     }
 
     [Fact]
