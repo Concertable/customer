@@ -1,6 +1,8 @@
 using Concertable.Customer.Concert.Contracts;
-using Concertable.Kernel.Exceptions;
-using FluentResults;
+using Concertable.Customer.Ticket.Application.Errors;
+using Reunion;
+using Reunion.Errors;
+using Reunion.Validation;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Validators;
 
@@ -15,38 +17,47 @@ internal sealed class TicketValidator : ITicketValidator
         this.timeProvider = timeProvider;
     }
 
-    public Result CanBePurchased(ConcertDto concert)
+    public ValidationResult CanBePurchased(ConcertDto concert) =>
+        new[]
+        {
+            Validate(
+                concert.DatePosted is not null,
+                "concert",
+                "Concert is not posted yet"),
+            Validate(
+                concert.Period.Start >= timeProvider.GetUtcNow(),
+                "concert",
+                "You cannot purchase a Ticket for a Concert that's already passed"),
+            Validate(
+                concert.AvailableTickets > 0,
+                "concert",
+                "No Tickets Available for Concert")
+        }.Combine();
+
+    public async Task<Result<ValidationResult, EligibilityError>> CanBePurchasedAsync(int concertId)
     {
-        var errors = new List<string>();
+        var concert = await concertModule.GetByIdAsync(concertId);
+        if (concert is null)
+            return Result<ValidationResult, EligibilityError>.Failure(
+                new EligibilityError.ConcertNotFound(concertId));
 
-        if (concert.DatePosted is null)
-            errors.Add("Concert is not posted yet");
-
-        if (concert.Period.Start < timeProvider.GetUtcNow())
-            errors.Add("You cannot purchase a Ticket for a Concert that's already passed");
-
-        if (concert.AvailableTickets <= 0)
-            errors.Add("No Tickets Available for Concert");
-
-        return errors.Count > 0 ? Result.Fail(errors) : Result.Ok();
+        return Result<ValidationResult, EligibilityError>.Success(CanBePurchased(concert));
     }
 
-    public async Task<Result> CanBePurchasedAsync(int concertId)
+    public ValidationResult CanPurchaseTickets(ConcertDto concert, int quantity)
     {
-        var concert = await concertModule.GetByIdAsync(concertId)
-            .OrNotFound();
+        var concertValidation = CanBePurchased(concert);
+        if (concertValidation.IsInvalid)
+            return concertValidation;
 
-        return CanBePurchased(concert);
+        return Validate(
+            concert.AvailableTickets - quantity >= 0,
+            "quantity",
+            $"Not enough tickets available. Only {concert.AvailableTickets} tickets are available");
     }
 
-    public Result CanPurchaseTickets(ConcertDto concert, int quantity)
-    {
-        var result = CanBePurchased(concert);
-        if (result.IsFailed)
-            return result;
-
-        return concert.AvailableTickets - quantity < 0
-            ? Result.Fail($"Not enough tickets available. Only {concert.AvailableTickets} tickets are available")
-            : Result.Ok();
-    }
+    private static ValidationResult Validate(bool isValid, string field, string message) =>
+        isValid
+            ? ValidationResult.Valid()
+            : ValidationResult.Invalid(new ValidationErrors([new(field, message)]));
 }
