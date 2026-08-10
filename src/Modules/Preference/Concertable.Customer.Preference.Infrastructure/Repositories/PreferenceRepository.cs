@@ -1,4 +1,5 @@
 using Concertable.Customer.Preference.Infrastructure.Data;
+using Concertable.DataAccess.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Preference.Infrastructure.Repositories;
@@ -6,6 +7,22 @@ namespace Concertable.Customer.Preference.Infrastructure.Repositories;
 internal sealed class PreferenceRepository : Repository<PreferenceEntity>, IPreferenceRepository
 {
     public PreferenceRepository(PreferenceDbContext context) : base(context) { }
+
+    public async Task<bool> TryAddAsync(PreferenceEntity preference)
+    {
+        context.Preferences.Add(preference);
+
+        try
+        {
+            await context.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException ex) when (ex.IsDuplicateKey())
+        {
+            ex.DiscardFailedChanges();
+            return false;
+        }
+    }
 
     public override async Task<IEnumerable<PreferenceEntity>> GetAllAsync(CancellationToken ct = default)
     {
