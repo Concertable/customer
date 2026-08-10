@@ -56,7 +56,7 @@ internal sealed class TicketService : ITicketService
                 new PurchaseError.ConcertNotFound(purchaseParams.ConcertId));
 
         var validationResult = ticketValidator.CanPurchaseTickets(concert, purchaseParams.Quantity);
-        if (validationResult.TryGetError(out var errors))
+        if (validationResult.TryGetErrors(out var errors))
             return Result<TicketPayment, PurchaseError>.Failure(
                 new PurchaseError.Invalid(CreateValidationErrors("purchase", errors)));
 
@@ -126,7 +126,7 @@ internal sealed class TicketService : ITicketService
             return Result<TicketCheckout, CheckoutError>.Failure(new CheckoutError.ConcertNotFound(concertId));
 
         var validationResult = ticketValidator.CanPurchaseTickets(concert, quantity);
-        if (validationResult.TryGetError(out var errors))
+        if (validationResult.TryGetErrors(out var errors))
             return Result<TicketCheckout, CheckoutError>.Failure(
                 new CheckoutError.Invalid(CreateValidationErrors("checkout", errors)));
 
@@ -181,6 +181,9 @@ internal sealed class TicketService : ITicketService
             ? new PurchaseError.PaymentRejected()
             : new PurchaseError.PaymentFailure(error);
 
-    private static ValidationErrors CreateValidationErrors(string field, IReadOnlyList<string> messages) =>
-        new(new Dictionary<string, string[]> { [field] = messages.ToArray() });
+    private static ValidationErrors CreateValidationErrors(string field, ValidationErrors errors) =>
+        new(new Dictionary<string, string[]>(StringComparer.Ordinal)
+        {
+            [field] = errors.Errors.SelectMany(error => error.Value).ToArray()
+        });
 }

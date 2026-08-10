@@ -15,6 +15,8 @@ using Concertable.Shared.QrCode.Application;
 using Grpc.Core;
 using Moq;
 using Reunion;
+using Reunion.Errors;
+using Reunion.Validation;
 
 namespace Concertable.Customer.Ticket.UnitTests;
 
@@ -33,7 +35,7 @@ public sealed class TicketServiceTests
 
         this.ticketValidator
             .Setup(validator => validator.CanPurchaseTickets(It.IsAny<ConcertDto>(), It.IsAny<int>()))
-            .Returns(UnitResult<IReadOnlyList<string>>.Success());
+            .Returns(ValidationResult.Valid());
         this.customerPaymentClient
             .Setup(client => client.PayAsync(
                 It.IsAny<Guid>(),
@@ -86,7 +88,8 @@ public sealed class TicketServiceTests
         this.concertModule.Setup(module => module.GetByIdAsync(concert.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(concert);
         this.ticketValidator.Setup(validator => validator.CanPurchaseTickets(concert, 2))
-            .Returns(UnitResult<IReadOnlyList<string>>.Failure(["Not enough tickets available."]));
+            .Returns(ValidationResult.Invalid(new ValidationErrors(
+                [new("quantity", "Not enough tickets available.")])));
 
         var result = await this.ticketService.PurchaseAsync(new TicketPurchaseParams
         {
@@ -201,7 +204,8 @@ public sealed class TicketServiceTests
         this.concertModule.Setup(module => module.GetByIdAsync(concert.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(concert);
         this.ticketValidator.Setup(validator => validator.CanPurchaseTickets(concert, 2))
-            .Returns(UnitResult<IReadOnlyList<string>>.Failure(["Not enough tickets available."]));
+            .Returns(ValidationResult.Invalid(new ValidationErrors(
+                [new("quantity", "Not enough tickets available.")])));
 
         var result = await this.ticketService.CheckoutAsync(concert.Id, 2);
 

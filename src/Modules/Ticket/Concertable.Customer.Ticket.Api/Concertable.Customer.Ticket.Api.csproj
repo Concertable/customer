@@ -15,6 +15,7 @@
     <ProjectReference Include="..\Concertable.Customer.Ticket.Infrastructure\Concertable.Customer.Ticket.Infrastructure.csproj" />
     <ProjectReference Include="..\..\User\Concertable.Customer.User.Api\Concertable.Customer.User.Api.csproj" />
     <PackageReference Include="Reunion.AspNetCore" />
+    <PackageReference Include="Reunion.Validation" />
   </ItemGroup>
 
 </Project>

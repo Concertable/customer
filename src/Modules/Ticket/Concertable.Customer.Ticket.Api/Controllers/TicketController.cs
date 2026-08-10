@@ -52,6 +52,6 @@ internal sealed class TicketController : ControllerBase
     public async Task<ActionResult<bool>> CanPurchase(int concertId)
     {
         var result = await ticketValidator.CanBePurchasedAsync(concertId);
-        return result.ToOkOrProblem();
+        return result.Map(validation => validation.IsValid).ToOkOrProblem();
     }
 }

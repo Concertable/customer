@@ -4,6 +4,8 @@ using Concertable.Customer.Ticket.Infrastructure.Validators;
 using Concertable.Kernel.ValueObjects;
 using Microsoft.Extensions.Time.Testing;
 using Moq;
+using Reunion.Errors;
+using Reunion.Validation;
 
 namespace Concertable.Customer.Ticket.UnitTests.Validators;
 
@@ -46,7 +48,7 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanBePurchased(NewConcert());
 
-        Assert.True(result);
+        Assert.True(result.IsValid);
     }
 
     [Fact]
@@ -54,7 +56,7 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanBePurchased(NewConcert(posted: false));
 
-        Assert.False(result);
+        Assert.True(result.IsInvalid);
     }
 
     [Fact]
@@ -64,7 +66,7 @@ public sealed class TicketValidatorTests
 
         var result = sut.CanBePurchased(NewConcert(period: started));
 
-        Assert.False(result);
+        Assert.True(result.IsInvalid);
     }
 
     [Fact]
@@ -72,7 +74,7 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanBePurchased(NewConcert(availableTickets: 0));
 
-        Assert.False(result);
+        Assert.True(result.IsInvalid);
     }
 
     [Fact]
@@ -84,8 +86,8 @@ public sealed class TicketValidatorTests
             NewConcert(posted: false, availableTickets: 0, period: started),
             quantity: 1);
 
-        Assert.True(result.TryGetError(out var errors));
-        Assert.Equal(3, errors.Count);
+        Assert.True(result.TryGetErrors(out var errors));
+        Assert.Equal(3, errors.Errors["concert"].Count);
     }
 
     [Fact]
@@ -93,7 +95,7 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanPurchaseTickets(NewConcert(availableTickets: 10), quantity: 10);
 
-        Assert.True(result.IsSuccess);
+        Assert.True(result.IsValid);
     }
 
     [Fact]
@@ -101,7 +103,10 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanPurchaseTickets(NewConcert(availableTickets: 10), quantity: 11);
 
-        Assert.True(result.IsFailure);
+        Assert.True(result.TryGetErrors(out var errors));
+        Assert.Equal(
+            ["Not enough tickets available. Only 10 tickets are available"],
+            errors.Errors["quantity"]);
     }
 
     [Fact]
@@ -109,7 +114,8 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanPurchaseTickets(NewConcert(posted: false), quantity: 1);
 
-        Assert.True(result.IsFailure);
+        Assert.True(result.TryGetErrors(out var errors));
+        Assert.Equal(["Concert is not posted yet"], errors.Errors["concert"]);
     }
 
     [Fact]
@@ -133,7 +139,7 @@ public sealed class TicketValidatorTests
 
         var result = await sut.CanBePurchasedAsync(1);
 
-        Assert.True(result.TryGetValue(out var canBePurchased));
-        Assert.True(canBePurchased);
+        Assert.True(result.TryGetValue(out var validation));
+        Assert.True(validation.IsValid);
     }
 }
