@@ -2,23 +2,26 @@ using Concertable.Contracts;
 using Concertable.Customer.Review.Application.Errors;
 using Concertable.Customer.Review.Domain.Entities;
 using Concertable.Customer.Ticket.Contracts;
-using Reunion;
 using Concertable.Kernel.Identity;
+using Reunion;
 
 namespace Concertable.Customer.Review.Infrastructure.Services;
 
 internal sealed class ConcertReviewService : IConcertReviewService
 {
     private readonly IConcertReviewRepository reviewRepository;
+    private readonly ITicketModule ticketModule;
     private readonly IReviewValidator reviewValidator;
     private readonly ICurrentUser currentUser;
 
     public ConcertReviewService(
         IConcertReviewRepository reviewRepository,
+        ITicketModule ticketModule,
         IReviewValidator reviewValidator,
         ICurrentUser currentUser)
     {
         this.reviewRepository = reviewRepository;
+        this.ticketModule = ticketModule;
         this.reviewValidator = reviewValidator;
         this.currentUser = currentUser;
     }
@@ -29,18 +32,33 @@ internal sealed class ConcertReviewService : IConcertReviewService
     public Task<ReviewSummary> GetSummaryAsync(int concertId) =>
         reviewRepository.GetSummaryByConcertAsync(concertId);
 
-    public Task<bool> CanCurrentUserReviewAsync(int concertId) =>
+    public async Task<bool> CanCurrentUserReviewAsync(int concertId) =>
         currentUser.IsAuthenticated
-            ? reviewValidator.CanUserReviewConcertAsync(currentUser.GetId(), concertId)
-            : Task.FromResult(false);
+        && (await GetReviewableTicketAsync(currentUser.GetId(), concertId)).IsSuccess;
 
     public Task<Result<ReviewDto, CreateReviewError>> CreateAsync(int concertId, CreateReviewRequest request)
     {
         var userId = currentUser.GetId();
 
-        return reviewValidator
-            .GetReviewableTicketAsync(userId, concertId)
+        return GetReviewableTicketAsync(userId, concertId)
             .BindAsync(ticket => CreateAsync(ticket, request));
+    }
+
+    private async Task<Result<TicketSummary, CreateReviewError>> GetReviewableTicketAsync(
+        Guid userId,
+        int concertId)
+    {
+        var ticket = await ticketModule.GetByUserAndConcertAsync(userId, concertId);
+        if (ticket is null)
+            return Result.Failure<TicketSummary, CreateReviewError>(new CreateReviewError.TicketNotFound());
+
+        if (reviewValidator.ValidateReviewPeriod(ticket).IsInvalid)
+            return Result.Failure<TicketSummary, CreateReviewError>(new CreateReviewError.ConcertNotReviewableYet());
+
+        if ((await reviewValidator.ValidateTicketNotReviewedAsync(ticket.Id)).IsInvalid)
+            return Result.Failure<TicketSummary, CreateReviewError>(new CreateReviewError.ReviewAlreadyExists());
+
+        return Result.Success<TicketSummary, CreateReviewError>(ticket);
     }
 
     private async Task<Result<ReviewDto, CreateReviewError>> CreateAsync(
@@ -50,15 +68,24 @@ internal sealed class ConcertReviewService : IConcertReviewService
         var email = currentUser.Email
             ?? throw new UnauthorizedAccessException("User email claim missing.");
 
-        var review = ReviewEntity.Create(
+        var reviewResult = ReviewEntity.Create(
             ticket.Id,
             request.Stars,
             request.Details,
             email,
             artistId: ticket.ArtistId,
             venueId: ticket.VenueId,
-            concertId: ticket.ConcertId);
+            concertId: ticket.ConcertId)
+            .MapError<CreateReviewError>(errors => new CreateReviewError.Invalid(errors));
 
+        return await reviewResult.Match(
+            success: PersistAsync,
+            failure: error => Task.FromResult(
+                Result.Failure<ReviewDto, CreateReviewError>(error)));
+    }
+
+    private async Task<Result<ReviewDto, CreateReviewError>> PersistAsync(ReviewEntity review)
+    {
         await reviewRepository.AddAsync(review);
         await reviewRepository.SaveChangesAsync();
 

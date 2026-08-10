@@ -34,4 +34,18 @@ public sealed class CreateReviewErrorTests
         Assert.Equal("A review already exists for this ticket.", definition.Message);
         Assert.Equal(ErrorKind.Conflict, definition.Kind);
     }
+
+    [Fact]
+    public void Invalid_Definition_IsStable()
+    {
+        var errors = new ValidationErrors(
+            [new("Stars", "Stars must be between 1 and 5.")]);
+        var definition = Assert.IsType<ValidationError>(
+            new CreateReviewError.Invalid(errors).Definition);
+
+        Assert.Equal("review.invalid", definition.Code);
+        Assert.Equal("The review is invalid.", definition.Message);
+        Assert.Equal(ErrorKind.Invalid, definition.Kind);
+        Assert.Same(errors, definition.Errors);
+    }
 }

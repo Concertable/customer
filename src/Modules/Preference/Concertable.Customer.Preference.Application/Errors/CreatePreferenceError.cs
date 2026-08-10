@@ -6,12 +6,9 @@ namespace Concertable.Customer.Preference.Application.Errors;
 [Union(EnableImplicitConversions = false)]
 internal abstract partial record CreatePreferenceError : IError
 {
-    private static readonly ErrorDefinitions<CreatePreferenceError> Definitions =
-        ErrorDefinition.For<CreatePreferenceError>();
-
     public ErrorDefinition Definition => this switch
     {
-        PreferenceAlreadyExists => Definitions.Conflict<PreferenceAlreadyExists>(
+        PreferenceAlreadyExists => ErrorDefinition.Conflict<PreferenceAlreadyExists>(
             "A preference already exists for this user.")
     };
 
