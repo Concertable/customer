@@ -69,6 +69,7 @@
   <Project Path="../Concertable.ServiceDefaults/Concertable.ServiceDefaults.csproj" />
   <Project Path="src/Concertable.Customer.Web/Concertable.Customer.Web.csproj" />
   <Project Path="../Concertable.AppHost.Shared/Concertable.AppHost.Shared.csproj" />
+  <Project Path="../Concertable.Frontend.Hosting/Concertable.Frontend.Hosting.csproj" />
   <Project Path="../Concertable.Auth/src/Concertable.Auth/Concertable.Auth.csproj" />
   <Project Path="../Concertable.Payment/src/Concertable.Payment.Web/Concertable.Payment.Web.csproj" />
   <Project Path="../Concertable.Payment/src/Concertable.Payment.Workers/Concertable.Payment.Workers.csproj" />
