@@ -29,10 +29,9 @@ internal sealed class PreferenceService : IPreferenceService
         var preference = PreferenceEntity.Create(resolvedUserId, request.RadiusKm, request.Genres);
 
         if (!await preferenceRepository.TryAddAsync(preference))
-            return Result.Failure<PreferenceDto, CreatePreferenceError>(
-                new CreatePreferenceError.PreferenceAlreadyExists());
+            return new CreatePreferenceError.PreferenceAlreadyExists();
 
-        return Result.Success<PreferenceDto, CreatePreferenceError>(preference.ToDto());
+        return preference.ToDto();
     }
 
     public async Task<IReadOnlyList<PreferenceDto>> GetAsync()
@@ -55,19 +54,17 @@ internal sealed class PreferenceService : IPreferenceService
     {
         var preference = await preferenceRepository.GetByIdAsync(id);
         if (preference is null)
-            return Result.Failure<PreferenceDto, UpdatePreferenceError>(
-                new UpdatePreferenceError.PreferenceNotFound());
+            return new UpdatePreferenceError.PreferenceNotFound();
 
         if (currentUser.GetId() != preference.UserId)
-            return Result.Failure<PreferenceDto, UpdatePreferenceError>(
-                new UpdatePreferenceError.PreferenceNotOwned());
+            return new UpdatePreferenceError.PreferenceNotOwned();
 
         preference.Update(request.RadiusKm, request.Genres);
 
         preferenceRepository.Update(preference);
         await preferenceRepository.SaveChangesAsync();
 
-        return Result.Success<PreferenceDto, UpdatePreferenceError>(preference.ToDto());
+        return preference.ToDto();
     }
 
     public async Task<IReadOnlyList<Guid>> GetUserIdsByLocationAndGenresAsync(
