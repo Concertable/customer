@@ -50,15 +50,15 @@ internal sealed class ConcertReviewService : IConcertReviewService
     {
         var ticket = await ticketModule.GetByUserAndConcertAsync(userId, concertId);
         if (ticket is null)
-            return Result.Failure<TicketSummary, CreateReviewError>(new CreateReviewError.TicketNotFound());
+            return new CreateReviewError.TicketNotFound();
 
         if (reviewValidator.ValidateReviewPeriod(ticket).IsInvalid)
-            return Result.Failure<TicketSummary, CreateReviewError>(new CreateReviewError.ConcertNotReviewableYet());
+            return new CreateReviewError.ConcertNotReviewableYet();
 
         if ((await reviewValidator.ValidateTicketNotReviewedAsync(ticket.Id)).IsInvalid)
-            return Result.Failure<TicketSummary, CreateReviewError>(new CreateReviewError.ReviewAlreadyExists());
+            return new CreateReviewError.ReviewAlreadyExists();
 
-        return Result.Success<TicketSummary, CreateReviewError>(ticket);
+        return ticket;
     }
 
     private async Task<Result<ReviewDto, CreateReviewError>> CreateAsync(
@@ -80,16 +80,14 @@ internal sealed class ConcertReviewService : IConcertReviewService
 
         return await reviewResult.Match(
             success: PersistAsync,
-            failure: error => Task.FromResult(
-                Result.Failure<ReviewDto, CreateReviewError>(error)));
+            failure: error => Task.FromResult<Result<ReviewDto, CreateReviewError>>(error));
     }
 
     private async Task<Result<ReviewDto, CreateReviewError>> PersistAsync(ReviewEntity review)
     {
         if (!await reviewRepository.TryAddAsync(review))
-            return Result.Failure<ReviewDto, CreateReviewError>(
-                new CreateReviewError.ReviewAlreadyExists());
+            return new CreateReviewError.ReviewAlreadyExists();
 
-        return Result.Success<ReviewDto, CreateReviewError>(review.ToDto());
+        return review.ToDto();
     }
 }

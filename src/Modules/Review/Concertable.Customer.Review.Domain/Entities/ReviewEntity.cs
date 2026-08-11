@@ -36,7 +36,7 @@ public sealed class ReviewEntity : IIdEntity, IEventRaiser
             var errors = new ValidationErrors(
                 [new("Stars", "Stars must be between 1 and 5.")]);
 
-            return Result.Failure<ReviewEntity, ValidationErrors>(errors);
+            return errors;
         }
 
         var review = new ReviewEntity
@@ -50,6 +50,6 @@ public sealed class ReviewEntity : IIdEntity, IEventRaiser
             ConcertId = concertId
         };
         review.events.Raise(new ReviewCreatedDomainEvent(ticketId, artistId, venueId, concertId, stars, email, details));
-        return Result.Success<ReviewEntity, ValidationErrors>(review);
+        return review;
     }
 }
