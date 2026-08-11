@@ -1,3 +1,6 @@
+using Concertable.B2B.Hosting;
+using Concertable.Customer.Hosting;
+using Concertable.Frontend.Hosting;
 using Concertable.Payment.Hosting;
 using Concertable.Search.Hosting;
 
@@ -7,7 +10,7 @@ var sql = builder.AddSqlServerContainer("concertable-customer-sql-data");
 var authDb = sql.AddDatabase(AuthConstants.Database);
 var customerDb = sql.AddDatabase(CustomerConstants.Database);
 var paymentDb = sql.AddDatabase(PaymentConstants.Database);
-var b2bDb = sql.AddDatabase("B2BDb");
+var b2bDb = sql.AddDatabase(B2BConstants.Database);
 
 var asb = builder.AddServiceBus();
 

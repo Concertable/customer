@@ -1,3 +1,5 @@
+namespace Concertable.Customer.Hosting;
+
 public static class CustomerConstants
 {
     public const string Database = "CustomerDb";
