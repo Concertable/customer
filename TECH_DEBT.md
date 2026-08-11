@@ -85,6 +85,8 @@ item below.
 
 **Resolves when:** the `ReadRepository<T>` base applies `AsNoTracking` to its query root so every derived read repo inherits it, and the ad-hoc call in `ConcertReadRepository` is removed. NOT context-wide `UseQueryTrackingBehavior(NoTracking)` — the projection handlers write through the same module contexts and need tracked queries.
 
+**Progress:** publish-first cut-over — `ReadRepository<T>` ships in the published `Concertable.DataAccess.Infrastructure`, so consumers can't move atomically with the base. **PR1 (done):** the base gains a no-tracking `Query` root and routes `GetAllAsync`/`GetByIdAsync` through it (the inherited reads and the Venue/Artist read repos become no-tracking for free once the pin bumps). **PR2 (after platform-sync bumps the pin):** migrate `ConcertReadRepository`'s custom queries onto `Query`, drop every ad-hoc `.AsNoTracking()`, delete this entry.
+
 ---
 
 ### Ticket list reads load full entities (incl. `QrCode` blobs) instead of projecting
