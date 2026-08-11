@@ -4,7 +4,9 @@ using Aspire.Hosting.Azure;
 using Concertable.Messaging.AzureServiceBus.Options;
 using Microsoft.Extensions.Configuration;
 
-public static class CustomerAppHostExtensions
+namespace Concertable.Customer.Hosting;
+
+public static class AppHostExtensions
 {
     public static IResourceBuilder<ProjectResource> AddCustomerWeb<TProject>(
         this IDistributedApplicationBuilder builder,

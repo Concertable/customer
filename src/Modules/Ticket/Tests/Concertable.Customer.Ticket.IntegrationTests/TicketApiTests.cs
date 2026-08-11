@@ -1,6 +1,7 @@
 using System.Net;
 using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Application.Requests;
+using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
 
 namespace Concertable.Customer.Ticket.IntegrationTests;
@@ -80,6 +81,41 @@ public sealed class TicketApiTests : IAsyncLifetime
         Assert.False(result.RequiresAction);
     }
 
+    [Fact]
+    public async Task Purchase_MissingConcert_ReturnsNotFoundProblem()
+    {
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
+
+        var response = await client.PostAsync("/api/ticket/purchase", new TicketPurchaseParams
+        {
+            PaymentMethodId = "pm_test",
+            ConcertId = int.MaxValue,
+            Quantity = 1
+        });
+
+        await AssertProblemCodeAsync(response, HttpStatusCode.NotFound, "ticket.concert_not_found");
+    }
+
+    [Fact]
+    public async Task Purchase_InsufficientAvailability_ReturnsValidationProblem()
+    {
+        var concert = fixture.SeedState.UpcomingFlatFeeConcert;
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
+
+        var response = await client.PostAsync("/api/ticket/purchase", new TicketPurchaseParams
+        {
+            PaymentMethodId = "pm_test",
+            ConcertId = concert.Id,
+            Quantity = concert.AvailableTickets + 1
+        });
+
+        var problem = await AssertValidationProblemAsync(
+            response,
+            "ticket.purchase_invalid",
+            "purchase");
+        Assert.StartsWith("Not enough tickets available.", Assert.Single(problem.Errors["purchase"]));
+    }
+
     #endregion
 
     #region Checkout
@@ -129,6 +165,35 @@ public sealed class TicketApiTests : IAsyncLifetime
         Assert.Equal(concert.Id, result.ConcertId);
         Assert.Equal(1, result.Quantity);
         Assert.Equal("pi_mock_secret", result.Session.ClientSecret);
+    }
+
+    [Fact]
+    public async Task Checkout_MissingConcert_ReturnsNotFoundProblem()
+    {
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
+
+        var response = await client.PostAsync(
+            "/api/ticket/checkout",
+            new TicketCheckoutRequest(int.MaxValue, 1));
+
+        await AssertProblemCodeAsync(response, HttpStatusCode.NotFound, "ticket.concert_not_found");
+    }
+
+    [Fact]
+    public async Task Checkout_InsufficientAvailability_ReturnsValidationProblem()
+    {
+        var concert = fixture.SeedState.UpcomingFlatFeeConcert;
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
+
+        var response = await client.PostAsync(
+            "/api/ticket/checkout",
+            new TicketCheckoutRequest(concert.Id, concert.AvailableTickets + 1));
+
+        var problem = await AssertValidationProblemAsync(
+            response,
+            "ticket.checkout_invalid",
+            "checkout");
+        Assert.StartsWith("Not enough tickets available.", Assert.Single(problem.Errors["checkout"]));
     }
 
     #endregion
@@ -279,5 +344,39 @@ public sealed class TicketApiTests : IAsyncLifetime
         Assert.False(await response.Content.ReadAsync<bool>());
     }
 
+    [Fact]
+    public async Task CanPurchase_MissingConcert_ReturnsNotFoundProblem()
+    {
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
+
+        var response = await client.GetAsync($"/api/ticket/concert/{int.MaxValue}/eligibility");
+
+        await AssertProblemCodeAsync(response, HttpStatusCode.NotFound, "ticket.concert_not_found");
+    }
+
     #endregion
+
+    private static async Task AssertProblemCodeAsync(
+        HttpResponseMessage response,
+        HttpStatusCode statusCode,
+        string code)
+    {
+        await response.ShouldBe(statusCode);
+        var problem = await response.Content.ReadAsync<ProblemDetails>();
+        Assert.NotNull(problem);
+        Assert.Equal(code, problem.Extensions["code"]?.ToString());
+    }
+
+    private static async Task<ValidationProblemDetails> AssertValidationProblemAsync(
+        HttpResponseMessage response,
+        string code,
+        string field)
+    {
+        await response.ShouldBe(HttpStatusCode.BadRequest);
+        var problem = await response.Content.ReadAsync<ValidationProblemDetails>();
+        Assert.NotNull(problem);
+        Assert.Equal(code, problem.Extensions["code"]?.ToString());
+        Assert.Equal([field], problem.Errors.Keys);
+        return problem;
+    }
 }
