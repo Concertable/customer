@@ -79,16 +79,6 @@ item below.
 
 ---
 
-### Read repositories don't default to no-tracking
-
-`ConcertReadRepository.GetDtoAsync` needed an ad-hoc `.AsNoTracking()` (EF throws when a projection carries a whole owned instance like `Period` on a tracking query), and the other read repos rely on projections happening to be untracked. Reads through a `ReadRepository<T>` should never track — the per-call opt-out is backwards.
-
-**Resolves when:** the `ReadRepository<T>` base applies `AsNoTracking` to its query root so every derived read repo inherits it, and the ad-hoc call in `ConcertReadRepository` is removed. NOT context-wide `UseQueryTrackingBehavior(NoTracking)` — the projection handlers write through the same module contexts and need tracked queries.
-
-**Progress:** publish-first cut-over — `ReadRepository<T>` ships in the published `Concertable.DataAccess.Infrastructure`, so consumers can't move atomically with the base. **PR1 (done):** the base gains a no-tracking `Query` root and routes `GetAllAsync`/`GetByIdAsync` through it (the inherited reads and the Venue/Artist read repos become no-tracking for free once the pin bumps). **PR2 (after platform-sync bumps the pin):** migrate `ConcertReadRepository`'s custom queries onto `Query`, drop every ad-hoc `.AsNoTracking()`, delete this entry.
-
----
-
 ### Ticket list reads load full entities (incl. `QrCode` blobs) instead of projecting
 
 `TicketService.GetUserUpcomingAsync` / `GetUserHistoryAsync` materialise whole `TicketEntity` rows and map in memory (`tickets.ToDtos()`), hauling the `QrCode byte[]` blob for every ticket in a list view rather than a queryable projection. The empty-string masks that used to ride this path are gone: `UserEmail` was dropped from `TicketDto` (web reads it from nowhere; mobile `TicketDetailScreen` now reads the signed-in email from `useAuthStore`), the mapper no longer takes an email parameter, and `TicketPaymentProcessor` fail-closes on `meta["fromUserEmail"]`. What remains is pure efficiency — and it's blocked by an SPA coupling: both surfaces read `qrCode` straight off the list DTO (web `TicketCard` → `QrPopover`, mobile `<QRCode value={ticket.qrCode}>`), so `QrCode` can't simply be excluded from a projection.
