@@ -13,8 +13,4 @@
     <PackageReference Include="Concertable.DataAccess.Application" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="FluentResults" />
-  </ItemGroup>
-
 </Project>
