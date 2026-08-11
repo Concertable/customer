@@ -7,6 +7,8 @@ using Concertable.Customer.Ticket.Application.Commands;
 using Concertable.Customer.Ticket.Contracts.Events;
 using Concertable.Payment.Contracts.Events;
 
+namespace Concertable.Customer.Hosting;
+
 public static class CustomerTopology
 {
     public static AsbTopology AddCustomerTopology(this AsbTopology topology) =>
