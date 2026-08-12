@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.DataAccess.Infrastructure;
 
-public abstract class ReadDbContext : DbContextBase
+public abstract class ReadDbContext : DbContextBase, IReadDbContext
 {
     private readonly IEntityTypeConfigurationProvider provider;
     private readonly string defaultSchema;
@@ -15,6 +15,8 @@ public abstract class ReadDbContext : DbContextBase
         this.provider = provider;
         this.defaultSchema = defaultSchema;
     }
+
+    public IQueryable<T> Query<T>() where T : class => Set<T>();
 
     protected sealed override void OnModelCreating(ModelBuilder modelBuilder)
     {
