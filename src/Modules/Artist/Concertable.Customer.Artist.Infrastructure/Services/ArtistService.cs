@@ -1,4 +1,5 @@
 using Concertable.Customer.Artist.Application.DTOs;
+using Reunion;
 
 namespace Concertable.Customer.Artist.Infrastructure.Services;
 
@@ -11,6 +12,6 @@ internal sealed class ArtistService : IArtistService
         this.repository = repository;
     }
 
-    public Task<ArtistDetails?> GetDetailsByIdAsync(int artistId) =>
-        repository.GetDetailsByIdAsync(artistId);
+    public async Task<Option<ArtistDetails>> GetDetailsByIdAsync(int artistId) =>
+        await repository.GetDetailsByIdAsync(artistId);
 }

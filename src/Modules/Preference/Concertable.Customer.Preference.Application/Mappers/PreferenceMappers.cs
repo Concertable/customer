@@ -13,6 +13,6 @@ internal static class PreferenceMappers
         Genres = preference.GenrePreferences.Select(gp => gp.Genre).ToList()
     };
 
-    public static IEnumerable<PreferenceDto> ToDtos(this IEnumerable<PreferenceEntity> preferences) =>
-        preferences.Select(p => p.ToDto());
+    public static IReadOnlyList<PreferenceDto> ToDtos(this IEnumerable<PreferenceEntity> preferences) =>
+        preferences.Select(p => p.ToDto()).ToList();
 }
