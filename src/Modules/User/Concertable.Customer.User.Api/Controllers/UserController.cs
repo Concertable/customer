@@ -3,6 +3,7 @@ using Concertable.Customer.User.Application.Interfaces;
 using Concertable.Customer.User.Application.Requests;
 using Concertable.Customer.User.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using Reunion.AspNetCore.Mvc;
 
 namespace Concertable.Customer.User.Api.Controllers;
 
@@ -29,8 +30,6 @@ internal sealed class UserController : ControllerBase
     public async Task<ActionResult<CustomerDto>> Me()
     {
         var user = await userService.GetMeAsync();
-        return user.Match<ActionResult<CustomerDto>>(
-            value => Ok(value),
-            () => Unauthorized());
+        return user.ToOkOr(Unauthorized);
     }
 }

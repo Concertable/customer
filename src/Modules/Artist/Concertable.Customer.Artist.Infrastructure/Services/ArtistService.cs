@@ -12,9 +12,6 @@ internal sealed class ArtistService : IArtistService
         this.repository = repository;
     }
 
-    public async Task<Option<ArtistDetails>> GetDetailsByIdAsync(int artistId)
-    {
-        var artist = await repository.GetDetailsByIdAsync(artistId);
-        return artist.ToOption();
-    }
+    public async Task<Option<ArtistDetails>> GetDetailsByIdAsync(int artistId) =>
+        await repository.GetDetailsByIdAsync(artistId);
 }
