@@ -11,7 +11,7 @@ internal sealed class ArtistReadRepository : ReadRepository<ArtistEntity>, IArti
     public ArtistReadRepository(ArtistDbContext context) : base(context) { }
 
     public Task<ArtistDetails?> GetDetailsByIdAsync(int artistId) =>
-        Query
+        base.Query
             .Where(a => a.Id == artistId)
             .ToDetails()
             .FirstOrDefaultAsync();
