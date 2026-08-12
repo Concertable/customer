@@ -9,19 +9,19 @@ namespace Concertable.Customer.Concert.Infrastructure.Repositories;
 
 internal sealed class ConcertReadRepository : ReadRepository<ConcertEntity>, IConcertReadRepository
 {
-    public ConcertReadRepository(ConcertDbContext context) : base(context) { }
+    public ConcertReadRepository(ConcertReadDbContext context) : base(context) { }
 
     public override Task<ConcertEntity?> GetByIdAsync(int id, CancellationToken ct = default) =>
-        base.Query.Include(c => c.Genres).FirstOrDefaultAsync(c => c.Id == id, ct);
+        context.Concerts.Include(c => c.Genres).FirstOrDefaultAsync(c => c.Id == id, ct);
 
     public Task<ConcertDto?> GetDtoAsync(int concertId) =>
-        base.Query
+        context.Concerts
             .Where(c => c.Id == concertId)
             .ToDto()
             .FirstOrDefaultAsync();
 
     public Task<ConcertDetails?> GetDetailsAsync(int concertId, CancellationToken ct = default) =>
-        base.Query
+        context.Concerts
             .Where(c => c.Id == concertId)
             .ToDetails(context.VenueReadModels, context.ArtistReadModels)
             .FirstOrDefaultAsync(ct);
