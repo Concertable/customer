@@ -30,7 +30,7 @@ public sealed class PreferenceServiceTests
         this.geometryCalculator = new Mock<IGeometryCalculator>();
         this.currentUser.SetupGet(user => user.Id).Returns(UserId);
         this.preferenceRepository
-            .Setup(repository => repository.TryAddAsync(It.IsAny<PreferenceEntity>()))
+            .Setup(repository => repository.InsertAsync(It.IsAny<PreferenceEntity>()))
             .ReturnsAsync(true);
         this.sut = new PreferenceService(
             preferenceRepository.Object,
@@ -116,7 +116,7 @@ public sealed class PreferenceServiceTests
     public async Task CreateAsync_DuplicateInsert_ReturnsConflict()
     {
         this.preferenceRepository
-            .Setup(repository => repository.TryAddAsync(It.IsAny<PreferenceEntity>()))
+            .Setup(repository => repository.InsertAsync(It.IsAny<PreferenceEntity>()))
             .ReturnsAsync(false);
 
         var result = await this.sut.CreateAsync(NewRequest());
@@ -137,7 +137,7 @@ public sealed class PreferenceServiceTests
         Assert.Equal(30, dto.RadiusKm);
         Assert.Equal([Genre.Rock, Genre.Jazz], dto.Genres.Order());
         this.preferenceRepository.Verify(
-            repository => repository.TryAddAsync(
+            repository => repository.InsertAsync(
                 It.Is<PreferenceEntity>(preference =>
                     preference.UserId == requestedUserId
                     && preference.RadiusKm == 30)),
@@ -149,7 +149,7 @@ public sealed class PreferenceServiceTests
     {
         var expected = new InvalidOperationException();
         this.preferenceRepository
-            .Setup(repository => repository.TryAddAsync(It.IsAny<PreferenceEntity>()))
+            .Setup(repository => repository.InsertAsync(It.IsAny<PreferenceEntity>()))
             .ThrowsAsync(expected);
 
         var actual = await Assert.ThrowsAsync<InvalidOperationException>(
@@ -164,7 +164,7 @@ public sealed class PreferenceServiceTests
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
         this.preferenceRepository
-            .Setup(repository => repository.TryAddAsync(It.IsAny<PreferenceEntity>()))
+            .Setup(repository => repository.InsertAsync(It.IsAny<PreferenceEntity>()))
             .Returns(Task.FromCanceled<bool>(cancellation.Token));
 
         var exception = await Assert.ThrowsAnyAsync<OperationCanceledException>(

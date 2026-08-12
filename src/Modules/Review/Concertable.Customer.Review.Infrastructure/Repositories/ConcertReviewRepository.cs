@@ -43,7 +43,7 @@ internal sealed class ConcertReviewRepository : IConcertReviewRepository
             .AsNoTracking()
             .AnyAsync(r => r.TicketId == ticketId);
 
-    public async Task<bool> TryAddAsync(ReviewEntity review)
+    public async Task<bool> InsertAsync(ReviewEntity review)
     {
         context.Reviews.Add(review);
 

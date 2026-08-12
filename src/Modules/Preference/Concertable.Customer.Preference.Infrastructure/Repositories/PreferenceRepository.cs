@@ -8,7 +8,7 @@ internal sealed class PreferenceRepository : Repository<PreferenceEntity>, IPref
 {
     public PreferenceRepository(PreferenceDbContext context) : base(context) { }
 
-    public async Task<bool> TryAddAsync(PreferenceEntity preference)
+    public async Task<bool> InsertAsync(PreferenceEntity preference)
     {
         context.Preferences.Add(preference);
 
