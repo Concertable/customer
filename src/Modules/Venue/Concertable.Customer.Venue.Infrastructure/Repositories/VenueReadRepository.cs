@@ -11,7 +11,7 @@ internal sealed class VenueReadRepository : ReadRepository<VenueEntity>, IVenueR
     public VenueReadRepository(VenueDbContext context) : base(context) { }
 
     public Task<VenueDetails?> GetDetailsByIdAsync(int venueId) =>
-        Query
+        base.Query
             .Where(v => v.Id == venueId)
             .ToDetails()
             .FirstOrDefaultAsync();
