@@ -1,6 +1,7 @@
 using Concertable.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Reunion.AspNetCore.Mvc;
 
 namespace Concertable.Customer.Review.Api.Controllers;
 
@@ -17,11 +18,11 @@ internal sealed class ConcertReviewsController : ControllerBase
 
     [HttpPost]
     [Authorize(Policy = "Customer")]
-    public async Task<IActionResult> Create(int concertId, [FromBody] CreateReviewRequest request)
+    public async Task<ActionResult<ReviewDto>> Create(int concertId, [FromBody] CreateReviewRequest request)
     {
-        var review = await reviewService.CreateAsync(concertId, request);
+        var result = await reviewService.CreateAsync(concertId, request);
 
-        return CreatedAtAction(nameof(GetByConcertId), new { concertId }, review);
+        return result.ToActionResult(value => CreatedAtAction(nameof(GetByConcertId), new { concertId }, value));
     }
 
     [HttpGet]

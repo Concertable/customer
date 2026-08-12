@@ -3,6 +3,7 @@ using Concertable.Customer.Venue.Api.Responses;
 using Concertable.Customer.Venue.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Reunion.AspNetCore.Mvc;
 
 namespace Concertable.Customer.Venue.Api.Controllers;
 
@@ -22,6 +23,6 @@ internal sealed class VenueController : ControllerBase
     public async Task<ActionResult<DetailsResponse>> GetDetailsById(int id)
     {
         var venue = await venueService.GetDetailsByIdAsync(id);
-        return venue is null ? NotFound() : Ok(venue.ToDetailsResponse());
+        return venue.ToOkOr(value => value.ToDetailsResponse(), NotFound);
     }
 }
