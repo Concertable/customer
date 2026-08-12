@@ -85,7 +85,7 @@ internal sealed class ConcertReviewService : IConcertReviewService
 
     private async Task<Result<ReviewDto, CreateReviewError>> PersistAsync(ReviewEntity review)
     {
-        if (!await reviewRepository.TryAddAsync(review))
+        if (!await reviewRepository.InsertAsync(review))
             return new CreateReviewError.ReviewAlreadyExists();
 
         return review.ToDto();
