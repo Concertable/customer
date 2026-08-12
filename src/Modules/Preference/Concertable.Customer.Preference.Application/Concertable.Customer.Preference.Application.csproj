@@ -9,6 +9,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Concertable.Customer.Preference.Domain\Concertable.Customer.Preference.Domain.csproj" />
     <PackageReference Include="Concertable.DataAccess.Application" />
+    <PackageReference Include="Dunet" />
+    <PackageReference Include="Reunion" />
+    <PackageReference Include="Reunion.Errors" />
   </ItemGroup>
 
 </Project>

@@ -5,6 +5,7 @@ namespace Concertable.Customer.Preference.Application.Interfaces;
 
 internal interface IPreferenceRepository : IRepository<PreferenceEntity>
 {
+    Task<bool> InsertAsync(PreferenceEntity preference);
     Task<PreferenceEntity?> GetByUserIdAsync(Guid id);
-    Task<IEnumerable<PreferenceEntity>> GetByMatchingGenresAsync(IEnumerable<Genre> genres);
+    Task<IReadOnlyList<PreferenceEntity>> GetByMatchingGenresAsync(IEnumerable<Genre> genres);
 }

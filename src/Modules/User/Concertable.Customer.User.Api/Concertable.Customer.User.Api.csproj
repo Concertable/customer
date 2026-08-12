@@ -14,6 +14,7 @@
     <ProjectReference Include="..\Concertable.Customer.User.Contracts\Concertable.Customer.User.Contracts.csproj" />
     <ProjectReference Include="..\Concertable.Customer.User.Application\Concertable.Customer.User.Application.csproj" />
     <PackageReference Include="Concertable.Shared.Api" />
+    <PackageReference Include="Reunion.AspNetCore" />
   </ItemGroup>
 
 </Project>
