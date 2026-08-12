@@ -8,5 +8,5 @@ internal interface IConcertReviewRepository
     Task<IPagination<ReviewDto>> GetByConcertAsync(int concertId, IPageParams pageParams);
     Task<ReviewSummary> GetSummaryByConcertAsync(int concertId);
     Task<bool> HasReviewForTicketAsync(Guid ticketId);
-    Task<bool> TryAddAsync(ReviewEntity review);
+    Task<bool> InsertAsync(ReviewEntity review);
 }

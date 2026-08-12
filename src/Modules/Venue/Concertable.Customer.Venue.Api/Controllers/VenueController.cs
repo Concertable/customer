@@ -23,6 +23,6 @@ internal sealed class VenueController : ControllerBase
     public async Task<ActionResult<DetailsResponse>> GetDetailsById(int id)
     {
         var venue = await venueService.GetDetailsByIdAsync(id);
-        return venue.Map(value => value.ToDetailsResponse()).ToOkOrNotFound();
+        return venue.ToOkOr(value => value.ToDetailsResponse(), NotFound);
     }
 }

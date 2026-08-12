@@ -23,6 +23,6 @@ internal sealed class ArtistController : ControllerBase
     public async Task<ActionResult<DetailsResponse>> GetDetailsById(int id)
     {
         var artist = await artistService.GetDetailsByIdAsync(id);
-        return artist.Map(value => value.ToDetailsResponse()).ToOkOrNotFound();
+        return artist.ToOkOr(value => value.ToDetailsResponse(), NotFound);
     }
 }
