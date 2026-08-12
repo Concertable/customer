@@ -17,7 +17,5 @@ public abstract class CustomerDesignTimeDbContextFactory<TContext> : IDesignTime
 
     protected abstract TContext Create(DbContextOptions<TContext> options);
 
-    protected virtual void ConfigureSqlServer(SqlServerDbContextOptionsBuilder sql)
-    {
-    }
+    protected virtual void ConfigureSqlServer(SqlServerDbContextOptionsBuilder sql) { }
 }
