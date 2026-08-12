@@ -8,10 +8,10 @@ namespace Concertable.Customer.Artist.Infrastructure.Repositories;
 
 internal sealed class ArtistReadRepository : ReadRepository<ArtistEntity>, IArtistReadRepository
 {
-    public ArtistReadRepository(ArtistDbContext context) : base(context) { }
+    public ArtistReadRepository(ArtistReadDbContext context) : base(context) { }
 
     public Task<ArtistDetails?> GetDetailsByIdAsync(int artistId) =>
-        base.Query
+        context.Artists
             .Where(a => a.Id == artistId)
             .ToDetails()
             .FirstOrDefaultAsync();

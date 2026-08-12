@@ -8,10 +8,10 @@ namespace Concertable.Customer.Venue.Infrastructure.Repositories;
 
 internal sealed class VenueReadRepository : ReadRepository<VenueEntity>, IVenueReadRepository
 {
-    public VenueReadRepository(VenueDbContext context) : base(context) { }
+    public VenueReadRepository(VenueReadDbContext context) : base(context) { }
 
     public Task<VenueDetails?> GetDetailsByIdAsync(int venueId) =>
-        base.Query
+        context.Venues
             .Where(v => v.Id == venueId)
             .ToDetails()
             .FirstOrDefaultAsync();
