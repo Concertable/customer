@@ -35,7 +35,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUnitOfWork<ConcertDbContext>, UnitOfWork<ConcertDbContext>>();
         services.AddScoped<IUnitOfWorkBehavior, UnitOfWorkBehavior>();
 
-        services.AddScoped<IConcertReadRepository, ConcertReadRepository>();
+        services.AddScoped<IConcertReadRepository>(sp =>
+            new ConcertReadRepository(sp.GetRequiredService<ConcertReadDbContext>()));
         services.AddScoped<IConcertService, ConcertService>();
         services.AddScoped<IConcertModule, ConcertModule>();
         services.AddScoped<IIntegrationEventHandler<ConcertChangedEvent>, ConcertProjectionHandler>();
