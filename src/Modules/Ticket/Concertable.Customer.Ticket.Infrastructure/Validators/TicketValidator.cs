@@ -36,12 +36,11 @@ internal sealed class TicketValidator : ITicketValidator
 
     public async Task<Result<ValidationResult, EligibilityError>> CanBePurchasedAsync(int concertId)
     {
-        var concert = await concertModule.GetByIdAsync(concertId);
-        if (concert is null)
-            return Result<ValidationResult, EligibilityError>.Failure(
-                new EligibilityError.ConcertNotFound(concertId));
+        var concertOption = await concertModule.GetByIdAsync(concertId);
+        if (!concertOption.TryGetValue(out var concert))
+            return new EligibilityError.ConcertNotFound(concertId);
 
-        return Result<ValidationResult, EligibilityError>.Success(CanBePurchased(concert));
+        return CanBePurchased(concert);
     }
 
     public ValidationResult CanPurchaseTickets(ConcertDto concert, int quantity)

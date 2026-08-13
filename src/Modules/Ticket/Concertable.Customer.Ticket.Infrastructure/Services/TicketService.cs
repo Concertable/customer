@@ -50,15 +50,13 @@ internal sealed class TicketService : ITicketService
 
     public async Task<Result<TicketPayment, PurchaseError>> PurchaseAsync(TicketPurchaseParams purchaseParams)
     {
-        var concert = await concertModule.GetByIdAsync(purchaseParams.ConcertId);
-        if (concert is null)
-            return Result<TicketPayment, PurchaseError>.Failure(
-                new PurchaseError.ConcertNotFound(purchaseParams.ConcertId));
+        var concertOption = await concertModule.GetByIdAsync(purchaseParams.ConcertId);
+        if (!concertOption.TryGetValue(out var concert))
+            return new PurchaseError.ConcertNotFound(purchaseParams.ConcertId);
 
         var validationResult = ticketValidator.CanPurchaseTickets(concert, purchaseParams.Quantity);
         if (validationResult.TryGetErrors(out var errors))
-            return Result<TicketPayment, PurchaseError>.Failure(
-                new PurchaseError.Invalid(CreateValidationErrors("purchase", errors)));
+            return new PurchaseError.Invalid(CreateValidationErrors("purchase", errors));
 
         var metadata = new Dictionary<string, string>
         {
@@ -73,21 +71,21 @@ internal sealed class TicketService : ITicketService
             metadata,
             purchaseParams.PaymentMethodId);
 
-        return paymentResult.Match(
-            payment => Result<TicketPayment, PurchaseError>.Success(new TicketPayment
+        return paymentResult
+            .Map(payment => new TicketPayment
             {
                 RequiresAction = payment.RequiresAction,
                 TransactionId = payment.TransactionId,
                 ClientSecret = payment.ClientSecret,
                 UserEmail = currentUser.Email
-            }),
-            error => Result<TicketPayment, PurchaseError>.Failure(ToPurchaseError(error)));
+            })
+            .MapError(ToPurchaseError);
     }
 
     public async Task<TicketPayment> CompleteAsync(PurchaseComplete purchaseCompleteDto)
     {
-        var concert = await concertModule.GetByIdAsync(purchaseCompleteDto.EntityId);
-        if (concert is null)
+        var concertOption = await concertModule.GetByIdAsync(purchaseCompleteDto.EntityId);
+        if (!concertOption.TryGetValue(out var concert))
             throw new InvalidOperationException(
                 $"Concert {purchaseCompleteDto.EntityId} was not found while completing a ticket purchase.");
 
@@ -121,14 +119,13 @@ internal sealed class TicketService : ITicketService
 
     public async Task<Result<TicketCheckout, CheckoutError>> CheckoutAsync(int concertId, int quantity)
     {
-        var concert = await concertModule.GetByIdAsync(concertId);
-        if (concert is null)
-            return Result<TicketCheckout, CheckoutError>.Failure(new CheckoutError.ConcertNotFound(concertId));
+        var concertOption = await concertModule.GetByIdAsync(concertId);
+        if (!concertOption.TryGetValue(out var concert))
+            return new CheckoutError.ConcertNotFound(concertId);
 
         var validationResult = ticketValidator.CanPurchaseTickets(concert, quantity);
         if (validationResult.TryGetErrors(out var errors))
-            return Result<TicketCheckout, CheckoutError>.Failure(
-                new CheckoutError.Invalid(CreateValidationErrors("checkout", errors)));
+            return new CheckoutError.Invalid(CreateValidationErrors("checkout", errors));
 
         var metadata = new Dictionary<string, string>
         {
@@ -141,8 +138,7 @@ internal sealed class TicketService : ITicketService
 
         var session = await customerPaymentClient.CreatePaymentSessionAsync(currentUser.GetId(), concert.Id, concert.PayeeOwnerId, metadata);
 
-        return Result<TicketCheckout, CheckoutError>.Success(
-            new TicketCheckout(session, concert.Price, concert.Id, quantity));
+        return new TicketCheckout(session, concert.Price, concert.Id, quantity);
     }
 
     public async Task<IEnumerable<TicketDto>> GetUserUpcomingAsync()
