@@ -7,7 +7,7 @@ namespace Concertable.Customer.Concert.Application.Interfaces;
 
 internal interface IConcertReadRepository : IReadRepository<ConcertEntity>
 {
-    Task<ConcertDto?> GetDtoAsync(int concertId);
+    Task<ConcertDto?> GetDtoAsync(int concertId, CancellationToken ct = default);
 
     Task<ConcertDetails?> GetDetailsAsync(int concertId, CancellationToken ct = default);
 }
