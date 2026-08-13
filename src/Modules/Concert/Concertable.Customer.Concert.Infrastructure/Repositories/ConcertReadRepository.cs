@@ -15,11 +15,11 @@ internal sealed class ConcertReadRepository : ReadRepository<ConcertEntity>, ICo
     public override Task<ConcertEntity?> GetByIdAsync(int id, CancellationToken ct = default) =>
         context.Query<ConcertEntity>().Include(c => c.Genres).FirstOrDefaultAsync(c => c.Id == id, ct);
 
-    public Task<ConcertDto?> GetDtoAsync(int concertId) =>
+    public Task<ConcertDto?> GetDtoAsync(int concertId, CancellationToken ct = default) =>
         context.Query<ConcertEntity>()
             .Where(c => c.Id == concertId)
             .ToDto()
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(ct);
 
     public Task<ConcertDetails?> GetDetailsAsync(int concertId, CancellationToken ct = default) =>
         context.Query<ConcertEntity>()
