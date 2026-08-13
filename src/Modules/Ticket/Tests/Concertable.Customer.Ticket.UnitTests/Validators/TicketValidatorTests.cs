@@ -4,6 +4,7 @@ using Concertable.Customer.Ticket.Infrastructure.Validators;
 using Concertable.Kernel.ValueObjects;
 using Microsoft.Extensions.Time.Testing;
 using Moq;
+using Reunion;
 using Reunion.Errors;
 using Reunion.Validation;
 
@@ -122,7 +123,7 @@ public sealed class TicketValidatorTests
     public async Task CanBePurchasedAsync_WhenConcertMissing_ReturnsConcertNotFound()
     {
         concertModule.Setup(m => m.GetByIdAsync(999, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((ConcertDto?)null);
+            .ReturnsAsync(Option.None<ConcertDto>());
 
         var result = await sut.CanBePurchasedAsync(999);
 
