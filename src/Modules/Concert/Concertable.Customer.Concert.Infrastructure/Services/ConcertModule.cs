@@ -1,5 +1,6 @@
 using Concertable.Customer.Concert.Application.Interfaces;
 using Concertable.Customer.Concert.Contracts;
+using Reunion;
 
 namespace Concertable.Customer.Concert.Infrastructure.Services;
 
@@ -12,6 +13,6 @@ internal sealed class ConcertModule : IConcertModule
         this.concertRepository = concertRepository;
     }
 
-    public Task<ConcertDto?> GetByIdAsync(int concertId, CancellationToken ct = default) =>
-        concertRepository.GetDtoAsync(concertId);
+    public Task<Option<ConcertDto>> GetByIdAsync(int concertId, CancellationToken ct = default) =>
+        concertRepository.GetDtoAsync(concertId, ct).ToOption();
 }

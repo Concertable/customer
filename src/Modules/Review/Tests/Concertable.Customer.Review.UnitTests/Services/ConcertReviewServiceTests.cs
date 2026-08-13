@@ -6,6 +6,7 @@ using Concertable.Customer.Review.Infrastructure.Services;
 using Concertable.Customer.Ticket.Contracts;
 using Concertable.Kernel.Identity;
 using Moq;
+using Reunion;
 using Reunion.Errors;
 using Reunion.Validation;
 
@@ -59,7 +60,7 @@ public sealed class ConcertReviewServiceTests
     {
         this.ticketModule
             .Setup(module => module.GetByUserAndConcertAsync(UserId, ConcertId))
-            .ReturnsAsync((TicketSummary?)null);
+            .ReturnsAsync(Option.None<TicketSummary>());
 
         var result = await this.sut.CreateAsync(ConcertId, NewRequest());
 
