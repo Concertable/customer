@@ -11,6 +11,7 @@ using Concertable.Payment.Contracts.Errors;
 using Concertable.Shared.QrCode.Application;
 using Reunion;
 using Reunion.Errors;
+using Reunion.Validation;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Services;
 
@@ -48,16 +49,17 @@ internal sealed class TicketService : ITicketService
         this.timeProvider = timeProvider;
     }
 
-    public async Task<Result<TicketPayment, PurchaseError>> PurchaseAsync(TicketPurchaseParams purchaseParams)
+    public Task<Result<TicketPayment, PurchaseError>> PurchaseAsync(TicketPurchaseParams purchaseParams) =>
+        concertModule.GetByIdAsync(purchaseParams.ConcertId)
+            .OrFailure<ConcertDto, PurchaseError>(
+                new PurchaseError.ConcertNotFound(purchaseParams.ConcertId))
+            .Bind(concert => ValidatePurchase(concert, purchaseParams.Quantity))
+            .BindAsync(concert => PayForTicketsAsync(concert, purchaseParams));
+
+    private async Task<Result<TicketPayment, PurchaseError>> PayForTicketsAsync(
+        ConcertDto concert,
+        TicketPurchaseParams purchaseParams)
     {
-        var concertOption = await concertModule.GetByIdAsync(purchaseParams.ConcertId);
-        if (!concertOption.TryGetValue(out var concert))
-            return new PurchaseError.ConcertNotFound(purchaseParams.ConcertId);
-
-        var validationResult = ticketValidator.CanPurchaseTickets(concert, purchaseParams.Quantity);
-        if (validationResult.TryGetErrors(out var errors))
-            return new PurchaseError.Invalid(CreateValidationErrors("purchase", errors));
-
         var metadata = new Dictionary<string, string>
         {
             [PaymentMetadataKeys.Type] = TransactionTypes.Ticket,
@@ -117,16 +119,14 @@ internal sealed class TicketService : ITicketService
         };
     }
 
-    public async Task<Result<TicketCheckout, CheckoutError>> CheckoutAsync(int concertId, int quantity)
+    public Task<Result<TicketCheckout, CheckoutError>> CheckoutAsync(int concertId, int quantity) =>
+        concertModule.GetByIdAsync(concertId)
+            .OrFailure<ConcertDto, CheckoutError>(new CheckoutError.ConcertNotFound(concertId))
+            .Bind(concert => ValidateCheckout(concert, quantity))
+            .MapAsync(concert => CreateCheckoutAsync(concert, quantity));
+
+    private async Task<TicketCheckout> CreateCheckoutAsync(ConcertDto concert, int quantity)
     {
-        var concertOption = await concertModule.GetByIdAsync(concertId);
-        if (!concertOption.TryGetValue(out var concert))
-            return new CheckoutError.ConcertNotFound(concertId);
-
-        var validationResult = ticketValidator.CanPurchaseTickets(concert, quantity);
-        if (validationResult.TryGetErrors(out var errors))
-            return new CheckoutError.Invalid(CreateValidationErrors("checkout", errors));
-
         var metadata = new Dictionary<string, string>
         {
             [PaymentMetadataKeys.Type] = TransactionTypes.Ticket,
@@ -140,6 +140,18 @@ internal sealed class TicketService : ITicketService
 
         return new TicketCheckout(session, concert.Price, concert.Id, quantity);
     }
+
+    private Result<ConcertDto, PurchaseError> ValidatePurchase(ConcertDto concert, int quantity) =>
+        ticketValidator.CanPurchaseTickets(concert, quantity)
+            .Map<ConcertDto, PurchaseError>(
+                () => concert,
+                errors => new PurchaseError.Invalid(CreateValidationErrors("purchase", errors)));
+
+    private Result<ConcertDto, CheckoutError> ValidateCheckout(ConcertDto concert, int quantity) =>
+        ticketValidator.CanPurchaseTickets(concert, quantity)
+            .Map<ConcertDto, CheckoutError>(
+                () => concert,
+                errors => new CheckoutError.Invalid(CreateValidationErrors("checkout", errors)));
 
     public async Task<IEnumerable<TicketDto>> GetUserUpcomingAsync()
     {
