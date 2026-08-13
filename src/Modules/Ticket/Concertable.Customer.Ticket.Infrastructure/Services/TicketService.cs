@@ -141,17 +141,23 @@ internal sealed class TicketService : ITicketService
         return new TicketCheckout(session, concert.Price, concert.Id, quantity);
     }
 
-    private Result<ConcertDto, PurchaseError> ValidatePurchase(ConcertDto concert, int quantity) =>
-        ticketValidator.CanPurchaseTickets(concert, quantity)
-            .Map<ConcertDto, PurchaseError>(
-                () => concert,
-                errors => new PurchaseError.Invalid(CreateValidationErrors("purchase", errors)));
+    private Result<ConcertDto, PurchaseError> ValidatePurchase(ConcertDto concert, int quantity)
+    {
+        var validation = ticketValidator.CanPurchaseTickets(concert, quantity);
+        if (validation.TryGetErrors(out var errors))
+            return new PurchaseError.Invalid(CreateValidationErrors("purchase", errors));
 
-    private Result<ConcertDto, CheckoutError> ValidateCheckout(ConcertDto concert, int quantity) =>
-        ticketValidator.CanPurchaseTickets(concert, quantity)
-            .Map<ConcertDto, CheckoutError>(
-                () => concert,
-                errors => new CheckoutError.Invalid(CreateValidationErrors("checkout", errors)));
+        return concert;
+    }
+
+    private Result<ConcertDto, CheckoutError> ValidateCheckout(ConcertDto concert, int quantity)
+    {
+        var validation = ticketValidator.CanPurchaseTickets(concert, quantity);
+        if (validation.TryGetErrors(out var errors))
+            return new CheckoutError.Invalid(CreateValidationErrors("checkout", errors));
+
+        return concert;
+    }
 
     public async Task<IEnumerable<TicketDto>> GetUserUpcomingAsync()
     {
