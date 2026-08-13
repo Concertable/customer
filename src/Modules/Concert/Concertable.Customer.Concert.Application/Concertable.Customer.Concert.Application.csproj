@@ -11,6 +11,7 @@
     <ProjectReference Include="..\Concertable.Customer.Concert.Contracts\Concertable.Customer.Concert.Contracts.csproj" />
     <PackageReference Include="Concertable.Kernel" />
     <PackageReference Include="Concertable.DataAccess.Application" />
+    <PackageReference Include="Reunion" />
   </ItemGroup>
 
 </Project>
