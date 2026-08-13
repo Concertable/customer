@@ -48,8 +48,8 @@ internal sealed class ConcertReviewService : IConcertReviewService
         Guid userId,
         int concertId)
     {
-        var ticket = await ticketModule.GetByUserAndConcertAsync(userId, concertId);
-        if (ticket is null)
+        var ticketOption = await ticketModule.GetByUserAndConcertAsync(userId, concertId);
+        if (!ticketOption.TryGetValue(out var ticket))
             return new CreateReviewError.TicketNotFound();
 
         if (reviewValidator.ValidateReviewPeriod(ticket).IsInvalid)

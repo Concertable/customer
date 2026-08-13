@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Concertable.Messaging.Contracts" />
+    <PackageReference Include="Reunion" />
   </ItemGroup>
 
 </Project>

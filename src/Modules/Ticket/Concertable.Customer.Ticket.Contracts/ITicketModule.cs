@@ -1,8 +1,10 @@
+using Reunion;
+
 namespace Concertable.Customer.Ticket.Contracts;
 
 public interface ITicketModule
 {
-    Task<TicketSummary?> GetByUserAndConcertAsync(Guid userId, int concertId);
+    Task<Option<TicketSummary>> GetByUserAndConcertAsync(Guid userId, int concertId);
     Task<bool> CanReviewArtistAsync(Guid userId, int artistId);
     Task<bool> CanReviewVenueAsync(Guid userId, int venueId);
 }
