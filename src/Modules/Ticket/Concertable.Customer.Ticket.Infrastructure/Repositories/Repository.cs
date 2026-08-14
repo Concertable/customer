@@ -3,6 +3,6 @@ using Concertable.Kernel;
 
 namespace Concertable.Customer.Ticket.Infrastructure.Repositories;
 
-internal abstract class BaseRepository<TEntity>(TicketDbContext context)
-    : BaseRepository<TEntity, TicketDbContext>(context)
+internal abstract class WriteRepository<TEntity>(TicketDbContext context)
+    : WriteRepository<TEntity, TicketDbContext>(context)
     where TEntity : class;
