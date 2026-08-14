@@ -80,10 +80,10 @@ services.AddGeometry();
 services.AddClientCredentials(opts =>
 {
     opts.Authority = builder.Configuration["Auth:Authority"] ?? builder.Configuration["services__auth__https__0"]
-        ?? (builder.Environment.IsEnvironment("Testing") ? null!
+        ?? (builder.Environment.IsEnvironment("Integration") ? null!
             : throw new InvalidOperationException("Auth:Authority is required (no explicit key and no service-discovery fallback)."));
     opts.ClientId = builder.Configuration["ServiceAuth:ClientId"]
-        ?? (builder.Environment.IsEnvironment("Testing") ? null!
+        ?? (builder.Environment.IsEnvironment("Integration") ? null!
             : throw new InvalidOperationException("ServiceAuth:ClientId is required."));
     if (builder.Configuration["ServiceAuth:ClientSecret"] is string clientSecret)
         opts.ClientSecret = clientSecret;
@@ -96,10 +96,10 @@ services.AddAzureServiceBusTransport(
     opts =>
     {
         opts.ConnectionString = builder.Configuration.GetConnectionString("asb")
-            ?? (builder.Environment.IsEnvironment("Testing") ? null!
+            ?? (builder.Environment.IsEnvironment("Integration") ? null!
                 : throw new InvalidOperationException("Connection string 'asb' is required."));
         opts.ServiceName = builder.Configuration["ServiceBus:ServiceName"]
-            ?? (builder.Environment.IsEnvironment("Testing") ? "concertable-customer"
+            ?? (builder.Environment.IsEnvironment("Integration") ? "concertable-customer"
                 : throw new InvalidOperationException("Configuration 'ServiceBus:ServiceName' is required."));
     },
     reg =>
@@ -129,7 +129,7 @@ services.AddInbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionStr
 services.AddScoped<AuditInterceptor>();
 services.AddScoped<IDomainEventDispatchInterceptor, DomainEventDispatchInterceptor>();
 services.AddSeedingInfrastructure();
-if (!builder.Environment.IsEnvironment("Testing"))
+if (!builder.Environment.IsEnvironment("Integration"))
 {
     services.AddScoped<IDbInitializer, DevDbInitializer>();
     services.AddScoped<SeedState>();
@@ -149,7 +149,7 @@ services.AddArtistModule(builder.Configuration);
 
 services.AddNotificationClient();
 services.AddCurrentUser();
-if (!builder.Environment.IsEnvironment("Testing"))
+if (!builder.Environment.IsEnvironment("Integration"))
     services.AddPaymentClient(builder.Configuration);
 
 services.AddExceptionHandler<GlobalExceptionHandler>();
