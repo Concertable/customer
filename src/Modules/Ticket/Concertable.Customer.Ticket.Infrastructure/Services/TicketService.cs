@@ -53,7 +53,9 @@ internal sealed class TicketService : ITicketService
         concertModule.GetByIdAsync(purchaseParams.ConcertId)
             .OrFailure<ConcertDto, PurchaseError>(
                 new PurchaseError.ConcertNotFound(purchaseParams.ConcertId))
-            .Bind(concert => ValidatePurchase(concert, purchaseParams.Quantity))
+            .Ensure(
+                concert => ticketValidator.CanPurchaseTickets(concert, purchaseParams.Quantity),
+                errors => new PurchaseError.Invalid(CreateValidationErrors("purchase", errors)))
             .BindAsync(concert => PayForTicketsAsync(concert, purchaseParams));
 
     private async Task<Result<TicketPayment, PurchaseError>> PayForTicketsAsync(
@@ -122,7 +124,9 @@ internal sealed class TicketService : ITicketService
     public Task<Result<TicketCheckout, CheckoutError>> CheckoutAsync(int concertId, int quantity) =>
         concertModule.GetByIdAsync(concertId)
             .OrFailure<ConcertDto, CheckoutError>(new CheckoutError.ConcertNotFound(concertId))
-            .Bind(concert => ValidateCheckout(concert, quantity))
+            .Ensure(
+                concert => ticketValidator.CanPurchaseTickets(concert, quantity),
+                errors => new CheckoutError.Invalid(CreateValidationErrors("checkout", errors)))
             .MapAsync(concert => CreateCheckoutAsync(concert, quantity));
 
     private async Task<TicketCheckout> CreateCheckoutAsync(ConcertDto concert, int quantity)
@@ -139,24 +143,6 @@ internal sealed class TicketService : ITicketService
         var session = await customerPaymentClient.CreatePaymentSessionAsync(currentUser.GetId(), concert.Id, concert.PayeeOwnerId, metadata);
 
         return new TicketCheckout(session, concert.Price, concert.Id, quantity);
-    }
-
-    private Result<ConcertDto, PurchaseError> ValidatePurchase(ConcertDto concert, int quantity)
-    {
-        var validation = ticketValidator.CanPurchaseTickets(concert, quantity);
-        if (validation.TryGetErrors(out var errors))
-            return new PurchaseError.Invalid(CreateValidationErrors("purchase", errors));
-
-        return concert;
-    }
-
-    private Result<ConcertDto, CheckoutError> ValidateCheckout(ConcertDto concert, int quantity)
-    {
-        var validation = ticketValidator.CanPurchaseTickets(concert, quantity);
-        if (validation.TryGetErrors(out var errors))
-            return new CheckoutError.Invalid(CreateValidationErrors("checkout", errors));
-
-        return concert;
     }
 
     public async Task<IEnumerable<TicketDto>> GetUserUpcomingAsync()
