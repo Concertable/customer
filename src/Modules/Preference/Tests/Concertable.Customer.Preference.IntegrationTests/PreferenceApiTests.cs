@@ -79,7 +79,7 @@ public sealed class PreferenceApiTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Create_MissingPreference_Returns201WithoutBody()
+    public async Task Create_MissingPreference_Returns201WithBody()
     {
         var user = fixture.SeedState.Customer3;
         await RemovePreferenceAsync(user.Id);
@@ -88,7 +88,10 @@ public sealed class PreferenceApiTests : IAsyncLifetime
         var response = await client.PostAsync("/api/preference", NewRequest());
 
         await response.ShouldBe(HttpStatusCode.Created);
-        (await response.Content.ReadAsStringAsync()).ShouldBe(string.Empty);
+        var createdPreference = (await response.Content.ReadAsync<PreferenceDto>()).ShouldNotBeNull();
+        createdPreference.UserId.ShouldBe(user.Id);
+        createdPreference.RadiusKm.ShouldBe(30);
+        createdPreference.Genres.Order().ShouldBe([Genre.Rock, Genre.Jazz]);
 
         var getResponse = await client.GetAsync("/api/preference/user");
         await getResponse.ShouldBe(HttpStatusCode.OK);
