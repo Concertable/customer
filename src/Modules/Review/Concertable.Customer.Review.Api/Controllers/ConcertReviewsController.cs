@@ -21,8 +21,8 @@ internal sealed class ConcertReviewsController : ControllerBase
     public async Task<ActionResult<ReviewDto>> Create(int concertId, [FromBody] CreateReviewRequest request)
     {
         var result = await reviewService.CreateAsync(concertId, request);
-
-        return result.ToActionResult(value => CreatedAtAction(nameof(GetByConcertId), new { concertId }, value));
+        return result.ToActionResult(value =>
+            (ActionResult<ReviewDto>)CreatedAtAction(nameof(GetByConcertId), new { concertId }, value));
     }
 
     [HttpGet]
