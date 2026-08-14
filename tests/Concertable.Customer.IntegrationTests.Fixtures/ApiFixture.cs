@@ -14,6 +14,7 @@ using Concertable.Payment.Client;
 using Concertable.Customer.Seed.Infrastructure;
 using Concertable.Shared.Email.Application;
 using Concertable.Shared.Geocoding.Application;
+using Concertable.Kernel;
 using Concertable.Testing.Integration;
 using Concertable.Testing.Integration.Logging;
 using Concertable.Testing.Integration.Mocks;
