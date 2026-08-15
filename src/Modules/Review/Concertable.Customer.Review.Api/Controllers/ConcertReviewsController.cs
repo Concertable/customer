@@ -18,9 +18,11 @@ internal sealed class ConcertReviewsController : ControllerBase
 
     [HttpPost]
     [Authorize(Policy = "Customer")]
-    public async Task<ActionResult<ReviewDto>> Create(int concertId, [FromBody] CreateReviewRequest request) =>
-        (await reviewService.CreateAsync(concertId, request))
-            .ToCreatedOrProblem(_ => $"/api/concerts/{concertId}/reviews");
+    public async Task<ActionResult<ReviewDto>> Create(int concertId, [FromBody] CreateReviewRequest request)
+    {
+        var result = await reviewService.CreateAsync(concertId, request);
+        return result.ToCreatedAtActionOrProblem(nameof(GetByConcertId), new { concertId });
+    }
 
     [HttpGet]
     [AllowAnonymous]

@@ -252,6 +252,7 @@ public sealed class ReviewApiTests : IAsyncLifetime
 
         // Assert
         await response.ShouldBe(HttpStatusCode.Created);
+        response.Headers.Location.ShouldBe(new Uri($"http://localhost/api/concerts/{concert.Id}/reviews"));
         var review = await response.Content.ReadAsync<ReviewDto>();
         Assert.NotNull(review);
         Assert.Equal(4, review.Stars);
