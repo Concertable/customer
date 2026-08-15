@@ -14,6 +14,6 @@ export interface TicketPurchasedPayload {
 
 export interface TicketPurchaseFailedPayload {
   transactionId: string;
-  failureCode: string;
-  failureMessage: string;
+  failureCode?: string;
+  failureMessage?: string;
 }
