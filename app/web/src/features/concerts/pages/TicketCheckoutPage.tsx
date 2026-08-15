@@ -6,7 +6,7 @@ import { Skeleton } from "@concertable/web/components/ui/skeleton";
 import type { TicketPurchasedPayload } from "@concertable/customer/features/notifications";
 import { useConcert, type Concert } from "@concertable/web/features/concerts";
 import { useTicketCheckoutQuery } from "@concertable/customer/features/tickets";
-import { useCheckoutFlow, type CheckoutFlowState } from "@concertable/web/features/concerts/hooks/useCheckoutFlow";
+import type { CheckoutFlowState } from "@concertable/web/features/concerts/hooks/useCheckoutFlow";
 import { CheckoutLayout } from "@concertable/web/features/concerts/components/checkout/CheckoutLayout";
 import { CheckoutSection } from "@concertable/web/features/concerts/components/checkout/CheckoutSection";
 import { CheckoutEventBanner } from "@concertable/web/features/concerts/components/checkout/CheckoutEventBanner";
@@ -15,6 +15,7 @@ import { QuantitySelector } from "@concertable/web/features/concerts/components/
 import { CheckoutSuccess } from "@concertable/web/features/concerts/components/checkout/CheckoutSuccess";
 import { CheckoutFlow } from "@concertable/web/features/concerts/components/checkout/CheckoutFlow";
 import { StripePaymentForm } from "@concertable/web/features/concerts/components/checkout/StripePaymentForm";
+import { useTicketPaymentFlow } from "../hooks/useTicketPaymentFlow";
 
 export function TicketCheckoutPage() {
   const { id } = useParams({ from: "/_customer/concert/checkout/$id" });
@@ -59,14 +60,19 @@ export function TicketCheckoutFlow({ concert, flow }: Readonly<Props>) {
 
 function TicketCheckoutForm({ concert }: { concert: Concert }) {
   const [quantity, setQuantity] = useState(1);
-  const [submitted, setSubmitted] = useState(false);
-  const flow = useCheckoutFlow<TicketPurchasedPayload>({ event: "TicketPurchased" });
   const {
     data: checkout,
     isLoading: isCheckoutLoading,
     isError: isCheckoutError,
     isFetching,
   } = useTicketCheckoutQuery(concert.id, quantity);
+  const {
+    flow,
+    submitted,
+    paymentError,
+    paymentConfirmed,
+    retryPayment,
+  } = useTicketPaymentFlow(checkout?.session.clientSecret);
 
   if (submitted) return <TicketCheckoutFlow concert={concert} flow={flow} />;
   if (isCheckoutLoading) return <CheckoutSkeleton />;
@@ -109,12 +115,23 @@ function TicketCheckoutForm({ concert }: { concert: Concert }) {
       }
     >
       <CheckoutSection title="Payment Method">
-        <StripePaymentForm
-          session={checkout.session}
-          submitLabel={`Pay £${total.toFixed(2)}`}
-          onSuccess={() => setSubmitted(true)}
-          disabled={isFetching}
-        />
+        {paymentError ? (
+          <div className="space-y-4">
+            <p data-testid="payment-error" className="text-destructive text-sm">
+              {paymentError}
+            </p>
+            <Button type="button" variant="outline" onClick={retryPayment}>
+              Try again
+            </Button>
+          </div>
+        ) : (
+          <StripePaymentForm
+            session={checkout.session}
+            submitLabel={`Pay £${total.toFixed(2)}`}
+            onSuccess={paymentConfirmed}
+            disabled={isFetching}
+          />
+        )}
       </CheckoutSection>
     </CheckoutLayout>
   );
