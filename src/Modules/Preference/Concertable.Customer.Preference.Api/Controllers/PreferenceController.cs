@@ -23,7 +23,7 @@ internal sealed class PreferenceController : ControllerBase
     public async Task<ActionResult<PreferenceDto>> Create([FromBody] PreferenceRequest request)
     {
         var result = await preferenceService.CreateAsync(request);
-        return result.ToActionResult(_ => Created());
+        return result.ToCreatedOrProblem();
     }
 
     [HttpPut("{id}")]
