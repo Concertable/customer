@@ -56,7 +56,7 @@ export function TicketCheckoutScreen() {
   );
   const handleFailure = useCallback((failure: TicketPurchaseFailedPayload) => {
     failureReceived.current = true;
-    notify(failure.failureMessage, "error");
+    notify(failure.failureMessage ?? "Payment failed.", "error");
     setSubmitted(false);
   }, []);
   const flow = useCheckoutFlow<

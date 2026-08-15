@@ -22,7 +22,7 @@ export function useTicketPaymentFlow(clientSecret?: string) {
   );
   const handleFailure = useCallback((failure: TicketPurchaseFailedPayload) => {
     failureReceived.current = true;
-    setPaymentError(failure.failureMessage);
+    setPaymentError(failure.failureMessage ?? "Payment failed.");
     setSubmitted(false);
   }, []);
   const flow = useCheckoutFlow<
