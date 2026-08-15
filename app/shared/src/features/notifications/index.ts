@@ -1,2 +1,5 @@
 export { useTicketPurchasedHandler } from "./hooks/useTicketPurchasedHandler";
-export type { TicketPurchasedPayload } from "./types";
+export type {
+  TicketPurchaseFailedPayload,
+  TicketPurchasedPayload,
+} from "./types";
