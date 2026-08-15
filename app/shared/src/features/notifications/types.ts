@@ -5,15 +5,9 @@ export interface TicketPurchasedPayload {
   amount: number;
   currency?: string;
   purchaseDate: string;
-  transactionId: string;
+  transactionId?: string;
   clientSecret?: string;
   userEmail?: string;
   ticketIds: number[];
   concertId: number;
-}
-
-export interface TicketPurchaseFailedPayload {
-  transactionId: string;
-  failureCode?: string;
-  failureMessage?: string;
 }

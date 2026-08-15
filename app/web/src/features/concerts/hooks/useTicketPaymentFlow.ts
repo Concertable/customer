@@ -1,60 +1,66 @@
-import { useCallback, useRef, useState } from "react";
-import type {
-  TicketPurchaseFailedPayload,
-  TicketPurchasedPayload,
-} from "@concertable/customer/features/notifications";
-import { useCheckoutFlow } from "@concertable/web/features/concerts/hooks/useCheckoutFlow";
+import { useEffect, useRef, useState } from "react";
+import type { TicketPurchasedPayload } from "@concertable/customer/features/notifications";
+import type { CheckoutFlowState } from "@concertable/web/features/concerts/hooks/useCheckoutFlow";
+import { notificationConnection } from "@concertable/web/lib/signalr";
+
+interface TicketPurchaseFailedPayload {
+  transactionId: string;
+  failureMessage?: string;
+}
 
 export function useTicketPaymentFlow(clientSecret?: string) {
   const [submitted, setSubmitted] = useState(false);
   const [paymentError, setPaymentError] = useState<string>();
-  const [attempt, setAttempt] = useState(0);
+  const [flow, setFlow] = useState<CheckoutFlowState<TicketPurchasedPayload>>({
+    phase: "awaiting",
+  });
   const failureReceived = useRef(false);
   const transactionId = clientSecret?.split("_secret_")[0];
-  const matchesSuccess = useCallback(
-    (payload: TicketPurchasedPayload) => payload.transactionId === transactionId,
-    [transactionId],
-  );
-  const matchesFailure = useCallback(
-    (failure: TicketPurchaseFailedPayload) =>
-      failure.transactionId === transactionId,
-    [transactionId],
-  );
-  const handleFailure = useCallback((failure: TicketPurchaseFailedPayload) => {
-    failureReceived.current = true;
-    setPaymentError(failure.failureMessage ?? "Payment failed.");
-    setSubmitted(false);
-  }, []);
-  const flow = useCheckoutFlow<
-    TicketPurchasedPayload,
-    TicketPurchaseFailedPayload
-  >({
-    event: "TicketPurchased",
-    failureEvent: "TicketPurchaseFailed",
-    active: transactionId !== undefined,
-    timeoutActive: submitted,
-    matchesSuccess,
-    matchesFailure,
-    onFailure: handleFailure,
-    resetKey: `${transactionId}:${attempt}`,
-  });
 
-  const paymentStarted = () => {
+  useEffect(() => {
     failureReceived.current = false;
+    setSubmitted(false);
     setPaymentError(undefined);
-    setAttempt((current) => current + 1);
-  };
+    setFlow({ phase: "awaiting" });
+  }, [transactionId]);
+
+  useEffect(() => {
+    if (!transactionId) return;
+
+    const successHandler = (payload: TicketPurchasedPayload) => {
+      if (payload.transactionId !== transactionId) return;
+      setFlow({ phase: "success", result: payload });
+    };
+    const failureHandler = (failure: TicketPurchaseFailedPayload) => {
+      if (failure.transactionId !== transactionId) return;
+      failureReceived.current = true;
+      setPaymentError(failure.failureMessage ?? "Payment failed.");
+      setSubmitted(false);
+    };
+
+    notificationConnection.on("TicketPurchased", successHandler);
+    notificationConnection.on("TicketPurchaseFailed", failureHandler);
+    return () => {
+      notificationConnection.off("TicketPurchased", successHandler);
+      notificationConnection.off("TicketPurchaseFailed", failureHandler);
+    };
+  }, [transactionId]);
+
+  useEffect(() => {
+    if (!submitted || flow.phase !== "awaiting") return;
+    const timeoutId = setTimeout(() => setFlow({ phase: "timeout" }), 30_000);
+    return () => clearTimeout(timeoutId);
+  }, [flow.phase, submitted]);
 
   const paymentConfirmed = () => {
-    if (failureReceived.current) return;
-    setSubmitted(true);
+    if (!failureReceived.current) setSubmitted(true);
   };
 
-  return {
-    flow,
-    submitted,
-    paymentError,
-    paymentStarted,
-    paymentConfirmed,
+  const retryPayment = () => {
+    failureReceived.current = false;
+    setPaymentError(undefined);
+    setFlow({ phase: "awaiting" });
   };
+
+  return { flow, submitted, paymentError, paymentConfirmed, retryPayment };
 }

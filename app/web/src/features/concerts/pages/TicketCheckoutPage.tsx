@@ -3,10 +3,7 @@ import { useParams, useRouter } from "@tanstack/react-router";
 import dayjs from "dayjs";
 import { Button } from "@concertable/web/components/ui/button";
 import { Skeleton } from "@concertable/web/components/ui/skeleton";
-import type {
-  TicketPurchaseFailedPayload,
-  TicketPurchasedPayload,
-} from "@concertable/customer/features/notifications";
+import type { TicketPurchasedPayload } from "@concertable/customer/features/notifications";
 import { useConcert, type Concert } from "@concertable/web/features/concerts";
 import { useTicketCheckoutQuery } from "@concertable/customer/features/tickets";
 import type { CheckoutFlowState } from "@concertable/web/features/concerts/hooks/useCheckoutFlow";
@@ -40,16 +37,11 @@ const config = {
 
 interface Props {
   concert: Concert;
-  flow: CheckoutFlowState<
-    TicketPurchasedPayload,
-    TicketPurchaseFailedPayload
-  >;
+  flow: CheckoutFlowState<TicketPurchasedPayload>;
 }
 
 export function TicketCheckoutFlow({ concert, flow }: Readonly<Props>) {
   const router = useRouter();
-
-  if (flow.phase === "failure") return null;
 
   return (
     <CheckoutFlow
@@ -78,8 +70,8 @@ function TicketCheckoutForm({ concert }: { concert: Concert }) {
     flow,
     submitted,
     paymentError,
-    paymentStarted,
     paymentConfirmed,
+    retryPayment,
   } = useTicketPaymentFlow(checkout?.session.clientSecret);
 
   if (submitted) return <TicketCheckoutFlow concert={concert} flow={flow} />;
@@ -123,14 +115,23 @@ function TicketCheckoutForm({ concert }: { concert: Concert }) {
       }
     >
       <CheckoutSection title="Payment Method">
-        <StripePaymentForm
-          session={checkout.session}
-          submitLabel={`Pay £${total.toFixed(2)}`}
-          error={paymentError}
-          onSubmitStart={paymentStarted}
-          onSuccess={paymentConfirmed}
-          disabled={isFetching}
-        />
+        {paymentError ? (
+          <div className="space-y-4">
+            <p data-testid="payment-error" className="text-destructive text-sm">
+              {paymentError}
+            </p>
+            <Button type="button" variant="outline" onClick={retryPayment}>
+              Try again
+            </Button>
+          </div>
+        ) : (
+          <StripePaymentForm
+            session={checkout.session}
+            submitLabel={`Pay £${total.toFixed(2)}`}
+            onSuccess={paymentConfirmed}
+            disabled={isFetching}
+          />
+        )}
       </CheckoutSection>
     </CheckoutLayout>
   );
