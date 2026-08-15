@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -7,7 +7,10 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useStripe } from "@stripe/stripe-react-native";
 import { useConcert, useCheckoutFlow } from "@concertable/shared/features/concerts";
 import { useTicketCheckoutQuery } from "@concertable/customer/features/tickets";
-import type { TicketPurchasedPayload } from "@concertable/customer/features/notifications";
+import type {
+  TicketPurchaseFailedPayload,
+  TicketPurchasedPayload,
+} from "@concertable/customer/features/notifications";
 import { Button } from "@concertable/mobile/components/ui/button";
 import { Skeleton } from "@concertable/mobile/components/ui/skeleton";
 import { Text } from "@concertable/mobile/components/ui/text";
@@ -24,30 +27,9 @@ import type { CustomerConcertNavParamList } from "../../../navigation/types";
 type CheckoutRoute = RouteProp<CustomerConcertNavParamList, "TicketCheckout">;
 type CheckoutNav = NativeStackNavigationProp<CustomerConcertNavParamList>;
 
-function TicketCheckoutAwaitingFlow() {
-  const nav = useNavigation<CheckoutNav>();
-  const flow = useCheckoutFlow<TicketPurchasedPayload>({
-    connection: notificationConnection,
-    event: "TicketPurchased",
-  });
-
-  useEffect(() => {
-    logger.log("[TicketCheckoutScreen] flow", {
-      phase: flow.phase,
-      hasResult: "result" in flow,
-    });
-    if (flow.phase === "success") {
-      logger.log("[TicketCheckoutScreen] phase=success → nav.replace");
-      nav.replace("CheckoutSuccess", { ticketCount: flow.result.ticketIds.length });
-    }
-  }, [flow, nav]);
-
-  logger.log("[TicketCheckoutScreen] rendering CheckoutAwaiting", { phase: flow.phase });
-  return <CheckoutAwaiting timed_out={flow.phase === "timeout"} />;
-}
-
 export function TicketCheckoutScreen() {
   const route = useRoute<CheckoutRoute>();
+  const nav = useNavigation<CheckoutNav>();
   const { concertId } = route.params;
 
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
@@ -58,8 +40,50 @@ export function TicketCheckoutScreen() {
   const [ready, setReady] = useState(false);
   const [paying, setPaying] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const failureReceived = useRef(false);
 
   const { data: checkout, isLoading, isError, isFetching } = useTicketCheckoutQuery(concertId, qty);
+  const transactionId = checkout?.session.clientSecret.split("_secret_")[0];
+  const matchesSuccess = useCallback(
+    (payload: TicketPurchasedPayload) => payload.transactionId === transactionId,
+    [transactionId],
+  );
+  const matchesFailure = useCallback(
+    (failure: TicketPurchaseFailedPayload) =>
+      failure.transactionId === transactionId,
+    [transactionId],
+  );
+  const handleFailure = useCallback((failure: TicketPurchaseFailedPayload) => {
+    failureReceived.current = true;
+    notify(failure.failureMessage, "error");
+    setSubmitted(false);
+  }, []);
+  const flow = useCheckoutFlow<
+    TicketPurchasedPayload,
+    TicketPurchaseFailedPayload
+  >({
+    connection: notificationConnection,
+    event: "TicketPurchased",
+    failureEvent: "TicketPurchaseFailed",
+    active: transactionId !== undefined,
+    timeoutActive: submitted,
+    matchesSuccess,
+    matchesFailure,
+    onFailure: handleFailure,
+    resetKey: `${transactionId}:${attempt}`,
+  });
+
+  useEffect(() => {
+    logger.log("[TicketCheckoutScreen] flow", {
+      phase: flow.phase,
+      hasResult: "result" in flow,
+    });
+    if (flow.phase !== "success") return;
+
+    logger.log("[TicketCheckoutScreen] phase=success → nav.replace");
+    nav.replace("CheckoutSuccess", { ticketCount: flow.result.ticketIds.length });
+  }, [flow, nav]);
 
   useEffect(() => {
     if (!checkout) return;
@@ -84,6 +108,8 @@ export function TicketCheckoutScreen() {
   }, [checkout]);
 
   async function handlePay() {
+    failureReceived.current = false;
+    setAttempt((current) => current + 1);
     setPaying(true);
     const { error } = await presentPaymentSheet();
     setPaying(false);
@@ -95,6 +121,7 @@ export function TicketCheckoutScreen() {
       if (error.code !== "Canceled") notify(error.message, "error");
       return;
     }
+    if (failureReceived.current) return;
     logger.log("[TicketCheckoutScreen] submitted — waiting for TicketPurchased", {
       connectionState: notificationConnection.state,
     });
@@ -102,7 +129,7 @@ export function TicketCheckoutScreen() {
   }
 
   if (submitted)
-    return <TicketCheckoutAwaitingFlow />;
+    return <CheckoutAwaiting timed_out={flow.phase === "timeout"} />;
 
   if (isLoading) {
     return (
