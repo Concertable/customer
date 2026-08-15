@@ -3,10 +3,13 @@ import { useParams, useRouter } from "@tanstack/react-router";
 import dayjs from "dayjs";
 import { Button } from "@concertable/web/components/ui/button";
 import { Skeleton } from "@concertable/web/components/ui/skeleton";
-import type { TicketPurchasedPayload } from "@concertable/customer/features/notifications";
+import type {
+  TicketPurchaseFailedPayload,
+  TicketPurchasedPayload,
+} from "@concertable/customer/features/notifications";
 import { useConcert, type Concert } from "@concertable/web/features/concerts";
 import { useTicketCheckoutQuery } from "@concertable/customer/features/tickets";
-import { useCheckoutFlow, type CheckoutFlowState } from "@concertable/web/features/concerts/hooks/useCheckoutFlow";
+import type { CheckoutFlowState } from "@concertable/web/features/concerts/hooks/useCheckoutFlow";
 import { CheckoutLayout } from "@concertable/web/features/concerts/components/checkout/CheckoutLayout";
 import { CheckoutSection } from "@concertable/web/features/concerts/components/checkout/CheckoutSection";
 import { CheckoutEventBanner } from "@concertable/web/features/concerts/components/checkout/CheckoutEventBanner";
@@ -15,6 +18,7 @@ import { QuantitySelector } from "@concertable/web/features/concerts/components/
 import { CheckoutSuccess } from "@concertable/web/features/concerts/components/checkout/CheckoutSuccess";
 import { CheckoutFlow } from "@concertable/web/features/concerts/components/checkout/CheckoutFlow";
 import { StripePaymentForm } from "@concertable/web/features/concerts/components/checkout/StripePaymentForm";
+import { useTicketPaymentFlow } from "../hooks/useTicketPaymentFlow";
 
 export function TicketCheckoutPage() {
   const { id } = useParams({ from: "/_customer/concert/checkout/$id" });
@@ -36,11 +40,16 @@ const config = {
 
 interface Props {
   concert: Concert;
-  flow: CheckoutFlowState<TicketPurchasedPayload>;
+  flow: CheckoutFlowState<
+    TicketPurchasedPayload,
+    TicketPurchaseFailedPayload
+  >;
 }
 
 export function TicketCheckoutFlow({ concert, flow }: Readonly<Props>) {
   const router = useRouter();
+
+  if (flow.phase === "failure") return null;
 
   return (
     <CheckoutFlow
@@ -59,14 +68,19 @@ export function TicketCheckoutFlow({ concert, flow }: Readonly<Props>) {
 
 function TicketCheckoutForm({ concert }: { concert: Concert }) {
   const [quantity, setQuantity] = useState(1);
-  const [submitted, setSubmitted] = useState(false);
-  const flow = useCheckoutFlow<TicketPurchasedPayload>({ event: "TicketPurchased" });
   const {
     data: checkout,
     isLoading: isCheckoutLoading,
     isError: isCheckoutError,
     isFetching,
   } = useTicketCheckoutQuery(concert.id, quantity);
+  const {
+    flow,
+    submitted,
+    paymentError,
+    paymentStarted,
+    paymentConfirmed,
+  } = useTicketPaymentFlow(checkout?.session.clientSecret);
 
   if (submitted) return <TicketCheckoutFlow concert={concert} flow={flow} />;
   if (isCheckoutLoading) return <CheckoutSkeleton />;
@@ -112,7 +126,9 @@ function TicketCheckoutForm({ concert }: { concert: Concert }) {
         <StripePaymentForm
           session={checkout.session}
           submitLabel={`Pay £${total.toFixed(2)}`}
-          onSuccess={() => setSubmitted(true)}
+          error={paymentError}
+          onSubmitStart={paymentStarted}
+          onSuccess={paymentConfirmed}
           disabled={isFetching}
         />
       </CheckoutSection>
