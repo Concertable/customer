@@ -1,9 +1,9 @@
-using Concertable.Customer.DataAccess.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using CustomerReadDbContext = Concertable.Customer.DataAccess.Infrastructure.ReadDbContext;
 
 namespace Concertable.Customer.Concert.Infrastructure.Data;
 
 internal sealed class ConcertReadDbContext(
     DbContextOptions<ConcertReadDbContext> options,
     ConcertConfigurationProvider provider)
-    : ReadDbContext(options, provider, Schema.Name);
+    : CustomerReadDbContext(options, provider, Schema.Name);
