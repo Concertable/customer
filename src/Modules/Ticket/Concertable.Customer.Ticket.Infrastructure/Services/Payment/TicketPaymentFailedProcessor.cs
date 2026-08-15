@@ -34,7 +34,12 @@ internal sealed class TicketPaymentFailedProcessor : IIntegrationEventHandler<Pa
         var fromUserId = @event.Metadata.GetValue(PaymentMetadataKeys.FromUserId);
         logger.TicketPaymentFailed(fromUserId, @event.FailureCode, @event.FailureMessage);
 
-        await notifier.TicketPurchaseFailedAsync(fromUserId, new { @event.FailureCode, @event.FailureMessage });
+        await notifier.TicketPurchaseFailedAsync(fromUserId, new
+        {
+            @event.TransactionId,
+            @event.FailureCode,
+            @event.FailureMessage
+        });
 
         context.AddInboxMessage(envelope, nameof(TicketPaymentFailedProcessor));
         try
