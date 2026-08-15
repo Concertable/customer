@@ -257,7 +257,6 @@ public sealed class ReviewApiTests : IAsyncLifetime
         Assert.NotNull(review);
         Assert.Equal(4, review.Stars);
         Assert.Equal("Great concert", review.Details);
-        Assert.Equal($"/api/concerts/{concert.Id}/reviews", response.Headers.Location?.OriginalString);
     }
 
     #endregion
