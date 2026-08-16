@@ -110,6 +110,39 @@ public sealed class UserServiceTests
 
     #endregion
 
+    #region GetByIdsAsync
+
+    [Fact]
+    public async Task GetByIdsAsync_ExistingUsers_ReturnsMaterializedDtos()
+    {
+        var user = NewUser();
+        var source = new List<UserEntity> { user };
+        this.userRepository
+            .Setup(repository => repository.GetByIdsAsync(It.IsAny<IEnumerable<Guid>>()))
+            .ReturnsAsync(source);
+
+        var result = await this.sut.GetByIdsAsync([user.Id]);
+        source.Add(UserEntity.FromRegistration(Guid.NewGuid(), "other@test.com"));
+
+        var customer = Assert.Single(result);
+        Assert.Equal(user.Id, customer.Id);
+        Assert.Equal(user.Email, customer.Email);
+    }
+
+    [Fact]
+    public async Task GetByIdsAsync_MissingUsers_ReturnsEmptyList()
+    {
+        this.userRepository
+            .Setup(repository => repository.GetByIdsAsync(It.IsAny<IEnumerable<Guid>>()))
+            .ReturnsAsync([]);
+
+        var result = await this.sut.GetByIdsAsync([Guid.NewGuid()]);
+
+        Assert.Empty(result);
+    }
+
+    #endregion
+
     private static UserEntity NewUser() =>
         UserEntity.FromRegistration(UserId, "customer@test.com");
 }

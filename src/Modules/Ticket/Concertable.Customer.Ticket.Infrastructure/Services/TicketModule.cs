@@ -1,3 +1,4 @@
+using Concertable.Customer.Ticket.Application.Interfaces;
 using Concertable.Customer.Ticket.Contracts;
 using Reunion;
 
@@ -5,19 +6,19 @@ namespace Concertable.Customer.Ticket.Infrastructure.Services;
 
 internal sealed class TicketModule : ITicketModule
 {
-    private readonly ITicketRepository ticketRepository;
+    private readonly ITicketService ticketService;
 
-    public TicketModule(ITicketRepository ticketRepository)
+    public TicketModule(ITicketService ticketService)
     {
-        this.ticketRepository = ticketRepository;
+        this.ticketService = ticketService;
     }
 
     public Task<Option<TicketSummary>> GetByUserAndConcertAsync(Guid userId, int concertId) =>
-        ticketRepository.GetSummaryByUserAndConcertAsync(userId, concertId).ToOption();
+        ticketService.GetByUserAndConcertAsync(userId, concertId);
 
     public Task<bool> CanReviewArtistAsync(Guid userId, int artistId) =>
-        ticketRepository.CanReviewArtistAsync(userId, artistId);
+        ticketService.CanReviewArtistAsync(userId, artistId);
 
     public Task<bool> CanReviewVenueAsync(Guid userId, int venueId) =>
-        ticketRepository.CanReviewVenueAsync(userId, venueId);
+        ticketService.CanReviewVenueAsync(userId, venueId);
 }

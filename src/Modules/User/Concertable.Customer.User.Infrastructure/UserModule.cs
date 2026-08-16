@@ -1,19 +1,16 @@
-using Concertable.Customer.User.Application.Mappers;
+using Concertable.Customer.User.Application.Interfaces;
 
 namespace Concertable.Customer.User.Infrastructure;
 
 internal sealed class UserModule : IUserModule
 {
-    private readonly IUserRepository userRepository;
+    private readonly IUserService userService;
 
-    public UserModule(IUserRepository userRepository)
+    public UserModule(IUserService userService)
     {
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
-    public async Task<IReadOnlyList<CustomerDto>> GetByIdsAsync(IEnumerable<Guid> ids)
-    {
-        var users = await userRepository.GetByIdsAsync(ids);
-        return users.Select(u => u.ToDto()).ToList();
-    }
+    public Task<IReadOnlyList<CustomerDto>> GetByIdsAsync(IEnumerable<Guid> ids) =>
+        userService.GetByIdsAsync(ids);
 }
