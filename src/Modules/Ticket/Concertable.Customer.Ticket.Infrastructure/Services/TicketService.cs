@@ -3,6 +3,7 @@ using Concertable.Customer.Ticket.Application.Commands;
 using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Application.Errors;
 using Concertable.Customer.Ticket.Application.Requests;
+using Concertable.Customer.Ticket.Contracts;
 using Concertable.Customer.Ticket.Domain.Entities;
 using Concertable.Kernel.Identity;
 using Concertable.Kernel.ValueObjects;
@@ -156,6 +157,15 @@ internal sealed class TicketService : ITicketService
         var tickets = await ticketRepository.GetHistoryByUserIdAsync(currentUser.GetId());
         return tickets.ToDtos();
     }
+
+    public Task<Option<TicketSummary>> GetByUserAndConcertAsync(Guid userId, int concertId) =>
+        ticketRepository.GetSummaryByUserAndConcertAsync(userId, concertId).ToOption();
+
+    public Task<bool> CanReviewArtistAsync(Guid userId, int artistId) =>
+        ticketRepository.CanReviewArtistAsync(userId, artistId);
+
+    public Task<bool> CanReviewVenueAsync(Guid userId, int venueId) =>
+        ticketRepository.CanReviewVenueAsync(userId, venueId);
 
     private TicketEntity BuildTicket(Guid userId, ConcertDto concert)
     {
