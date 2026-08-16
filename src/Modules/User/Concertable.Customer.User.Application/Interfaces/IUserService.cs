@@ -7,4 +7,5 @@ internal interface IUserService
 {
     Task<CustomerDto> SaveLocationAsync(double latitude, double longitude);
     Task<Option<CustomerDto>> GetMeAsync();
+    Task<IReadOnlyList<CustomerDto>> GetByIdsAsync(IEnumerable<Guid> ids);
 }
