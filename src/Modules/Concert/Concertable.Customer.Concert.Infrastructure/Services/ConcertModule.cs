@@ -6,13 +6,13 @@ namespace Concertable.Customer.Concert.Infrastructure.Services;
 
 internal sealed class ConcertModule : IConcertModule
 {
-    private readonly IConcertReadRepository concertRepository;
+    private readonly IConcertService concertService;
 
-    public ConcertModule(IConcertReadRepository concertRepository)
+    public ConcertModule(IConcertService concertService)
     {
-        this.concertRepository = concertRepository;
+        this.concertService = concertService;
     }
 
     public Task<Option<ConcertDto>> GetByIdAsync(int concertId, CancellationToken ct = default) =>
-        concertRepository.GetDtoAsync(concertId, ct).ToOption();
+        concertService.GetByIdAsync(concertId, ct);
 }
