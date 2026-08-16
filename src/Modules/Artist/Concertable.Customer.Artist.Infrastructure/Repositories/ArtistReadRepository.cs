@@ -7,9 +7,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Artist.Infrastructure.Repositories;
 
-internal sealed class ArtistReadRepository(IArtistReadDbContext context)
-    : QueryableReadRepository<ArtistEntity, int>(context.Artists), IArtistReadRepository
+internal sealed class ArtistReadRepository : QueryableReadRepository<ArtistEntity, int>, IArtistReadRepository
 {
+    private readonly IArtistReadDbContext context;
+
+    public ArtistReadRepository(IArtistReadDbContext context) : base(context.Artists)
+    {
+        this.context = context;
+    }
+
     public Task<ArtistDetails?> GetDetailsByIdAsync(int artistId) =>
         context.Artists
             .Where(a => a.Id == artistId)
