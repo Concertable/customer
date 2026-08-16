@@ -7,9 +7,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Venue.Infrastructure.Repositories;
 
-internal sealed class VenueReadRepository(IVenueReadDbContext context)
-    : QueryableReadRepository<VenueEntity, int>(context.Venues), IVenueReadRepository
+internal sealed class VenueReadRepository : QueryableReadRepository<VenueEntity, int>, IVenueReadRepository
 {
+    private readonly IVenueReadDbContext context;
+
+    public VenueReadRepository(IVenueReadDbContext context) : base(context.Venues)
+    {
+        this.context = context;
+    }
+
     public Task<VenueDetails?> GetDetailsByIdAsync(int venueId) =>
         context.Venues
             .Where(v => v.Id == venueId)

@@ -4,10 +4,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.DataAccess.Infrastructure;
 
-public abstract class QueryableReadRepository<TEntity, TKey>(IQueryable<TEntity> query)
-    : IReadRepository<TEntity, TKey>
+public abstract class QueryableReadRepository<TEntity, TKey> : IReadRepository<TEntity, TKey>
     where TEntity : class, IEntity<TKey>
 {
+    private readonly IQueryable<TEntity> query;
+
+    protected QueryableReadRepository(IQueryable<TEntity> query)
+    {
+        this.query = query;
+    }
+
     public virtual async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken ct = default) =>
         await query.ToListAsync(ct);
 
