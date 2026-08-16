@@ -3,6 +3,7 @@ using Concertable.Customer.User.Api.Authorization;
 using Concertable.Kernel;
 using Microsoft.AspNetCore.Mvc;
 using Reunion.AspNetCore.Mvc;
+using Reunion.Validation;
 
 namespace Concertable.Customer.Ticket.Api.Controllers;
 
@@ -52,6 +53,6 @@ internal sealed class TicketController : ControllerBase
     public async Task<ActionResult<bool>> CanPurchase(int concertId)
     {
         var result = await ticketValidator.CanBePurchasedAsync(concertId);
-        return result.Map(validation => validation.IsValid).ToOkOrProblem();
+        return result.ToOkOrProblem((ValidationResult validation) => validation.IsValid);
     }
 }
