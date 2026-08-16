@@ -24,12 +24,12 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<VenueReadDbContext>((sp, opts) =>
             opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+        services.AddScoped<IVenueReadDbContext>(sp => sp.GetRequiredService<VenueReadDbContext>());
 
         services.AddScoped<IUnitOfWork<VenueDbContext>, UnitOfWork<VenueDbContext>>();
         services.AddScoped<IUnitOfWorkBehavior, UnitOfWorkBehavior>();
 
-        services.AddScoped<IVenueReadRepository>(sp =>
-            new VenueReadRepository(sp.GetRequiredService<VenueReadDbContext>()));
+        services.AddScoped<IVenueReadRepository, VenueReadRepository>();
         services.AddScoped<IVenueService, VenueService>();
         services.AddScoped<IIntegrationEventHandler<VenueChangedEvent>, VenueProjectionHandler>();
         services.AddScoped<IIntegrationEventHandler<VenueRatingUpdatedEvent>, VenueRatingProjectionHandler>();
