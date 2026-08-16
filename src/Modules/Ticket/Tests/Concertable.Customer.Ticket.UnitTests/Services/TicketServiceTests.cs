@@ -3,6 +3,7 @@ using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Application.Errors;
 using Concertable.Customer.Ticket.Application.Interfaces;
 using Concertable.Customer.Ticket.Application.Requests;
+using Concertable.Customer.Ticket.Contracts;
 using Concertable.Customer.Ticket.Infrastructure;
 using Concertable.Customer.Ticket.Infrastructure.Services;
 using Concertable.Kernel.Identity;
@@ -18,11 +19,12 @@ using Reunion;
 using Reunion.Errors;
 using Reunion.Validation;
 
-namespace Concertable.Customer.Ticket.UnitTests;
+namespace Concertable.Customer.Ticket.UnitTests.Services;
 
 public sealed class TicketServiceTests
 {
     private readonly Mock<ITicketValidator> ticketValidator = new();
+    private readonly Mock<ITicketRepository> ticketRepository = new();
     private readonly Mock<IConcertModule> concertModule = new();
     private readonly Mock<ICustomerPaymentOperationsClient> customerPaymentClient = new();
     private readonly TicketService ticketService;
@@ -56,7 +58,7 @@ public sealed class TicketServiceTests
             .ReturnsAsync(new CheckoutSession("client-secret", "customer-session", "customer"));
 
         this.ticketService = new TicketService(
-            new Mock<ITicketRepository>().Object,
+            this.ticketRepository.Object,
             this.ticketValidator.Object,
             new Mock<IQrCodeGenerator>().Object,
             currentUser.Object,
@@ -228,6 +230,60 @@ public sealed class TicketServiceTests
         Assert.Equal(
             "Concert 42 was not found while completing a ticket purchase.",
             exception.Message);
+    }
+
+    [Fact]
+    public async Task GetByUserAndConcertAsync_ExistingTicket_ReturnsSome()
+    {
+        var userId = Guid.NewGuid();
+        var summary = new TicketSummary(Guid.NewGuid(), 42, 1, 2, DateTime.UtcNow);
+        this.ticketRepository
+            .Setup(repository => repository.GetSummaryByUserAndConcertAsync(userId, 42))
+            .ReturnsAsync(summary);
+
+        var result = await this.ticketService.GetByUserAndConcertAsync(userId, 42);
+
+        Assert.True(result.TryGetValue(out var actual));
+        Assert.Same(summary, actual);
+    }
+
+    [Fact]
+    public async Task GetByUserAndConcertAsync_MissingTicket_ReturnsNone()
+    {
+        var userId = Guid.NewGuid();
+        this.ticketRepository
+            .Setup(repository => repository.GetSummaryByUserAndConcertAsync(userId, 42))
+            .ReturnsAsync((TicketSummary?)null);
+
+        var result = await this.ticketService.GetByUserAndConcertAsync(userId, 42);
+
+        Assert.True(result.IsNone);
+    }
+
+    [Fact]
+    public async Task CanReviewArtistAsync_ForwardsRepositoryResult()
+    {
+        var userId = Guid.NewGuid();
+        this.ticketRepository
+            .Setup(repository => repository.CanReviewArtistAsync(userId, 7))
+            .ReturnsAsync(true);
+
+        var result = await this.ticketService.CanReviewArtistAsync(userId, 7);
+
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task CanReviewVenueAsync_ForwardsRepositoryResult()
+    {
+        var userId = Guid.NewGuid();
+        this.ticketRepository
+            .Setup(repository => repository.CanReviewVenueAsync(userId, 9))
+            .ReturnsAsync(false);
+
+        var result = await this.ticketService.CanReviewVenueAsync(userId, 9);
+
+        Assert.False(result);
     }
 
     private static ConcertDto CreateConcert() => new(
