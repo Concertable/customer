@@ -9,9 +9,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Concert.Infrastructure.Repositories;
 
-internal sealed class ConcertReadRepository(IConcertReadDbContext context)
-    : QueryableReadRepository<ConcertEntity, int>(context.Concerts), IConcertReadRepository
+internal sealed class ConcertReadRepository : QueryableReadRepository<ConcertEntity, int>, IConcertReadRepository
 {
+    private readonly IConcertReadDbContext context;
+
+    public ConcertReadRepository(IConcertReadDbContext context) : base(context.Concerts)
+    {
+        this.context = context;
+    }
+
     public override Task<ConcertEntity?> GetByIdAsync(int id, CancellationToken ct = default) =>
         context.Concerts.Include(c => c.Genres).FirstOrDefaultAsync(c => c.Id == id, ct);
 
