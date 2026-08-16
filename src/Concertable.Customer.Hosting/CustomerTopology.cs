@@ -13,6 +13,8 @@ public static class CustomerTopology
 {
     public static AsbTopology AddCustomerTopology(this AsbTopology topology) =>
         topology
+            .Publish<CustomerReviewSubmittedEvent>()
+            .Publish<TicketPurchasedEvent>()
             .Subscribe<ConcertChangedEvent>(CustomerConstants.ServiceName)
             .Subscribe<ConcertPostedEvent>(CustomerConstants.ServiceName)
             .Subscribe<CustomerReviewSubmittedEvent>(CustomerConstants.ServiceName)
