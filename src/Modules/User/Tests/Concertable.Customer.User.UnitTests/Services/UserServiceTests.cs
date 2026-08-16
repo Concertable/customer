@@ -40,7 +40,7 @@ public sealed class UserServiceTests
     public async Task GetMeAsync_ExistingUser_ReturnsSome()
     {
         this.userRepository
-            .Setup(repository => repository.GetByIdAsync(UserId))
+            .Setup(repository => repository.GetByIdAsync(UserId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(NewUser());
 
         var result = await this.sut.GetMeAsync();
@@ -54,7 +54,7 @@ public sealed class UserServiceTests
     public async Task GetMeAsync_MissingUser_ReturnsNone()
     {
         this.userRepository
-            .Setup(repository => repository.GetByIdAsync(UserId))
+            .Setup(repository => repository.GetByIdAsync(UserId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((UserEntity?)null);
 
         var result = await this.sut.GetMeAsync();
@@ -73,7 +73,7 @@ public sealed class UserServiceTests
         var address = new Address("Test County", "Test Town");
         var location = new Point(-0.1278, 51.5074) { SRID = 4326 };
         this.userRepository
-            .Setup(repository => repository.GetByIdAsync(UserId))
+            .Setup(repository => repository.GetByIdAsync(UserId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
         this.geocodingClient
             .Setup(client => client.GetLocationAsync(51.5074, -0.1278))
@@ -90,14 +90,14 @@ public sealed class UserServiceTests
         Assert.Equal("Test County", result.County);
         Assert.Equal("Test Town", result.Town);
         this.userRepository.Verify(repository => repository.Update(user), Times.Once);
-        this.userRepository.Verify(repository => repository.SaveChangesAsync(), Times.Once);
+        this.userRepository.Verify(repository => repository.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
     public async Task SaveLocationAsync_MissingUser_ThrowsInvariantException()
     {
         this.userRepository
-            .Setup(repository => repository.GetByIdAsync(UserId))
+            .Setup(repository => repository.GetByIdAsync(UserId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((UserEntity?)null);
 
         await Assert.ThrowsAsync<UnauthorizedAccessException>(
