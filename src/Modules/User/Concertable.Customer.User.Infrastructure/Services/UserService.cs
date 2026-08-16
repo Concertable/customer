@@ -49,4 +49,10 @@ internal sealed class UserService : IUserService
         var user = await userRepository.GetByIdAsync(currentUser.GetId());
         return user.ToOption().Map(value => value.ToDto());
     }
+
+    public async Task<IReadOnlyList<CustomerDto>> GetByIdsAsync(IEnumerable<Guid> ids)
+    {
+        var users = await userRepository.GetByIdsAsync(ids);
+        return users.Select(user => user.ToDto()).ToList();
+    }
 }
