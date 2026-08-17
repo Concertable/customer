@@ -1,5 +1,8 @@
-# Concertable.Customer.IntegrationTests.Fixtures — integration tests
+# Concertable.Customer.IntegrationTests.Fixtures
 
-Conventions: [INTEGRATION_CONVENTIONS.md](../../../agents/INTEGRATION_CONVENTIONS.md)
+**A support library, not a suite: it holds the fixture the tests boot, so it declares
+`<IsTestProject>false</IsTestProject>` and contains no tests of its own.**
+
+Fixtures and harness inventory: [INTEGRATION_CONVENTIONS.md](../../../agents/INTEGRATION_CONVENTIONS.md)
 
 @../../../agents/INTEGRATION_CONVENTIONS.md
