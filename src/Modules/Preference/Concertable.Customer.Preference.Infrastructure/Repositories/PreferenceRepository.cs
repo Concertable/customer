@@ -6,7 +6,12 @@ namespace Concertable.Customer.Preference.Infrastructure.Repositories;
 
 internal sealed class PreferenceRepository : Repository<PreferenceEntity>, IPreferenceRepository
 {
-    public PreferenceRepository(PreferenceDbContext context) : base(context) { }
+    private readonly PreferenceDbContext context;
+
+    public PreferenceRepository(PreferenceDbContext context) : base(context)
+    {
+        this.context = context;
+    }
 
     public async Task<bool> InsertAsync(PreferenceEntity preference)
     {
