@@ -41,6 +41,21 @@ Mirror of the B2B item in `api/Concertable.B2B/TECH_DEBT.md`. See [`plans/platfo
 
 ## MED
 
+### Web composes module infrastructure outside each API boundary
+
+`Concertable.Customer.Web/Program.cs` directly registers the Concert, Ticket, Review, User,
+Preference, Venue, and Artist infrastructure modules. It also calls separate API registration only
+for User and Preference, while the other module controllers are discovered implicitly. The host must
+therefore know which internal runtime registration belongs behind each HTTP module, and its project
+directly references all seven `*.Infrastructure` projects.
+
+**Resolves when:** each `AddXApi(IConfiguration)` extension composes its own `AddXModule` registration
+and controller surface, `Concertable.Customer.Web` calls only those API extensions, and the Web project
+removes every direct module-Infrastructure reference. Add an architecture guard that rejects direct
+`Modules/*/*.Infrastructure` references from Web hosts so the boundary cannot regress.
+
+---
+
 ### Preference module lacks `.Contracts` project
 
 Concert and Ticket gained their `.Contracts` projects (`IConcertModule`, `ITicketModule`); Preference is the last module without one. No cross-module caller reaches into Preference today, so this is latent.
