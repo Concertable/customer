@@ -59,7 +59,7 @@ public class ApiFixture : IAsyncLifetime
                 {
                     ["ConnectionStrings:CustomerDb"] = sqlFixture.ConnectionString,
                 });
-                if (RateLimitPermit is { } permit)
+                if (RateLimitPermit is int permit)
                     config.ConstrainRateLimiting(RateLimitPolicies.All, permit);
                 else
                     config.RelaxRateLimiting(RateLimitPolicies.All);
