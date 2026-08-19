@@ -2,6 +2,7 @@ using Concertable.Customer.Ticket.Application.Requests;
 using Concertable.Customer.User.Api.Authorization;
 using Concertable.Kernel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Reunion.AspNetCore.Mvc;
 using Reunion.Validation;
 
@@ -21,6 +22,7 @@ internal sealed class TicketController : ControllerBase
         this.ticketValidator = ticketValidator;
     }
 
+    [EnableRateLimiting("purchase")]
     [HttpPost("purchase")]
     public async Task<ActionResult<TicketPayment>> Purchase([FromBody] TicketPurchaseParams purchaseParams)
     {
@@ -29,6 +31,7 @@ internal sealed class TicketController : ControllerBase
         return result.ToOkOrProblem();
     }
 
+    [EnableRateLimiting("purchase")]
     [HttpPost("checkout")]
     public async Task<ActionResult<TicketCheckout>> Checkout([FromBody] TicketCheckoutRequest request)
     {
