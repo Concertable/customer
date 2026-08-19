@@ -1,7 +1,7 @@
 # Concertable.Customer — Architecture
 
 > Cross-service plan and design rationale: [`api/docs/MICROSERVICES_ARCHITECTURE.md`](../docs/MICROSERVICES_ARCHITECTURE.md)
-> Internal module rules: the `module-structure` and `module-structure` skills
+> Internal module rules: the `dotnet-standards:module-structure` and `dotnet:module-structure` skills
 > Outstanding gaps: [`TECH_DEBT.md`](./TECH_DEBT.md)
 
 ---
@@ -107,7 +107,7 @@ No sync calls to B2B. Browse/detail reads go to `Concertable.Search` from the SP
 
 ## Internal architecture
 
-Customer is a modular monolith inside the service. The `module-structure` and `module-structure` skills apply:
+Customer is a modular monolith inside the service. The `dotnet-standards:module-structure` and `dotnet:module-structure` skills apply:
 
 - Cross-module calls: `IXModule` facade only (in `<Module>.Contracts`). Modules with no cross-module consumer carry no Contracts project: Preference (latent — TECH_DEBT), and Venue/Artist (the Concert module owns its own venue/artist read-model slices in the `[concert]` schema rather than fanning out to them at read time)
 - Per-module DbContext, owns its own tables
