@@ -29,6 +29,7 @@ using Concertable.Seed.Shared;
 using Concertable.Seed.Shared.Extensions;
 using Concertable.ServiceDefaults;
 using Concertable.Shared.Api.Exceptions;
+using Concertable.Shared.Api.Extensions;
 using Concertable.Shared.Email.Infrastructure.Extensions;
 using Concertable.Shared.Geocoding.Infrastructure.Extensions;
 using Concertable.Shared.Notification.Infrastructure.Extensions;
@@ -52,7 +53,7 @@ public static class CustomerWebHostExtensions
             builder.Services.AddProblemDetails();
             builder.Services.AddControllers()
                 .AddApplicationPart(typeof(Concertable.Shared.Api.Controllers.GenreController).Assembly)
-                .AddJsonOptions(opts => opts.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()))
+                .AddApplicationJson()
                 .AddControllersAsServices();
             var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
             builder.Services.AddCors(options =>
