@@ -1,9 +1,13 @@
+using Concertable.Customer.Venue.Domain.Entities;
+using Concertable.DataAccess.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using CustomerReadDbContext = Concertable.Customer.DataAccess.Infrastructure.ReadDbContext;
 
 namespace Concertable.Customer.Venue.Infrastructure.Data;
 
 internal sealed class VenueReadDbContext(
     DbContextOptions<VenueReadDbContext> options,
     VenueConfigurationProvider provider)
-    : CustomerReadDbContext(options, provider, Schema.Name);
+    : ReadDbContext(options, provider, Schema.Name), IVenueReadDbContext
+{
+    IQueryable<VenueEntity> IVenueReadDbContext.Venues => Query<VenueEntity>();
+}
