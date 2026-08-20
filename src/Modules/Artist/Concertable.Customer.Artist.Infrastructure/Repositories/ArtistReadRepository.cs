@@ -1,18 +1,23 @@
 using Concertable.Customer.Artist.Application.DTOs;
 using Concertable.Customer.Artist.Domain.Entities;
+using Concertable.Customer.Artist.Infrastructure.Data;
 using Concertable.Customer.Artist.Infrastructure.Mappers;
-using Concertable.DataAccess.Application;
-using Concertable.DataAccess.Infrastructure;
+using Concertable.Customer.DataAccess.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Artist.Infrastructure.Repositories;
 
-internal sealed class ArtistReadRepository : ReadRepository<ArtistEntity, int>, IArtistReadRepository
+internal sealed class ArtistReadRepository : QueryableReadRepository<ArtistEntity, int>, IArtistReadRepository
 {
-    public ArtistReadRepository(IReadDbContext context) : base(context) { }
+    private readonly IArtistReadDbContext context;
+
+    public ArtistReadRepository(IArtistReadDbContext context) : base(context.Artists)
+    {
+        this.context = context;
+    }
 
     public Task<ArtistDetails?> GetDetailsByIdAsync(int artistId) =>
-        base.context.Query<ArtistEntity>()
+        context.Artists
             .Where(a => a.Id == artistId)
             .ToDetails()
             .FirstOrDefaultAsync();
