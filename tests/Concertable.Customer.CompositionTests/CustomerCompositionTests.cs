@@ -1,0 +1,34 @@
+using Concertable.Composition.Testing;
+using Concertable.Customer.Web;
+using Microsoft.AspNetCore.Builder;
+using Xunit;
+
+namespace Concertable.Customer.CompositionTests;
+
+public sealed class CustomerCompositionTests
+{
+    [Fact]
+    public void Web_ProductionGraphAndStrictValidation_AreValid()
+    {
+        var builder = WebApplication.CreateBuilder(CompositionTestArguments.Create());
+        builder.AddCustomerWebHost();
+        using var app = builder.Build();
+        builder.Services.ValidateComposition(app.Services, new CompositionValidationOptions
+        {
+            RootAssemblies = [typeof(CustomerWebHostExtensions).Assembly]
+        });
+        var invalidBuilder = WebApplication.CreateBuilder(CompositionTestArguments.Create());
+        invalidBuilder.AddCustomerWebHost();
+        invalidBuilder.Services.AddInvalidLifetimeGraph();
+        Assert.ThrowsAny<Exception>(() => invalidBuilder.Build());
+    }
+
+    [Fact]
+    public void AppHost_ProductionGraphAndStrictValidation_AreValid()
+    {
+        using var app = CustomerAppHost.CreateBuilder([]).Build();
+        var builder = CustomerAppHost.CreateBuilder([]);
+        builder.Services.AddInvalidLifetimeGraph();
+        Assert.ThrowsAny<Exception>(() => builder.Build());
+    }
+}
