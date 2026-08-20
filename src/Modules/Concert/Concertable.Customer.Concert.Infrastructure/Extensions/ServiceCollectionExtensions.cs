@@ -31,12 +31,12 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<ConcertReadDbContext>((sp, opts) =>
             opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+        services.AddScoped<IConcertReadDbContext>(sp => sp.GetRequiredService<ConcertReadDbContext>());
 
         services.AddScoped<IUnitOfWork<ConcertDbContext>, UnitOfWork<ConcertDbContext>>();
         services.AddScoped<IUnitOfWorkBehavior, UnitOfWorkBehavior>();
 
-        services.AddScoped<IConcertReadRepository>(sp =>
-            new ConcertReadRepository(sp.GetRequiredService<ConcertReadDbContext>()));
+        services.AddScoped<IConcertReadRepository, ConcertReadRepository>();
         services.AddScoped<IConcertService, ConcertService>();
         services.AddScoped<IConcertModule, ConcertModule>();
         services.AddScoped<IIntegrationEventHandler<ConcertChangedEvent>, ConcertProjectionHandler>();
