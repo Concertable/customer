@@ -34,6 +34,7 @@ using Concertable.Shared.Geocoding.Infrastructure.Extensions;
 using Concertable.Shared.Pdf.Infrastructure.Extensions;
 using Concertable.Shared.QrCode.Infrastructure.Extensions;
 using Concertable.Shared.Api.Exceptions;
+using Concertable.Shared.Api.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -59,7 +60,7 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddProblemDetails();
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(Concertable.Shared.Api.Controllers.GenreController).Assembly)
-    .AddJsonOptions(opts => opts.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
+    .AddApplicationJson();
 
 var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options =>
