@@ -34,10 +34,13 @@ using Concertable.Shared.Geocoding.Infrastructure.Extensions;
 using Concertable.Shared.Pdf.Infrastructure.Extensions;
 using Concertable.Shared.QrCode.Infrastructure.Extensions;
 using Concertable.Shared.Api.Exceptions;
+using Concertable.Shared.Api.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Concertable.ServiceDefaults;
+using Concertable.Customer.Web;
+using Microsoft.AspNetCore.HttpOverrides;
 using Concertable.DataAccess.Infrastructure.Data;
 using Concertable.Messaging.Application.Extensions;
 using Concertable.Messaging.AzureServiceBus.Extensions;
@@ -57,7 +60,7 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddProblemDetails();
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(Concertable.Shared.Api.Controllers.GenreController).Assembly)
-    .AddJsonOptions(opts => opts.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
+    .AddApplicationJson();
 
 var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options =>
@@ -181,12 +184,22 @@ services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 services.AddAuthorization();
 
+services.Configure<ForwardedHeadersOptions>(options =>
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto);
+
+builder.AddDefaultRateLimiting();
+builder.AddRateLimitPolicy(RateLimitPolicies.PublicRead, new RateLimitWindow { PermitLimit = 100, WindowSeconds = 60 }, perUser: false);
+builder.AddRateLimitPolicy(RateLimitPolicies.Purchase, new RateLimitWindow { PermitLimit = 20, WindowSeconds = 60 }, perUser: true);
+builder.AddRateLimitPolicy(RateLimitPolicies.Review, new RateLimitWindow { PermitLimit = 10, WindowSeconds = 60 }, perUser: true);
+
 var app = builder.Build();
 
+app.UseForwardedHeaders();
 app.UseExceptionHandler();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseDefaultRateLimiting();
 
 app.MapDefaultEndpoints();
 app.MapControllers();
