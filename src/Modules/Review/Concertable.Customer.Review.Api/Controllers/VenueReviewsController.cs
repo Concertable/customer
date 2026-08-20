@@ -1,6 +1,7 @@
 using Concertable.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Concertable.Customer.Review.Api.Controllers;
 
@@ -17,6 +18,7 @@ internal sealed class VenueReviewsController : ControllerBase
 
     [HttpGet]
     [AllowAnonymous]
+    [EnableRateLimiting("public-read")]
     public async Task<ActionResult<IPagination<ReviewDto>>> Get(int venueId, [FromQuery] PageParams pageParams) =>
         Ok(await reviewService.GetAsync(venueId, pageParams));
 
