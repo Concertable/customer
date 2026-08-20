@@ -3,12 +3,14 @@ using Concertable.Customer.Artist.Api.Responses;
 using Concertable.Customer.Artist.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Reunion.AspNetCore.Mvc;
 
 namespace Concertable.Customer.Artist.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[EnableRateLimiting("public-read")]
 internal sealed class ArtistController : ControllerBase
 {
     private readonly IArtistService artistService;
