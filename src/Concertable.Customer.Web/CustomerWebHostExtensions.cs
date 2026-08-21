@@ -53,8 +53,7 @@ public static class CustomerWebHostExtensions
             builder.Services.AddProblemDetails();
             builder.Services.AddControllers()
                 .AddApplicationPart(typeof(Concertable.Shared.Api.Controllers.GenreController).Assembly)
-                .AddApplicationJson()
-                .AddControllersAsServices();
+                .AddApplicationJson();
             var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
             builder.Services.AddCors(options =>
             {
