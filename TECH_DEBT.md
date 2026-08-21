@@ -49,14 +49,6 @@ Concert and Ticket gained their `.Contracts` projects (`IConcertModule`, `ITicke
 
 ---
 
-### Missing test projects for Artist, Venue, Preference
-
-`Concertable.Customer.Artist`, `Concertable.Customer.Venue`, and `Concertable.Customer.Preference` have no Unit or Integration test projects.
-
-**Resolves when:** Each gains at minimum an Integration tests project following the pattern in `Modules/Review/Tests/` or `Modules/Ticket/Tests/`.
-
----
-
 ## LOW
 
 ### `DateRange` mapped as `ComplexProperty` on Ticket but `OwnsOne` elsewhere
