@@ -31,4 +31,23 @@ public sealed class CustomerCompositionTests
         builder.Services.AddInvalidLifetimeGraph();
         Assert.ThrowsAny<Exception>(() => builder.Build());
     }
+
+    [Fact]
+    public void Web_ReferencesNoModuleInfrastructureAssembly()
+    {
+        var webAssemblyName = typeof(CustomerWebHostExtensions).Assembly.GetName().Name!;
+        var servicePrefix = webAssemblyName[..(webAssemblyName.LastIndexOf('.') + 1)];
+        var seedInfrastructureAssembly = $"{servicePrefix}Seed.Infrastructure";
+
+        var moduleInfrastructureReferences = typeof(CustomerWebHostExtensions).Assembly
+            .GetReferencedAssemblies()
+            .Select(reference => reference.Name)
+            .Where(name => name is not null
+                && name.StartsWith(servicePrefix, StringComparison.Ordinal)
+                && name.EndsWith(".Infrastructure", StringComparison.Ordinal)
+                && name != seedInfrastructureAssembly)
+            .ToArray();
+
+        Assert.Empty(moduleInfrastructureReferences);
+    }
 }
