@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Concertable.Customer.Concert.Application\Concertable.Customer.Concert.Application.csproj" />
     <ProjectReference Include="..\Concertable.Customer.Concert.Infrastructure\Concertable.Customer.Concert.Infrastructure.csproj" />
+    <PackageReference Include="Concertable.Shared.Api" />
     <PackageReference Include="Reunion.AspNetCore" />
   </ItemGroup>
 
