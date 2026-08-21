@@ -1,10 +1,10 @@
-using Concertable.Customer.Artist.Infrastructure.Data;
-using Concertable.Customer.Concert.Infrastructure.Data;
-using Concertable.Customer.Preference.Infrastructure.Data;
-using Concertable.Customer.Review.Infrastructure.Data;
-using Concertable.Customer.Ticket.Infrastructure.Data;
-using Concertable.Customer.User.Infrastructure.Data;
-using Concertable.Customer.Venue.Infrastructure.Data;
+using Concertable.Customer.Artist.Api.Extensions;
+using Concertable.Customer.Concert.Api.Extensions;
+using Concertable.Customer.Preference.Api.Extensions;
+using Concertable.Customer.Review.Api.Extensions;
+using Concertable.Customer.Ticket.Api.Extensions;
+using Concertable.Customer.User.Api.Extensions;
+using Concertable.Customer.Venue.Api.Extensions;
 using Concertable.Customer.Web;
 using Concertable.DataAccess.Application;
 using Concertable.Messaging.Infrastructure.Inbox;
@@ -34,13 +34,13 @@ if (!app.Environment.IsProduction())
     var sp = scope.ServiceProvider;
     await sp.GetRequiredService<OutboxDbContext>().Database.MigrateAsync();
     await sp.GetRequiredService<InboxDbContext>().Database.MigrateAsync();
-    await sp.GetRequiredService<ArtistDbContext>().Database.MigrateAsync();
-    await sp.GetRequiredService<ConcertDbContext>().Database.MigrateAsync();
-    await sp.GetRequiredService<PreferenceDbContext>().Database.MigrateAsync();
-    await sp.GetRequiredService<ReviewDbContext>().Database.MigrateAsync();
-    await sp.GetRequiredService<TicketDbContext>().Database.MigrateAsync();
-    await sp.GetRequiredService<UserDbContext>().Database.MigrateAsync();
-    await sp.GetRequiredService<VenueDbContext>().Database.MigrateAsync();
+    await sp.MigrateArtistModuleAsync();
+    await sp.MigrateConcertModuleAsync();
+    await sp.MigratePreferenceModuleAsync();
+    await sp.MigrateReviewModuleAsync();
+    await sp.MigrateTicketModuleAsync();
+    await sp.MigrateUserModuleAsync();
+    await sp.MigrateVenueModuleAsync();
     if (app.Environment.IsDevelopment())
         await sp.GetRequiredService<IDbInitializer>().InitializeAsync();
 }
