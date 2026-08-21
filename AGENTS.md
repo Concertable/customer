@@ -1,6 +1,6 @@
 # Concertable.Customer
 
-Data service — the fan/buyer marketplace side. Inherits root [`AGENTS.md`](../../AGENTS.md) + [`api/AGENTS.md`](../AGENTS.md); internal design → [`ARCHITECTURE.md`](./ARCHITECTURE.md) (read first, don't duplicate).
+Data service — the fan/buyer marketplace side. Inherits root [`AGENTS.md`](../../AGENTS.md); internal design → [`ARCHITECTURE.md`](./ARCHITECTURE.md) (read first, don't duplicate).
 
 ## Stay an agent/marketplace-facilitator, never the principal
 
