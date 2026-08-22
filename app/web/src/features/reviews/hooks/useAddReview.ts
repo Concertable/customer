@@ -1,16 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { reviewApi } from "@concertable/customer/features/reviews";
 import {
-  createReviewRequestSchema,
+  reviewApi,
   type CreateReviewRequest,
-} from "../schemas/createReviewRequestSchema";
+} from "@concertable/customer/features/reviews";
 import { useCanReviewQuery } from "./useCanReviewQuery";
-
-export interface ReviewBuffer {
-  stars: number;
-  details: string;
-}
 
 export function useAddReview(concertId: number) {
   const queryClient = useQueryClient();
@@ -21,21 +15,15 @@ export function useAddReview(concertId: number) {
 
   const mutation = useMutation({
     mutationFn: (request: CreateReviewRequest) =>
-      reviewApi.createReview({ concertId, ...request }),
+      reviewApi.createReview(concertId, request),
     onSuccess: () => {
       toast.success("Review submitted");
       queryClient.invalidateQueries({ queryKey: ["reviews"] });
     },
   });
 
-  const submit = (buffer: ReviewBuffer, onDone: () => void) => {
-    const parsed = createReviewRequestSchema.safeParse({
-      stars: buffer.stars,
-      details: buffer.details || undefined,
-    });
-    if (parsed.success) mutation.mutate(parsed.data, { onSuccess: onDone });
-    return parsed;
-  };
+  const submit = (request: CreateReviewRequest, onDone: () => void) =>
+    mutation.mutate(request, { onSuccess: onDone });
 
   return { canReview, isLoading, submit, isPending: mutation.isPending };
 }
