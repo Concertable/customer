@@ -1,6 +1,6 @@
-using Concertable.Composition.Testing;
 using Concertable.Customer.Web;
 using Concertable.Testing;
+using Concertable.Testing.Architecture;
 using Microsoft.AspNetCore.Builder;
 using Xunit;
 
