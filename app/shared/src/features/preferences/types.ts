@@ -8,7 +8,7 @@ export interface Preference {
   genres: Genre[];
 }
 
-export interface CreatePreferenceRequest {
+export interface PreferenceRequest {
   radiusKm: number;
   genres: Genre[];
 }

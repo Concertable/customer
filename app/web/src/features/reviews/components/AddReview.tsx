@@ -1,5 +1,8 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Star } from "lucide-react";
+import type { CreateReviewRequest } from "@concertable/customer/features/reviews";
 import { Button } from "@concertable/web/components/ui/button";
 import {
   Dialog,
@@ -10,6 +13,10 @@ import {
 import { Textarea } from "@concertable/web/components/ui/textarea";
 import { Label } from "@concertable/web/components/ui/label";
 import { useAddReview } from "../hooks/useAddReview";
+import {
+  createReviewRequestSchema,
+  type CreateReviewFormValues,
+} from "../schemas/createReviewRequestSchema";
 
 interface Props {
   concertId: number;
@@ -18,26 +25,32 @@ interface Props {
 export function AddReview({ concertId }: Readonly<Props>) {
   const { canReview, isLoading, submit, isPending } = useAddReview(concertId);
   const [open, setOpen] = useState(false);
-  const [stars, setStars] = useState(0);
   const [hovered, setHovered] = useState(0);
-  const [details, setDetails] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    watch,
+    formState: { errors, isValid },
+  } = useForm<CreateReviewFormValues, unknown, CreateReviewRequest>({
+    resolver: zodResolver(createReviewRequestSchema),
+    defaultValues: { stars: 0, details: "" },
+    mode: "onChange",
+  });
+  const stars = watch("stars");
 
   if (isLoading || !canReview) return null;
 
   function selectStars(value: number) {
-    setStars(value);
-    setError(null);
+    setValue("stars", value, { shouldValidate: true });
   }
 
-  function handleSubmit() {
-    const parsed = submit({ stars, details }, () => {
+  function onValid(request: CreateReviewRequest) {
+    submit(request, () => {
       setOpen(false);
-      setStars(0);
-      setDetails("");
-      setError(null);
+      reset();
     });
-    if (!parsed.success) setError(parsed.error.issues[0].message);
   }
 
   return (
@@ -50,7 +63,7 @@ export function AddReview({ concertId }: Readonly<Props>) {
             <DialogTitle>Add Review</DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4">
+          <form onSubmit={handleSubmit(onValid)} className="space-y-4">
             <div className="space-y-1">
               <Label>Rating</Label>
               <div className="flex gap-1">
@@ -72,9 +85,9 @@ export function AddReview({ concertId }: Readonly<Props>) {
                   </button>
                 ))}
               </div>
-              {error && (
+              {errors.stars && (
                 <p className="text-destructive text-xs" data-testid="review-rating-error">
-                  {error}
+                  {errors.stars.message}
                 </p>
               )}
             </div>
@@ -84,20 +97,19 @@ export function AddReview({ concertId }: Readonly<Props>) {
               <Textarea
                 id="details"
                 placeholder="Share your experience..."
-                value={details}
-                onChange={(e) => setDetails(e.target.value)}
                 rows={4}
+                {...register("details")}
               />
             </div>
 
             <Button
-              onClick={handleSubmit}
-              disabled={isPending}
+              type="submit"
+              disabled={isPending || !isValid}
               className="w-full"
             >
               {isPending ? "Submitting..." : "Submit"}
             </Button>
-          </div>
+          </form>
         </DialogContent>
       </Dialog>
     </>
