@@ -4,9 +4,9 @@ using Concertable.Testing;
 using Microsoft.AspNetCore.Builder;
 using Xunit;
 
-namespace Concertable.Customer.CompositionTests;
+namespace Concertable.Customer.ArchitectureTests;
 
-public sealed class CustomerCompositionTests
+public sealed class CustomerArchitectureTests
 {
     [Fact]
     public void Web_ProductionGraphAndStrictValidation_AreValid()
