@@ -5,7 +5,7 @@ import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { useHeaderAmountQuery } from "@concertable/shared/features/search";
 import type { ConcertHeader, ArtistHeader, VenueHeader } from "@concertable/shared/features/search";
 import { useImageUrlQuery } from "@concertable/shared/hooks";
-import { useSearchFiltersStore } from "@concertable/shared/features/search";
+import { useSearchFilters } from "@concertable/shared/features/search";
 import { Image } from "expo-image";
 import { MapPin } from "lucide-react-native";
 import { Screen } from "@concertable/mobile/components/ui/Screen";
@@ -25,7 +25,7 @@ type TabNav = BottomTabNavigationProp<CustomerTabParamList>;
 export function HomeScreen() {
   const homeNav = useNavigation<HomeNav>();
   const tabNav = useNavigation<TabNav>();
-  const { setFilters } = useSearchFiltersStore();
+  const { replaceFilters } = useSearchFilters();
 
   const { data: concerts, isLoading: concertsLoading, refetch: refetchConcerts } = useHeaderAmountQuery("concert", 15);
   const { data: artists, isLoading: artistsLoading, refetch: refetchArtists } = useHeaderAmountQuery("artist", 15);
@@ -40,7 +40,7 @@ export function HomeScreen() {
   }
 
   function goToSearch(headerType: "concert" | "artist" | "venue") {
-    setFilters({ headerType });
+    replaceFilters({ headerType });
     tabNav.navigate("SearchTab", { screen: "SearchMain" });
   }
 

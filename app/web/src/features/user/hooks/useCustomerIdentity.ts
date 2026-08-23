@@ -1,5 +1,5 @@
-import { useSyncUser as useSyncSharedUser } from "@concertable/web/features/user";
 import { customerClient } from "@concertable/customer/lib/customerClient";
+import { useMeQuery } from "@concertable/web/features/user";
 import type { User } from "@concertable/web/features/auth/types";
 
 async function getMe(): Promise<User> {
@@ -7,6 +7,6 @@ async function getMe(): Promise<User> {
   return data;
 }
 
-export function useSyncUser() {
-  useSyncSharedUser(getMe);
+export function useCustomerIdentity() {
+  return useMeQuery(getMe);
 }
