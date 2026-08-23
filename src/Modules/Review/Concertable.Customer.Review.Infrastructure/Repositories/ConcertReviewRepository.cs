@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Review.Infrastructure.Repositories;
 
-internal sealed class ConcertReviewRepository : IConcertReviewRepository
+internal sealed class ConcertReviewRepository : WriteRepository<ReviewEntity>, IConcertReviewRepository
 {
     private readonly ReviewDbContext context;
 
-    public ConcertReviewRepository(ReviewDbContext context)
+    public ConcertReviewRepository(ReviewDbContext context) : base(context)
     {
         this.context = context;
     }
@@ -43,19 +43,5 @@ internal sealed class ConcertReviewRepository : IConcertReviewRepository
             .AsNoTracking()
             .AnyAsync(r => r.TicketId == ticketId);
 
-    public async Task<bool> InsertAsync(ReviewEntity review)
-    {
-        context.Reviews.Add(review);
-
-        try
-        {
-            await context.SaveChangesAsync();
-            return true;
-        }
-        catch (DbUpdateException ex) when (ex.IsDuplicateKey())
-        {
-            ex.DiscardFailedChanges();
-            return false;
-        }
-    }
+    public Task<bool> InsertAsync(ReviewEntity review) => this.TryInsertAsync(review);
 }
