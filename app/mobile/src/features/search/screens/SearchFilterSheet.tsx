@@ -4,7 +4,7 @@ import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Calendar } from "react-native-calendars";
 import { MapPin, X } from "lucide-react-native";
 import { useCurrentLocation } from "@concertable/mobile/hooks/useCurrentLocation";
-import { useSearchFiltersStore, useGenresQuery } from "@concertable/shared/features/search";
+import { useSearchFilters, useGenresQuery } from "@concertable/shared/features/search";
 import type { HeaderType, SearchFilters, SortField } from "@concertable/shared/features/search";
 import type { Genre } from "@concertable/shared/types";
 import { GenreChips } from "@concertable/mobile/components/ui/GenreChips";
@@ -37,7 +37,7 @@ export const SearchFilterSheet = forwardRef<BottomSheetModal, Props>(function Se
     [ref],
   );
 
-  const { filters, setFilters } = useSearchFiltersStore();
+  const { filters, replaceFilters } = useSearchFilters();
   const { data: allGenres } = useGenresQuery();
 
   const [headerType, setHeaderType] = useState<HeaderType>("concert");
@@ -113,7 +113,7 @@ export const SearchFilterSheet = forwardRef<BottomSheetModal, Props>(function Se
   }
 
   function handleApply() {
-    setFilters({
+    replaceFilters({
       ...filtersRef.current,
       headerType,
       genres: genres.length ? genres : undefined,
@@ -138,7 +138,7 @@ export const SearchFilterSheet = forwardRef<BottomSheetModal, Props>(function Se
     setLocationLabel(undefined);
     setRadius(25);
     setSortOrder("date");
-    setFilters({ headerType: "concert" });
+    replaceFilters({ headerType: "concert" });
     internalRef.current?.dismiss();
   }
 

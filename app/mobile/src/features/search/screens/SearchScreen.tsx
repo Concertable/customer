@@ -3,7 +3,7 @@ import { Keyboard, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useAutocompleteQuery, useSearchFiltersStore } from "@concertable/shared/features/search";
+import { useAutocompleteQuery, useSearchFilters } from "@concertable/shared/features/search";
 import type { AutocompleteResult } from "@concertable/shared/features/search";
 import { Screen } from "@concertable/mobile/components/ui/Screen";
 import { Navbar } from "@concertable/mobile/components/ui/Navbar";
@@ -19,7 +19,7 @@ type SearchNav = NativeStackNavigationProp<SearchStackParamList>;
 
 export function SearchScreen() {
   const nav = useNavigation<SearchNav>();
-  const { filters } = useSearchFiltersStore();
+  const { filters } = useSearchFilters();
   const [focused, setFocused] = useState(false);
   const filterSheetRef = useRef<BottomSheetModal>(null);
 
