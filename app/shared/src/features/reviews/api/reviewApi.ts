@@ -12,12 +12,25 @@ const reviewApi = {
   },
 
   createReview: async (
-    concertId: number,
-    request: CreateReviewRequest,
+    concertIdOrRequest:
+      | number
+      | (CreateReviewRequest & { concertId: number }),
+    request?: CreateReviewRequest,
   ): Promise<Review> => {
+    const concertId =
+      typeof concertIdOrRequest === "number"
+        ? concertIdOrRequest
+        : concertIdOrRequest.concertId;
+    const body =
+      typeof concertIdOrRequest === "number"
+        ? request
+        : {
+            stars: concertIdOrRequest.stars,
+            details: concertIdOrRequest.details,
+          };
     const { data } = await customerClient.post<Review>(
       basePath("concert", concertId),
-      request,
+      body,
     );
     return data;
   },
