@@ -16,7 +16,7 @@ const preferenceApi = {
 
   updatePreference: async (
     id: number,
-    request: PreferenceRequest,
+    request: PreferenceRequest | Preference,
   ): Promise<Preference> => {
     const { data } = await apiClient.put<Preference>(
       `/preference/${id}`,

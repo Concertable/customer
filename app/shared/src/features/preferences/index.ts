@@ -4,4 +4,8 @@ export {
   useCreateMyPreferenceMutation,
 } from "./hooks/usePreferenceQuery";
 export { preferenceRequestSchema } from "./schemas/preferenceRequestSchema";
-export type { Preference, PreferenceRequest } from "./types";
+export type {
+  Preference,
+  PreferenceRequest,
+  CreatePreferenceRequest,
+} from "./types";

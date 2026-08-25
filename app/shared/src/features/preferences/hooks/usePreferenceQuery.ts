@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import preferenceApi from "../api/preferenceApi";
-import type { PreferenceRequest } from "../types";
+import type { Preference, PreferenceRequest } from "../types";
 
 export function useMyPreferenceQuery() {
   return useQuery({
@@ -12,7 +12,13 @@ export function useMyPreferenceQuery() {
 export function useUpdateMyPreferenceMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: PreferenceRequest }) =>
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: PreferenceRequest | Preference;
+    }) =>
       preferenceApi.updatePreference(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["preference", "my"] }),
   });
