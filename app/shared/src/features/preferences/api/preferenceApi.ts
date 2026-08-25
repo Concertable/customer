@@ -18,9 +18,13 @@ const preferenceApi = {
     id: number,
     request: PreferenceRequest | Preference,
   ): Promise<Preference> => {
+    const body: PreferenceRequest = {
+      radiusKm: request.radiusKm,
+      genres: request.genres,
+    };
     const { data } = await apiClient.put<Preference>(
       `/preference/${id}`,
-      request,
+      body,
     );
     return data;
   },
