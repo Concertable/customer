@@ -1,5 +1,5 @@
 import type { Genre } from "@concertable/shared/types";
-import type { User } from "@concertable/shared/features/auth";
+import type { User } from "@concertable/shared/features/auth/types";
 
 export interface Preference {
   id: number;
