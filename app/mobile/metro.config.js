@@ -10,7 +10,9 @@ const config = getDefaultConfig(__dirname);
 const customerPackage = path.dirname(require.resolve("@concertable/customer/package.json"));
 const mobilePackage = path.dirname(require.resolve("@concertable/mobile/package.json"));
 const sharedPackage = path.dirname(require.resolve("@concertable/shared/package.json"));
-const mobileNodeModules = path.join(path.dirname(mobilePackage), "node_modules");
+const mobileNodeModules = path.dirname(
+  path.dirname(require.resolve("react-native/package.json", { paths: [mobilePackage] })),
+);
 
 config.watchFolders = [customerPackage, mobilePackage, mobileNodeModules, sharedPackage];
 config.resolver.nodeModulesPaths = [
