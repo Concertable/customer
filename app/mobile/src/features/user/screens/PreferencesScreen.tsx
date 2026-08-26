@@ -1,8 +1,18 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { useMyPreferenceQuery, useUpdateMyPreferenceMutation, useCreateMyPreferenceMutation } from "@concertable/customer/features/preferences";
+import {
+  preferenceRequestSchema,
+  useCreateMyPreferenceMutation,
+  useMyPreferenceQuery,
+  useUpdateMyPreferenceMutation,
+} from "@concertable/customer/features/preferences";
+import type {
+  Preference,
+  PreferenceRequest,
+} from "@concertable/customer/features/preferences/types";
 import { useGenresQuery } from "@concertable/shared/features/search";
 import type { Genre } from "@concertable/shared/types";
 import { GenreChips } from "@concertable/mobile/components/ui/GenreChips";
@@ -14,41 +24,126 @@ import { theme } from "@concertable/mobile/lib/theme";
 
 const RADIUS_PRESETS = [5, 10, 25, 50, 100] as const;
 
-export function PreferencesScreen() {
+interface PreferencesFormProps {
+  preference?: Preference;
+  allGenres?: Genre[];
+}
+
+function PreferencesForm({
+  preference,
+  allGenres,
+}: Readonly<PreferencesFormProps>) {
   const nav = useNavigation();
-  const { data: preference, isLoading } = useMyPreferenceQuery();
-  const { data: allGenres } = useGenresQuery();
   const updatePreference = useUpdateMyPreferenceMutation();
   const createPreference = useCreateMyPreferenceMutation();
+  const {
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { isValid },
+  } = useForm<PreferenceRequest>({
+    resolver: zodResolver(preferenceRequestSchema),
+    defaultValues: {
+      radiusKm: preference?.radiusKm ?? 25,
+      genres: preference?.genres ?? [],
+    },
+    mode: "onChange",
+  });
 
-  const [selectedGenres, setSelectedGenres] = useState<Genre[]>(() =>
-    preference?.genres ?? [],
-  );
-  const [radiusKm, setRadiusKm] = useState<number>(() => preference?.radiusKm ?? 25);
-
-  async function handleSave() {
-    try {
-      if (preference?.id) {
-        await updatePreference.mutateAsync({
-          id: preference.id,
-          data: {
-            id: preference.id,
-            user: preference.user,
-            radiusKm,
-            genres: selectedGenres,
-          },
-        });
-      } else {
-        await createPreference.mutateAsync({ radiusKm, genres: [] });
-      }
-      notify("Preferences saved", "success");
-      nav.goBack();
-    } catch {
-      notify("Failed to save preferences", "error");
-    }
-  }
-
+  const radiusKm = watch("radiusKm");
+  const selectedGenres = watch("genres");
   const saving = updatePreference.isPending || createPreference.isPending;
+
+  const onSaved = () => {
+    notify("Preferences saved", "success");
+    nav.goBack();
+  };
+
+  const onValid = (request: PreferenceRequest) => {
+    if (preference) {
+      updatePreference.mutate(
+        { id: preference.id, data: request },
+        { onSuccess: onSaved },
+      );
+      return;
+    }
+
+    createPreference.mutate(request, { onSuccess: onSaved });
+  };
+
+  const toggleGenre = (genre: Genre) => {
+    const genres = selectedGenres.includes(genre)
+      ? selectedGenres.filter((selected) => selected !== genre)
+      : [...selectedGenres, genre];
+    setValue("genres", genres, { shouldDirty: true, shouldValidate: true });
+  };
+
+  return (
+    <SafeAreaView className="flex-1 bg-background" edges={["bottom"]}>
+      <ScrollView
+        contentContainerStyle={{ padding: 16, gap: 20 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="gap-3">
+          <Text className="text-base font-semibold text-foreground">
+            Search Radius
+          </Text>
+          <View className="flex-row flex-wrap gap-2">
+            {RADIUS_PRESETS.map((radius) => (
+              <Button
+                key={radius}
+                variant={radiusKm === radius ? "default" : "outline"}
+                size="sm"
+                onPress={() =>
+                  setValue("radiusKm", radius, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
+              >
+                <Text>{`${radius}km`}</Text>
+              </Button>
+            ))}
+          </View>
+        </View>
+
+        <View className="gap-3">
+          <Text className="text-base font-semibold text-foreground">
+            Preferred Genres
+          </Text>
+          {allGenres && (
+            <GenreChips
+              genres={allGenres}
+              selected={selectedGenres}
+              onToggle={toggleGenre}
+            />
+          )}
+        </View>
+      </ScrollView>
+
+      <View className="px-4 pt-3 pb-6 border-t border-border">
+        <Button
+          disabled={saving || !isValid}
+          onPress={handleSubmit(onValid)}
+          size="lg"
+        >
+          {saving ? (
+            <ActivityIndicator
+              size="small"
+              color={theme.primaryForeground}
+            />
+          ) : (
+            <Text>Save</Text>
+          )}
+        </Button>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+export function PreferencesScreen() {
+  const { data: preference, isLoading } = useMyPreferenceQuery();
+  const { data: allGenres } = useGenresQuery();
 
   if (isLoading) {
     return (
@@ -59,46 +154,5 @@ export function PreferencesScreen() {
     );
   }
 
-  return (
-    <SafeAreaView className="flex-1 bg-background" edges={["bottom"]}>
-      <ScrollView contentContainerStyle={{ padding: 16, gap: 20 }} showsVerticalScrollIndicator={false}>
-        <View className="gap-3">
-          <Text className="text-base font-semibold text-foreground">Search Radius</Text>
-          <View className="flex-row flex-wrap gap-2">
-            {RADIUS_PRESETS.map((r) => (
-              <Button
-                key={r}
-                variant={radiusKm === r ? "default" : "outline"}
-                size="sm"
-                onPress={() => setRadiusKm(r)}
-              >
-                <Text>{`${r}km`}</Text>
-              </Button>
-            ))}
-          </View>
-        </View>
-
-        <View className="gap-3">
-          <Text className="text-base font-semibold text-foreground">Preferred Genres</Text>
-          {allGenres && (
-            <GenreChips
-              genres={allGenres}
-              selected={selectedGenres}
-              onToggle={(genre) =>
-                setSelectedGenres((prev) => (prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre]))
-              }
-            />
-          )}
-        </View>
-      </ScrollView>
-
-      <View className="px-4 pt-3 pb-6 border-t border-border">
-        <Button disabled={saving} onPress={handleSave} size="lg">
-          {saving
-            ? <ActivityIndicator size="small" color={theme.primaryForeground} />
-            : <Text>Save</Text>}
-        </Button>
-      </View>
-    </SafeAreaView>
-  );
+  return <PreferencesForm preference={preference} allGenres={allGenres} />;
 }

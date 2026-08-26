@@ -7,7 +7,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useStripe } from "@stripe/stripe-react-native";
 import { useConcert } from "@concertable/shared/features/concerts";
 import { useTicketCheckoutQuery } from "@concertable/customer/features/tickets";
-import type { TicketPurchasedPayload } from "@concertable/customer/features/notifications";
+import type { TicketPurchasedPayload } from "@concertable/customer/features/notifications/types";
 import { Button } from "@concertable/mobile/components/ui/button";
 import { Skeleton } from "@concertable/mobile/components/ui/skeleton";
 import { Text } from "@concertable/mobile/components/ui/text";
