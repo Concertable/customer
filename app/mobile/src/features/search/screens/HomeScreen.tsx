@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { useHeaderAmountQuery } from "@concertable/shared/features/search";
-import type { ConcertHeader, ArtistHeader, VenueHeader } from "@concertable/shared/features/search";
+import type { ConcertHeader, ArtistHeader, VenueHeader } from "@concertable/shared/features/search/types";
 import { useImageUrlQuery } from "@concertable/shared/hooks";
 import { useSearchFilters } from "@concertable/shared/features/search";
 import { Image } from "expo-image";
