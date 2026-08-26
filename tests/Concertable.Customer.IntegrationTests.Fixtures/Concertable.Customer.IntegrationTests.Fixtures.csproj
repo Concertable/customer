@@ -19,8 +19,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Concertable.Customer.Web\Concertable.Customer.Web.csproj" />
-    <ProjectReference Include="..\..\..\Concertable.Shared\tests\Concertable.Testing\Concertable.Testing.csproj" />
-    <ProjectReference Include="..\..\..\Concertable.Shared\tests\Concertable.Testing.Integration\Concertable.Testing.Integration.csproj" />
+    <PackageReference Include="Concertable.Testing" />
+    <PackageReference Include="Concertable.Testing.Integration" />
     <ProjectReference Include="..\..\src\Seed\Concertable.Customer.Seed.Infrastructure\Concertable.Customer.Seed.Infrastructure.csproj" />
   </ItemGroup>
 
