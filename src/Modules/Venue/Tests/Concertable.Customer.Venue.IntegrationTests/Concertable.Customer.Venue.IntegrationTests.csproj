@@ -20,7 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Concertable.Customer.Venue.Api\Concertable.Customer.Venue.Api.csproj" />
     <ProjectReference Include="..\..\..\..\..\tests\Concertable.Customer.IntegrationTests.Fixtures\Concertable.Customer.IntegrationTests.Fixtures.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\Concertable.Shared\tests\Concertable.Testing\Concertable.Testing.csproj" />
+    <PackageReference Include="Concertable.Testing" />
   </ItemGroup>
 
   <ItemGroup>
