@@ -5,7 +5,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import QRCode from "react-native-qrcode-svg";
 import { CalendarDays, MapPin, Music, Ticket as TicketIcon } from "lucide-react-native";
 import { useUpcomingTicketsQuery, useTicketHistoryQuery } from "@concertable/customer/features/tickets";
-import type { Ticket } from "@concertable/customer/features/tickets";
+import type { Ticket } from "@concertable/customer/features/tickets/types";
 import { Screen } from "@concertable/mobile/components/ui/Screen";
 import { Navbar } from "@concertable/mobile/components/ui/Navbar";
 import { EmptyState } from "@concertable/mobile/components/ui/EmptyState";
