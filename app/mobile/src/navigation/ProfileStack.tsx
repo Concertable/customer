@@ -1,8 +1,8 @@
 import { CustomerProfileScreen } from "../features/user/screens/CustomerProfileScreen";
-import { EditProfileScreen } from "shared/features/user/screens/EditProfileScreen";
-import { LocationScreen } from "shared/features/user/screens/LocationScreen";
+import { EditProfileScreen } from "@concertable/mobile/features/user/screens/EditProfileScreen";
+import { LocationScreen } from "@concertable/mobile/features/user/screens/LocationScreen";
 import { PreferencesScreen } from "../features/user/screens/PreferencesScreen";
-import { createAppStack } from "shared/navigation/createAppStack";
+import { createAppStack } from "@concertable/mobile/navigation/createAppStack";
 import type { CustomerProfileStackParamList } from "./types";
 
 const Stack = createAppStack<CustomerProfileStackParamList>();

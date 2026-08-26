@@ -1,4 +1,5 @@
 using Aspire.Hosting;
+using Concertable.Customer.Hosting;
 using Respawn;
 using Respawn.Graph;
 using ConcertSchema = Concertable.Customer.Concert.Infrastructure.Schema;
@@ -21,7 +22,7 @@ public sealed class DbFixture
 
     public async Task InitializeAsync()
     {
-        await customer.InitializeAsync(app, AppHostConstants.Databases.Customer, new RespawnerOptions
+        await customer.InitializeAsync(app, CustomerConstants.Database, new RespawnerOptions
         {
             TablesToIgnore = [
                 "__EFMigrationsHistory",

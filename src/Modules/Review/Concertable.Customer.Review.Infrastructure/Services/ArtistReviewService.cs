@@ -25,8 +25,7 @@ internal sealed class ArtistReviewService : IArtistReviewService
     public Task<ReviewSummary> GetSummaryAsync(int artistId) =>
         reviewRepository.GetSummaryByArtistAsync(artistId);
 
-    public Task<bool> CanCurrentUserReviewAsync(int artistId) =>
+    public async Task<bool> CanCurrentUserReviewAsync(int artistId) =>
         currentUser.IsAuthenticated
-            ? reviewValidator.CanUserReviewArtistAsync(currentUser.GetId(), artistId)
-            : Task.FromResult(false);
+        && (await reviewValidator.ValidateArtistAsync(currentUser.GetId(), artistId)).IsValid;
 }

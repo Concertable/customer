@@ -1,9 +1,12 @@
 using Concertable.Customer.Concert.Contracts;
+using Concertable.Customer.Ticket.Application.Errors;
 using Concertable.Customer.Ticket.Infrastructure.Validators;
 using Concertable.Kernel.ValueObjects;
-using Concertable.Kernel.Exceptions;
 using Microsoft.Extensions.Time.Testing;
 using Moq;
+using Reunion;
+using Reunion.Errors;
+using Reunion.Validation;
 
 namespace Concertable.Customer.Ticket.UnitTests.Validators;
 
@@ -46,7 +49,7 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanBePurchased(NewConcert());
 
-        Assert.True(result.IsSuccess);
+        Assert.True(result.IsValid);
     }
 
     [Fact]
@@ -54,7 +57,7 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanBePurchased(NewConcert(posted: false));
 
-        Assert.True(result.IsFailed);
+        Assert.True(result.IsInvalid);
     }
 
     [Fact]
@@ -64,7 +67,7 @@ public sealed class TicketValidatorTests
 
         var result = sut.CanBePurchased(NewConcert(period: started));
 
-        Assert.True(result.IsFailed);
+        Assert.True(result.IsInvalid);
     }
 
     [Fact]
@@ -72,18 +75,20 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanBePurchased(NewConcert(availableTickets: 0));
 
-        Assert.True(result.IsFailed);
+        Assert.True(result.IsInvalid);
     }
 
     [Fact]
-    public void CanBePurchased_AccumulatesAllFailures()
+    public void CanPurchaseTickets_WithSeveralBaseFailures_AccumulatesAllFailures()
     {
         var started = new DateRange(timeProvider.GetUtcNow().UtcDateTime.AddDays(-1), timeProvider.GetUtcNow().UtcDateTime.AddDays(1));
 
-        var result = sut.CanBePurchased(NewConcert(posted: false, availableTickets: 0, period: started));
+        var result = sut.CanPurchaseTickets(
+            NewConcert(posted: false, availableTickets: 0, period: started),
+            quantity: 1);
 
-        Assert.True(result.IsFailed);
-        Assert.Equal(3, result.Errors.Count);
+        Assert.True(result.TryGetErrors(out var errors));
+        Assert.Equal(3, errors.Errors["concert"].Count);
     }
 
     [Fact]
@@ -91,7 +96,7 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanPurchaseTickets(NewConcert(availableTickets: 10), quantity: 10);
 
-        Assert.True(result.IsSuccess);
+        Assert.True(result.IsValid);
     }
 
     [Fact]
@@ -99,7 +104,10 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanPurchaseTickets(NewConcert(availableTickets: 10), quantity: 11);
 
-        Assert.True(result.IsFailed);
+        Assert.True(result.TryGetErrors(out var errors));
+        Assert.Equal(
+            ["Not enough tickets available. Only 10 tickets are available"],
+            errors.Errors["quantity"]);
     }
 
     [Fact]
@@ -107,31 +115,32 @@ public sealed class TicketValidatorTests
     {
         var result = sut.CanPurchaseTickets(NewConcert(posted: false), quantity: 1);
 
-        Assert.True(result.IsFailed);
+        Assert.True(result.TryGetErrors(out var errors));
+        Assert.Equal(["Concert is not posted yet"], errors.Errors["concert"]);
     }
 
     [Fact]
-    public async Task CanBePurchasedAsync_WhenConcertMissing_ThrowsNotFound()
+    public async Task CanBePurchasedAsync_WhenConcertMissing_ReturnsConcertNotFound()
     {
-        // Arrange
         concertModule.Setup(m => m.GetByIdAsync(999, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((ConcertDto?)null);
+            .ReturnsAsync(Option.None<ConcertDto>());
 
-        // Act + Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => sut.CanBePurchasedAsync(999));
+        var result = await sut.CanBePurchasedAsync(999);
+
+        Assert.True(result.TryGetError(out var error));
+        var notFound = Assert.IsType<EligibilityError.ConcertNotFound>(error);
+        Assert.Equal(999, notFound.ConcertId);
     }
 
     [Fact]
     public async Task CanBePurchasedAsync_ValidatesFetchedConcert()
     {
-        // Arrange
         concertModule.Setup(m => m.GetByIdAsync(1, It.IsAny<CancellationToken>()))
             .ReturnsAsync(NewConcert());
 
-        // Act
         var result = await sut.CanBePurchasedAsync(1);
 
-        // Assert
-        Assert.True(result.IsSuccess);
+        Assert.True(result.TryGetValue(out var validation));
+        Assert.True(validation.IsValid);
     }
 }
