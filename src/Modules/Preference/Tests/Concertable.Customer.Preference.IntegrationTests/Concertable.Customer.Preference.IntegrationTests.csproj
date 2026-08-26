@@ -21,7 +21,7 @@
     <ProjectReference Include="..\..\Concertable.Customer.Preference.Application\Concertable.Customer.Preference.Application.csproj" />
     <ProjectReference Include="..\..\Concertable.Customer.Preference.Infrastructure\Concertable.Customer.Preference.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\..\..\tests\Concertable.Customer.IntegrationTests.Fixtures\Concertable.Customer.IntegrationTests.Fixtures.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\Concertable.Shared\tests\Concertable.Testing\Concertable.Testing.csproj" />
+    <PackageReference Include="Concertable.Testing" />
   </ItemGroup>
 
   <ItemGroup>
