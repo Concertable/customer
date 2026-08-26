@@ -10,7 +10,7 @@ using Concertable.Customer.Review.Api.Extensions;
 using Concertable.Customer.Review.Contracts.Events;
 using Concertable.Customer.Seed.Infrastructure;
 using Concertable.Customer.Ticket.Api.Extensions;
-using Concertable.Customer.Ticket.Application.Commands;
+using Concertable.Customer.Ticket.Contracts;
 using Concertable.Customer.Ticket.Contracts.Events;
 using Concertable.Customer.User.Api.Extensions;
 using Concertable.Customer.Venue.Api.Extensions;
