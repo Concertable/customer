@@ -1,9 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import {
-  reviewApi,
-  type CreateReviewRequest,
-} from "@concertable/customer/features/reviews";
+import { reviewApi } from "@concertable/customer/features/reviews";
+import type { CreateReviewRequest } from "@concertable/customer/features/reviews/types";
 import { useCanReviewQuery } from "./useCanReviewQuery";
 
 export function useAddReview(concertId: number) {

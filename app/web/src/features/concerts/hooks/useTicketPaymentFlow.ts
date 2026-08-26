@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { TicketPurchasedPayload } from "@concertable/customer/features/notifications";
+import type { TicketPurchasedPayload } from "@concertable/customer/features/notifications/types";
 import type { CheckoutFlowState } from "@concertable/web/features/concerts/hooks/useCheckoutFlow";
 import { notificationConnection } from "@concertable/web/lib/signalr";
 

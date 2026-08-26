@@ -1,4 +1,4 @@
-import type { CreateReviewRequest } from "@concertable/customer/features/reviews";
+import type { CreateReviewRequest } from "@concertable/customer/features/reviews/types";
 import { z } from "zod";
 
 export const createReviewRequestSchema = z.object({
