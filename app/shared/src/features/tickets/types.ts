@@ -1,5 +1,5 @@
-import type { CheckoutSession } from "@concertable/shared/features/concerts";
-import type { PaymentOutcome } from "@concertable/shared/features/payments";
+import type { CheckoutSession } from "@concertable/shared/features/concerts/types";
+import type { PaymentOutcome } from "@concertable/shared/features/payments/types";
 
 export interface TicketPurchaseRequest {
   concertId: number;

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Star } from "lucide-react";
-import type { CreateReviewRequest } from "@concertable/customer/features/reviews";
+import type { CreateReviewRequest } from "@concertable/customer/features/reviews/types";
 import { Button } from "@concertable/web/components/ui/button";
 import {
   Dialog,

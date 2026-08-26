@@ -3,8 +3,8 @@ import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useTicketPurchasedHandler } from "@concertable/customer/features/notifications";
 import { notificationConnection } from "@concertable/web/lib/signalr";
-import type { TicketPurchasedPayload } from "@concertable/customer/features/notifications";
-import type { ConcertPostedPayload } from "@concertable/web/features/notifications";
+import type { TicketPurchasedPayload } from "@concertable/customer/features/notifications/types";
+import type { ConcertPostedPayload } from "@concertable/web/features/notifications/types";
 
 export function useCustomerNotifications() {
   const router = useRouter();

@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useAutocompleteQuery, useSearchFilters } from "@concertable/shared/features/search";
-import type { AutocompleteResult } from "@concertable/shared/features/search";
+import type { AutocompleteResult } from "@concertable/shared/features/search/types";
 import { Screen } from "@concertable/mobile/components/ui/Screen";
 import { Navbar } from "@concertable/mobile/components/ui/Navbar";
 import { theme } from "@concertable/mobile/lib/theme";
