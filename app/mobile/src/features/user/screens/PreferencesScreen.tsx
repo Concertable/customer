@@ -8,9 +8,11 @@ import {
   useCreateMyPreferenceMutation,
   useMyPreferenceQuery,
   useUpdateMyPreferenceMutation,
-  type Preference,
-  type PreferenceRequest,
 } from "@concertable/customer/features/preferences";
+import type {
+  Preference,
+  PreferenceRequest,
+} from "@concertable/customer/features/preferences/types";
 import { useGenresQuery } from "@concertable/shared/features/search";
 import type { Genre } from "@concertable/shared/types";
 import { GenreChips } from "@concertable/mobile/components/ui/GenreChips";
