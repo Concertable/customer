@@ -2,6 +2,9 @@ using Concertable.Customer.Ticket.Application.Requests;
 using Concertable.Customer.User.Api.Authorization;
 using Concertable.Kernel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using Reunion.AspNetCore.Mvc;
+using Reunion.Validation;
 
 namespace Concertable.Customer.Ticket.Api.Controllers;
 
@@ -19,26 +22,22 @@ internal sealed class TicketController : ControllerBase
         this.ticketValidator = ticketValidator;
     }
 
+    [EnableRateLimiting("purchase")]
     [HttpPost("purchase")]
     public async Task<ActionResult<TicketPayment>> Purchase([FromBody] TicketPurchaseParams purchaseParams)
     {
         var result = await ticketService.PurchaseAsync(purchaseParams);
 
-        if (result.IsFailed)
-            return BadRequest(result.Errors.SelectMessages());
-
-        return Ok(result.Value);
+        return result.ToOkOrProblem();
     }
 
+    [EnableRateLimiting("purchase")]
     [HttpPost("checkout")]
     public async Task<ActionResult<TicketCheckout>> Checkout([FromBody] TicketCheckoutRequest request)
     {
         var result = await ticketService.CheckoutAsync(request.ConcertId, request.Quantity);
 
-        if (result.IsFailed)
-            return BadRequest(result.Errors.SelectMessages());
-
-        return Ok(result.Value);
+        return result.ToOkOrProblem();
     }
 
     [HttpGet("upcoming/user")]
@@ -57,6 +56,6 @@ internal sealed class TicketController : ControllerBase
     public async Task<ActionResult<bool>> CanPurchase(int concertId)
     {
         var result = await ticketValidator.CanBePurchasedAsync(concertId);
-        return Ok(result.IsSuccess);
+        return result.ToOkOrProblem((ValidationResult validation) => validation.IsValid);
     }
 }

@@ -1,5 +1,5 @@
 import type { NavigatorScreenParams } from "@react-navigation/native";
-import type { ConcertNavParamList, ProfileStackParamList } from "shared/navigation/types";
+import type { ConcertNavParamList, ProfileStackParamList } from "@concertable/mobile/navigation/types";
 
 export type CustomerConcertNavParamList = ConcertNavParamList & {
   TicketCheckout: { concertId: number };

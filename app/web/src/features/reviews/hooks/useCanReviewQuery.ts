@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "react-oidc-context";
-import { reviewApi } from "@concertable/customer/shared/features/reviews";
-import type { ReviewEntityType } from "@/features/reviews";
+import { reviewApi } from "@concertable/customer/features/reviews";
+import type { ReviewEntityType } from "@concertable/web/features/reviews";
 
 export function useCanReviewQuery(type: ReviewEntityType, id: number) {
   const { isAuthenticated } = useAuth();

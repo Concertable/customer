@@ -49,14 +49,6 @@ Concert and Ticket gained their `.Contracts` projects (`IConcertModule`, `ITicke
 
 ---
 
-### Missing test projects for Artist, Venue, Preference
-
-`Concertable.Customer.Artist`, `Concertable.Customer.Venue`, and `Concertable.Customer.Preference` have no Unit or Integration test projects.
-
-**Resolves when:** Each gains at minimum an Integration tests project following the pattern in `Modules/Review/Tests/` or `Modules/Ticket/Tests/`.
-
----
-
 ## LOW
 
 ### `DateRange` mapped as `ComplexProperty` on Ticket but `OwnsOne` elsewhere
@@ -79,16 +71,24 @@ item below.
 
 ---
 
-### Read repositories don't default to no-tracking
-
-`ConcertReadRepository.GetDtoAsync` needed an ad-hoc `.AsNoTracking()` (EF throws when a projection carries a whole owned instance like `Period` on a tracking query), and the other read repos rely on projections happening to be untracked. Reads through a `ReadRepository<T>` should never track — the per-call opt-out is backwards.
-
-**Resolves when:** the `ReadRepository<T>` base applies `AsNoTracking` to its query root so every derived read repo inherits it, and the ad-hoc call in `ConcertReadRepository` is removed. NOT context-wide `UseQueryTrackingBehavior(NoTracking)` — the projection handlers write through the same module contexts and need tracked queries.
-
----
-
 ### Ticket list reads load full entities (incl. `QrCode` blobs) instead of projecting
 
 `TicketService.GetUserUpcomingAsync` / `GetUserHistoryAsync` materialise whole `TicketEntity` rows and map in memory (`tickets.ToDtos()`), hauling the `QrCode byte[]` blob for every ticket in a list view rather than a queryable projection. The empty-string masks that used to ride this path are gone: `UserEmail` was dropped from `TicketDto` (web reads it from nowhere; mobile `TicketDetailScreen` now reads the signed-in email from `useAuthStore`), the mapper no longer takes an email parameter, and `TicketPaymentProcessor` fail-closes on `meta["fromUserEmail"]`. What remains is pure efficiency — and it's blocked by an SPA coupling: both surfaces read `qrCode` straight off the list DTO (web `TicketCard` → `QrPopover`, mobile `<QRCode value={ticket.qrCode}>`), so `QrCode` can't simply be excluded from a projection.
 
 **Resolves when:** the list reads become `IQueryable<TicketEntity>` projections that exclude `QrCode`, AND the SPA fetches the QR lazily per ticket (the read path already exists — `GetQrCodeByIdAsync` on the ticket repository) instead of reading it from the list DTO.
+
+### Rate-limit policy names are raw literals in Customer controllers (no service-wide constants home)
+
+The `[EnableRateLimiting(...)]` attributes on Customer controllers carry raw strings
+(`"public-read"`, `"purchase"`, `"review"`) rather than the `RateLimitPolicies` constants, because those
+constants live in `Concertable.Customer.Web` (the host — the only place that can register the policies) and
+the module `*.Api` projects cannot reference the host. Unlike B2B, whose policy constants sit in the
+universally-referenced `Concertable.B2B.Tenant.Contracts`, Customer has no low-level project that every
+module `*.Api` shares, so there is nowhere reachable to put a shared constant. A typo in a literal fails
+fast at endpoint execution (no matching policy) and the `public-read` + `review` names are exercised by the
+rate-limit integration trip tests; only `purchase` is unpinned by a test.
+
+**Resolves when:** a low-level Customer project the module `*.Api` projects (and the host) all reference —
+mirroring B2B's `Tenant.Contracts` — holds `RateLimitPolicies`, and the Customer controller attributes
+reference the constants instead of literals. Needs a project-topology decision (whether Customer should
+gain such a shared assembly, and its name/placement).

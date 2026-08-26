@@ -4,6 +4,7 @@ using Aspire.Hosting.Testing;
 using Concertable.B2B.Seed.Contracts;
 using Concertable.Customer.Artist.Infrastructure.Extensions;
 using Concertable.Customer.Concert.Infrastructure.Extensions;
+using Concertable.Customer.Hosting;
 using Concertable.Customer.Preference.Infrastructure.Extensions;
 using Concertable.Customer.Seed.Infrastructure;
 using Concertable.Customer.Venue.Infrastructure.Extensions;
@@ -24,6 +25,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Stripe;
 using System.Net.Http.Headers;
 using CustomerDevDbInitializer = Concertable.Customer.Web.DevDbInitializer;
 
@@ -53,6 +55,7 @@ public sealed class AppFixture : IAsyncLifetime
     public SeedState SeedState { get; private set; } = null!;
     public SeedCatalog Catalog { get; private set; } = null!;
     public DbFixture DbFixture { get; private set; } = null!;
+    public StripeCustomerResolver StripeCustomerResolver { get; private set; } = null!;
     public string AuthUrl => authUrl;
     public string CustomerSpaUrl => customerSpaUrl;
 
@@ -89,11 +92,14 @@ public sealed class AppFixture : IAsyncLifetime
         logger.InitializingE2ETestFixture();
 
         healthWaiter = new HealthWaiter(loggerFactory.CreateLogger<HealthWaiter>());
-
         var builder = await DistributedApplicationTestingBuilder
             .CreateAsync<Projects.Concertable_Customer_AppHost>();
+        var stripeSecretKey = builder.Configuration["Stripe:SecretKey"]
+            ?? throw new InvalidOperationException("Stripe:SecretKey is not configured for the Customer E2E fixture.");
+        var stripeClient = new StripeClient(stripeSecretKey);
+        StripeCustomerResolver = await Concertable.Testing.E2E.StripeCustomerResolver.CreateAsync(stripeClient);
 
-        builder.AddCustomerE2E(customerWebUrl, searchWebUrl, authUrl, paymentWebUrl);
+        builder.AddE2EStack(customerWebUrl, searchWebUrl, authUrl, paymentWebUrl, StripeCustomerResolver);
 
         app = await builder.BuildAsync();
         resourceLogger = new AspireResourceLogger(
@@ -112,13 +118,13 @@ public sealed class AppFixture : IAsyncLifetime
         await DbFixture.InitializeAsync();
         await DbFixture.ResetAsync();
 
-        var customerConnectionString = await app.GetConnectionStringAsync(AppHostConstants.Databases.Customer)
+        var customerConnectionString = await app.GetConnectionStringAsync(CustomerConstants.Database)
             ?? throw new InvalidOperationException("Customer DB connection string is missing.");
 
         var customerSeedConfig = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                [$"ConnectionStrings:{AppHostConstants.Databases.Customer}"] = customerConnectionString,
+                [$"ConnectionStrings:{CustomerConstants.Database}"] = customerConnectionString,
             })
             .Build();
 
@@ -175,15 +181,35 @@ public sealed class AppFixture : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        CustomerClient.Dispose();
-        tokenMinter.Dispose();
-        healthWaiter.Dispose();
-        await DbFixture.DisposeAsync();
-        await host.StopAsync();
-        host.Dispose();
-        await app.DisposeAsync();
-        await resourceLogger.DisposeAsync();
-        loggerFactory.Dispose();
+        try
+        {
+            CustomerClient?.Dispose();
+            tokenMinter.Dispose();
+            healthWaiter?.Dispose();
+            if (DbFixture is not null)
+                await DbFixture.DisposeAsync();
+            if (host is not null)
+            {
+                await host.StopAsync();
+                host.Dispose();
+            }
+            if (app is not null)
+                await app.DisposeAsync();
+            if (resourceLogger is not null)
+                await resourceLogger.DisposeAsync();
+        }
+        finally
+        {
+            try
+            {
+                if (StripeCustomerResolver is not null)
+                    await StripeCustomerResolver.DisposeAsync();
+            }
+            finally
+            {
+                loggerFactory.Dispose();
+            }
+        }
     }
 
     public ResourceNotificationService ResourceNotifications => app.ResourceNotifications;

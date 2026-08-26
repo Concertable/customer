@@ -2,7 +2,6 @@ using Concertable.Customer.Ticket.Infrastructure;
 using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.DataAccess.Infrastructure.Extensions;
 using Concertable.Messaging.Contracts;
-using Concertable.Kernel.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -43,18 +42,15 @@ internal sealed class TicketPaymentProcessor : IIntegrationEventHandler<PaymentS
 
         try
         {
-            var result = await ticketService.CompleteAsync(new()
+            var payment = (await ticketService.CompleteAsync(new()
             {
                 EntityId = meta.GetValueAs<int>(PaymentMetadataKeys.ConcertId),
                 FromUserId = meta.GetValueAs<Guid>(PaymentMetadataKeys.FromUserId),
                 FromEmail = meta.GetValue(PaymentMetadataKeys.FromUserEmail),
                 Quantity = meta.TryGetValue(PaymentMetadataKeys.Quantity, out var q) ? int.Parse(q) : null
-            });
+            })) with { TransactionId = @event.TransactionId };
 
-            if (result.IsFailed)
-                throw new BadRequestException(result.Errors);
-
-            await notifier.TicketPurchasedAsync(meta.GetValue(PaymentMetadataKeys.FromUserId), result.Value);
+            await notifier.TicketPurchasedAsync(meta.GetValue(PaymentMetadataKeys.FromUserId), payment);
         }
         catch (DbUpdateException ex) when (ex.IsDuplicateKey())
         {

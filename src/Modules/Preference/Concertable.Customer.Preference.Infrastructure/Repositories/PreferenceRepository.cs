@@ -1,11 +1,19 @@
 using Concertable.Customer.Preference.Infrastructure.Data;
+using Concertable.DataAccess.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Concertable.Customer.Preference.Infrastructure.Repositories;
 
 internal sealed class PreferenceRepository : Repository<PreferenceEntity>, IPreferenceRepository
 {
-    public PreferenceRepository(PreferenceDbContext context) : base(context) { }
+    private readonly PreferenceDbContext context;
+
+    public PreferenceRepository(PreferenceDbContext context) : base(context)
+    {
+        this.context = context;
+    }
+
+    public Task<bool> InsertAsync(PreferenceEntity preference) => this.TryInsertAsync(preference);
 
     public override async Task<IEnumerable<PreferenceEntity>> GetAllAsync(CancellationToken ct = default)
     {
@@ -28,7 +36,7 @@ internal sealed class PreferenceRepository : Repository<PreferenceEntity>, IPref
             .FirstOrDefaultAsync(p => p.UserId == id);
     }
 
-    public async Task<IEnumerable<PreferenceEntity>> GetByMatchingGenresAsync(IEnumerable<Genre> genres)
+    public async Task<IReadOnlyList<PreferenceEntity>> GetByMatchingGenresAsync(IEnumerable<Genre> genres)
     {
         var target = genres.ToArray();
         return await context.Preferences
