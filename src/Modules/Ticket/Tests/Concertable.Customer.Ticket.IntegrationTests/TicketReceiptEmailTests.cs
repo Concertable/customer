@@ -1,4 +1,4 @@
-using Concertable.Customer.Ticket.Application.Commands;
+using Concertable.Customer.Ticket.Contracts;
 using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.Messaging.Contracts;
 using Concertable.Messaging.Domain;

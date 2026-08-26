@@ -1,4 +1,4 @@
-using Concertable.Customer.Ticket.Application.Commands;
+using Concertable.Customer.Ticket.Contracts;
 using Concertable.Customer.Ticket.Application.Interfaces;
 using Concertable.Messaging.Contracts;
 using Concertable.Shared.Email.Application;

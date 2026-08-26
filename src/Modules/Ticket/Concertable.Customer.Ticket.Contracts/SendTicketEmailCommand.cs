@@ -1,6 +1,6 @@
 using Concertable.Messaging.Contracts;
 
-namespace Concertable.Customer.Ticket.Application.Commands;
+namespace Concertable.Customer.Ticket.Contracts;
 
 [MessageType("concertable.customer.send-ticket-email.v1")]
 public sealed record SendTicketEmailCommand(
