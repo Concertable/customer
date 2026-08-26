@@ -3,13 +3,17 @@ import tailwindcss from "@tailwindcss/vite"
 import react from '@vitejs/plugin-react'
 import { defineConfig, loadEnv } from 'vite'
 import { tanstackRouter } from '@tanstack/router-vite-plugin'
-import basicSsl from '@vitejs/plugin-basic-ssl'
+import { aspNetDevelopmentHttps } from '../../scripts/vite-development-https'
 
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, path.resolve(__dirname, '../'), 'VITE_')
   return {
-    plugins: [tanstackRouter(), react(), tailwindcss(), basicSsl()],
+    plugins: [tanstackRouter(), react(), tailwindcss()],
     server: {
+      host: '127.0.0.1',
+      https: command === 'serve'
+        ? aspNetDevelopmentHttps(path.resolve(__dirname, '../../node_modules/.vite/aspnet-https/customer'))
+        : undefined,
       port: 5174,
     },
     envDir: '../',
@@ -33,8 +37,6 @@ export default defineConfig(({ command, mode }) => {
         },
     resolve: {
       alias: [
-        { find: /^@\/(components|features|hooks|lib|providers|context|types|assets)(\/.*)?$/, replacement: path.resolve(__dirname, "../shared/src/$1$2") },
-        { find: /^shared\/(.*)$/, replacement: path.resolve(__dirname, "../shared/src/$1") },
         { find: "@", replacement: path.resolve(__dirname, "./src") },
       ],
     },

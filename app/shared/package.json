@@ -1,18 +1,64 @@
 {
   "name": "@concertable/customer",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.0",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Concertable/concertable.git",
+    "directory": "app/customer/shared"
+  },
   "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build": "npm run clean && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json --resolve-full-paths --resolve-full-extension .js",
+    "prepack": "npm run build"
+  },
   "exports": {
-    "./shared": "./src/index.ts",
-    "./shared/lib": "./src/lib/index.ts",
-    "./shared/features/tickets": "./src/features/tickets/index.ts",
-    "./shared/features/preferences": "./src/features/preferences/index.ts",
-    "./shared/features/reviews": "./src/features/reviews/index.ts",
-    "./shared/features/notifications": "./src/features/notifications/index.ts",
-    "./shared/lib/*": "./src/lib/*.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./lib": {
+      "types": "./dist/lib/index.d.ts",
+      "import": "./dist/lib/index.js",
+      "default": "./dist/lib/index.js"
+    },
+    "./features/tickets": {
+      "types": "./dist/features/tickets/index.d.ts",
+      "import": "./dist/features/tickets/index.js",
+      "default": "./dist/features/tickets/index.js"
+    },
+    "./features/preferences": {
+      "types": "./dist/features/preferences/index.d.ts",
+      "import": "./dist/features/preferences/index.js",
+      "default": "./dist/features/preferences/index.js"
+    },
+    "./features/reviews": {
+      "types": "./dist/features/reviews/index.d.ts",
+      "import": "./dist/features/reviews/index.js",
+      "default": "./dist/features/reviews/index.js"
+    },
+    "./features/notifications": {
+      "types": "./dist/features/notifications/index.d.ts",
+      "import": "./dist/features/notifications/index.js",
+      "default": "./dist/features/notifications/index.js"
+    },
+    "./lib/*": {
+      "types": "./dist/lib/*.d.ts",
+      "import": "./dist/lib/*.js",
+      "default": "./dist/lib/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com"
   },
   "dependencies": {
     "@concertable/shared": "*",
@@ -26,6 +72,7 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.14",
+    "tsc-alias": "^1.9.1",
     "typescript": "~5.9.3"
   }
 }

@@ -1,5 +1,7 @@
 using Concertable.Customer.Review.Domain.Events;
 using Concertable.Kernel;
+using Reunion;
+using Reunion.Errors;
 
 namespace Concertable.Customer.Review.Domain.Entities;
 
@@ -20,7 +22,7 @@ public sealed class ReviewEntity : IIdEntity, IEventRaiser
 
     private ReviewEntity() { }
 
-    public static ReviewEntity Create(
+    public static Result<ReviewEntity, ValidationErrors> Create(
         Guid ticketId,
         byte stars,
         string? details,
@@ -29,7 +31,14 @@ public sealed class ReviewEntity : IIdEntity, IEventRaiser
         int venueId,
         int concertId)
     {
-        ValidateStars(stars);
+        if (stars is < 1 or > 5)
+        {
+            var errors = new ValidationErrors(
+                [new("Stars", "Stars must be between 1 and 5.")]);
+
+            return errors;
+        }
+
         var review = new ReviewEntity
         {
             TicketId = ticketId,
@@ -42,11 +51,5 @@ public sealed class ReviewEntity : IIdEntity, IEventRaiser
         };
         review.events.Raise(new ReviewCreatedDomainEvent(ticketId, artistId, venueId, concertId, stars, email, details));
         return review;
-    }
-
-    private static void ValidateStars(byte stars)
-    {
-        if (stars is < 1 or > 5)
-            throw new DomainException("Stars must be between 1 and 5.");
     }
 }

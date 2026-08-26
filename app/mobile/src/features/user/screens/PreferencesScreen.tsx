@@ -2,15 +2,15 @@ import { useState } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { useMyPreferenceQuery, useUpdateMyPreferenceMutation, useCreateMyPreferenceMutation } from "@concertable/customer/shared/features/preferences";
+import { useMyPreferenceQuery, useUpdateMyPreferenceMutation, useCreateMyPreferenceMutation } from "@concertable/customer/features/preferences";
 import { useGenresQuery } from "@concertable/shared/features/search";
 import type { Genre } from "@concertable/shared/types";
-import { GenreChips } from "@/components/ui/GenreChips";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Text } from "@/components/ui/text";
-import { notify } from "shared/lib/toast";
-import { theme } from "shared/lib/theme";
+import { GenreChips } from "@concertable/mobile/components/ui/GenreChips";
+import { Button } from "@concertable/mobile/components/ui/button";
+import { Skeleton } from "@concertable/mobile/components/ui/skeleton";
+import { Text } from "@concertable/mobile/components/ui/text";
+import { notify } from "@concertable/mobile/lib/toast";
+import { theme } from "@concertable/mobile/lib/theme";
 
 const RADIUS_PRESETS = [5, 10, 25, 50, 100] as const;
 

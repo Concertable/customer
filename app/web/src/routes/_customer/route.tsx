@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCustomerNotifications } from "../../features/notifications";
-import { AppLayout } from "@/components/AppLayout";
-import type { ProfileMenuItem } from "@/components/ProfileMenu";
+import { AppLayout } from "@concertable/web/components/AppLayout";
+import type { ProfileMenuItem } from "@concertable/web/components/ProfileMenu";
 
 const links = [
   { label: "Home", to: "/" },

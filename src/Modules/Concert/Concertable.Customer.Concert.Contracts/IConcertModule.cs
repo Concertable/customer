@@ -1,11 +1,12 @@
 using System.ComponentModel;
 using Concertable.Kernel.ValueObjects;
+using Reunion;
 
 namespace Concertable.Customer.Concert.Contracts;
 
 public interface IConcertModule
 {
-    Task<ConcertDto?> GetByIdAsync(int concertId, CancellationToken ct = default);
+    Task<Option<ConcertDto>> GetByIdAsync(int concertId, CancellationToken ct = default);
 }
 
 [DisplayName(DisplayNames.Concert)]
