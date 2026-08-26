@@ -1,10 +1,10 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { Toaster } from "@concertable/web/components/ui/sonner";
-import { useSyncUser } from "../features/user/hooks/useSyncUser";
+import { useCustomerIdentity } from "../features/user/hooks/useCustomerIdentity";
 
 function RootLayout() {
-  useSyncUser();
+  useCustomerIdentity();
   return (
     <>
       <Outlet />

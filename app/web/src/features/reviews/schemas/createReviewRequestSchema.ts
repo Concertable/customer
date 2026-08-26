@@ -1,6 +1,6 @@
+import type { CreateReviewRequest } from "@concertable/customer/features/reviews/types";
 import { z } from "zod";
 
-// Bounds mirror the backend CreateReviewRequestValidator — keep them in sync.
 export const createReviewRequestSchema = z.object({
   stars: z
     .number()
@@ -11,7 +11,10 @@ export const createReviewRequestSchema = z.object({
     .string()
     .trim()
     .max(1000, "Review must be 1000 characters or fewer")
+    .transform((details) => details || undefined)
     .optional(),
-});
+}) satisfies z.ZodType<CreateReviewRequest>;
 
-export type CreateReviewRequest = z.infer<typeof createReviewRequestSchema>;
+export type CreateReviewFormValues = z.input<
+  typeof createReviewRequestSchema
+>;
