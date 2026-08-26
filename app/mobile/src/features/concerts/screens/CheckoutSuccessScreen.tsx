@@ -6,9 +6,9 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { CheckCircle } from "lucide-react-native";
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import { theme } from "shared/lib/theme";
+import { Button } from "@concertable/mobile/components/ui/button";
+import { Text } from "@concertable/mobile/components/ui/text";
+import { theme } from "@concertable/mobile/lib/theme";
 import type { CustomerConcertNavParamList, CustomerTabParamList } from "../../../navigation/types";
 
 type SuccessRoute = RouteProp<CustomerConcertNavParamList, "CheckoutSuccess">;

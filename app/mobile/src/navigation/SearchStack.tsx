@@ -2,9 +2,9 @@ import { SearchScreen } from "../features/search/screens/SearchScreen";
 import { CustomerConcertDetailScreen } from "../features/concerts/screens/CustomerConcertDetailScreen";
 import { TicketCheckoutScreen } from "../features/concerts/screens/TicketCheckoutScreen";
 import { CheckoutSuccessScreen } from "../features/concerts/screens/CheckoutSuccessScreen";
-import { ArtistDetailScreen } from "shared/features/artists/screens/ArtistDetailScreen";
-import { VenueDetailScreen } from "shared/features/venues/screens/VenueDetailScreen";
-import { createAppStack } from "shared/navigation/createAppStack";
+import { ArtistDetailScreen } from "@concertable/mobile/features/artists/screens/ArtistDetailScreen";
+import { VenueDetailScreen } from "@concertable/mobile/features/venues/screens/VenueDetailScreen";
+import { createAppStack } from "@concertable/mobile/navigation/createAppStack";
 import type { SearchStackParamList } from "./types";
 
 const Stack = createAppStack<SearchStackParamList>();

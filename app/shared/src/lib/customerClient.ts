@@ -1,3 +1,3 @@
-import axios from "axios";
+import { createApiClient } from "@concertable/shared/lib/apiClient";
 
-export const customerClient = axios.create();
+export const customerClient = createApiClient();

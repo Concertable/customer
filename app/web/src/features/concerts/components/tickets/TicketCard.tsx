@@ -1,6 +1,6 @@
 import { CalendarDays, MapPin, Music } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import type { Ticket } from "@concertable/customer/shared/features/tickets";
+import { Separator } from "@concertable/web/components/ui/separator";
+import type { Ticket } from "@concertable/customer/features/tickets";
 import { QrPopover } from "./QrPopover";
 
 interface Props {

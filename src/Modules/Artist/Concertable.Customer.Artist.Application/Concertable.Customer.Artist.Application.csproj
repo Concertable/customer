@@ -10,6 +10,7 @@
     <ProjectReference Include="..\Concertable.Customer.Artist.Domain\Concertable.Customer.Artist.Domain.csproj" />
     <PackageReference Include="Concertable.Kernel" />
     <PackageReference Include="Concertable.DataAccess.Application" />
+    <PackageReference Include="Reunion" />
   </ItemGroup>
 
 </Project>

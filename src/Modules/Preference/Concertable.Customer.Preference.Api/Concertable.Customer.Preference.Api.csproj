@@ -12,7 +12,9 @@
 
   <ItemGroup>
     <PackageReference Include="Concertable.Shared.Api" />
+    <PackageReference Include="Reunion.AspNetCore" />
     <ProjectReference Include="..\Concertable.Customer.Preference.Application\Concertable.Customer.Preference.Application.csproj" />
+    <ProjectReference Include="..\Concertable.Customer.Preference.Infrastructure\Concertable.Customer.Preference.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

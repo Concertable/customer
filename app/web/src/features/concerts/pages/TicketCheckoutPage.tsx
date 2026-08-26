@@ -1,20 +1,21 @@
 import { useState } from "react";
 import { useParams, useRouter } from "@tanstack/react-router";
 import dayjs from "dayjs";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import type { TicketPurchasedPayload } from "@concertable/customer/shared/features/notifications";
-import { useConcert, type Concert } from "@/features/concerts";
-import { useTicketCheckoutQuery } from "@concertable/customer/shared/features/tickets";
-import { useCheckoutFlow, type CheckoutFlowState } from "@/features/concerts/hooks/useCheckoutFlow";
-import { CheckoutLayout } from "@/features/concerts/components/checkout/CheckoutLayout";
-import { CheckoutSection } from "@/features/concerts/components/checkout/CheckoutSection";
-import { CheckoutEventBanner } from "@/features/concerts/components/checkout/CheckoutEventBanner";
-import { OrderSummaryCard } from "@/features/concerts/components/checkout/OrderSummaryCard";
-import { QuantitySelector } from "@/features/concerts/components/checkout/QuantitySelector";
-import { CheckoutSuccess } from "@/features/concerts/components/checkout/CheckoutSuccess";
-import { CheckoutFlow } from "@/features/concerts/components/checkout/CheckoutFlow";
-import { StripePaymentForm } from "@/features/concerts/components/checkout/StripePaymentForm";
+import { Button } from "@concertable/web/components/ui/button";
+import { Skeleton } from "@concertable/web/components/ui/skeleton";
+import type { TicketPurchasedPayload } from "@concertable/customer/features/notifications";
+import { useConcert, type Concert } from "@concertable/web/features/concerts";
+import { useTicketCheckoutQuery } from "@concertable/customer/features/tickets";
+import type { CheckoutFlowState } from "@concertable/web/features/concerts/hooks/useCheckoutFlow";
+import { CheckoutLayout } from "@concertable/web/features/concerts/components/checkout/CheckoutLayout";
+import { CheckoutSection } from "@concertable/web/features/concerts/components/checkout/CheckoutSection";
+import { CheckoutEventBanner } from "@concertable/web/features/concerts/components/checkout/CheckoutEventBanner";
+import { OrderSummaryCard } from "@concertable/web/features/concerts/components/checkout/OrderSummaryCard";
+import { QuantitySelector } from "@concertable/web/features/concerts/components/checkout/QuantitySelector";
+import { CheckoutSuccess } from "@concertable/web/features/concerts/components/checkout/CheckoutSuccess";
+import { CheckoutFlow } from "@concertable/web/features/concerts/components/checkout/CheckoutFlow";
+import { StripePaymentForm } from "@concertable/web/features/concerts/components/checkout/StripePaymentForm";
+import { useTicketPaymentFlow } from "../hooks/useTicketPaymentFlow";
 
 export function TicketCheckoutPage() {
   const { id } = useParams({ from: "/_customer/concert/checkout/$id" });
@@ -59,14 +60,19 @@ export function TicketCheckoutFlow({ concert, flow }: Readonly<Props>) {
 
 function TicketCheckoutForm({ concert }: { concert: Concert }) {
   const [quantity, setQuantity] = useState(1);
-  const [submitted, setSubmitted] = useState(false);
-  const flow = useCheckoutFlow<TicketPurchasedPayload>({ event: "TicketPurchased" });
   const {
     data: checkout,
     isLoading: isCheckoutLoading,
     isError: isCheckoutError,
     isFetching,
   } = useTicketCheckoutQuery(concert.id, quantity);
+  const {
+    flow,
+    submitted,
+    paymentError,
+    paymentConfirmed,
+    retryPayment,
+  } = useTicketPaymentFlow(checkout?.session.clientSecret);
 
   if (submitted) return <TicketCheckoutFlow concert={concert} flow={flow} />;
   if (isCheckoutLoading) return <CheckoutSkeleton />;
@@ -109,12 +115,23 @@ function TicketCheckoutForm({ concert }: { concert: Concert }) {
       }
     >
       <CheckoutSection title="Payment Method">
-        <StripePaymentForm
-          session={checkout.session}
-          submitLabel={`Pay £${total.toFixed(2)}`}
-          onSuccess={() => setSubmitted(true)}
-          disabled={isFetching}
-        />
+        {paymentError ? (
+          <div className="space-y-4">
+            <p data-testid="payment-error" className="text-destructive text-sm">
+              {paymentError}
+            </p>
+            <Button type="button" variant="outline" onClick={retryPayment}>
+              Try again
+            </Button>
+          </div>
+        ) : (
+          <StripePaymentForm
+            session={checkout.session}
+            submitLabel={`Pay £${total.toFixed(2)}`}
+            onSuccess={paymentConfirmed}
+            disabled={isFetching}
+          />
+        )}
       </CheckoutSection>
     </CheckoutLayout>
   );
