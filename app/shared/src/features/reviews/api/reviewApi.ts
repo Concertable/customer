@@ -1,5 +1,5 @@
 import { customerClient } from "../../../lib/customerClient";
-import type { Review, ReviewEntityType } from "@concertable/shared/features/reviews";
+import type { Review, ReviewEntityType } from "@concertable/shared/features/reviews/types";
 import type { CreateReviewRequest } from "../types";
 
 const basePath = (type: ReviewEntityType, id: number) =>

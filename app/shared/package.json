@@ -31,6 +31,11 @@
       "import": "./dist/lib/index.js",
       "default": "./dist/lib/index.js"
     },
+    "./features/*/types": {
+      "types": "./dist/features/*/types.d.ts",
+      "import": "./dist/features/*/types.js",
+      "default": "./dist/features/*/types.js"
+    },
     "./features/tickets": {
       "types": "./dist/features/tickets/index.d.ts",
       "import": "./dist/features/tickets/index.js",
