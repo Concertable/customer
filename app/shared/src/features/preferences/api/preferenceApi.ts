@@ -16,15 +16,11 @@ const preferenceApi = {
 
   updatePreference: async (
     id: number,
-    request: PreferenceRequest | Preference,
+    request: PreferenceRequest,
   ): Promise<Preference> => {
-    const body: PreferenceRequest = {
-      radiusKm: request.radiusKm,
-      genres: request.genres,
-    };
     const { data } = await apiClient.put<Preference>(
       `/preference/${id}`,
-      body,
+      request,
     );
     return data;
   },

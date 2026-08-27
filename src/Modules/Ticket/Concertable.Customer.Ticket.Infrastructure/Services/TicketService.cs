@@ -1,5 +1,4 @@
 using Concertable.Customer.Concert.Contracts;
-using Concertable.Customer.Ticket.Application.Commands;
 using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Application.Errors;
 using Concertable.Customer.Ticket.Application.Requests;

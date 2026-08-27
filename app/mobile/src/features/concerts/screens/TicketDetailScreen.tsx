@@ -9,7 +9,7 @@ import * as Brightness from "expo-brightness";
 import { CalendarDays, Hash, Mail, MapPin, Music, Share2, Ticket } from "lucide-react-native";
 import type { LucideIcon } from "lucide-react-native";
 import { useUpcomingTicketsQuery, useTicketHistoryQuery } from "@concertable/customer/features/tickets";
-import { useAuthStore } from "@concertable/shared/features/auth";
+import { useCurrentUser } from "@concertable/mobile/auth/useCurrentUser";
 import { ErrorState } from "@concertable/mobile/components/ui/ErrorState";
 import { theme } from "@concertable/mobile/lib/theme";
 import dayjs from "dayjs";
@@ -23,11 +23,11 @@ export function TicketDetailScreen() {
 
   const { data: upcoming } = useUpcomingTicketsQuery();
   const { data: history } = useTicketHistoryQuery();
-  const user = useAuthStore((s) => s.user);
+  const user = useCurrentUser();
 
   const ticket = [...(upcoming ?? []), ...(history ?? [])].find((t) => t.id === ticketId);
 
-  const prevBrightness = useRef<number | null>(null);
+  const prevBrightness = useRef<number | undefined>(undefined);
 
   useMountEffect(() => {
     Brightness.getBrightnessAsync().then((b) => {
@@ -35,7 +35,7 @@ export function TicketDetailScreen() {
       Brightness.setBrightnessAsync(1);
     });
     return () => {
-      if (prevBrightness.current !== null) {
+      if (prevBrightness.current !== undefined) {
         Brightness.setBrightnessAsync(prevBrightness.current);
       }
     };
