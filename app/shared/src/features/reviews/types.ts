@@ -1,5 +1,3 @@
-export interface CreateReviewRequest {
-  concertId: number;
-  stars: number;
-  details?: string;
-}
+import type { Review } from "@concertable/shared/features/reviews/types";
+
+export type CreateReviewRequest = Pick<Review, "stars" | "details">;
