@@ -1,5 +1,5 @@
 import { apiClient } from "@concertable/shared/lib/apiClient";
-import type { Preference, CreatePreferenceRequest } from "../types";
+import type { Preference, PreferenceRequest } from "../types";
 
 const preferenceApi = {
   getMyPreference: async (): Promise<Preference> => {
@@ -8,7 +8,7 @@ const preferenceApi = {
   },
 
   createPreference: async (
-    request: CreatePreferenceRequest,
+    request: PreferenceRequest,
   ): Promise<Preference> => {
     const { data } = await apiClient.post<Preference>("/preference", request);
     return data;
@@ -16,9 +16,16 @@ const preferenceApi = {
 
   updatePreference: async (
     id: number,
-    preference: Preference,
+    request: PreferenceRequest | Preference,
   ): Promise<Preference> => {
-    const { data } = await apiClient.put<Preference>(`/preference/${id}`, preference);
+    const body: PreferenceRequest = {
+      radiusKm: request.radiusKm,
+      genres: request.genres,
+    };
+    const { data } = await apiClient.put<Preference>(
+      `/preference/${id}`,
+      body,
+    );
     return data;
   },
 };

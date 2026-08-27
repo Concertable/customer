@@ -13,21 +13,7 @@ internal sealed class PreferenceRepository : Repository<PreferenceEntity>, IPref
         this.context = context;
     }
 
-    public async Task<bool> InsertAsync(PreferenceEntity preference)
-    {
-        context.Preferences.Add(preference);
-
-        try
-        {
-            await context.SaveChangesAsync();
-            return true;
-        }
-        catch (DbUpdateException ex) when (ex.IsDuplicateKey())
-        {
-            ex.DiscardFailedChanges();
-            return false;
-        }
-    }
+    public Task<bool> InsertAsync(PreferenceEntity preference) => this.TryInsertAsync(preference);
 
     public override async Task<IEnumerable<PreferenceEntity>> GetAllAsync(CancellationToken ct = default)
     {
