@@ -3,7 +3,7 @@ using Concertable.B2B.Artist.Contracts.Events;
 using Concertable.B2B.Concert.Contracts.Events;
 using Concertable.B2B.Venue.Contracts.Events;
 using Concertable.Customer.Review.Contracts.Events;
-using Concertable.Customer.Ticket.Application.Commands;
+using Concertable.Customer.Ticket.Contracts;
 using Concertable.Customer.Ticket.Contracts.Events;
 using Concertable.Payment.Contracts.Events;
 
