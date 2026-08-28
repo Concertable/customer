@@ -1,0 +1,12 @@
+{
+  "//": "Copy this file to appsettings.Development.json (gitignored) — or run ./scripts/setup-local-dev.ps1.",
+  "//2": "Allows the customer SPA's localhost origin (and the manager SPAs, for shared detail views) through CORS. No secrets here.",
+  "Cors": {
+    "AllowedOrigins": [
+      "https://localhost:5174",
+      "https://localhost:5175",
+      "https://localhost:5176",
+      "https://localhost:5177"
+    ]
+  }
+}
