@@ -47,7 +47,7 @@ public sealed class TicketServiceTests
                 It.IsAny<IReadOnlyDictionary<string, string>>(),
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result<PaymentOutcome, PaymentError>.Success(new PaymentOutcome()));
+            .ReturnsAsync(Result<PaymentOutcome, PaymentError>.Success(new PaymentOutcome { TransactionId = "pi_test" }));
         this.customerPaymentClient
             .Setup(client => client.CreatePaymentSessionAsync(
                 It.IsAny<Guid>(),
@@ -224,7 +224,8 @@ public sealed class TicketServiceTests
             {
                 EntityId = 42,
                 FromEmail = "customer@example.com",
-                FromUserId = Guid.NewGuid()
+                FromUserId = Guid.NewGuid(),
+                TransactionId = "pi_test"
             }));
 
         Assert.Equal(

@@ -5,5 +5,6 @@ internal sealed record PurchaseComplete
     public int EntityId { get; init; }
     public Guid FromUserId { get; init; }
     public required string FromEmail { get; init; }
+    public required string TransactionId { get; init; }
     public int? Quantity { get; init; }
 }
