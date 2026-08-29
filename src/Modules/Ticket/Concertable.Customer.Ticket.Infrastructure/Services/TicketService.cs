@@ -112,6 +112,7 @@ internal sealed class TicketService : ITicketService
 
         return new TicketPayment
         {
+            TransactionId = purchaseCompleteDto.TransactionId,
             TicketIds = ticketIds,
             ConcertId = purchaseCompleteDto.EntityId,
             PurchaseDate = tickets[0].PurchaseDate,
