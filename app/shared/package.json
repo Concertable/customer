@@ -68,7 +68,7 @@
     "registry": "https://npm.pkg.github.com"
   },
   "dependencies": {
-    "@concertable/shared": "*",
+    "@concertable/shared": "alpha",
     "@tanstack/react-query": "^5.90.21",
     "@types/qs": "^6.15.0",
     "axios": "^1.13.6",
