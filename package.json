@@ -1,0 +1,20 @@
+{
+  "name": "@concertable/customer-repository",
+  "private": true,
+  "workspaces": [
+    "app/web",
+    "app/mobile",
+    "app/shared"
+  ],
+  "scripts": {
+    "build:web": "npm -w @concertable/web-customer run build",
+    "typecheck:mobile": "npm -w @concertable/mobile-customer exec -- tsc --noEmit -p tsconfig.json"
+  },
+  "overrides": {
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native-css-interop": {
+      "tailwindcss": "^3"
+    }
+  }
+}
