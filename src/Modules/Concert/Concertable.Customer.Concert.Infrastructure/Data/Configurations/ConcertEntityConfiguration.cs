@@ -20,6 +20,7 @@ internal sealed class ConcertEntityConfiguration : IEntityTypeConfiguration<Conc
         builder.HasMany(c => c.Genres)
             .WithOne(g => g.Concert)
             .HasForeignKey(g => g.ConcertId);
+        builder.Navigation(c => c.Genres).AutoInclude();
     }
 }
 
