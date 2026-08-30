@@ -17,7 +17,7 @@ public abstract class QueryableReadRepository<TEntity, TKey> : IReadRepository<T
     public virtual async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken ct = default) =>
         await query.ToListAsync(ct);
 
-    public virtual Task<TEntity?> GetByIdAsync(TKey id, CancellationToken ct = default) =>
+    public Task<TEntity?> GetByIdAsync(TKey id, CancellationToken ct = default) =>
         query.FirstOrDefaultAsync(entity => entity.Id!.Equals(id), ct);
 
     public bool Exists(TKey id) => query.Any(entity => entity.Id!.Equals(id));
