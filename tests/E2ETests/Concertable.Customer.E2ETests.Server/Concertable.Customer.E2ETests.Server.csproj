@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Concertable.Kernel" />
     <PackageReference Include="Concertable.DataAccess.Application" />
     <PackageReference Include="Microsoft.Data.SqlClient" />
     <PackageReference Include="Respawn" />
