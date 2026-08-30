@@ -22,13 +22,6 @@ internal sealed class PreferenceRepository : Repository<PreferenceEntity>, IPref
             .ToListAsync(ct);
     }
 
-    public override async Task<PreferenceEntity?> GetByIdAsync(int id, CancellationToken ct = default)
-    {
-        return await context.Preferences
-            .Include(p => p.GenrePreferences)
-            .FirstOrDefaultAsync(p => p.Id == id, ct);
-    }
-
     public async Task<PreferenceEntity?> GetByUserIdAsync(Guid id)
     {
         return await context.Preferences
