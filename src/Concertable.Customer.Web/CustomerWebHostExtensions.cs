@@ -21,6 +21,8 @@ using Concertable.Kernel.Extensions;
 using Concertable.Messaging.Application.Extensions;
 using Concertable.Messaging.AzureServiceBus.Extensions;
 using Concertable.Messaging.Infrastructure.Extensions;
+using Concertable.Messaging.Infrastructure.Inbox;
+using Concertable.Messaging.Infrastructure.Outbox;
 using Concertable.Payment.Client.Extensions;
 using Concertable.Payment.Contracts.Events;
 using Concertable.Seed.Shared;
@@ -31,6 +33,7 @@ using Concertable.Shared.Api.Extensions;
 using Concertable.Shared.Email.Infrastructure.Extensions;
 using Concertable.Shared.Geocoding.Infrastructure.Extensions;
 using Concertable.Shared.Notification.Infrastructure.Extensions;
+using Concertable.Shared.Notification.Infrastructure.Hubs;
 using Concertable.Shared.Pdf.Infrastructure.Extensions;
 using Concertable.Shared.QrCode.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -164,6 +167,40 @@ public static class CustomerWebHostExtensions
             builder.AddRateLimitPolicy(RateLimitPolicies.Purchase, new RateLimitWindow { PermitLimit = 20, WindowSeconds = 60 }, perUser: true);
             builder.AddRateLimitPolicy(RateLimitPolicies.Review, new RateLimitWindow { PermitLimit = 10, WindowSeconds = 60 }, perUser: true);
             return builder;
+        }
+    }
+
+    extension(WebApplication app)
+    {
+        public async Task UseCustomerWebHost()
+        {
+            app.UseForwardedHeaders();
+            app.UseExceptionHandler();
+            app.UseCors();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseDefaultRateLimiting();
+
+            app.MapDefaultEndpoints();
+            app.MapControllers();
+            app.MapHub<NotificationHub>("/hub/notifications");
+
+            if (!app.Environment.IsProduction())
+            {
+                await using var scope = app.Services.CreateAsyncScope();
+                var services = scope.ServiceProvider;
+                await services.GetRequiredService<OutboxDbContext>().Database.MigrateAsync();
+                await services.GetRequiredService<InboxDbContext>().Database.MigrateAsync();
+                await services.MigrateArtistModuleAsync();
+                await services.MigrateConcertModuleAsync();
+                await services.MigratePreferenceModuleAsync();
+                await services.MigrateReviewModuleAsync();
+                await services.MigrateTicketModuleAsync();
+                await services.MigrateUserModuleAsync();
+                await services.MigrateVenueModuleAsync();
+                if (app.Environment.IsDevelopment())
+                    await services.GetRequiredService<IDbInitializer>().InitializeAsync();
+            }
         }
     }
 }
