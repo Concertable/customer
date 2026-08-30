@@ -13,7 +13,7 @@ public static class Program
             ContentRootPath = AppContext.BaseDirectory,
         });
         builder.AddCustomerWebHost();
-        builder.Services.AddCustomerE2EAdmin(builder.Configuration);
+        builder.Services.AddCustomerE2EAdmin(builder.Configuration, builder.Environment);
 
         var app = builder.Build();
         app.MapCustomerE2EAdmin();
