@@ -9,55 +9,34 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SuccessRouteImport } from './routes/success'
-import { Route as StripeReturnRouteImport } from './routes/stripe-return'
-import { Route as StripeRefreshRouteImport } from './routes/stripe-refresh'
-import { Route as RegisterRouteImport } from './routes/register'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as FailRouteImport } from './routes/fail'
 import { Route as CustomerRouteRouteImport } from './routes/_customer/route'
+import { Route as FailRouteImport } from './routes/fail'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as StripeRefreshRouteImport } from './routes/stripe-refresh'
+import { Route as StripeReturnRouteImport } from './routes/stripe-return'
+import { Route as SuccessRouteImport } from './routes/success'
 import { Route as CustomerIndexRouteImport } from './routes/_customer/index'
-import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
-import { Route as CustomerSettingsRouteRouteImport } from './routes/_customer/settings/route'
 import { Route as CustomerProfileRouteRouteImport } from './routes/_customer/profile/route'
-import { Route as CustomerSettingsIndexRouteImport } from './routes/_customer/settings/index'
-import { Route as CustomerProfileIndexRouteImport } from './routes/_customer/profile/index'
+import { Route as CustomerSettingsRouteRouteImport } from './routes/_customer/settings/route'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as CustomerFindIndexRouteImport } from './routes/_customer/find/index'
-import { Route as CustomerSettingsPaymentRouteImport } from './routes/_customer/settings/payment'
+import { Route as CustomerProfileIndexRouteImport } from './routes/_customer/profile/index'
 import { Route as CustomerProfileLocationRouteImport } from './routes/_customer/profile/location'
-import { Route as CustomerProfileTicketsIndexRouteImport } from './routes/_customer/profile/tickets/index'
-import { Route as CustomerProfilePreferencesIndexRouteImport } from './routes/_customer/profile/preferences/index'
-import { Route as CustomerProfileTicketsUpcomingRouteImport } from './routes/_customer/profile/tickets/upcoming'
-import { Route as CustomerProfileTicketsHistoryRouteImport } from './routes/_customer/profile/tickets/history'
-import { Route as CustomerProfilePreferencesCreateRouteImport } from './routes/_customer/profile/preferences/create'
-import { Route as CustomerFindVenueIdRouteImport } from './routes/_customer/find/venue.$id'
-import { Route as CustomerFindConcertIdRouteImport } from './routes/_customer/find/concert.$id'
-import { Route as CustomerFindArtistIdRouteImport } from './routes/_customer/find/artist.$id'
+import { Route as CustomerSettingsIndexRouteImport } from './routes/_customer/settings/index'
+import { Route as CustomerSettingsPaymentRouteImport } from './routes/_customer/settings/payment'
 import { Route as CustomerConcertCheckoutIdRouteImport } from './routes/_customer/concert/checkout.$id'
+import { Route as CustomerFindArtistIdRouteImport } from './routes/_customer/find/artist.$id'
+import { Route as CustomerFindConcertIdRouteImport } from './routes/_customer/find/concert.$id'
+import { Route as CustomerFindVenueIdRouteImport } from './routes/_customer/find/venue.$id'
+import { Route as CustomerProfilePreferencesIndexRouteImport } from './routes/_customer/profile/preferences/index'
+import { Route as CustomerProfilePreferencesCreateRouteImport } from './routes/_customer/profile/preferences/create'
+import { Route as CustomerProfileTicketsIndexRouteImport } from './routes/_customer/profile/tickets/index'
+import { Route as CustomerProfileTicketsHistoryRouteImport } from './routes/_customer/profile/tickets/history'
+import { Route as CustomerProfileTicketsUpcomingRouteImport } from './routes/_customer/profile/tickets/upcoming'
 
-const SuccessRoute = SuccessRouteImport.update({
-  id: '/success',
-  path: '/success',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StripeReturnRoute = StripeReturnRouteImport.update({
-  id: '/stripe-return',
-  path: '/stripe-return',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StripeRefreshRoute = StripeRefreshRouteImport.update({
-  id: '/stripe-refresh',
-  path: '/stripe-refresh',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const CustomerRouteRoute = CustomerRouteRouteImport.update({
+  id: '/_customer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FailRoute = FailRouteImport.update({
@@ -65,8 +44,29 @@ const FailRoute = FailRouteImport.update({
   path: '/fail',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CustomerRouteRoute = CustomerRouteRouteImport.update({
-  id: '/_customer',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StripeRefreshRoute = StripeRefreshRouteImport.update({
+  id: '/stripe-refresh',
+  path: '/stripe-refresh',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StripeReturnRoute = StripeReturnRouteImport.update({
+  id: '/stripe-return',
+  path: '/stripe-return',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SuccessRoute = SuccessRouteImport.update({
+  id: '/success',
+  path: '/success',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CustomerIndexRoute = CustomerIndexRouteImport.update({
@@ -74,68 +74,71 @@ const CustomerIndexRoute = CustomerIndexRouteImport.update({
   path: '/',
   getParentRoute: () => CustomerRouteRoute,
 } as any)
-const AuthCallbackRoute = AuthCallbackRouteImport.update({
-  id: '/auth/callback',
-  path: '/auth/callback',
-  getParentRoute: () => rootRouteImport,
+const CustomerProfileRouteRoute = CustomerProfileRouteRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => CustomerRouteRoute,
 } as any)
 const CustomerSettingsRouteRoute = CustomerSettingsRouteRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => CustomerRouteRoute,
 } as any)
-const CustomerProfileRouteRoute = CustomerProfileRouteRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => CustomerRouteRoute,
-} as any)
-const CustomerSettingsIndexRoute = CustomerSettingsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CustomerSettingsRouteRoute,
-} as any)
-const CustomerProfileIndexRoute = CustomerProfileIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CustomerProfileRouteRoute,
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CustomerFindIndexRoute = CustomerFindIndexRouteImport.update({
   id: '/find/',
   path: '/find/',
   getParentRoute: () => CustomerRouteRoute,
 } as any)
-const CustomerSettingsPaymentRoute = CustomerSettingsPaymentRouteImport.update({
-  id: '/payment',
-  path: '/payment',
-  getParentRoute: () => CustomerSettingsRouteRoute,
+const CustomerProfileIndexRoute = CustomerProfileIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CustomerProfileRouteRoute,
 } as any)
 const CustomerProfileLocationRoute = CustomerProfileLocationRouteImport.update({
   id: '/location',
   path: '/location',
   getParentRoute: () => CustomerProfileRouteRoute,
 } as any)
-const CustomerProfileTicketsIndexRoute =
-  CustomerProfileTicketsIndexRouteImport.update({
-    id: '/tickets/',
-    path: '/tickets/',
-    getParentRoute: () => CustomerProfileRouteRoute,
+const CustomerSettingsIndexRoute = CustomerSettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CustomerSettingsRouteRoute,
+} as any)
+const CustomerSettingsPaymentRoute = CustomerSettingsPaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
+  getParentRoute: () => CustomerSettingsRouteRoute,
+} as any)
+const CustomerConcertCheckoutIdRoute =
+  CustomerConcertCheckoutIdRouteImport.update({
+    id: '/concert/checkout/$id',
+    path: '/concert/checkout/$id',
+    getParentRoute: () => CustomerRouteRoute,
   } as any)
+const CustomerFindArtistIdRoute = CustomerFindArtistIdRouteImport.update({
+  id: '/find/artist/$id',
+  path: '/find/artist/$id',
+  getParentRoute: () => CustomerRouteRoute,
+} as any)
+const CustomerFindConcertIdRoute = CustomerFindConcertIdRouteImport.update({
+  id: '/find/concert/$id',
+  path: '/find/concert/$id',
+  getParentRoute: () => CustomerRouteRoute,
+} as any)
+const CustomerFindVenueIdRoute = CustomerFindVenueIdRouteImport.update({
+  id: '/find/venue/$id',
+  path: '/find/venue/$id',
+  getParentRoute: () => CustomerRouteRoute,
+} as any)
 const CustomerProfilePreferencesIndexRoute =
   CustomerProfilePreferencesIndexRouteImport.update({
     id: '/preferences/',
     path: '/preferences/',
-    getParentRoute: () => CustomerProfileRouteRoute,
-  } as any)
-const CustomerProfileTicketsUpcomingRoute =
-  CustomerProfileTicketsUpcomingRouteImport.update({
-    id: '/tickets/upcoming',
-    path: '/tickets/upcoming',
-    getParentRoute: () => CustomerProfileRouteRoute,
-  } as any)
-const CustomerProfileTicketsHistoryRoute =
-  CustomerProfileTicketsHistoryRouteImport.update({
-    id: '/tickets/history',
-    path: '/tickets/history',
     getParentRoute: () => CustomerProfileRouteRoute,
   } as any)
 const CustomerProfilePreferencesCreateRoute =
@@ -144,26 +147,23 @@ const CustomerProfilePreferencesCreateRoute =
     path: '/preferences/create',
     getParentRoute: () => CustomerProfileRouteRoute,
   } as any)
-const CustomerFindVenueIdRoute = CustomerFindVenueIdRouteImport.update({
-  id: '/find/venue/$id',
-  path: '/find/venue/$id',
-  getParentRoute: () => CustomerRouteRoute,
-} as any)
-const CustomerFindConcertIdRoute = CustomerFindConcertIdRouteImport.update({
-  id: '/find/concert/$id',
-  path: '/find/concert/$id',
-  getParentRoute: () => CustomerRouteRoute,
-} as any)
-const CustomerFindArtistIdRoute = CustomerFindArtistIdRouteImport.update({
-  id: '/find/artist/$id',
-  path: '/find/artist/$id',
-  getParentRoute: () => CustomerRouteRoute,
-} as any)
-const CustomerConcertCheckoutIdRoute =
-  CustomerConcertCheckoutIdRouteImport.update({
-    id: '/concert/checkout/$id',
-    path: '/concert/checkout/$id',
-    getParentRoute: () => CustomerRouteRoute,
+const CustomerProfileTicketsIndexRoute =
+  CustomerProfileTicketsIndexRouteImport.update({
+    id: '/tickets/',
+    path: '/tickets/',
+    getParentRoute: () => CustomerProfileRouteRoute,
+  } as any)
+const CustomerProfileTicketsHistoryRoute =
+  CustomerProfileTicketsHistoryRouteImport.update({
+    id: '/tickets/history',
+    path: '/tickets/history',
+    getParentRoute: () => CustomerProfileRouteRoute,
+  } as any)
+const CustomerProfileTicketsUpcomingRoute =
+  CustomerProfileTicketsUpcomingRouteImport.update({
+    id: '/tickets/upcoming',
+    path: '/tickets/upcoming',
+    getParentRoute: () => CustomerProfileRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -337,39 +337,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/success': {
-      id: '/success'
-      path: '/success'
-      fullPath: '/success'
-      preLoaderRoute: typeof SuccessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/stripe-return': {
-      id: '/stripe-return'
-      path: '/stripe-return'
-      fullPath: '/stripe-return'
-      preLoaderRoute: typeof StripeReturnRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/stripe-refresh': {
-      id: '/stripe-refresh'
-      path: '/stripe-refresh'
-      fullPath: '/stripe-refresh'
-      preLoaderRoute: typeof StripeRefreshRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/_customer': {
+      id: '/_customer'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof CustomerRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/fail': {
@@ -379,11 +351,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FailRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_customer': {
-      id: '/_customer'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof CustomerRouteRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stripe-refresh': {
+      id: '/stripe-refresh'
+      path: '/stripe-refresh'
+      fullPath: '/stripe-refresh'
+      preLoaderRoute: typeof StripeRefreshRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stripe-return': {
+      id: '/stripe-return'
+      path: '/stripe-return'
+      fullPath: '/stripe-return'
+      preLoaderRoute: typeof StripeReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/success': {
+      id: '/success'
+      path: '/success'
+      fullPath: '/success'
+      preLoaderRoute: typeof SuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_customer/': {
@@ -393,12 +393,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerIndexRouteImport
       parentRoute: typeof CustomerRouteRoute
     }
-    '/auth/callback': {
-      id: '/auth/callback'
-      path: '/auth/callback'
-      fullPath: '/auth/callback'
-      preLoaderRoute: typeof AuthCallbackRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_customer/profile': {
+      id: '/_customer/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof CustomerProfileRouteRouteImport
+      parentRoute: typeof CustomerRouteRoute
     }
     '/_customer/settings': {
       id: '/_customer/settings'
@@ -407,26 +407,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerSettingsRouteRouteImport
       parentRoute: typeof CustomerRouteRoute
     }
-    '/_customer/profile': {
-      id: '/_customer/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof CustomerProfileRouteRouteImport
-      parentRoute: typeof CustomerRouteRoute
-    }
-    '/_customer/settings/': {
-      id: '/_customer/settings/'
-      path: '/'
-      fullPath: '/settings/'
-      preLoaderRoute: typeof CustomerSettingsIndexRouteImport
-      parentRoute: typeof CustomerSettingsRouteRoute
-    }
-    '/_customer/profile/': {
-      id: '/_customer/profile/'
-      path: '/'
-      fullPath: '/profile/'
-      preLoaderRoute: typeof CustomerProfileIndexRouteImport
-      parentRoute: typeof CustomerProfileRouteRoute
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_customer/find/': {
       id: '/_customer/find/'
@@ -435,12 +421,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerFindIndexRouteImport
       parentRoute: typeof CustomerRouteRoute
     }
-    '/_customer/settings/payment': {
-      id: '/_customer/settings/payment'
-      path: '/payment'
-      fullPath: '/settings/payment'
-      preLoaderRoute: typeof CustomerSettingsPaymentRouteImport
-      parentRoute: typeof CustomerSettingsRouteRoute
+    '/_customer/profile/': {
+      id: '/_customer/profile/'
+      path: '/'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof CustomerProfileIndexRouteImport
+      parentRoute: typeof CustomerProfileRouteRoute
     }
     '/_customer/profile/location': {
       id: '/_customer/profile/location'
@@ -449,53 +435,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerProfileLocationRouteImport
       parentRoute: typeof CustomerProfileRouteRoute
     }
-    '/_customer/profile/tickets/': {
-      id: '/_customer/profile/tickets/'
-      path: '/tickets'
-      fullPath: '/profile/tickets/'
-      preLoaderRoute: typeof CustomerProfileTicketsIndexRouteImport
-      parentRoute: typeof CustomerProfileRouteRoute
+    '/_customer/settings/': {
+      id: '/_customer/settings/'
+      path: '/'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof CustomerSettingsIndexRouteImport
+      parentRoute: typeof CustomerSettingsRouteRoute
     }
-    '/_customer/profile/preferences/': {
-      id: '/_customer/profile/preferences/'
-      path: '/preferences'
-      fullPath: '/profile/preferences/'
-      preLoaderRoute: typeof CustomerProfilePreferencesIndexRouteImport
-      parentRoute: typeof CustomerProfileRouteRoute
+    '/_customer/settings/payment': {
+      id: '/_customer/settings/payment'
+      path: '/payment'
+      fullPath: '/settings/payment'
+      preLoaderRoute: typeof CustomerSettingsPaymentRouteImport
+      parentRoute: typeof CustomerSettingsRouteRoute
     }
-    '/_customer/profile/tickets/upcoming': {
-      id: '/_customer/profile/tickets/upcoming'
-      path: '/tickets/upcoming'
-      fullPath: '/profile/tickets/upcoming'
-      preLoaderRoute: typeof CustomerProfileTicketsUpcomingRouteImport
-      parentRoute: typeof CustomerProfileRouteRoute
-    }
-    '/_customer/profile/tickets/history': {
-      id: '/_customer/profile/tickets/history'
-      path: '/tickets/history'
-      fullPath: '/profile/tickets/history'
-      preLoaderRoute: typeof CustomerProfileTicketsHistoryRouteImport
-      parentRoute: typeof CustomerProfileRouteRoute
-    }
-    '/_customer/profile/preferences/create': {
-      id: '/_customer/profile/preferences/create'
-      path: '/preferences/create'
-      fullPath: '/profile/preferences/create'
-      preLoaderRoute: typeof CustomerProfilePreferencesCreateRouteImport
-      parentRoute: typeof CustomerProfileRouteRoute
-    }
-    '/_customer/find/venue/$id': {
-      id: '/_customer/find/venue/$id'
-      path: '/find/venue/$id'
-      fullPath: '/find/venue/$id'
-      preLoaderRoute: typeof CustomerFindVenueIdRouteImport
-      parentRoute: typeof CustomerRouteRoute
-    }
-    '/_customer/find/concert/$id': {
-      id: '/_customer/find/concert/$id'
-      path: '/find/concert/$id'
-      fullPath: '/find/concert/$id'
-      preLoaderRoute: typeof CustomerFindConcertIdRouteImport
+    '/_customer/concert/checkout/$id': {
+      id: '/_customer/concert/checkout/$id'
+      path: '/concert/checkout/$id'
+      fullPath: '/concert/checkout/$id'
+      preLoaderRoute: typeof CustomerConcertCheckoutIdRouteImport
       parentRoute: typeof CustomerRouteRoute
     }
     '/_customer/find/artist/$id': {
@@ -505,12 +463,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerFindArtistIdRouteImport
       parentRoute: typeof CustomerRouteRoute
     }
-    '/_customer/concert/checkout/$id': {
-      id: '/_customer/concert/checkout/$id'
-      path: '/concert/checkout/$id'
-      fullPath: '/concert/checkout/$id'
-      preLoaderRoute: typeof CustomerConcertCheckoutIdRouteImport
+    '/_customer/find/concert/$id': {
+      id: '/_customer/find/concert/$id'
+      path: '/find/concert/$id'
+      fullPath: '/find/concert/$id'
+      preLoaderRoute: typeof CustomerFindConcertIdRouteImport
       parentRoute: typeof CustomerRouteRoute
+    }
+    '/_customer/find/venue/$id': {
+      id: '/_customer/find/venue/$id'
+      path: '/find/venue/$id'
+      fullPath: '/find/venue/$id'
+      preLoaderRoute: typeof CustomerFindVenueIdRouteImport
+      parentRoute: typeof CustomerRouteRoute
+    }
+    '/_customer/profile/preferences/': {
+      id: '/_customer/profile/preferences/'
+      path: '/preferences'
+      fullPath: '/profile/preferences/'
+      preLoaderRoute: typeof CustomerProfilePreferencesIndexRouteImport
+      parentRoute: typeof CustomerProfileRouteRoute
+    }
+    '/_customer/profile/preferences/create': {
+      id: '/_customer/profile/preferences/create'
+      path: '/preferences/create'
+      fullPath: '/profile/preferences/create'
+      preLoaderRoute: typeof CustomerProfilePreferencesCreateRouteImport
+      parentRoute: typeof CustomerProfileRouteRoute
+    }
+    '/_customer/profile/tickets/': {
+      id: '/_customer/profile/tickets/'
+      path: '/tickets'
+      fullPath: '/profile/tickets/'
+      preLoaderRoute: typeof CustomerProfileTicketsIndexRouteImport
+      parentRoute: typeof CustomerProfileRouteRoute
+    }
+    '/_customer/profile/tickets/history': {
+      id: '/_customer/profile/tickets/history'
+      path: '/tickets/history'
+      fullPath: '/profile/tickets/history'
+      preLoaderRoute: typeof CustomerProfileTicketsHistoryRouteImport
+      parentRoute: typeof CustomerProfileRouteRoute
+    }
+    '/_customer/profile/tickets/upcoming': {
+      id: '/_customer/profile/tickets/upcoming'
+      path: '/tickets/upcoming'
+      fullPath: '/profile/tickets/upcoming'
+      preLoaderRoute: typeof CustomerProfileTicketsUpcomingRouteImport
+      parentRoute: typeof CustomerProfileRouteRoute
     }
   }
 }
