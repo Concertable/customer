@@ -8,6 +8,31 @@ namespace Concertable.Customer.Hosting;
 
 public static class AppHostExtensions
 {
+    public static IResourceBuilder<ContainerResource> AddCustomerWeb(
+        this IDistributedApplicationBuilder builder,
+        string image,
+        string digest,
+        IResourceBuilder<ProjectResource> auth,
+        IResourceBuilder<SqlServerDatabaseResource> customerDb,
+        IResourceBuilder<AzureServiceBusResource> asb,
+        IResourceBuilder<ProjectResource> paymentWeb)
+    {
+        var customerSecret = builder.Configuration["ServiceAuth:CustomerClientSecret"];
+        return builder.AddContainerImage(CustomerConstants.WebResource, image, digest)
+                      .WithReference(auth)
+                      .WaitFor(auth)
+                      .WithReference(customerDb)
+                      .WaitFor(customerDb)
+                      .WithReference(asb)
+                      .WaitFor(asb)
+                      .WithReference(paymentWeb)
+                      .WaitFor(paymentWeb)
+                      .WithEnvironment("Auth__Authority", auth.GetEndpoint("https"))
+                      .WithEnvironment(AzureServiceBusOptions.ServiceNameEnvVar, CustomerConstants.ServiceName)
+                      .WithEnvironment("ServiceAuth__ClientId", "concertable-customer")
+                      .WithOptionalEnvironment("ServiceAuth__ClientSecret", customerSecret);
+    }
+
     public static IResourceBuilder<ProjectResource> AddCustomerWeb<TProject>(
         this IDistributedApplicationBuilder builder,
         IResourceBuilder<ProjectResource> auth,

@@ -42,13 +42,14 @@ internal sealed class TicketPaymentProcessor : IIntegrationEventHandler<PaymentS
 
         try
         {
-            var payment = (await ticketService.CompleteAsync(new()
+            var payment = await ticketService.CompleteAsync(new()
             {
                 EntityId = meta.GetValueAs<int>(PaymentMetadataKeys.ConcertId),
                 FromUserId = meta.GetValueAs<Guid>(PaymentMetadataKeys.FromUserId),
                 FromEmail = meta.GetValue(PaymentMetadataKeys.FromUserEmail),
+                TransactionId = @event.TransactionId,
                 Quantity = meta.TryGetValue(PaymentMetadataKeys.Quantity, out var q) ? int.Parse(q) : null
-            })) with { TransactionId = @event.TransactionId };
+            });
 
             await notifier.TicketPurchasedAsync(meta.GetValue(PaymentMetadataKeys.FromUserId), payment);
         }
