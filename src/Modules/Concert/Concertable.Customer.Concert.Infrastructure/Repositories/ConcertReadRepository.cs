@@ -18,9 +18,6 @@ internal sealed class ConcertReadRepository : QueryableReadRepository<ConcertEnt
         this.context = context;
     }
 
-    public override Task<ConcertEntity?> GetByIdAsync(int id, CancellationToken ct = default) =>
-        context.Concerts.Include(c => c.Genres).FirstOrDefaultAsync(c => c.Id == id, ct);
-
     public Task<ConcertDto?> GetDtoAsync(int concertId, CancellationToken ct = default) =>
         context.Concerts
             .Where(c => c.Id == concertId)
