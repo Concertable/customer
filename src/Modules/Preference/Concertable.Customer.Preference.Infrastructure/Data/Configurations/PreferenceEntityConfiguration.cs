@@ -9,5 +9,6 @@ internal sealed class PreferenceEntityConfiguration : IEntityTypeConfiguration<P
     {
         builder.ToTable(Schema.Tables.Preferences, Schema.Name);
         builder.HasIndex(p => p.UserId).IsUnique();
+        builder.Navigation(p => p.GenrePreferences).AutoInclude();
     }
 }
