@@ -7,8 +7,10 @@
     "app/shared"
   ],
   "scripts": {
-    "build:web": "npm -w @concertable/web-customer run build",
-    "typecheck:mobile": "npm -w @concertable/mobile-customer exec -- tsc --noEmit -p tsconfig.json"
+    "build:shared": "npm -w @concertable/customer run build",
+    "build:web": "npm run build:shared && npm -w @concertable/web-customer run build",
+    "typecheck:mobile": "npm run build:shared && npm -w @concertable/mobile-customer exec -- tsc --noEmit -p tsconfig.json",
+    "build:mobile": "npm run typecheck:mobile && npm -w @concertable/mobile-customer exec -- expo export --platform android"
   },
   "overrides": {
     "react": "19.1.0",
