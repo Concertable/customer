@@ -19,6 +19,14 @@ public static class ServiceCollectionExtensions
                 .AddInternalControllers(typeof(ConcertReviewsController).Assembly);
             return services;
         }
+
+        public IServiceCollection AddReviewMigrations(IConfiguration configuration)
+        {
+            services.AddSingleton<ReviewConfigurationProvider>();
+            services.AddDbContext<ReviewDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("CustomerDb")));
+            return services;
+        }
     }
 
     extension(IServiceProvider services)
