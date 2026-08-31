@@ -25,7 +25,12 @@ public abstract class QueryableReadRepository<TEntity, TKey> : IReadRepository<T
     public Task<TEntity?> GetByIdAsync(TKey id, ISpecification<TEntity> spec, CancellationToken ct = default) =>
         query.Apply(spec).FirstOrDefaultAsync(entity => entity.Id!.Equals(id), ct);
 
-    public Task<TResult?> GetByIdAsync<TResult>(TKey id, ISpecification<TEntity, TResult> spec, CancellationToken ct = default) =>
+    public Task<TResult?> GetByIdAsync<TResult>(TKey id, ISpecification<TEntity, TResult> spec, CancellationToken ct = default)
+        where TResult : class =>
+        query.Where(entity => entity.Id!.Equals(id)).Select(spec.Selector).FirstOrDefaultAsync(ct);
+
+    public Task<TResult?> GetByIdAsync<TResult>(TKey id, ISpecification<TEntity, TResult?> spec, CancellationToken ct = default)
+        where TResult : struct =>
         query.Where(entity => entity.Id!.Equals(id)).Select(spec.Selector).FirstOrDefaultAsync(ct);
 
     public async Task<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity> spec, CancellationToken ct = default) =>
