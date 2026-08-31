@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: read
+
+env:
+  GITHUB_PACKAGES_TOKEN: ${{ secrets.PACKAGES_READ_TOKEN }}
+
+jobs:
+  backend:
+    name: Backend and migrations
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore backend
+        run: dotnet restore CarveCustomer.slnx
+
+      - name: Build backend
+        run: dotnet build CarveCustomer.slnx --configuration Release --no-restore
+
+      - name: Validate migration snapshots
+        shell: pwsh
+        run: ./scripts/validate-migrations.ps1
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Clean install
+        run: npm ci
+
+      - name: Test and build shared package
+        run: npm run build:shared
+
+      - name: Test web app
+        run: npm -w @concertable/web-customer test
+
+      - name: Build web app
+        run: npm run build:web
+
+      - name: Typecheck and export mobile app
+        run: npm run build:mobile
