@@ -19,6 +19,14 @@ public static class ServiceCollectionExtensions
                 .AddInternalControllers(typeof(ConcertController).Assembly);
             return services;
         }
+
+        public IServiceCollection AddConcertMigrations(IConfiguration configuration)
+        {
+            services.AddSingleton<ConcertConfigurationProvider>();
+            services.AddDbContext<ConcertDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("CustomerDb")));
+            return services;
+        }
     }
 
     extension(IServiceProvider services)
