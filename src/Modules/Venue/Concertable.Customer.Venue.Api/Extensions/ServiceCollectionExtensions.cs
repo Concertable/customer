@@ -19,6 +19,14 @@ public static class ServiceCollectionExtensions
                 .AddInternalControllers(typeof(VenueController).Assembly);
             return services;
         }
+
+        public IServiceCollection AddVenueMigrations(IConfiguration configuration)
+        {
+            services.AddSingleton<VenueConfigurationProvider>();
+            services.AddDbContext<VenueDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("CustomerDb")));
+            return services;
+        }
     }
 
     extension(IServiceProvider services)

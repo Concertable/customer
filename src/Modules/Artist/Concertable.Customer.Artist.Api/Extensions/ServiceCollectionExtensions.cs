@@ -19,6 +19,14 @@ public static class ServiceCollectionExtensions
                 .AddInternalControllers(typeof(ArtistController).Assembly);
             return services;
         }
+
+        public IServiceCollection AddArtistMigrations(IConfiguration configuration)
+        {
+            services.AddSingleton<ArtistConfigurationProvider>();
+            services.AddDbContext<ArtistDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("CustomerDb")));
+            return services;
+        }
     }
 
     extension(IServiceProvider services)
