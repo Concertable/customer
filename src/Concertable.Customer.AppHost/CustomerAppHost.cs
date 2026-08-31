@@ -26,9 +26,11 @@ public static class CustomerAppHost
         var paymentDb = sql.AddDatabase(PaymentConstants.Database);
         var asb = builder.AddServiceBus();
         asb.Topology().AddCustomerTopology().AddSearchTopology().AddPaymentTopology().AddAuthTopology().RunAsEmulator();
-        var auth = builder.AddAuth(AuthImage, AuthDigest, authDb, asb);
+        var auth = builder.AddAuth(AuthImage, AuthDigest, authDb, asb)
+                          .WithHttpEndpoint(targetPort: 8080, name: "https");
         auth.WithEndpoint("https", endpoint => endpoint.Port = 7093);
-        var paymentWeb = builder.AddPaymentWeb(PaymentWebImage, PaymentWebDigest, auth, paymentDb, asb);
+        var paymentWeb = builder.AddPaymentWeb(PaymentWebImage, PaymentWebDigest, auth, paymentDb, asb)
+                                .WithHttpEndpoint(targetPort: 8080, name: "https");
         paymentWeb.WithEndpoint("https", endpoint => endpoint.Port = 7098);
         var customerWeb = builder.AddCustomerWeb<Projects.Concertable_Customer_Web>(auth, customerDb, asb, paymentWeb);
         auth.WithEnvironment("ServiceAuth__AuthClientId", "concertable-auth");
