@@ -100,6 +100,23 @@ jobs:
           test -s artifacts/images/customer-migrations.tar.gz
           test -s artifacts/images/customer-seed-simulator.tar.gz
 
+      - name: Verify and inventory candidate integrity
+        shell: pwsh
+        run: >-
+          ./scripts/verify-artifact-integrity.ps1
+          -PackageDirectory artifacts/packages
+          -ImageDirectory artifacts/images
+          -EvidenceDirectory artifacts/integrity
+
+      - name: Retain candidate integrity evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: customer-candidate-integrity-${{ github.sha }}
+          path: artifacts/integrity
+          if-no-files-found: error
+          retention-days: 30
+
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
