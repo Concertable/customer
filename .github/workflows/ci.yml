@@ -11,7 +11,7 @@ permissions:
   packages: read
 
 env:
-  GITHUB_PACKAGES_TOKEN: ${{ secrets.PACKAGES_READ_TOKEN }}
+  GITHUB_PACKAGES_TOKEN: ${{ github.token }}
 
 jobs:
   backend:
