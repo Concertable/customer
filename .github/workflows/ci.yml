@@ -76,6 +76,20 @@ jobs:
             -p:ContainerImageTag=${{ github.sha }} \
             -p:ContainerArchiveOutputPath=${{ github.workspace }}/artifacts/images/customer-migrations.tar.gz
 
+      - name: Build Customer seed simulator image candidate
+        run: |
+          dotnet publish src/Seed/Concertable.Customer.Seed.Simulator/Concertable.Customer.Seed.Simulator.csproj \
+            --configuration Release \
+            --no-restore \
+            /t:PublishContainer \
+            -p:ContainerImageTag=${{ github.sha }} \
+            -p:ContainerArchiveOutputPath=${{ github.workspace }}/artifacts/images/customer-seed-simulator.tar.gz
+
+      - name: Smoke Customer seed simulator image candidate
+        run: |
+          docker load --input artifacts/images/customer-seed-simulator.tar.gz
+          docker run --rm concertable/customer-seed-simulator:${{ github.sha }} --SeedSimulator:Smoke=true
+
       - name: Verify Customer migration job on an empty database
         shell: pwsh
         run: ./scripts/verify-migration-job.ps1 -Configuration Release
@@ -84,6 +98,7 @@ jobs:
         run: |
           test -s artifacts/images/customer-web.tar.gz
           test -s artifacts/images/customer-migrations.tar.gz
+          test -s artifacts/images/customer-seed-simulator.tar.gz
 
   frontend:
     name: Frontend

@@ -76,6 +76,7 @@
     <PackageVersion Include="Concertable.Shared.QrCode.Application" Version="$(ConcertableDotNetPlatformVersion)" />
     <PackageVersion Include="Concertable.Shared.QrCode.Infrastructure" Version="$(ConcertableDotNetPlatformVersion)" />
     <PackageVersion Include="Concertable.Messaging.Contracts" Version="$(ConcertableDotNetPlatformVersion)" />
+    <PackageVersion Include="Concertable.Messaging.Application" Version="$(ConcertableDotNetPlatformVersion)" />
     <PackageVersion Include="Concertable.Messaging.Domain" Version="$(ConcertableDotNetPlatformVersion)" />
     <PackageVersion Include="Concertable.Messaging.Infrastructure" Version="$(ConcertableDotNetPlatformVersion)" />
     <PackageVersion Include="Concertable.Messaging.AzureServiceBus" Version="$(ConcertableDotNetPlatformVersion)" />
@@ -93,6 +94,7 @@
     <PackageVersion Include="Concertable.B2B.Concert.Contracts" Version="$(ConcertableDotNetPlatformVersion)" />
     <PackageVersion Include="Concertable.B2B.Venue.Contracts" Version="$(ConcertableDotNetPlatformVersion)" />
     <PackageVersion Include="Concertable.B2B.Seed.Contracts" Version="$(ConcertableDotNetPlatformVersion)" />
+    <PackageVersion Include="Concertable.B2B.User.Contracts" Version="$(ConcertableDotNetPlatformVersion)" />
   </ItemGroup>
 
   <ItemGroup>
