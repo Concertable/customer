@@ -8,7 +8,7 @@ namespace Concertable.Customer.Hosting;
 
 public static class AppHostExtensions
 {
-    public static IResourceBuilder<ContainerResource> AddCustomerWeb(
+    public static IResourceBuilder<ServiceContainerResource> AddCustomerWeb(
         this IDistributedApplicationBuilder builder,
         string image,
         string digest,
