@@ -22,6 +22,14 @@ public static class ServiceCollectionExtensions
 
         public IServiceCollection AddPreferenceDevSeeding()
             => services.AddPreferenceDevSeeder();
+
+        public IServiceCollection AddPreferenceMigrations(IConfiguration configuration)
+        {
+            services.AddSingleton<PreferenceConfigurationProvider>();
+            services.AddDbContext<PreferenceDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("CustomerDb")));
+            return services;
+        }
     }
 
     extension(IServiceProvider services)

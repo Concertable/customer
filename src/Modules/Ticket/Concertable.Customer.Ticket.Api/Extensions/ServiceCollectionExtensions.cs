@@ -22,6 +22,14 @@ public static class ServiceCollectionExtensions
 
         public IServiceCollection AddTicketDevSeeding()
             => services.AddTicketDevSeeder();
+
+        public IServiceCollection AddTicketMigrations(IConfiguration configuration)
+        {
+            services.AddSingleton<TicketConfigurationProvider>();
+            services.AddDbContext<TicketDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("CustomerDb")));
+            return services;
+        }
     }
 
     extension(IServiceProvider services)

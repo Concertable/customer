@@ -67,8 +67,23 @@ jobs:
             -p:ContainerImageTag=${{ github.sha }} \
             -p:ContainerArchiveOutputPath=${{ github.workspace }}/artifacts/images/customer-web.tar.gz
 
-      - name: Verify image candidate
-        run: test -s artifacts/images/customer-web.tar.gz
+      - name: Build Customer migrations image candidate
+        run: |
+          dotnet publish src/Concertable.Customer.Migrations/Concertable.Customer.Migrations.csproj \
+            --configuration Release \
+            --no-restore \
+            /t:PublishContainer \
+            -p:ContainerImageTag=${{ github.sha }} \
+            -p:ContainerArchiveOutputPath=${{ github.workspace }}/artifacts/images/customer-migrations.tar.gz
+
+      - name: Verify Customer migration job on an empty database
+        shell: pwsh
+        run: ./scripts/verify-migration-job.ps1 -Configuration Release
+
+      - name: Verify image candidates
+        run: |
+          test -s artifacts/images/customer-web.tar.gz
+          test -s artifacts/images/customer-migrations.tar.gz
 
   frontend:
     name: Frontend
