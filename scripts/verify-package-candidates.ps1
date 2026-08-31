@@ -9,6 +9,7 @@ $ErrorActionPreference = 'Stop'
 $expectedPackageIds = @(
     'Concertable.Customer.Hosting'
     'Concertable.Customer.Review.Contracts'
+    'Concertable.Customer.Seed.Contracts'
     'Concertable.Customer.Ticket.Contracts'
 )
 
@@ -78,6 +79,7 @@ try {
   <ItemGroup>
     <PackageReference Include="Concertable.Customer.Hosting" Version="$escapedVersion" />
     <PackageReference Include="Concertable.Customer.Review.Contracts" Version="$escapedVersion" />
+    <PackageReference Include="Concertable.Customer.Seed.Contracts" Version="$escapedVersion" />
     <PackageReference Include="Concertable.Customer.Ticket.Contracts" Version="$escapedVersion" />
   </ItemGroup>
 </Project>
@@ -96,6 +98,7 @@ try {
     <packageSource key="customer-candidates">
       <package pattern="Concertable.Customer.Hosting" />
       <package pattern="Concertable.Customer.Review.Contracts" />
+      <package pattern="Concertable.Customer.Seed.Contracts" />
       <package pattern="Concertable.Customer.Ticket.Contracts" />
     </packageSource>
     <packageSource key="nuget.org"><package pattern="*" /></packageSource>
