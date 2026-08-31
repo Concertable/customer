@@ -1,4 +1,8 @@
+using Aspire.Hosting;
+using Aspire.Hosting.ApplicationModel;
+using Concertable.Auth.Hosting;
 using Concertable.Customer.Web;
+using Concertable.Payment.Hosting;
 using Concertable.Testing;
 using Concertable.Testing.Architecture;
 using Microsoft.AspNetCore.Builder;
@@ -27,7 +31,10 @@ public sealed class CustomerArchitectureTests
     [Fact]
     public void AppHost_ProductionGraphAndStrictValidation_AreValid()
     {
-        using var app = CustomerAppHost.CreateBuilder([]).Build();
+        var validBuilder = CustomerAppHost.CreateBuilder([]);
+        AssertImageEndpoint(validBuilder, AuthConstants.Resource);
+        AssertImageEndpoint(validBuilder, PaymentConstants.WebResource);
+        using var app = validBuilder.Build();
         var builder = CustomerAppHost.CreateBuilder([]);
         builder.Services.AddInvalidLifetimeGraph();
         Assert.ThrowsAny<Exception>(() => builder.Build());
@@ -36,4 +43,17 @@ public sealed class CustomerArchitectureTests
     [Fact]
     public void Web_ReferencesNoModuleInfrastructureAssembly() =>
         Assert.Empty(typeof(CustomerWebHostExtensions).Assembly.ModuleInfrastructureReferences("Seed"));
+
+    private static void AssertImageEndpoint(
+        IDistributedApplicationBuilder builder,
+        string resourceName)
+    {
+        var resource = Assert.IsType<ServiceContainerResource>(
+            builder.Resources.Single(resource => resource.Name == resourceName));
+        var endpoint = Assert.Single(resource.Annotations.OfType<EndpointAnnotation>());
+
+        Assert.Equal("https", endpoint.Name);
+        Assert.Equal("http", endpoint.UriScheme);
+        Assert.Equal(8080, endpoint.TargetPort);
+    }
 }
