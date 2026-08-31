@@ -26,19 +26,19 @@ public abstract class QueryableReadRepository<TEntity, TKey> : IReadRepository<T
         query.Apply(spec).FirstOrDefaultAsync(entity => entity.Id!.Equals(id), ct);
 
     public Task<TResult?> GetByIdAsync<TResult>(TKey id, ISpecification<TEntity, TResult> spec, CancellationToken ct = default) =>
-        query.Apply(spec).Where(entity => entity.Id!.Equals(id)).Select(spec.Selector).FirstOrDefaultAsync(ct);
+        query.Where(entity => entity.Id!.Equals(id)).Select(spec.Selector).FirstOrDefaultAsync(ct);
 
     public async Task<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity> spec, CancellationToken ct = default) =>
         await query.Apply(spec).ToListAsync(ct);
 
     public async Task<IEnumerable<TEntity>> GetAllAsync(IOrderedSpecification<TEntity> spec, CancellationToken ct = default) =>
-        await query.Apply(spec).ToListAsync(ct);
+        await query.Apply(spec).ApplyOrders(spec.Orders).ToListAsync(ct);
 
     public async Task<IEnumerable<TResult>> GetAllAsync<TResult>(ISpecification<TEntity, TResult> spec, CancellationToken ct = default) =>
-        await query.Apply(spec).Select(spec.Selector).ToListAsync(ct);
+        await query.Select(spec.Selector).ToListAsync(ct);
 
     public async Task<IEnumerable<TResult>> GetAllAsync<TResult>(IOrderedSpecification<TEntity, TResult> spec, CancellationToken ct = default) =>
-        await query.Apply(spec).Select(spec.Selector).ToListAsync(ct);
+        await query.ApplyOrders(spec.Orders).Select(spec.Selector).ToListAsync(ct);
 
     public bool Exists(TKey id) => query.Any(entity => entity.Id!.Equals(id));
 }
