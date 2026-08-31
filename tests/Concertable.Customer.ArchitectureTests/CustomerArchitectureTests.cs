@@ -5,7 +5,10 @@ using Concertable.Customer.Web;
 using Concertable.Payment.Hosting;
 using Concertable.Testing;
 using Concertable.Testing.Architecture;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace Concertable.Customer.ArchitectureTests;
@@ -22,6 +25,9 @@ public sealed class CustomerArchitectureTests
         {
             RootAssemblies = [typeof(CustomerWebHostExtensions).Assembly]
         });
+        var jwtOptions = app.Services.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>()
+            .Get(JwtBearerDefaults.AuthenticationScheme);
+        Assert.False(jwtOptions.RequireHttpsMetadata);
         var invalidBuilder = WebApplication.CreateBuilder(CompositionTestArguments.Create());
         invalidBuilder.AddCustomerWebHost();
         invalidBuilder.Services.AddInvalidLifetimeGraph();
@@ -32,12 +38,24 @@ public sealed class CustomerArchitectureTests
     public void AppHost_ProductionGraphAndStrictValidation_AreValid()
     {
         var validBuilder = CustomerAppHost.CreateBuilder([]);
-        AssertImageEndpoint(validBuilder, AuthConstants.Resource);
-        AssertImageEndpoint(validBuilder, PaymentConstants.WebResource);
+        AssertImageEndpoint(validBuilder, AuthConstants.Resource, "https");
+        AssertImageEndpoint(validBuilder, PaymentConstants.WebResource, "https");
+        AssertImageEndpoint(validBuilder, PaymentConstants.WebResource, "http");
         using var app = validBuilder.Build();
         var builder = CustomerAppHost.CreateBuilder([]);
         builder.Services.AddInvalidLifetimeGraph();
         Assert.ThrowsAny<Exception>(() => builder.Build());
+    }
+
+    [Fact]
+    public void AppHost_PublishGraphWithStripeCli_IsValid()
+    {
+        var builder = CustomerAppHost.CreateBuilder(
+            ["--publisher", "manifest", "--Stripe:SecretKey=sk_test_composition"]);
+
+        Assert.True(builder.ExecutionContext.IsPublishMode);
+        Assert.Single(builder.Resources, resource => resource.Name == PaymentConstants.StripeCliResource);
+        using var app = builder.Build();
     }
 
     [Fact]
@@ -46,13 +64,16 @@ public sealed class CustomerArchitectureTests
 
     private static void AssertImageEndpoint(
         IDistributedApplicationBuilder builder,
-        string resourceName)
+        string resourceName,
+        string endpointName)
     {
         var resource = Assert.IsType<ServiceContainerResource>(
             builder.Resources.Single(resource => resource.Name == resourceName));
-        var endpoint = Assert.Single(resource.Annotations.OfType<EndpointAnnotation>());
+        var endpoint = Assert.Single(
+            resource.Annotations.OfType<EndpointAnnotation>(),
+            endpoint => endpoint.Name == endpointName);
 
-        Assert.Equal("https", endpoint.Name);
+        Assert.Equal(endpointName, endpoint.Name);
         Assert.Equal("http", endpoint.UriScheme);
         Assert.Equal(8080, endpoint.TargetPort);
     }
