@@ -11,7 +11,7 @@ export default defineConfig(({ command, mode }) => {
     plugins: [tanstackRouter(), react(), tailwindcss()],
     server: {
       host: '127.0.0.1',
-      https: command === 'serve'
+      https: command === 'serve' && mode !== 'test'
         ? aspNetDevelopmentHttps(path.resolve(__dirname, '../../node_modules/.vite/aspnet-https/customer'))
         : undefined,
       port: 5174,
