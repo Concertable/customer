@@ -3,6 +3,7 @@ using Concertable.Customer.Artist.Domain.Entities;
 using Concertable.Customer.Concert.Domain.Entities;
 using Concertable.Customer.Preference.Domain.Entities;
 using Concertable.Customer.Review.Domain.Entities;
+using Concertable.Customer.Seed.Contracts;
 using Concertable.Customer.Seed.Infrastructure.Factories;
 using Concertable.Customer.Ticket.Domain.Entities;
 using Concertable.Customer.User.Domain.Entities;
@@ -44,7 +45,7 @@ public sealed class SeedState
     public ConcertEntity PastFlatFeeConcert { get; }
     public IReadOnlyList<ConcertEntity> Concerts { get; }
 
-    public SeedState(SeedCatalog catalog)
+    public SeedState(SeedCatalog catalog, DevFixture fixture)
     {
         Customer1 = UserFactory.FromRegistration(SeedCustomers.CustomerId(1), SeedCustomers.CustomerEmail(1));
         Customer2 = UserFactory.FromRegistration(SeedCustomers.CustomerId(2), SeedCustomers.CustomerEmail(2));
@@ -73,7 +74,7 @@ public sealed class SeedState
         Tickets = [UpcomingFlatFeeTicket, PastDoorSplitTicket, PastFlatFeeTicket];
 
         // PastFlatFeeTicket is left unreviewed so tests have a review-eligible past ticket.
-        ConfirmedConcertReview = ReviewFactory.CreateForTicket(PastDoorSplitTicket, 5, "Great show", Customer1.Email);
+        ConfirmedConcertReview = ReviewFactory.Create(fixture.ConfirmedConcertReview);
         PastDoorSplitTicket.MarkReviewed();
         Reviews = [ConfirmedConcertReview];
     }

@@ -67,6 +67,7 @@
     <PackageVersion Include="Concertable.Shared.QrCode.Application" Version="$(ConcertablePlatformVersion)" />
     <PackageVersion Include="Concertable.Shared.QrCode.Infrastructure" Version="$(ConcertablePlatformVersion)" />
     <PackageVersion Include="Concertable.Messaging.Contracts" Version="$(ConcertablePlatformVersion)" />
+    <PackageVersion Include="Concertable.Messaging.Application" Version="$(ConcertablePlatformVersion)" />
     <PackageVersion Include="Concertable.Messaging.Domain" Version="$(ConcertablePlatformVersion)" />
     <PackageVersion Include="Concertable.Messaging.Infrastructure" Version="$(ConcertablePlatformVersion)" />
     <PackageVersion Include="Concertable.Messaging.AzureServiceBus" Version="$(ConcertablePlatformVersion)" />
