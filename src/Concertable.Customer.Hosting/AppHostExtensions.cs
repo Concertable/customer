@@ -8,14 +8,14 @@ namespace Concertable.Customer.Hosting;
 
 public static class AppHostExtensions
 {
-    public static IResourceBuilder<ContainerResource> AddCustomerWeb(
+    public static IResourceBuilder<ServiceContainerResource> AddCustomerWeb(
         this IDistributedApplicationBuilder builder,
         string image,
         string digest,
-        IResourceBuilder<ProjectResource> auth,
+        IResourceBuilder<IResourceWithServiceDiscovery> auth,
         IResourceBuilder<SqlServerDatabaseResource> customerDb,
         IResourceBuilder<AzureServiceBusResource> asb,
-        IResourceBuilder<ProjectResource> paymentWeb)
+        IResourceBuilder<IResourceWithServiceDiscovery> paymentWeb)
     {
         var customerSecret = builder.Configuration["ServiceAuth:CustomerClientSecret"];
         return builder.AddContainerImage(CustomerConstants.WebResource, image, digest)
@@ -35,10 +35,10 @@ public static class AppHostExtensions
 
     public static IResourceBuilder<ProjectResource> AddCustomerWeb<TProject>(
         this IDistributedApplicationBuilder builder,
-        IResourceBuilder<ProjectResource> auth,
+        IResourceBuilder<IResourceWithServiceDiscovery> auth,
         IResourceBuilder<SqlServerDatabaseResource> customerDb,
         IResourceBuilder<AzureServiceBusResource> asb,
-        IResourceBuilder<ProjectResource> paymentWeb)
+        IResourceBuilder<IResourceWithServiceDiscovery> paymentWeb)
         where TProject : IProjectMetadata, new()
     {
         var customerSecret = builder.Configuration["ServiceAuth:CustomerClientSecret"];

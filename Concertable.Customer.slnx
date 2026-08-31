@@ -76,6 +76,7 @@
   </Folder>
   <Project Path="src/Concertable.Customer.AppHost/Concertable.Customer.AppHost.csproj" />
   <Project Path="src/Concertable.Customer.Hosting/Concertable.Customer.Hosting.csproj" />
+  <Project Path="src/Concertable.Customer.TestKit/Concertable.Customer.TestKit.csproj" />
   <Project Path="../Concertable.Search/src/Concertable.Search.Hosting/Concertable.Search.Hosting.csproj" />
   <Project Path="../Concertable.Payment/src/Concertable.Payment.Hosting/Concertable.Payment.Hosting.csproj" />
   <Project Path="../Concertable.ServiceDefaults/Concertable.ServiceDefaults.csproj" />
@@ -95,11 +96,14 @@
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="tests/Concertable.Customer.ArchitectureTests/Concertable.Customer.ArchitectureTests.csproj" />
+    <Project Path="tests/Concertable.Customer.E2EAdmin.IntegrationTests/Concertable.Customer.E2EAdmin.IntegrationTests.csproj" />
     <Project Path="tests/Concertable.Customer.IntegrationTests.Fixtures/Concertable.Customer.IntegrationTests.Fixtures.csproj" />
   </Folder>
   <Folder Name="/Tests/E2ETests/">
     <Project Path="tests/E2ETests/Concertable.Customer.E2ETests/Concertable.Customer.E2ETests.csproj" />
     <Project Path="tests/E2ETests/Concertable.Customer.E2ETests.Mobile/Concertable.Customer.E2ETests.Mobile.csproj" />
+    <Project Path="tests/E2ETests/Concertable.Customer.E2ETests.Server/Concertable.Customer.E2ETests.Server.csproj" />
     <Project Path="tests/E2ETests/Concertable.Customer.E2ETests.Ui/Concertable.Customer.E2ETests.Ui.csproj" />
+    <Project Path="tests/E2ETests/Concertable.Customer.E2ETests.Web/Concertable.Customer.E2ETests.Web.csproj" />
   </Folder>
 </Solution>

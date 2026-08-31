@@ -15,10 +15,9 @@ public static class CustomerAppHost
         var authDb = sql.AddDatabase(AuthConstants.Database);
         var customerDb = sql.AddDatabase(CustomerConstants.Database);
         var paymentDb = sql.AddDatabase(PaymentConstants.Database);
-        var b2bDb = sql.AddDatabase(B2BConstants.Database);
         var asb = builder.AddServiceBus();
         asb.Topology().AddCustomerTopology().AddSearchTopology().AddPaymentTopology().AddAuthTopology().RunAsEmulator();
-        var auth = builder.AddAuth<Projects.Concertable_Auth>(authDb, b2bDb, asb);
+        var auth = builder.AddAuth<Projects.Concertable_Auth>(authDb, asb);
         auth.WithEndpoint("https", endpoint => endpoint.Port = 7093);
         var paymentWeb = builder.AddPaymentWeb<Projects.Concertable_Payment_Web>(auth, paymentDb, asb);
         paymentWeb.WithEndpoint("https", endpoint => endpoint.Port = 7098);
