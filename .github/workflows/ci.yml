@@ -5,6 +5,13 @@ on:
   push:
     branches:
       - main
+  merge_group:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -12,13 +19,17 @@ permissions:
 
 env:
   GITHUB_PACKAGES_TOKEN: ${{ github.token }}
+  DOTNET_NOLOGO: true
 
 jobs:
   backend:
-    name: Backend and migrations
+    name: Backend, tests, packages, and image
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-dotnet@v4
         with:
@@ -30,13 +41,39 @@ jobs:
       - name: Build backend
         run: dotnet build CarveCustomer.slnx --configuration Release --no-restore
 
+      - name: Test backend
+        # Integration projects each own a Testcontainers SQL fixture. Serialize project execution so
+        # seven assemblies do not race Docker startup on the same runner.
+        run: dotnet test CarveCustomer.slnx --configuration Release --no-build --no-restore -m:1
+
       - name: Validate migration snapshots
         shell: pwsh
         run: ./scripts/validate-migrations.ps1
 
+      - name: Pack Customer-owned packages
+        run: dotnet pack CarveCustomer.slnx --configuration Release --no-build --no-restore --output artifacts/packages
+
+      - name: Verify package candidates from a clean consumer
+        shell: pwsh
+        run: ./scripts/verify-package-candidates.ps1 -PackageDirectory artifacts/packages
+
+      - name: Build Customer Web image candidate
+        run: |
+          mkdir -p artifacts/images
+          dotnet publish src/Concertable.Customer.Web/Concertable.Customer.Web.csproj \
+            --configuration Release \
+            --no-restore \
+            /t:PublishContainer \
+            -p:ContainerImageTag=${{ github.sha }} \
+            -p:ContainerArchiveOutputPath=${{ github.workspace }}/artifacts/images/customer-web.tar.gz
+
+      - name: Verify image candidate
+        run: test -s artifacts/images/customer-web.tar.gz
+
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 

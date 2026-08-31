@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/Concertable.Customer.Hosting/Concertable.Customer.Hosting.csproj" />
     <Project Path="src/Concertable.Customer.Web/Concertable.Customer.Web.csproj" />
   </Folder>
   <Folder Name="/src/Concertable.Customer.DataAccess/">
