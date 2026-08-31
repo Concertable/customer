@@ -51,12 +51,12 @@ public sealed class CustomerArchitectureTests
     [Fact]
     public void AppHost_ProductionGraphAndStrictValidation_AreValid()
     {
-        var validBuilder = CustomerAppHost.CreateBuilder([]);
+        var validBuilder = AppHost.CreateBuilder([]);
         AssertImageEndpoint(validBuilder, AuthConstants.Resource, "https");
         AssertImageEndpoint(validBuilder, PaymentConstants.WebResource, "https");
         AssertImageEndpoint(validBuilder, PaymentConstants.WebResource, "http");
         using var app = validBuilder.Build();
-        var builder = CustomerAppHost.CreateBuilder([]);
+        var builder = AppHost.CreateBuilder([]);
         builder.Services.AddInvalidLifetimeGraph();
         Assert.ThrowsAny<Exception>(() => builder.Build());
     }
@@ -64,7 +64,7 @@ public sealed class CustomerArchitectureTests
     [Fact]
     public void AppHost_PublishGraphWithStripeCli_IsValid()
     {
-        var builder = CustomerAppHost.CreateBuilder(
+        var builder = AppHost.CreateBuilder(
             ["--publisher", "manifest", "--Stripe:SecretKey=sk_test_composition"]);
 
         Assert.True(builder.ExecutionContext.IsPublishMode);
