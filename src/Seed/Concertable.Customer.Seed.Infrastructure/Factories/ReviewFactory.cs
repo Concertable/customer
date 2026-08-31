@@ -1,13 +1,13 @@
 using Concertable.Customer.Review.Domain.Entities;
-using Concertable.Customer.Ticket.Domain.Entities;
+using Concertable.Customer.Seed.Contracts;
 
 namespace Concertable.Customer.Seed.Infrastructure.Factories;
 
 public static class ReviewFactory
 {
-    public static ReviewEntity CreateForTicket(TicketEntity ticket, byte stars, string? details, string email) =>
+    public static ReviewEntity Create(ReviewSeedSpec spec) =>
         ReviewEntity
-            .Create(ticket.Id, stars, details, email, ticket.ArtistId, ticket.VenueId, ticket.ConcertId)
+            .Create(spec.TicketId, spec.Stars, spec.Details, spec.Email, spec.ArtistId, spec.VenueId, spec.ConcertId)
             .Match(
                 success: review => review,
                 failure: _ => throw new InvalidOperationException("Seed review must be valid."));

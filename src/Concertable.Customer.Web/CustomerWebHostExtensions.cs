@@ -8,6 +8,7 @@ using Concertable.Customer.Concert.Api.Extensions;
 using Concertable.Customer.Preference.Api.Extensions;
 using Concertable.Customer.Review.Api.Extensions;
 using Concertable.Customer.Review.Contracts.Events;
+using Concertable.Customer.Seed.Contracts;
 using Concertable.Customer.Seed.Infrastructure;
 using Concertable.Customer.Ticket.Api.Extensions;
 using Concertable.Customer.Ticket.Contracts;
@@ -165,6 +166,7 @@ public static class CustomerWebHostExtensions
         services.AddScoped<IKeyedServiceProvider>(sp => (IKeyedServiceProvider)sp);
         services.AddSingleton(TimeProvider.System);
         services.AddSingleton<SeedCatalog>();
+        services.AddSingleton<DevFixture>();
         services.AddSharedInfrastructure(configuration);
         services.AddGeometry();
         services.AddOutbox(opt => opt.UseSqlServer(configuration.GetConnectionString("CustomerDb")));
