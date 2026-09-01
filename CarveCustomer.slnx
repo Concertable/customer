@@ -2,6 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/Concertable.Customer.Hosting/Concertable.Customer.Hosting.csproj" />
     <Project Path="src/Concertable.Customer.Migrations/Concertable.Customer.Migrations.csproj" />
+    <Project Path="src/Concertable.Customer.TestKit/Concertable.Customer.TestKit.csproj" />
     <Project Path="src/Concertable.Customer.Web/Concertable.Customer.Web.csproj" />
   </Folder>
   <Folder Name="/src/Concertable.Customer.DataAccess/">
@@ -93,5 +94,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Concertable.Customer.IntegrationTests.Fixtures/Concertable.Customer.IntegrationTests.Fixtures.csproj" />
+    <Project Path="tests/Concertable.Customer.TestKit.Tests/Concertable.Customer.TestKit.Tests.csproj" />
   </Folder>
 </Solution>
