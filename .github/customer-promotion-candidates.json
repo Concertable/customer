@@ -14,6 +14,10 @@
       "project": "src/Seed/Concertable.Customer.Seed.Contracts/Concertable.Customer.Seed.Contracts.csproj"
     },
     {
+      "id": "Concertable.Customer.TestKit",
+      "project": "src/Concertable.Customer.TestKit/Concertable.Customer.TestKit.csproj"
+    },
+    {
       "id": "Concertable.Customer.Ticket.Contracts",
       "project": "src/Modules/Ticket/Concertable.Customer.Ticket.Contracts/Concertable.Customer.Ticket.Contracts.csproj"
     }
