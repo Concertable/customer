@@ -18,6 +18,7 @@ $expectedPackageIds = @(
     'Concertable.Customer.Hosting'
     'Concertable.Customer.Review.Contracts'
     'Concertable.Customer.Seed.Contracts'
+    'Concertable.Customer.TestKit'
     'Concertable.Customer.Ticket.Contracts'
 )
 $expectedImageNames = @(
