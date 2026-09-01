@@ -42,10 +42,10 @@ public abstract class QueryableReadRepository<TEntity, TKey> : IReadRepository<T
         await query.ApplyOrders(spec).Select(spec.Selector).ToListAsync(ct);
 
     public Task<IPagination<TEntity>> GetPageAsync(ISpecification<TEntity> spec, IPageParams pageParams, CancellationToken ct = default) =>
-        query.Apply(spec).ApplyOrders(spec).ToPaginationAsync(pageParams, ct);
+        query.Apply(spec).ApplyPagedOrders(spec).ToPaginationAsync(pageParams, ct);
 
     public Task<IPagination<TResult>> GetPageAsync<TResult>(ISpecification<TEntity, TResult> spec, IPageParams pageParams, CancellationToken ct = default) =>
-        query.ApplyOrders(spec).Select(spec.Selector).ToPaginationAsync(pageParams, ct);
+        query.ApplyPagedOrders(spec).Select(spec.Selector).ToPaginationAsync(pageParams, ct);
 
     public bool Exists(TKey id) => query.Any(entity => entity.Id!.Equals(id));
 }
