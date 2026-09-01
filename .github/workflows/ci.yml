@@ -26,6 +26,7 @@ permissions:
 env:
   GITHUB_PACKAGES_TOKEN: ${{ github.token }}
   DOTNET_NOLOGO: true
+  CANDIDATE_IMAGE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.sha }}
 
 jobs:
   backend:
@@ -40,6 +41,17 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+
+      - name: Validate manual release ref
+        if: github.event_name == 'workflow_dispatch'
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+          EXPECTED_COMMIT: ${{ github.sha }}
+        run: >-
+          ./scripts/validate-promotion-config.ps1
+          -ReleaseTag $env:RELEASE_TAG
+          -ExpectedCommit $env:EXPECTED_COMMIT
 
       - name: Restore backend
         run: dotnet restore CarveCustomer.slnx
@@ -70,7 +82,7 @@ jobs:
             --configuration Release \
             --no-restore \
             /t:PublishContainer \
-            -p:ContainerImageTag=${{ github.sha }} \
+            -p:ContainerImageTag="$CANDIDATE_IMAGE_TAG" \
             -p:ContainerArchiveOutputPath=${{ github.workspace }}/artifacts/images/customer-web.tar.gz
 
       - name: Build Customer migrations image candidate
@@ -79,7 +91,7 @@ jobs:
             --configuration Release \
             --no-restore \
             /t:PublishContainer \
-            -p:ContainerImageTag=${{ github.sha }} \
+            -p:ContainerImageTag="$CANDIDATE_IMAGE_TAG" \
             -p:ContainerArchiveOutputPath=${{ github.workspace }}/artifacts/images/customer-migrations.tar.gz
 
       - name: Build Customer seed simulator image candidate
@@ -88,13 +100,13 @@ jobs:
             --configuration Release \
             --no-restore \
             /t:PublishContainer \
-            -p:ContainerImageTag=${{ github.sha }} \
+            -p:ContainerImageTag="$CANDIDATE_IMAGE_TAG" \
             -p:ContainerArchiveOutputPath=${{ github.workspace }}/artifacts/images/customer-seed-simulator.tar.gz
 
       - name: Smoke Customer seed simulator image candidate
         run: |
           docker load --input artifacts/images/customer-seed-simulator.tar.gz
-          docker run --rm concertable/customer-seed-simulator:${{ github.sha }} --SeedSimulator:Smoke=true
+          docker run --rm "concertable/customer-seed-simulator:$CANDIDATE_IMAGE_TAG" --SeedSimulator:Smoke=true
 
       - name: Verify Customer migration job on an empty database
         shell: pwsh
@@ -108,10 +120,13 @@ jobs:
 
       - name: Validate promotion candidate selection
         shell: pwsh
+        env:
+          EXPECTED_IMAGE_TAG: ${{ env.CANDIDATE_IMAGE_TAG }}
         run: >-
           ./scripts/validate-promotion-config.ps1
           -PackageDirectory artifacts/packages
           -ImageDirectory artifacts/images
+          -ExpectedImageTag $env:EXPECTED_IMAGE_TAG
 
       - name: Validate manual release gate
         if: github.event_name == 'workflow_dispatch'
@@ -123,6 +138,7 @@ jobs:
           ./scripts/validate-promotion-config.ps1
           -PackageDirectory artifacts/packages
           -ImageDirectory artifacts/images
+          -ExpectedImageTag $env:RELEASE_TAG
           -ReleaseTag $env:RELEASE_TAG
           -ExpectedCommit $env:EXPECTED_COMMIT
 
