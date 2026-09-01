@@ -6,6 +6,8 @@ param(
 
     [string] $ImageDirectory,
 
+    [string] $ExpectedImageTag,
+
     [string] $ReleaseTag,
 
     [string] $ExpectedCommit
@@ -89,6 +91,58 @@ function Read-PackageMetadata {
     }
 }
 
+function Read-ContainerArchiveManifest {
+    param([Parameter(Mandatory)] [System.IO.FileInfo] $Archive)
+
+    $fileStream = $Archive.OpenRead()
+    try {
+        $firstByte = $fileStream.ReadByte()
+        $secondByte = $fileStream.ReadByte()
+        $fileStream.Position = 0
+        $isGzip = $firstByte -eq 0x1f -and $secondByte -eq 0x8b
+        $archiveStream = if ($isGzip) {
+            [System.IO.Compression.GZipStream]::new(
+                $fileStream,
+                [System.IO.Compression.CompressionMode]::Decompress,
+                $true)
+        }
+        else {
+            $fileStream
+        }
+        try {
+            $tarReader = [System.Formats.Tar.TarReader]::new($archiveStream, $true)
+            try {
+                while ($null -ne ($entry = $tarReader.GetNextEntry())) {
+                    if ($entry.Name -cne 'manifest.json') {
+                        continue
+                    }
+
+                    $reader = [System.IO.StreamReader]::new($entry.DataStream)
+                    try {
+                        return $reader.ReadToEnd() | ConvertFrom-Json -Depth 10
+                    }
+                    finally {
+                        $reader.Dispose()
+                    }
+                }
+            }
+            finally {
+                $tarReader.Dispose()
+            }
+        }
+        finally {
+            if ($isGzip) {
+                $archiveStream.Dispose()
+            }
+        }
+    }
+    finally {
+        $fileStream.Dispose()
+    }
+
+    throw "OCI archive '$($Archive.Name)' does not contain manifest.json."
+}
+
 $repositoryRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 $pathComparison = if ($IsWindows) { [StringComparison]::OrdinalIgnoreCase } else { [StringComparison]::Ordinal }
 $resolvedManifestPath = Resolve-RepositoryPath -RepositoryRoot $repositoryRoot -Path $ManifestPath -Comparison $pathComparison
@@ -159,6 +213,12 @@ foreach ($candidate in $oci) {
 if ([string]::IsNullOrWhiteSpace($PackageDirectory) -xor [string]::IsNullOrWhiteSpace($ImageDirectory)) {
     throw 'PackageDirectory and ImageDirectory must be supplied together.'
 }
+if (-not [string]::IsNullOrWhiteSpace($PackageDirectory) -and [string]::IsNullOrWhiteSpace($ExpectedImageTag)) {
+    throw 'ExpectedImageTag is required when validating built candidates.'
+}
+if (-not [string]::IsNullOrWhiteSpace($ExpectedImageTag) -and $ExpectedImageTag -notmatch '^[0-9A-Za-z_][0-9A-Za-z_.-]{0,127}$') {
+    throw "ExpectedImageTag '$ExpectedImageTag' is not a valid OCI tag."
+}
 
 $packageMetadata = @()
 if (-not [string]::IsNullOrWhiteSpace($PackageDirectory)) {
@@ -172,6 +232,27 @@ if (-not [string]::IsNullOrWhiteSpace($PackageDirectory)) {
 
     Assert-ExactSet -Expected $nugetIds -Actual @($packageMetadata.Id) -Description 'NuGet candidate IDs'
     Assert-ExactSet -Expected $ociArchives -Actual @($images.Name) -Description 'OCI candidate archives'
+
+    foreach ($candidate in $oci) {
+        $archive = $images | Where-Object { $_.Name -ceq $candidate.archive } | Select-Object -First 1
+        $archiveManifest = @(Read-ContainerArchiveManifest -Archive $archive)
+        if ($archiveManifest.Count -ne 1) {
+            throw "OCI archive '$($candidate.archive)' contains $($archiveManifest.Count) image manifests; expected exactly one."
+        }
+
+        $repository = $candidate.repository
+        if ($repository.StartsWith('ghcr.io/', [StringComparison]::Ordinal)) {
+            $repository = $repository.Substring('ghcr.io/'.Length)
+        }
+        $expectedRepoTag = "${repository}:$ExpectedImageTag"
+        $repoTags = @($archiveManifest[0].RepoTags)
+        if ($repoTags.Count -ne 1 -or $repoTags[0] -cne $expectedRepoTag) {
+            throw "OCI archive '$($candidate.archive)' contains tag '$($repoTags -join ', ')', not '$expectedRepoTag'."
+        }
+        if ($archiveManifest[0].Config -notmatch '^[0-9a-f]{64}\.json$') {
+            throw "OCI archive '$($candidate.archive)' has invalid config digest '$($archiveManifest[0].Config)'."
+        }
+    }
 }
 
 if ([string]::IsNullOrWhiteSpace($ReleaseTag) -xor [string]::IsNullOrWhiteSpace($ExpectedCommit)) {
