@@ -176,8 +176,8 @@ try {
         Get-ChildItem -LiteralPath $sbomDirectory -Filter '*.cdx.json' -File
         Get-ChildItem -LiteralPath $scanDirectory -Filter '*.trivy.json' -File
     )
-    if ($expectedEvidenceFiles.Count -ne 13 -or $expectedEvidenceFiles.Where({ $_.Length -eq 0 }).Count -ne 0) {
-        throw 'Expected seven non-empty SBOMs and six non-empty Trivy reports.'
+    if ($expectedEvidenceFiles.Count -ne 14 -or $expectedEvidenceFiles.Where({ $_.Length -eq 0 }).Count -ne 0) {
+        throw 'Expected eight non-empty SBOMs and six non-empty Trivy reports.'
     }
 
     if ($scanFailed) {
