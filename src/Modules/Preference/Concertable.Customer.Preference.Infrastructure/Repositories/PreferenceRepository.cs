@@ -15,7 +15,7 @@ internal sealed class PreferenceRepository : Repository<PreferenceEntity>, IPref
 
     public Task<bool> InsertAsync(PreferenceEntity preference) => this.TryInsertAsync(preference);
 
-    public override async Task<IEnumerable<PreferenceEntity>> GetAllAsync(CancellationToken ct = default)
+    public override async Task<IReadOnlyList<PreferenceEntity>> GetAllAsync(CancellationToken ct = default)
     {
         return await context.Preferences
             .Include(p => p.GenrePreferences)
