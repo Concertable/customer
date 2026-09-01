@@ -1,6 +1,12 @@
 name: CI
 
 on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing annotated v-prefixed tag to validate; this workflow never publishes
+        required: true
+        type: string
   pull_request:
   push:
     branches:
@@ -99,6 +105,26 @@ jobs:
           test -s artifacts/images/customer-web.tar.gz
           test -s artifacts/images/customer-migrations.tar.gz
           test -s artifacts/images/customer-seed-simulator.tar.gz
+
+      - name: Validate promotion candidate selection
+        shell: pwsh
+        run: >-
+          ./scripts/validate-promotion-config.ps1
+          -PackageDirectory artifacts/packages
+          -ImageDirectory artifacts/images
+
+      - name: Validate manual release gate
+        if: github.event_name == 'workflow_dispatch'
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+          EXPECTED_COMMIT: ${{ github.sha }}
+        run: >-
+          ./scripts/validate-promotion-config.ps1
+          -PackageDirectory artifacts/packages
+          -ImageDirectory artifacts/images
+          -ReleaseTag $env:RELEASE_TAG
+          -ExpectedCommit $env:EXPECTED_COMMIT
 
       - name: Verify and inventory candidate integrity
         shell: pwsh

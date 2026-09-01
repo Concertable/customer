@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "nuget": [
+    {
+      "id": "Concertable.Customer.Hosting",
+      "project": "src/Concertable.Customer.Hosting/Concertable.Customer.Hosting.csproj"
+    },
+    {
+      "id": "Concertable.Customer.Review.Contracts",
+      "project": "src/Modules/Review/Concertable.Customer.Review.Contracts/Concertable.Customer.Review.Contracts.csproj"
+    },
+    {
+      "id": "Concertable.Customer.Seed.Contracts",
+      "project": "src/Seed/Concertable.Customer.Seed.Contracts/Concertable.Customer.Seed.Contracts.csproj"
+    },
+    {
+      "id": "Concertable.Customer.Ticket.Contracts",
+      "project": "src/Modules/Ticket/Concertable.Customer.Ticket.Contracts/Concertable.Customer.Ticket.Contracts.csproj"
+    }
+  ],
+  "oci": [
+    {
+      "repository": "ghcr.io/concertable/customer-migrations",
+      "project": "src/Concertable.Customer.Migrations/Concertable.Customer.Migrations.csproj",
+      "archive": "customer-migrations.tar.gz"
+    },
+    {
+      "repository": "ghcr.io/concertable/customer-seed-simulator",
+      "project": "src/Seed/Concertable.Customer.Seed.Simulator/Concertable.Customer.Seed.Simulator.csproj",
+      "archive": "customer-seed-simulator.tar.gz"
+    },
+    {
+      "repository": "ghcr.io/concertable/customer-web",
+      "project": "src/Concertable.Customer.Web/Concertable.Customer.Web.csproj",
+      "archive": "customer-web.tar.gz"
+    }
+  ]
+}
