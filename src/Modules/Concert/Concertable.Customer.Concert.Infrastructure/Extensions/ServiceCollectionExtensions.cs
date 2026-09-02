@@ -7,6 +7,7 @@ using Concertable.Customer.Concert.Infrastructure.Data.Seeders;
 using Concertable.Customer.Concert.Infrastructure.Handlers;
 using Concertable.Customer.Concert.Infrastructure.Repositories;
 using Concertable.Customer.Concert.Infrastructure.Services;
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Ticket.Contracts.Events;
 using Concertable.DataAccess.Application;
 using Concertable.DataAccess.Infrastructure.Data;
@@ -23,13 +24,13 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddConcertModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ConcertDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
+            opts.UseSqlServer(configuration.GetConnectionString(Db.Name))
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
                     sp.GetRequiredService<IDomainEventDispatchInterceptor>()));
 
         services.AddDbContext<ConcertReadDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
+            opts.UseSqlServer(configuration.GetConnectionString(Db.Name))
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
         services.AddScoped<IConcertReadDbContext>(sp => sp.GetRequiredService<ConcertReadDbContext>());
 

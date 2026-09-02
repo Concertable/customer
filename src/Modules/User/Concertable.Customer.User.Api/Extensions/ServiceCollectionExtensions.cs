@@ -1,3 +1,4 @@
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.User.Api.Controllers;
 using Concertable.Customer.User.Infrastructure.Data;
 using Concertable.Customer.User.Infrastructure.Extensions;
@@ -31,7 +32,7 @@ public static class ServiceCollectionExtensions
             services.AddSingleton<UserConfigurationProvider>();
             services.AddDbContext<UserDbContext>(options =>
                 options.UseSqlServer(
-                    configuration.GetConnectionString("CustomerDb"),
+                    configuration.GetConnectionString(Db.Name),
                     sql => sql.UseNetTopologySuite()));
             return services;
         }

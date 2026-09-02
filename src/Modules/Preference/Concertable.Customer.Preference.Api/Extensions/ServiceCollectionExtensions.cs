@@ -1,3 +1,4 @@
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Preference.Api.Controllers;
 using Concertable.Customer.Preference.Infrastructure.Data;
 using Concertable.Customer.Preference.Infrastructure.Extensions;
@@ -27,7 +28,7 @@ public static class ServiceCollectionExtensions
         {
             services.AddSingleton<PreferenceConfigurationProvider>();
             services.AddDbContext<PreferenceDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("CustomerDb")));
+                options.UseSqlServer(configuration.GetConnectionString(Db.Name)));
             return services;
         }
     }

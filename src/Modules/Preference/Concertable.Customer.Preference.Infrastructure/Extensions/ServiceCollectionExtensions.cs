@@ -1,4 +1,5 @@
 using Concertable.B2B.Concert.Contracts.Events;
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Preference.Infrastructure.Data;
 using Concertable.Customer.Preference.Infrastructure.Data.Seeders;
 using Concertable.Customer.Preference.Infrastructure.Events;
@@ -18,7 +19,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddPreferenceModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<PreferenceDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
+            opts.UseSqlServer(configuration.GetConnectionString(Db.Name))
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
                     sp.GetRequiredService<IDomainEventDispatchInterceptor>())

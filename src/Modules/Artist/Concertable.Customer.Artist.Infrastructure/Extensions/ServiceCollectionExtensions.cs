@@ -4,6 +4,7 @@ using Concertable.Customer.Artist.Infrastructure.Data.Seeders;
 using Concertable.Customer.Artist.Infrastructure.Handlers;
 using Concertable.Customer.Artist.Infrastructure.Repositories;
 using Concertable.Customer.Artist.Infrastructure.Services;
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Seed.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,13 +17,13 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddArtistModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ArtistDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
+            opts.UseSqlServer(configuration.GetConnectionString(Db.Name))
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
                     sp.GetRequiredService<IDomainEventDispatchInterceptor>()));
 
         services.AddDbContext<ArtistReadDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
+            opts.UseSqlServer(configuration.GetConnectionString(Db.Name))
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
         services.AddScoped<IArtistReadDbContext>(sp => sp.GetRequiredService<ArtistReadDbContext>());
 
