@@ -25,6 +25,15 @@ public sealed class CustomerArchitectureTests
     }
 
     [Fact]
+    public void AppHost_ProductionGraphAndStrictValidation_AreValid()
+    {
+        using var app = CustomerAppHost.CreateBuilder([]).Build();
+        var builder = CustomerAppHost.CreateBuilder([]);
+        builder.Services.AddInvalidLifetimeGraph();
+        Assert.ThrowsAny<Exception>(() => builder.Build());
+    }
+
+    [Fact]
     public void Web_ReferencesNoModuleInfrastructureAssembly() =>
         Assert.Empty(typeof(CustomerWebHostExtensions).Assembly.ModuleInfrastructureReferences("Seed"));
 }
