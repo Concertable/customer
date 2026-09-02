@@ -1,3 +1,4 @@
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Review.Api.Controllers;
 using Concertable.Customer.Review.Infrastructure.Data;
 using Concertable.Customer.Review.Infrastructure.Extensions;
@@ -24,7 +25,7 @@ public static class ServiceCollectionExtensions
         {
             services.AddSingleton<ReviewConfigurationProvider>();
             services.AddDbContext<ReviewDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("CustomerDb")));
+                options.UseSqlServer(configuration.GetConnectionString(Db.Name)));
             return services;
         }
     }

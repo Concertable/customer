@@ -1,4 +1,5 @@
 using Concertable.Auth.Contracts.Events;
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.User.Application.Validators;
 using Concertable.Customer.User.Domain.Events;
 using Concertable.Customer.User.Infrastructure.Authorization;
@@ -25,7 +26,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddDbContext<UserDbContext>((sp, opts) =>
             opts.UseSqlServer(
-                    configuration.GetConnectionString("CustomerDb"),
+                    configuration.GetConnectionString(Db.Name),
                     sqlOpts => sqlOpts.UseNetTopologySuite())
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),

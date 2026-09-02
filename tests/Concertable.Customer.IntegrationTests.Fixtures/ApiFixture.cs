@@ -2,6 +2,7 @@ using Concertable.Customer.IntegrationTests.Fixtures.Mocks;
 using Concertable.Kernel.Notifications;
 using Concertable.Customer.Artist.Infrastructure.Extensions;
 using Concertable.Customer.Concert.Infrastructure.Extensions;
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Preference.Infrastructure.Extensions;
 using Concertable.Customer.Review.Infrastructure.Extensions;
 using Concertable.Customer.Ticket.Infrastructure.Extensions;
@@ -58,7 +59,7 @@ public class ApiFixture : IAsyncLifetime
             {
                 config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
-                    ["ConnectionStrings:CustomerDb"] = sqlFixture.ConnectionString,
+                    [$"ConnectionStrings:{Db.Name}"] = sqlFixture.ConnectionString,
                 });
                 if (RateLimitPermit is int permit)
                     config.ConstrainRateLimiting(RateLimitPolicies.All, permit);
