@@ -8,6 +8,7 @@ using Concertable.Testing.Architecture;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Xunit;
 
@@ -49,11 +50,16 @@ public sealed class CustomerArchitectureTests
     }
 
     [Fact]
-    public void AppHost_ProductionGraphAndStrictValidation_AreValid()
+    public async Task AppHost_ProductionGraphAndStrictValidation_AreValid()
     {
         var validBuilder = AppHost.CreateBuilder([]);
         AssertImageEndpoint(validBuilder, AuthConstants.Resource, "https");
         AssertContainerRuntimeArgs(validBuilder, AuthConstants.Resource, "--user", "root");
+        await AssertImageEnvironmentAsync(
+            validBuilder,
+            AuthConstants.Resource,
+            "ASPNETCORE_URLS",
+            "http://+:8080");
         AssertImageEndpoint(validBuilder, PaymentConstants.WebResource, "https");
         AssertImageEndpoint(validBuilder, PaymentConstants.WebResource, "http");
         using var app = validBuilder.Build();
@@ -91,6 +97,22 @@ public sealed class CustomerArchitectureTests
                 .GetResult();
 
         Assert.Equal(expected, args);
+    }
+
+    private static async Task AssertImageEnvironmentAsync(
+        IDistributedApplicationBuilder builder,
+        string resourceName,
+        string variableName,
+        string expected)
+    {
+        var resource = Assert.IsAssignableFrom<IResourceWithEnvironment>(
+            builder.Resources.Single(resource => resource.Name == resourceName));
+        var executionContext = new DistributedApplicationExecutionContext(DistributedApplicationOperation.Publish);
+        var configuration = await ExecutionConfigurationBuilder.Create(resource)
+            .WithEnvironmentVariablesConfig()
+            .BuildAsync(executionContext, NullLogger.Instance, CancellationToken.None);
+
+        Assert.Equal(expected, configuration.EnvironmentVariables.ToDictionary()[variableName]);
     }
 
     private static void AssertImageEndpoint(
