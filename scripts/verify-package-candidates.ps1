@@ -69,12 +69,15 @@ try {
     $escapedPackageDirectory = [System.Security.SecurityElement]::Escape($resolvedPackageDirectory)
     $escapedVersion = [System.Security.SecurityElement]::Escape($versions[0])
     $projectPath = Join-Path $consumerDirectory 'Consumer.csproj'
+    $sourcePath = Join-Path $consumerDirectory 'Program.cs'
     $configPath = Join-Path $consumerDirectory 'nuget.config'
 
     [System.IO.File]::WriteAllText($projectPath, @"
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
     <NuGetAudit>false</NuGetAudit>
   </PropertyGroup>
   <ItemGroup>
@@ -86,6 +89,22 @@ try {
   </ItemGroup>
 </Project>
 "@)
+
+    [System.IO.File]::WriteAllText($sourcePath, @'
+using Concertable.Customer.Hosting;
+using Concertable.Customer.Review.Contracts.Events;
+using Concertable.Customer.Seed.Contracts;
+using Concertable.Customer.TestKit;
+using Concertable.Customer.Ticket.Contracts.Events;
+
+using var httpClient = new HttpClient { BaseAddress = new Uri("https://customer.test/") };
+var client = new CustomerTestClient(httpClient);
+var request = new CustomerTicketPurchaseRequest("pm_card_visa", 42);
+var review = new CustomerReviewSubmittedEvent(Guid.NewGuid(), 1, 2, 3, 5, "customer@example.test", null);
+var purchase = new TicketPurchasedEvent(Guid.NewGuid(), Guid.NewGuid(), 3, 19.50m, DateTime.UtcNow);
+var seed = new ReviewSeedSpec(Guid.NewGuid(), DateTimeOffset.UtcNow, Guid.NewGuid(), 1, 2, 3, 5, "customer@example.test", null);
+Console.WriteLine($"{CustomerConstants.ServiceName}:{client.GetType().Name}:{request.ConcertId}:{review.ConcertId}:{purchase.ConcertId}:{seed.ConcertId}");
+'@)
 
     [System.IO.File]::WriteAllText($configPath, @"
 <?xml version="1.0" encoding="utf-8"?>
