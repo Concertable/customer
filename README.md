@@ -6,12 +6,11 @@ reviews. It is a *data service*: it owns its data and talks to other data servic
 only through `*.Contracts` integration events, never their runtime. It depends on the **Auth** and
 **Payment** adapter services at runtime.
 
-## Canonical source vs. this mirror
+## Canonical source
 
-Development happens in the **monorepo** ([`Concertable/concertable`](https://github.com/Concertable/concertable)),
-under `api/Concertable.Customer/`. That folder is **automatically mirrored** to the read-only repo
-[`Concertable/customer`](https://github.com/Concertable/customer) on every
-push to `main`. **Don't open PRs against the mirror** — nothing flows back from it.
+This repository is the canonical source for the Customer service. Customer changes are developed and
+reviewed here; shared platform and cross-service contract changes are delivered through their owning
+repositories and consumed as packages.
 
 ## Building standalone
 
@@ -22,8 +21,8 @@ them needs a GitHub [personal access token](https://github.com/settings/tokens) 
 
 ```sh
 export GITHUB_PACKAGES_TOKEN=<your read:packages PAT>
-dotnet build src/Concertable.Customer.Web/Concertable.Customer.Web.csproj
+dotnet build Concertable.Customer.slnx
 ```
 
-Building the host project pulls the whole deployable closure. (In the monorepo's CI the same
+Building the solution pulls the whole deployable closure. (In the repository's CI the same
 variable is supplied by the workflow's `GITHUB_TOKEN`; standalone, you export your own PAT.)
