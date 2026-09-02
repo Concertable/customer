@@ -37,6 +37,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
         with:
@@ -54,22 +55,22 @@ jobs:
           -ExpectedCommit $env:EXPECTED_COMMIT
 
       - name: Restore backend
-        run: dotnet restore CarveCustomer.slnx
+        run: dotnet restore Concertable.Customer.slnx
 
       - name: Build backend
-        run: dotnet build CarveCustomer.slnx --configuration Release --no-restore
+        run: dotnet build Concertable.Customer.slnx --configuration Release --no-restore
 
       - name: Test backend
         # Integration projects each own a Testcontainers SQL fixture. Serialize project execution so
         # seven assemblies do not race Docker startup on the same runner.
-        run: dotnet test CarveCustomer.slnx --configuration Release --no-build --no-restore -m:1
+        run: dotnet test Concertable.Customer.slnx --configuration Release --no-build --no-restore -m:1
 
       - name: Validate migration snapshots
         shell: pwsh
         run: ./scripts/validate-migrations.ps1
 
       - name: Pack Customer-owned packages
-        run: dotnet pack CarveCustomer.slnx --configuration Release --no-build --no-restore --output artifacts/packages
+        run: dotnet pack Concertable.Customer.slnx --configuration Release --no-build --no-restore --output artifacts/packages
 
       - name: Verify package candidates from a clean consumer
         shell: pwsh
@@ -165,6 +166,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
