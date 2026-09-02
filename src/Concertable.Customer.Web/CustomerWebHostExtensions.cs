@@ -5,6 +5,7 @@ using Concertable.B2B.Seed.Contracts;
 using Concertable.B2B.Venue.Contracts.Events;
 using Concertable.Customer.Artist.Api.Extensions;
 using Concertable.Customer.Concert.Api.Extensions;
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Preference.Api.Extensions;
 using Concertable.Customer.Review.Api.Extensions;
 using Concertable.Customer.Review.Contracts.Events;
@@ -172,8 +173,8 @@ public static class CustomerWebHostExtensions
         services.AddSingleton<DevFixture>();
         services.AddSharedInfrastructure(configuration);
         services.AddGeometry();
-        services.AddOutbox(opt => opt.UseSqlServer(configuration.GetConnectionString("CustomerDb")));
-        services.AddInbox(opt => opt.UseSqlServer(configuration.GetConnectionString("CustomerDb")));
+        services.AddOutbox(opt => opt.UseSqlServer(configuration.GetConnectionString(Db.Name)));
+        services.AddInbox(opt => opt.UseSqlServer(configuration.GetConnectionString(Db.Name)));
         services.AddScoped<AuditInterceptor>();
         services.AddScoped<IDomainEventDispatchInterceptor, DomainEventDispatchInterceptor>();
         services.AddSeedingInfrastructure();
@@ -188,8 +189,8 @@ public static class CustomerWebHostExtensions
 
     private static void AddCustomerMigrationPersistence(IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("CustomerDb")
-            ?? throw new InvalidOperationException("Connection string 'CustomerDb' is required.");
+        var connectionString = configuration.GetConnectionString(Db.Name)
+            ?? throw new InvalidOperationException($"Connection string '{Db.Name}' is required.");
 
         services.AddDbContext<OutboxDbContext>(options => options.UseSqlServer(connectionString));
         services.AddDbContext<InboxDbContext>(options => options.UseSqlServer(connectionString));

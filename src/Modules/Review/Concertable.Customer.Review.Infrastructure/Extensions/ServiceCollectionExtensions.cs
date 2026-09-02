@@ -1,3 +1,4 @@
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Review.Application.Validators;
 using Concertable.Customer.Review.Domain.Events;
 using Concertable.Customer.Review.Infrastructure.Data;
@@ -22,7 +23,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddReviewModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ReviewDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
+            opts.UseSqlServer(configuration.GetConnectionString(Db.Name))
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
                     sp.GetRequiredService<IDomainEventDispatchInterceptor>()));
