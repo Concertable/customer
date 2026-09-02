@@ -1,3 +1,4 @@
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Preference.Api.Controllers;
 using Concertable.Customer.Preference.Infrastructure.Data;
 using Concertable.Customer.Preference.Infrastructure.Extensions;
@@ -22,6 +23,14 @@ public static class ServiceCollectionExtensions
 
         public IServiceCollection AddPreferenceDevSeeding()
             => services.AddPreferenceDevSeeder();
+
+        public IServiceCollection AddPreferenceMigrations(IConfiguration configuration)
+        {
+            services.AddSingleton<PreferenceConfigurationProvider>();
+            services.AddDbContext<PreferenceDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString(Db.Name)));
+            return services;
+        }
     }
 
     extension(IServiceProvider services)

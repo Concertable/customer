@@ -17,7 +17,6 @@ Customer owns the fan/buyer side of Concertable: tickets sold, reviews of past c
 | Project | Kind | Purpose |
 |---|---|---|
 | `Concertable.Customer.Web` | ASP.NET Core HTTP host | All controllers + ASB event consumers (in-process). Single deployable — no separate Workers host. |
-| `Concertable.Customer.AppHost` | Aspire AppHost | Local-dev orchestrator only. |
 
 **Database:** `CustomerDb` (SQL Server). Per-module DbContexts: `ArtistDbContext`, `ConcertDbContext`, `PreferenceDbContext`, `ReviewDbContext`, `TicketDbContext`, `UserDbContext`, `VenueDbContext` + `OutboxDbContext`, `InboxDbContext`. All auto-migrated on non-Production startup.
 
@@ -48,7 +47,9 @@ These hold Customer's own model of upstream B2B concepts. In Customer's isolated
 | **Artist** | `ArtistEntity`, `ArtistGenreEntity` | `ArtistProjectionHandler` ← `ArtistChangedEvent`; `ArtistRatingProjectionHandler` ← `ArtistRatingUpdatedEvent` |
 | **Venue** | `VenueEntity` | `VenueProjectionHandler` ← `VenueChangedEvent`; `VenueRatingProjectionHandler` ← `VenueRatingUpdatedEvent` |
 
-These tables are empty until upstream B2B events arrive. Under the umbrella `Concertable.AppHost`, real B2B publishes them. Under standalone `Concertable.Customer.AppHost` (dev), the `Concertable.B2B.Seed.Simulator` Worker is registered as an Aspire resource and stands in for B2B — publishing the same events from the canonical fixture, so projection state is identical either way. See [`../Concertable.B2B/src/Seed/Concertable.B2B.Seed.Simulator/AGENTS.md`](../Concertable.B2B/src/Seed/Concertable.B2B.Seed.Simulator/AGENTS.md) for the pattern.
+These tables are empty until upstream B2B events arrive. Cross-service local orchestration belongs to the
+umbrella Concertable AppHost; this standalone repository does not include that cross-service composition
+in its build closure.
 
 ---
 
@@ -119,7 +120,7 @@ Customer is a modular monolith inside the service. The `dotnet-standards:module-
 
 ## Tech stack
 
-.NET 9 · EF Core + SQL Server · Azure Service Bus (emulator in dev) · `Concertable.Messaging` (Outbox/Inbox/Transport) · NetTopologySuite (geometry) · Aspire (`Concertable.ServiceDefaults`) · QuestPDF (`Ticket.Infrastructure` — ticket PDF generation) · `Concertable.Shared.{Blob,Email,Geocoding,Imaging,Pdf,QrCode}`
+.NET 10 · EF Core + SQL Server · Azure Service Bus (emulator in dev) · `Concertable.Messaging` (Outbox/Inbox/Transport) · NetTopologySuite (geometry) · Aspire (`Concertable.ServiceDefaults`) · QuestPDF (`Ticket.Infrastructure` — ticket PDF generation) · `Concertable.Shared.{Blob,Email,Geocoding,Imaging,Pdf,QrCode}`
 
 ---
 

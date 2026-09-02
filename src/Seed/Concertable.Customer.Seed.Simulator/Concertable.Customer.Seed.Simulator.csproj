@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableSdkContainerSupport>true</EnableSdkContainerSupport>
+    <ContainerRepository>concertable/customer-seed-simulator</ContainerRepository>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Concertable.Customer.Seed.Contracts\Concertable.Customer.Seed.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Concertable.Messaging.Application" />
+    <PackageReference Include="Concertable.Messaging.AzureServiceBus" />
+    <PackageReference Include="Concertable.Messaging.Contracts" />
+    <PackageReference Include="Concertable.ServiceDefaults" />
+  </ItemGroup>
+
+</Project>
