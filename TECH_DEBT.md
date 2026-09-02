@@ -18,11 +18,11 @@ When an item is fixed, update both this file and [`ARCHITECTURE.md`](./ARCHITECT
 
 ---
 
-### E2E boots the whole real fleet from source references (won't survive the repo split)
+### E2E boots the whole real system from source references (won't survive the repo split)
 
 `Concertable.Customer.E2ETests/AppFixture.cs` launches the Customer AppHost via
 `DistributedApplicationTestingBuilder`, composing **real** Payment + Auth + Search through
-`Projects.Concertable_*` *source* references. Fine in the monorepo, but it's full-fleet E2E run from
+`Projects.Concertable_*` *source* references. Fine in the monorepo, but it's full-system E2E run from
 inside one service's repo — it conflates two test tiers and breaks at the repo split. E2E must never
 stub Payment (stubbing defeats E2E); the fix is to split tiers by *where they run*:
 
@@ -30,7 +30,7 @@ stub Payment (stubbing defeats E2E); the fix is to split tiers by *where they ru
 - **Per-repo (every PR):** Customer keeps only **integration** tests, with adapter services faked
   behind their contracts — Payment via `MockCustomerPaymentClient` against `Payment.Contracts` — plus
   **consumer-driven contract tests**. No Payment source/runtime needed.
-- **Full-fleet system E2E (rare / pre-release, centralised):** stands up the real fleet from
+- **Full-system E2E (rare / pre-release, centralised):** stands up the real system from
   **published container images** (`AddProject<Projects.Concertable_Payment_Web>()` →
   `AddContainer("payment", "<registry>/payment:<version>")`), and moves out of Customer's repo into a
   system/deployment pipeline.
