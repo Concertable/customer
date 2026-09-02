@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Concertable.Customer.Seed.Contracts\Concertable.Customer.Seed.Contracts.csproj" />
     <ProjectReference Include="..\..\Modules\User\Concertable.Customer.User.Domain\Concertable.Customer.User.Domain.csproj" />
     <ProjectReference Include="..\..\Modules\Preference\Concertable.Customer.Preference.Domain\Concertable.Customer.Preference.Domain.csproj" />
     <ProjectReference Include="..\..\Modules\Ticket\Concertable.Customer.Ticket.Domain\Concertable.Customer.Ticket.Domain.csproj" />

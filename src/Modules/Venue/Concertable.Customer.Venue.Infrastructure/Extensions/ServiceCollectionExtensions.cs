@@ -1,3 +1,4 @@
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Venue.Infrastructure.Data;
 using Concertable.Customer.Venue.Infrastructure.Data.Seeders;
 using Concertable.Customer.Venue.Infrastructure.Handlers;
@@ -16,13 +17,13 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddVenueModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<VenueDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
+            opts.UseSqlServer(configuration.GetConnectionString(Db.Name))
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
                     sp.GetRequiredService<IDomainEventDispatchInterceptor>()));
 
         services.AddDbContext<VenueReadDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
+            opts.UseSqlServer(configuration.GetConnectionString(Db.Name))
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
         services.AddScoped<IVenueReadDbContext>(sp => sp.GetRequiredService<VenueReadDbContext>());
 

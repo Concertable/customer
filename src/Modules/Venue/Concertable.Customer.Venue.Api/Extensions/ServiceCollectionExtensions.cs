@@ -1,3 +1,4 @@
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Venue.Api.Controllers;
 using Concertable.Customer.Venue.Infrastructure.Data;
 using Concertable.Customer.Venue.Infrastructure.Extensions;
@@ -17,6 +18,14 @@ public static class ServiceCollectionExtensions
             services.AddVenueModule(configuration);
             services.AddControllers()
                 .AddInternalControllers(typeof(VenueController).Assembly);
+            return services;
+        }
+
+        public IServiceCollection AddVenueMigrations(IConfiguration configuration)
+        {
+            services.AddSingleton<VenueConfigurationProvider>();
+            services.AddDbContext<VenueDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString(Db.Name)));
             return services;
         }
     }

@@ -1,3 +1,4 @@
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Ticket.Application.Validators;
 using Concertable.Customer.Ticket.Contracts;
 using Concertable.Customer.Ticket.Domain.Events;
@@ -28,7 +29,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddTicketModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<TicketDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString("CustomerDb"))
+            opts.UseSqlServer(configuration.GetConnectionString(Db.Name))
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
                     sp.GetRequiredService<IDomainEventDispatchInterceptor>()));

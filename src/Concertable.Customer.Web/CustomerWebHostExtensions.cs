@@ -5,9 +5,11 @@ using Concertable.B2B.Seed.Contracts;
 using Concertable.B2B.Venue.Contracts.Events;
 using Concertable.Customer.Artist.Api.Extensions;
 using Concertable.Customer.Concert.Api.Extensions;
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Preference.Api.Extensions;
 using Concertable.Customer.Review.Api.Extensions;
 using Concertable.Customer.Review.Contracts.Events;
+using Concertable.Customer.Seed.Contracts;
 using Concertable.Customer.Seed.Infrastructure;
 using Concertable.Customer.Ticket.Api.Extensions;
 using Concertable.Customer.Ticket.Contracts;
@@ -21,6 +23,8 @@ using Concertable.Kernel.Extensions;
 using Concertable.Messaging.Application.Extensions;
 using Concertable.Messaging.AzureServiceBus.Extensions;
 using Concertable.Messaging.Infrastructure.Extensions;
+using Concertable.Messaging.Infrastructure.Inbox;
+using Concertable.Messaging.Infrastructure.Outbox;
 using Concertable.Payment.Client.Extensions;
 using Concertable.Payment.Contracts.Events;
 using Concertable.Seed.Shared;
@@ -59,11 +63,7 @@ public static class CustomerWebHostExtensions
             });
 
             var services = builder.Services;
-            services.AddScoped<IKeyedServiceProvider>(sp => (IKeyedServiceProvider)sp);
-            services.AddSingleton(TimeProvider.System);
-            services.AddSingleton<SeedCatalog>();
-            services.AddSharedInfrastructure(builder.Configuration);
-            services.AddGeometry();
+            AddCustomerRuntimePersistence(services, builder.Configuration);
             services.AddClientCredentials(opts =>
             {
                 opts.Authority = builder.Configuration["Auth:Authority"] ?? builder.Configuration["services__auth__https__0"]
@@ -108,11 +108,6 @@ public static class CustomerWebHostExtensions
                     reg.SubscribeTo<PaymentFailedEvent>();
                 });
             services.AddDirectBusKeyed("webhook");
-            services.AddOutbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("CustomerDb")));
-            services.AddInbox(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("CustomerDb")));
-            services.AddScoped<AuditInterceptor>();
-            services.AddScoped<IDomainEventDispatchInterceptor, DomainEventDispatchInterceptor>();
-            services.AddSeedingInfrastructure();
             if (!builder.Environment.IsIntegration())
             {
                 services.AddScoped<IDbInitializer, DevDbInitializer>();
@@ -120,13 +115,6 @@ public static class CustomerWebHostExtensions
                 services.AddPreferenceDevSeeding();
                 services.AddTicketDevSeeding();
             }
-            services.AddConcertApi(builder.Configuration);
-            services.AddTicketApi(builder.Configuration);
-            services.AddReviewApi(builder.Configuration);
-            services.AddUserApi(builder.Configuration);
-            services.AddPreferenceApi(builder.Configuration);
-            services.AddVenueApi(builder.Configuration);
-            services.AddArtistApi(builder.Configuration);
             services.AddNotificationClient();
             services.AddCurrentUser();
             if (!builder.Environment.IsIntegration())
@@ -165,5 +153,50 @@ public static class CustomerWebHostExtensions
             builder.AddRateLimitPolicy(RateLimitPolicies.Review, new RateLimitWindow { PermitLimit = 10, WindowSeconds = 60 }, perUser: true);
             return builder;
         }
+
+        public WebApplicationBuilder AddCustomerMigrationHost()
+        {
+            builder.Configuration.AddEnvironmentVariables();
+            AddCustomerMigrationPersistence(builder.Services, builder.Configuration);
+            return builder;
+        }
+    }
+
+    private static void AddCustomerRuntimePersistence(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddScoped<IKeyedServiceProvider>(sp => (IKeyedServiceProvider)sp);
+        services.AddSingleton(TimeProvider.System);
+        services.AddSingleton<SeedCatalog>();
+        services.AddSingleton<DevFixture>();
+        services.AddSharedInfrastructure(configuration);
+        services.AddGeometry();
+        services.AddOutbox(opt => opt.UseSqlServer(configuration.GetConnectionString(Db.Name)));
+        services.AddInbox(opt => opt.UseSqlServer(configuration.GetConnectionString(Db.Name)));
+        services.AddScoped<AuditInterceptor>();
+        services.AddScoped<IDomainEventDispatchInterceptor, DomainEventDispatchInterceptor>();
+        services.AddSeedingInfrastructure();
+        services.AddConcertApi(configuration);
+        services.AddTicketApi(configuration);
+        services.AddReviewApi(configuration);
+        services.AddUserApi(configuration);
+        services.AddPreferenceApi(configuration);
+        services.AddVenueApi(configuration);
+        services.AddArtistApi(configuration);
+    }
+
+    private static void AddCustomerMigrationPersistence(IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString(Db.Name)
+            ?? throw new InvalidOperationException($"Connection string '{Db.Name}' is required.");
+
+        services.AddDbContext<OutboxDbContext>(options => options.UseSqlServer(connectionString));
+        services.AddDbContext<InboxDbContext>(options => options.UseSqlServer(connectionString));
+        services.AddConcertMigrations(configuration);
+        services.AddTicketMigrations(configuration);
+        services.AddReviewMigrations(configuration);
+        services.AddUserMigrations(configuration);
+        services.AddPreferenceMigrations(configuration);
+        services.AddVenueMigrations(configuration);
+        services.AddArtistMigrations(configuration);
     }
 }

@@ -1,3 +1,4 @@
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Ticket.Api.Controllers;
 using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.Customer.Ticket.Infrastructure.Extensions;
@@ -22,6 +23,14 @@ public static class ServiceCollectionExtensions
 
         public IServiceCollection AddTicketDevSeeding()
             => services.AddTicketDevSeeder();
+
+        public IServiceCollection AddTicketMigrations(IConfiguration configuration)
+        {
+            services.AddSingleton<TicketConfigurationProvider>();
+            services.AddDbContext<TicketDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString(Db.Name)));
+            return services;
+        }
     }
 
     extension(IServiceProvider services)
