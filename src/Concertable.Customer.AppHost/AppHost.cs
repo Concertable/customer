@@ -1,8 +1,8 @@
+using Concertable.Customer.Hosting.Frontend;
 using Aspire.Hosting;
 using Concertable.Auth.Hosting;
 using Concertable.B2B.Hosting;
 using Concertable.Customer.Hosting;
-using Concertable.Frontend.Hosting;
 using Concertable.Payment.Hosting;
 using Concertable.Search.Hosting;
 
@@ -30,6 +30,7 @@ public static class AppHost
                           .WithContainerRuntimeArgs("--user", "root")
                           .WithHttpsEndpoint(targetPort: AuthConstants.ContainerPort, name: "https");
         auth.WithEndpoint("https", endpoint => endpoint.Port = 7093);
+        auth.WithSpaClients(CustomerLocalSpaSurfaces.All.Where(surface => surface.AuthClient is not null).ToArray());
         var paymentWeb = builder.AddPaymentWeb(PaymentWebImage, PaymentWebDigest, auth, paymentDb, asb)
                                 .WithHttpEndpoint(targetPort: 8080, name: "https")
                                 .WithHttpEndpoint(targetPort: 8080, name: "http");
@@ -40,7 +41,8 @@ public static class AppHost
         builder.AddPaymentWorkers(PaymentWorkersImage, PaymentWorkersDigest, paymentDb, asb);
         builder.AddB2BSeedingSimulator(B2BSeedingSimulatorImage, B2BSeedingSimulatorDigest, asb);
         builder.AddCustomerSpa(customerWeb, customerWeb, auth);
-        builder.AddMobileCustomer(customerWeb, auth, paymentWeb);
+        if (builder.AddMobileCustomer(customerWeb, auth, paymentWeb) is { } mobileTunnel)
+            auth.WithMobilePublicUrl(mobileTunnel.GetEndpoint(auth, "https"));
         builder.AddStripeCli(paymentWeb);
         return builder;
     }
