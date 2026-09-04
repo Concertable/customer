@@ -1,3 +1,4 @@
+using Concertable.Testing;
 using Concertable.Testing.Architecture;
 using Xunit;
 
