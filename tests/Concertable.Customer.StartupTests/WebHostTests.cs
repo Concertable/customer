@@ -1,0 +1,45 @@
+using Concertable.Customer.Web;
+using Concertable.Testing.Architecture;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Xunit;
+
+namespace Concertable.Customer.StartupTests;
+
+public sealed class WebHostTests
+{
+    [Fact]
+    public void ProductionGraphAndStrictValidation_AreValid()
+    {
+        var builder = WebApplication.CreateBuilder(CompositionTestArguments.Create());
+        builder.AddCustomerWebHost();
+        using var app = builder.Build();
+        builder.Services.ValidateComposition(app.Services, new CompositionValidationOptions
+        {
+            RootAssemblies = [typeof(CustomerWebHostExtensions).Assembly]
+        });
+        var jwtOptions = app.Services.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>()
+            .Get(JwtBearerDefaults.AuthenticationScheme);
+        Assert.False(jwtOptions.RequireHttpsMetadata);
+        var invalidBuilder = WebApplication.CreateBuilder(CompositionTestArguments.Create());
+        invalidBuilder.AddCustomerWebHost();
+        invalidBuilder.Services.AddInvalidLifetimeGraph();
+        Assert.ThrowsAny<Exception>(() => invalidBuilder.Build());
+    }
+
+    [Fact]
+    public void ProductionEnvironment_RequiresHttpsMetadata()
+    {
+        var arguments = CompositionTestArguments.Create();
+        arguments[0] = "--environment=Production";
+        var builder = WebApplication.CreateBuilder(arguments);
+        builder.AddCustomerWebHost();
+        using var app = builder.Build();
+        var jwtOptions = app.Services.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>()
+            .Get(JwtBearerDefaults.AuthenticationScheme);
+
+        Assert.True(jwtOptions.RequireHttpsMetadata);
+    }
+}
