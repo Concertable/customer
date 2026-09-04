@@ -1,6 +1,7 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Concertable.Auth.Hosting;
+using Concertable.Customer.Hosting;
 using Concertable.Customer.Web;
 using Concertable.Payment.Hosting;
 using Concertable.Testing;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace Concertable.Customer.ArchitectureTests;
@@ -72,6 +74,39 @@ public sealed class CustomerArchitectureTests
         Assert.True(builder.ExecutionContext.IsPublishMode);
         Assert.Single(builder.Resources, resource => resource.Name == PaymentConstants.StripeCliResource);
         using var app = builder.Build();
+    }
+
+    [Fact]
+    public void AppHost_MobileGraph_ContainsOnlyCustomerSurfaces()
+    {
+        var builder = AppHost.CreateBuilder(["--RunMobile=true"]);
+        Assert.Equal(
+            new[] { "customer", "mobile-customer" },
+            builder.Resources.OfType<NodeAppResource>().Select(resource => resource.Name).Order());
+        Assert.Single(builder.Resources, resource => resource.Name == "customer-dev");
+        Assert.DoesNotContain(builder.Resources, resource => resource.Name is "b2b-web" or "search-web");
+        using var app = builder.Build();
+    }
+
+    [Fact]
+    public async Task AppHost_CustomerSpaOrigin_MatchesAuthRegistration()
+    {
+        var builder = AppHost.CreateBuilder([]);
+        var surface = CustomerLocalSpaSurfaces.Customer;
+        var spa = Assert.Single(builder.Resources.OfType<NodeAppResource>());
+        var endpoint = Assert.Single(spa.Annotations.OfType<EndpointAnnotation>());
+        Assert.Equal(surface.ResourceName, spa.Name);
+        Assert.Equal(5174, endpoint.Port);
+        Assert.Equal("https", endpoint.UriScheme);
+        var auth = Assert.IsAssignableFrom<IResourceWithEnvironment>(
+            builder.Resources.Single(resource => resource.Name == AuthConstants.Resource));
+        var configuration = await ExecutionConfigurationBuilder.Create(auth)
+            .WithEnvironmentVariablesConfig()
+            .BuildAsync(new DistributedApplicationExecutionContext(DistributedApplicationOperation.Publish),
+                NullLogger.Instance, CancellationToken.None);
+        var environment = configuration.EnvironmentVariables.ToDictionary();
+        Assert.Equal(surface.Origin + "/auth/callback", environment["Auth__SpaClients__Customer__RedirectUri"]);
+        Assert.DoesNotContain(environment.Keys, key => key.StartsWith("Auth__SpaClients__Venue__", StringComparison.Ordinal));
     }
 
     [Fact]
