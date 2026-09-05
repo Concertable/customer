@@ -73,7 +73,7 @@ function TicketCheckoutForm({ concert }: { concert: Concert }) {
     paymentError,
     paymentConfirmed,
     retryPayment,
-  } = useTicketPaymentFlow(checkout?.session.clientSecret);
+  } = useTicketPaymentFlow(checkout?.reference);
 
   if (submitted) return <TicketCheckoutFlow concert={concert} flow={flow} />;
   if (isCheckoutLoading) return <CheckoutSkeleton />;
