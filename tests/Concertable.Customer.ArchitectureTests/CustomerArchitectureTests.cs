@@ -101,9 +101,9 @@ public sealed class CustomerArchitectureTests
         AssertClearMetroCacheCommand(mobile);
         var mobileEnvironment = await GetResolvedEnvironmentAsync(mobile, cancellation.Token);
         Assert.Equal("localhost", mobileEnvironment["REACT_NATIVE_PACKAGER_HOSTNAME"]);
-        AssertTunnelUrl(mobileEnvironment, "EXPO_PUBLIC_API_URL", "customer-dev-customer-web-https");
+        AssertTunnelUrl(mobileEnvironment, "EXPO_PUBLIC_API_URL", "customer-dev-customer-web-http");
         AssertTunnelUrl(mobileEnvironment, "EXPO_PUBLIC_AUTH_AUTHORITY", "customer-dev-auth-https");
-        AssertTunnelUrl(mobileEnvironment, "EXPO_PUBLIC_CUSTOMER_API_URL", "customer-dev-customer-web-https");
+        AssertTunnelUrl(mobileEnvironment, "EXPO_PUBLIC_CUSTOMER_API_URL", "customer-dev-customer-web-http");
         AssertTunnelUrl(mobileEnvironment, "EXPO_PUBLIC_PAYMENT_API_URL", "customer-dev-payment-web-https");
         Assert.DoesNotContain("EXPO_PUBLIC_SEARCH_API_URL", mobileEnvironment.Keys);
 
@@ -129,6 +129,7 @@ public sealed class CustomerArchitectureTests
             .BuildAsync(new DistributedApplicationExecutionContext(DistributedApplicationOperation.Publish),
                 NullLogger.Instance, CancellationToken.None);
         var environment = configuration.EnvironmentVariables.ToDictionary();
+        Assert.Equal("true", environment["Auth__SpaClients__RestrictToEnabledClients"]);
         Assert.Equal("Customer", environment["Auth__SpaClients__EnabledClients__0"]);
         Assert.DoesNotContain("Auth__SpaClients__EnabledClients__1", environment.Keys);
         Assert.Equal(surface.Origin + "/auth/callback", environment["Auth__SpaClients__Customer__RedirectUri"]);
