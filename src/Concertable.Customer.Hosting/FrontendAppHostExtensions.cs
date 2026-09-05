@@ -14,7 +14,11 @@ public static class FrontendAppHostExtensions
             IResourceBuilder<IResourceWithServiceDiscovery> backend,
             IResourceBuilder<IResourceWithServiceDiscovery> customerWeb,
             IResourceBuilder<IResourceWithServiceDiscovery> auth) =>
-            builder.AddSpaSurface(CustomerLocalSpaSurfaces.Customer, ["app", "web", "customer"], backend, auth)
+            builder.AddSpaSurface(
+                       CustomerLocalSpaSurfaces.Customer,
+                       [["app", "web", "customer"], ["app", "web"]],
+                       backend,
+                       auth)
                    .WithReference(customerWeb)
                    .WaitFor(customerWeb);
 
@@ -24,7 +28,11 @@ public static class FrontendAppHostExtensions
             IResourceBuilder<IResourceWithServiceDiscovery> customerWeb,
             IResourceBuilder<IResourceWithServiceDiscovery> paymentWeb,
             IResourceBuilder<DevTunnelResource> tunnel) =>
-            builder.AddMobileSurface("mobile-customer", ["app", "mobile", "customer"], api, tunnel,
+            builder.AddMobileSurface(
+                "mobile-customer",
+                [["app", "mobile", "customer"], ["app", "mobile"]],
+                api,
+                tunnel,
                 new(api, "EXPO_PUBLIC_API_URL"),
                 new(auth, "EXPO_PUBLIC_AUTH_AUTHORITY"),
                 new(customerWeb, "EXPO_PUBLIC_CUSTOMER_API_URL"),
