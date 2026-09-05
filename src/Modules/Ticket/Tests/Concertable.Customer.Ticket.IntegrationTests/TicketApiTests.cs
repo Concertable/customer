@@ -1,6 +1,8 @@
 using System.Net;
 using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Application.Requests;
+using Concertable.Payment.Contracts;
+using Concertable.Payment.Contracts.Errors;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
 
@@ -23,62 +25,66 @@ public sealed class TicketApiTests : IAsyncLifetime
     #region Purchase
 
     [Fact]
-    public async Task Purchase_ShouldReturn401_WhenUnauthenticated()
+    public async Task Purchase_Unauthenticated_ReturnsUnauthorized()
     {
-        // Arrange
         var client = fixture.CreateClient();
 
-        // Act
         var response = await client.PostAsync("/api/ticket/purchase", new TicketPurchaseParams
         {
-            PaymentMethodId = "pm_test",
             ConcertId = fixture.SeedState.UpcomingFlatFeeConcert.Id,
             Quantity = 1
         });
 
-        // Assert
         await response.ShouldBe(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
-    public async Task Purchase_ShouldReturn403_WhenUserNotInDatabase()
+    public async Task Purchase_UnregisteredUser_ReturnsForbidden()
     {
-        // Arrange - authenticated as a user that was never seeded
         var client = fixture.CreateClient(Guid.NewGuid());
 
-        // Act
         var response = await client.PostAsync("/api/ticket/purchase", new TicketPurchaseParams
         {
-            PaymentMethodId = "pm_test",
             ConcertId = fixture.SeedState.UpcomingFlatFeeConcert.Id,
             Quantity = 1
         });
 
-        // Assert
         await response.ShouldBe(HttpStatusCode.Forbidden);
     }
 
     [Fact]
-    public async Task Purchase_ShouldReturn200_WithPaymentResponse()
+    public async Task Purchase_AvailableConcert_ReturnsPaymentSessionReference()
     {
-        // Arrange
         var concert = fixture.SeedState.UpcomingFlatFeeConcert;
-        var client = fixture.CreateClient(fixture.SeedState.Customer1);
+        var buyer = fixture.SeedState.Customer1;
+        var client = fixture.CreateClient(buyer);
 
-        // Act
         var response = await client.PostAsync("/api/ticket/purchase", new TicketPurchaseParams
         {
-            PaymentMethodId = "pm_test",
             ConcertId = concert.Id,
             Quantity = 1
         });
 
-        // Assert
         await response.ShouldBe(HttpStatusCode.OK);
         var result = await response.Content.ReadAsync<TicketPayment>();
         Assert.NotNull(result);
-        Assert.Equal("pi_mock_pay", result.TransactionId);
-        Assert.False(result.RequiresAction);
+        Assert.Equal("ticket-purchase", result.Reference.OperationType);
+        Assert.Equal("payment-session-secret", result.ClientSecret);
+        Assert.Equal(concert.Id, result.ConcertId);
+        Assert.Equal(concert.Price, result.Amount);
+        Assert.Equal("GBP", result.Currency);
+
+        var request = Assert.Single(fixture.PaymentSessionClient.Sessions);
+        Assert.Equal(result.Reference, request.Reference);
+        Assert.Equal(PaymentSessionKind.Payment, request.Kind);
+        Assert.Equal(PaymentSession.OnSession, request.Session);
+        Assert.Equal(buyer.Id, request.PayerOwnerId);
+        Assert.Equal(concert.PayeeOwnerId, request.PayeeOwnerId);
+        Assert.Equal(
+            Concertable.Kernel.ValueObjects.Money.Gbp(concert.Price).ToMinorUnits(),
+            request.AmountMinor);
+        Assert.Equal(Concertable.Kernel.ValueObjects.Currency.Gbp, request.Currency);
+        Assert.Equal(PaymentSessionFundsRouting.Destination, request.FundsRouting);
     }
 
     [Fact]
@@ -88,7 +94,6 @@ public sealed class TicketApiTests : IAsyncLifetime
 
         var response = await client.PostAsync("/api/ticket/purchase", new TicketPurchaseParams
         {
-            PaymentMethodId = "pm_test",
             ConcertId = int.MaxValue,
             Quantity = 1
         });
@@ -104,7 +109,6 @@ public sealed class TicketApiTests : IAsyncLifetime
 
         var response = await client.PostAsync("/api/ticket/purchase", new TicketPurchaseParams
         {
-            PaymentMethodId = "pm_test",
             ConcertId = concert.Id,
             Quantity = concert.AvailableTickets + 1
         });
@@ -116,55 +120,77 @@ public sealed class TicketApiTests : IAsyncLifetime
         Assert.StartsWith("Not enough tickets available.", Assert.Single(problem.Errors["purchase"]));
     }
 
+    [Fact]
+    public async Task Purchase_DeclinedPaymentSession_ReturnsPaymentProblem()
+    {
+        fixture.PaymentSessionClient.CreateError = new PaymentOperationError.Declined();
+        var client = fixture.CreateClient(fixture.SeedState.Customer1);
+
+        var response = await client.PostAsync("/api/ticket/purchase", new TicketPurchaseParams
+        {
+            ConcertId = fixture.SeedState.UpcomingFlatFeeConcert.Id,
+            Quantity = 1
+        });
+
+        await AssertProblemCodeAsync(response, HttpStatusCode.PaymentRequired, "payment.operation.declined");
+    }
+
     #endregion
 
     #region Checkout
 
     [Fact]
-    public async Task Checkout_ShouldReturn401_WhenUnauthenticated()
+    public async Task Checkout_Unauthenticated_ReturnsUnauthorized()
     {
-        // Arrange
         var client = fixture.CreateClient();
 
-        // Act
         var response = await client.PostAsync("/api/ticket/checkout",
             new TicketCheckoutRequest(fixture.SeedState.UpcomingFlatFeeConcert.Id, 1));
 
-        // Assert
         await response.ShouldBe(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
-    public async Task Checkout_ShouldReturn403_WhenUserNotInDatabase()
+    public async Task Checkout_UnregisteredUser_ReturnsForbidden()
     {
-        // Arrange
         var client = fixture.CreateClient(Guid.NewGuid());
 
-        // Act
         var response = await client.PostAsync("/api/ticket/checkout",
             new TicketCheckoutRequest(fixture.SeedState.UpcomingFlatFeeConcert.Id, 1));
 
-        // Assert
         await response.ShouldBe(HttpStatusCode.Forbidden);
     }
 
     [Fact]
-    public async Task Checkout_ShouldReturn200_WithCheckoutSession()
+    public async Task Checkout_AvailableConcert_ReturnsPaymentSessionReference()
     {
-        // Arrange
         var concert = fixture.SeedState.UpcomingFlatFeeConcert;
-        var client = fixture.CreateClient(fixture.SeedState.Customer1);
+        var buyer = fixture.SeedState.Customer1;
+        var client = fixture.CreateClient(buyer);
 
-        // Act
         var response = await client.PostAsync("/api/ticket/checkout", new TicketCheckoutRequest(concert.Id, 1));
 
-        // Assert
         await response.ShouldBe(HttpStatusCode.OK);
         var result = await response.Content.ReadAsync<TicketCheckout>();
         Assert.NotNull(result);
         Assert.Equal(concert.Id, result.ConcertId);
         Assert.Equal(1, result.Quantity);
-        Assert.Equal("pi_mock_secret", result.Session.ClientSecret);
+        Assert.Equal("ticket-purchase", result.Reference.OperationType);
+        Assert.Equal("payment-session-secret", result.Session.ClientSecret);
+        Assert.Equal("customer-session-secret", result.Session.CustomerSession);
+        Assert.Equal("customer-token", result.Session.CustomerId);
+
+        var request = Assert.Single(fixture.PaymentSessionClient.Sessions);
+        Assert.Equal(result.Reference, request.Reference);
+        Assert.Equal(PaymentSessionKind.Payment, request.Kind);
+        Assert.Equal(PaymentSession.OnSession, request.Session);
+        Assert.Equal(buyer.Id, request.PayerOwnerId);
+        Assert.Equal(concert.PayeeOwnerId, request.PayeeOwnerId);
+        Assert.Equal(
+            Concertable.Kernel.ValueObjects.Money.Gbp(concert.Price).ToMinorUnits(),
+            request.AmountMinor);
+        Assert.Equal(Concertable.Kernel.ValueObjects.Currency.Gbp, request.Currency);
+        Assert.Equal(PaymentSessionFundsRouting.Destination, request.FundsRouting);
     }
 
     [Fact]
@@ -201,28 +227,22 @@ public sealed class TicketApiTests : IAsyncLifetime
     #region GetUserUpcoming
 
     [Fact]
-    public async Task GetUserUpcoming_ShouldReturn401_WhenUnauthenticated()
+    public async Task GetUserUpcoming_Unauthenticated_ReturnsUnauthorized()
     {
-        // Arrange
         var client = fixture.CreateClient();
 
-        // Act
         var response = await client.GetAsync("/api/ticket/upcoming/user");
 
-        // Assert
         await response.ShouldBe(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
-    public async Task GetUserUpcoming_ShouldReturn200_WithUpcomingTickets()
+    public async Task GetUserUpcoming_UpcomingTicket_ReturnsTicket()
     {
-        // Arrange
         var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
-        // Act
         var response = await client.GetAsync("/api/ticket/upcoming/user");
 
-        // Assert
         await response.ShouldBe(HttpStatusCode.OK);
         var tickets = await response.Content.ReadAsync<IEnumerable<TicketDto>>();
         Assert.NotNull(tickets);
@@ -231,15 +251,12 @@ public sealed class TicketApiTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task GetUserUpcoming_ShouldNotReturnPastTickets()
+    public async Task GetUserUpcoming_PastTickets_OmitsTickets()
     {
-        // Arrange
         var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
-        // Act
         var response = await client.GetAsync("/api/ticket/upcoming/user");
 
-        // Assert
         await response.ShouldBe(HttpStatusCode.OK);
         var tickets = (await response.Content.ReadAsync<IEnumerable<TicketDto>>())?.ToList();
         Assert.NotNull(tickets);
@@ -252,28 +269,22 @@ public sealed class TicketApiTests : IAsyncLifetime
     #region GetUserHistory
 
     [Fact]
-    public async Task GetUserHistory_ShouldReturn401_WhenUnauthenticated()
+    public async Task GetUserHistory_Unauthenticated_ReturnsUnauthorized()
     {
-        // Arrange
         var client = fixture.CreateClient();
 
-        // Act
         var response = await client.GetAsync("/api/ticket/history/user");
 
-        // Assert
         await response.ShouldBe(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
-    public async Task GetUserHistory_ShouldReturn200_WithPastTickets()
+    public async Task GetUserHistory_PastTickets_ReturnsTickets()
     {
-        // Arrange
         var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
-        // Act
         var response = await client.GetAsync("/api/ticket/history/user");
 
-        // Assert
         await response.ShouldBe(HttpStatusCode.OK);
         var tickets = (await response.Content.ReadAsync<IEnumerable<TicketDto>>())?.ToList();
         Assert.NotNull(tickets);
@@ -282,15 +293,12 @@ public sealed class TicketApiTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task GetUserHistory_ShouldNotReturnUpcomingTickets()
+    public async Task GetUserHistory_UpcomingTicket_OmitsTicket()
     {
-        // Arrange
         var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
-        // Act
         var response = await client.GetAsync("/api/ticket/history/user");
 
-        // Assert
         await response.ShouldBe(HttpStatusCode.OK);
         var tickets = await response.Content.ReadAsync<IEnumerable<TicketDto>>();
         Assert.NotNull(tickets);
@@ -302,44 +310,35 @@ public sealed class TicketApiTests : IAsyncLifetime
     #region CanPurchase
 
     [Fact]
-    public async Task CanPurchase_ShouldReturn401_WhenUnauthenticated()
+    public async Task CanPurchase_Unauthenticated_ReturnsUnauthorized()
     {
-        // Arrange
         var client = fixture.CreateClient();
 
-        // Act
         var response = await client.GetAsync($"/api/ticket/concert/{fixture.SeedState.UpcomingFlatFeeConcert.Id}/eligibility");
 
-        // Assert
         await response.ShouldBe(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
-    public async Task CanPurchase_ShouldReturn200True_WhenConcertIsAvailable()
+    public async Task CanPurchase_AvailableConcert_ReturnsTrue()
     {
-        // Arrange
         var concert = fixture.SeedState.UpcomingFlatFeeConcert;
         var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
-        // Act
         var response = await client.GetAsync($"/api/ticket/concert/{concert.Id}/eligibility");
 
-        // Assert
         await response.ShouldBe(HttpStatusCode.OK);
         Assert.True(await response.Content.ReadAsync<bool>());
     }
 
     [Fact]
-    public async Task CanPurchase_ShouldReturn200False_WhenConcertHasPassed()
+    public async Task CanPurchase_PastConcert_ReturnsFalse()
     {
-        // Arrange
         var concert = fixture.SeedState.PastDoorSplitConcert;
         var client = fixture.CreateClient(fixture.SeedState.Customer1);
 
-        // Act
         var response = await client.GetAsync($"/api/ticket/concert/{concert.Id}/eligibility");
 
-        // Assert
         await response.ShouldBe(HttpStatusCode.OK);
         Assert.False(await response.Content.ReadAsync<bool>());
     }

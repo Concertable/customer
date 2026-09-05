@@ -9,7 +9,7 @@ global using Concertable.Kernel.Identity;
 global using Concertable.Payment.Client;
 global using Concertable.Payment.Contracts;
 global using Concertable.Payment.Contracts.Events;
-global using Concertable.B2B.User.Contracts;
+global using Concertable.Customer.User.Contracts;
 global using Concertable.Kernel.Notifications;
 global using Concertable.Customer.Ticket.Domain;
 global using Concertable.Customer.Ticket.Application.Interfaces;

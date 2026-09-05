@@ -1,12 +1,15 @@
 using Concertable.Customer.Concert.Contracts;
 using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Application.Errors;
+using Concertable.Customer.Ticket.Application.Payments;
 using Concertable.Customer.Ticket.Application.Requests;
 using Concertable.Customer.Ticket.Contracts;
 using Concertable.Customer.Ticket.Domain.Entities;
 using Concertable.Kernel.Identity;
 using Concertable.Kernel.ValueObjects;
 using Concertable.Messaging.Contracts;
+using Concertable.Payment.Client;
+using Concertable.Payment.Contracts;
 using Concertable.Payment.Contracts.Errors;
 using Concertable.Shared.QrCode.Application;
 using Reunion;
@@ -22,7 +25,7 @@ internal sealed class TicketService : ITicketService
     private readonly IQrCodeGenerator qrCodeGenerator;
     private readonly ICurrentUser currentUser;
     private readonly IConcertModule concertModule;
-    private readonly ICustomerPaymentOperationsClient customerPaymentClient;
+    private readonly IPaymentSessionOperationsClient paymentSessions;
     private readonly IOutboxUnitOfWorkBehavior outboxBehavior;
     private readonly IBus bus;
     private readonly TimeProvider timeProvider;
@@ -33,7 +36,7 @@ internal sealed class TicketService : ITicketService
         IQrCodeGenerator qrCodeGenerator,
         ICurrentUser currentUser,
         IConcertModule concertModule,
-        ICustomerPaymentOperationsClient customerPaymentClient,
+        IPaymentSessionOperationsClient paymentSessions,
         IOutboxUnitOfWorkBehavior outboxBehavior,
         IBus bus,
         TimeProvider timeProvider)
@@ -43,7 +46,7 @@ internal sealed class TicketService : ITicketService
         this.qrCodeGenerator = qrCodeGenerator;
         this.currentUser = currentUser;
         this.concertModule = concertModule;
-        this.customerPaymentClient = customerPaymentClient;
+        this.paymentSessions = paymentSessions;
         this.outboxBehavior = outboxBehavior;
         this.bus = bus;
         this.timeProvider = timeProvider;
@@ -62,25 +65,16 @@ internal sealed class TicketService : ITicketService
         ConcertDto concert,
         TicketPurchaseParams purchaseParams)
     {
-        var metadata = new Dictionary<string, string>
-        {
-            [PaymentMetadataKeys.Type] = TransactionTypes.Ticket,
-            [PaymentMetadataKeys.ConcertId] = concert.Id.ToString(),
-            [PaymentMetadataKeys.Quantity] = purchaseParams.Quantity.ToString()
-        };
-
-        var paymentResult = await customerPaymentClient.PayAsync(
-            currentUser.GetId(), concert.Id, concert.PayeeOwnerId,
-            Money.Gbp(concert.Price * purchaseParams.Quantity),
-            metadata,
-            purchaseParams.PaymentMethodId);
+        var paymentResult = await CreatePaymentSessionAsync(concert, purchaseParams.Quantity);
 
         return paymentResult
             .Map(payment => new TicketPayment
             {
-                RequiresAction = payment.RequiresAction,
-                TransactionId = payment.TransactionId,
-                ClientSecret = payment.ClientSecret,
+                Reference = payment.Reference,
+                ClientSecret = payment.Session.ClientSecret,
+                ConcertId = concert.Id,
+                Amount = concert.Price * purchaseParams.Quantity,
+                Currency = "GBP",
                 UserEmail = currentUser.Email
             })
             .MapError(ToPurchaseError);
@@ -106,17 +100,19 @@ internal sealed class TicketService : ITicketService
             }
 
             var ids = tickets.Select(t => t.Id).ToList();
-            await bus.SendAsync(new SendTicketEmailCommand(purchaseCompleteDto.FromEmail, ids));
+            if (purchaseCompleteDto.FromEmail is not null)
+                await bus.SendAsync(new SendTicketEmailCommand(purchaseCompleteDto.FromEmail, ids));
+
             return ids;
         });
 
         return new TicketPayment
         {
-            TransactionId = purchaseCompleteDto.TransactionId,
+            Reference = purchaseCompleteDto.Reference,
             TicketIds = ticketIds,
             ConcertId = purchaseCompleteDto.EntityId,
             PurchaseDate = tickets[0].PurchaseDate,
-            Amount = concert.Price,
+            Amount = concert.Price * quantity,
             Currency = "GBP",
             UserEmail = purchaseCompleteDto.FromEmail
         };
@@ -128,22 +124,48 @@ internal sealed class TicketService : ITicketService
             .Ensure(
                 concert => ticketValidator.CanPurchaseTickets(concert, quantity),
                 errors => new CheckoutError.Invalid(CreateValidationErrors("checkout", errors)))
-            .MapAsync(concert => CreateCheckoutAsync(concert, quantity));
+            .BindAsync(concert => CreateCheckoutAsync(concert, quantity));
 
-    private async Task<TicketCheckout> CreateCheckoutAsync(ConcertDto concert, int quantity)
+    private async Task<Result<TicketCheckout, CheckoutError>> CreateCheckoutAsync(ConcertDto concert, int quantity)
     {
-        var metadata = new Dictionary<string, string>
-        {
-            [PaymentMetadataKeys.Type] = TransactionTypes.Ticket,
-            [PaymentMetadataKeys.ConcertId] = concert.Id.ToString(),
-            [PaymentMetadataKeys.Quantity] = quantity.ToString(),
-            [PaymentMetadataKeys.Amount] = Money.Gbp(concert.Price * quantity).ToMinorUnits().ToString(),
-            [PaymentMetadataKeys.Currency] = "gbp"
-        };
+        var paymentResult = await CreatePaymentSessionAsync(concert, quantity);
 
-        var session = await customerPaymentClient.CreatePaymentSessionAsync(currentUser.GetId(), concert.Id, concert.PayeeOwnerId, metadata);
+        return paymentResult
+            .Map(payment => new TicketCheckout(
+                payment.Reference,
+                new CheckoutSession(
+                    payment.Session.ClientSecret,
+                    payment.Session.CustomerSessionSecret,
+                    payment.Session.CustomerToken),
+                concert.Price,
+                concert.Id,
+                quantity))
+            .MapError(ToCheckoutError);
+    }
 
-        return new TicketCheckout(session, concert.Price, concert.Id, quantity);
+    private async Task<Result<TicketPaymentSession, PaymentOperationError>> CreatePaymentSessionAsync(
+        ConcertDto concert,
+        int quantity)
+    {
+        var buyerId = currentUser.GetId();
+        var reference = TicketPaymentOperationReferences.Create(
+            TicketPaymentOperationType.Purchase,
+            buyerId,
+            concert.Id,
+            quantity);
+        var request = new PaymentSessionOperationRequest(
+            Guid.CreateVersion7(timeProvider.GetUtcNow()),
+            PaymentSessionKind.Payment,
+            PaymentSession.OnSession,
+            reference,
+            buyerId,
+            concert.PayeeOwnerId,
+            Money.Gbp(concert.Price * quantity).ToMinorUnits(),
+            Currency.Gbp,
+            PaymentSessionFundsRouting.Destination);
+        var result = await paymentSessions.CreateAsync(request);
+
+        return result.Map(session => new TicketPaymentSession(reference, session));
     }
 
     public async Task<IEnumerable<TicketDto>> GetUserUpcomingAsync()
@@ -186,14 +208,19 @@ internal sealed class TicketService : ITicketService
             concert.VenueName);
     }
 
-    private static PurchaseError ToPurchaseError(PaymentError error) =>
-        error is PaymentError.PaymentRejected
-            ? new PurchaseError.PaymentRejected()
-            : new PurchaseError.PaymentFailure(error);
+    private static PurchaseError ToPurchaseError(PaymentOperationError error) =>
+        new PurchaseError.PaymentFailure(error);
+
+    private static CheckoutError ToCheckoutError(PaymentOperationError error) =>
+        new CheckoutError.PaymentFailure(error);
 
     private static ValidationErrors CreateValidationErrors(string field, ValidationErrors errors) =>
         new(new Dictionary<string, string[]>(StringComparer.Ordinal)
         {
             [field] = errors.Errors.SelectMany(error => error.Value).ToArray()
         });
+
+    private sealed record TicketPaymentSession(
+        PaymentOperationReference Reference,
+        PaymentSessionDescriptor Session);
 }
