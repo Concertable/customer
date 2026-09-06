@@ -3,10 +3,8 @@ import type {
   TicketPurchaseFailedPayload,
   TicketPurchasedPayload,
 } from "@concertable/customer/features/notifications/types";
-import {
-  paymentOperationReferencesMatch,
-  type PaymentOperationReference,
-} from "@concertable/customer/features/tickets";
+import { paymentOperationReferencesMatch } from "@concertable/customer/features/tickets";
+import type { PaymentOperationReference } from "@concertable/customer/features/tickets/types";
 import type { CheckoutFlowState } from "@concertable/web/features/concerts/hooks/useCheckoutFlow";
 import { notificationConnection } from "@concertable/web/lib/signalr";
 
