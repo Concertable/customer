@@ -7,6 +7,7 @@ using Concertable.Kernel.ValueObjects;
 using Concertable.Messaging.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Xunit.Abstractions;
 
 namespace Concertable.Customer.Ticket.IntegrationTests;
@@ -46,8 +47,8 @@ public sealed class CustomerReviewSubmittedEventHandlerTests(ApiFixture fixture,
         await DispatchAsync(NewEvent(ticketId), envelope);
 
         var stored = await scoped.RunAsync(ctx => ctx.Tickets.SingleAsync(t => t.Id == ticketId));
-        Assert.True(stored.HasReview);
-        Assert.True(await scoped.RunAsync(ctx => ctx.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(CustomerReviewSubmittedEventHandler))));
+        stored.HasReview.ShouldBeTrue();
+        (await scoped.RunAsync(ctx => ctx.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(CustomerReviewSubmittedEventHandler)))).ShouldBeTrue();
     }
 
     [Fact]
@@ -57,8 +58,7 @@ public sealed class CustomerReviewSubmittedEventHandlerTests(ApiFixture fixture,
 
         await DispatchAsync(NewEvent(Guid.NewGuid()), envelope);
 
-        // the miss is logged and the message is consumed, not retried
-        Assert.True(await scoped.RunAsync(ctx => ctx.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(CustomerReviewSubmittedEventHandler))));
+        (await scoped.RunAsync(ctx => ctx.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(CustomerReviewSubmittedEventHandler)))).ShouldBeTrue();
     }
 
     [Fact]
@@ -71,6 +71,6 @@ public sealed class CustomerReviewSubmittedEventHandlerTests(ApiFixture fixture,
         await DispatchAsync(NewEvent(ticketId), envelope);
 
         var stored = await scoped.RunAsync(ctx => ctx.Tickets.SingleAsync(t => t.Id == ticketId));
-        Assert.False(stored.HasReview);
+        stored.HasReview.ShouldBeFalse();
     }
 }

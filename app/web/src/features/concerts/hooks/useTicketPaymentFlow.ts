@@ -1,38 +1,37 @@
 import { useEffect, useRef, useState } from "react";
-import type { TicketPurchasedPayload } from "@concertable/customer/features/notifications/types";
+import type {
+  TicketPurchaseFailedPayload,
+  TicketPurchasedPayload,
+} from "@concertable/customer/features/notifications/types";
+import { paymentOperationReferencesMatch } from "@concertable/customer/features/tickets";
+import type { PaymentOperationReference } from "@concertable/customer/features/tickets/types";
 import type { CheckoutFlowState } from "@concertable/web/features/concerts/hooks/useCheckoutFlow";
 import { notificationConnection } from "@concertable/web/lib/signalr";
 
-interface TicketPurchaseFailedPayload {
-  transactionId: string;
-  failureMessage?: string;
-}
-
-export function useTicketPaymentFlow(clientSecret?: string) {
+export function useTicketPaymentFlow(reference?: PaymentOperationReference) {
   const [submitted, setSubmitted] = useState(false);
   const [paymentError, setPaymentError] = useState<string>();
   const [flow, setFlow] = useState<CheckoutFlowState<TicketPurchasedPayload>>({
     phase: "awaiting",
   });
   const failureReceived = useRef(false);
-  const transactionId = clientSecret?.split("_secret_")[0];
 
   useEffect(() => {
     failureReceived.current = false;
     setSubmitted(false);
     setPaymentError(undefined);
     setFlow({ phase: "awaiting" });
-  }, [transactionId]);
+  }, [reference]);
 
   useEffect(() => {
-    if (!transactionId) return;
+    if (!reference) return;
 
     const successHandler = (payload: TicketPurchasedPayload) => {
-      if (payload.transactionId !== transactionId) return;
+      if (!paymentOperationReferencesMatch(payload.reference, reference)) return;
       setFlow({ phase: "success", result: payload });
     };
     const failureHandler = (failure: TicketPurchaseFailedPayload) => {
-      if (failure.transactionId !== transactionId) return;
+      if (!paymentOperationReferencesMatch(failure.reference, reference)) return;
       failureReceived.current = true;
       setPaymentError(failure.failureMessage ?? "Payment failed.");
       setSubmitted(false);
@@ -44,7 +43,7 @@ export function useTicketPaymentFlow(clientSecret?: string) {
       notificationConnection.off("TicketPurchased", successHandler);
       notificationConnection.off("TicketPurchaseFailed", failureHandler);
     };
-  }, [transactionId]);
+  }, [reference]);
 
   useEffect(() => {
     if (!submitted || flow.phase !== "awaiting") return;

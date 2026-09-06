@@ -1,4 +1,5 @@
 export { default as ticketApi } from "./api/ticketApi";
+export { paymentOperationReferencesMatch } from "./paymentOperationReference";
 export {
   useUpcomingTicketsQuery,
   useTicketHistoryQuery,
@@ -10,4 +11,6 @@ export type {
   TicketCheckout,
   TicketPurchaseRequest,
   TicketPurchase,
+  PaymentOperationReference,
+  CheckoutSession,
 } from "./types";

@@ -1,3 +1,5 @@
+using Concertable.Customer.Ticket.Application.DTOs;
+using Concertable.Customer.Ticket.Application.Payments;
 using Concertable.Customer.Ticket.Infrastructure;
 using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.DataAccess.Infrastructure.Extensions;
@@ -11,47 +13,51 @@ internal sealed class TicketPaymentProcessor : IIntegrationEventHandler<PaymentS
 {
     private readonly ITicketService ticketService;
     private readonly ITicketNotifier notifier;
+    private readonly IUserModule userModule;
     private readonly TicketDbContext context;
     private readonly ILogger<TicketPaymentProcessor> logger;
 
     public TicketPaymentProcessor(
         ITicketService ticketService,
         ITicketNotifier notifier,
+        IUserModule userModule,
         TicketDbContext context,
         ILogger<TicketPaymentProcessor> logger)
     {
         this.ticketService = ticketService;
         this.notifier = notifier;
+        this.userModule = userModule;
         this.context = context;
         this.logger = logger;
     }
 
     public async Task HandleAsync(PaymentSucceededEvent @event, MessageEnvelope envelope, CancellationToken ct = default)
     {
-        if (@event.Metadata.GetValueOrDefault(PaymentMetadataKeys.Type) != TransactionTypes.Ticket)
+        if (!@event.Reference.TryGetPurchase(out var purchase))
             return;
 
         if (await context.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(TicketPaymentProcessor), ct))
             return;
 
-        var meta = @event.Metadata;
-
-        logger.TicketPaymentProcessing(meta.GetValue(PaymentMetadataKeys.FromUserId));
+        var userId = purchase.BuyerId.ToString();
+        logger.TicketPaymentProcessing(userId);
 
         context.AddInboxMessage(envelope, nameof(TicketPaymentProcessor));
 
         try
         {
+            var customers = await userModule.GetByIdsAsync([purchase.BuyerId]);
+            var customer = customers.SingleOrDefault();
             var payment = await ticketService.CompleteAsync(new()
             {
-                EntityId = meta.GetValueAs<int>(PaymentMetadataKeys.ConcertId),
-                FromUserId = meta.GetValueAs<Guid>(PaymentMetadataKeys.FromUserId),
-                FromEmail = meta.GetValue(PaymentMetadataKeys.FromUserEmail),
-                TransactionId = @event.TransactionId,
-                Quantity = meta.TryGetValue(PaymentMetadataKeys.Quantity, out var q) ? int.Parse(q) : null
+                Reference = @event.Reference,
+                EntityId = purchase.ConcertId,
+                FromUserId = purchase.BuyerId,
+                FromEmail = customer?.Email,
+                Quantity = purchase.Quantity
             });
 
-            await notifier.TicketPurchasedAsync(meta.GetValue(PaymentMetadataKeys.FromUserId), payment);
+            await notifier.TicketPurchasedAsync(userId, payment);
         }
         catch (DbUpdateException ex) when (ex.IsDuplicateKey())
         {
