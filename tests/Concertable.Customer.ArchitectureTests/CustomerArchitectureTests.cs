@@ -117,6 +117,8 @@ public sealed class CustomerArchitectureTests
     {
         var builder = AppHost.CreateBuilder([]);
         var surface = CustomerLocalSpaSurfaces.Customer;
+        var registration = Assert.Single(CustomerLocalSpaSurfaces.AuthClients);
+        Assert.Equal((surface, "Customer"), registration);
         var spa = Assert.Single(builder.Resources.OfType<NodeAppResource>());
         var endpoint = Assert.Single(spa.Annotations.OfType<EndpointAnnotation>());
         Assert.Equal(surface.ResourceName, spa.Name);

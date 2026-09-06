@@ -30,7 +30,7 @@ public static class AppHost
                           .WithContainerRuntimeArgs("--user", "root")
                           .WithHttpsEndpoint(targetPort: AuthConstants.ContainerPort, name: "https");
         auth.WithEndpoint("https", endpoint => endpoint.Port = 7093);
-        auth.WithSpaClients(CustomerLocalSpaSurfaces.All.Where(surface => surface.AuthClient is not null).ToArray());
+        auth.WithSpaClients(CustomerLocalSpaSurfaces.AuthClients);
         var paymentWeb = builder.AddPaymentWeb(PaymentWebImage, PaymentWebDigest, auth, paymentDb, asb)
                                 .WithHttpEndpoint(targetPort: 8080, name: "https")
                                 .WithHttpEndpoint(targetPort: 8080, name: "http");
