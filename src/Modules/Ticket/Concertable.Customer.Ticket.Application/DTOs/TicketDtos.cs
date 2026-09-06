@@ -1,12 +1,18 @@
-using Concertable.Payment.Client;
+using Concertable.Payment.Contracts;
 
 namespace Concertable.Customer.Ticket.Application.DTOs;
 
 internal sealed record TicketCheckout(
+    PaymentOperationReference Reference,
     CheckoutSession Session,
     decimal Price,
     int ConcertId,
     int Quantity);
+
+internal sealed record CheckoutSession(
+    string ClientSecret,
+    string? CustomerSession,
+    string? CustomerId);
 
 internal sealed record TicketConcert
 {
