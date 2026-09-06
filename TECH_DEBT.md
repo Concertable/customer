@@ -6,6 +6,29 @@ When an item is fixed, update both this file and [`ARCHITECTURE.md`](./ARCHITECT
 
 ## HIGH
 
+### A repeat ticket purchase replays the first payment instead of charging again
+
+`TicketPaymentOperationReferences` keys the purchase reference on
+`buyer:{buyerId}:concert:{concertId}:quantity:{n}` — a repeatable user action with no per-attempt
+discriminator. Payment enforces `(OperationType, ClientReference)` as a unique idempotency key and, on the
+duplicate, re-computes the replay fingerprint with the *existing* `OperationId` substituted in, so the fresh
+`OperationId` Customer mints per call does not distinguish the attempts. Every other fingerprint term (kind,
+payer, payee, amount, currency, routing) is identical for the same buyer, concert and quantity.
+
+A buyer who buys one ticket for a concert and then buys one more for the same concert therefore gets the
+first, already-succeeded PaymentIntent replayed: the API returns a valid-looking checkout with a stale client
+secret, the buyer is never charged, no `PaymentSucceededEvent` fires, and no second ticket is minted.
+
+Found by independent review during PR #633 (finding IR35); B2B's own reference scheme is unaffected because
+it keys on entity ids that exist once per intended operation.
+
+**Resolves when:** the client reference carries a per-attempt discriminator (the caller's `OperationId`, or a
+purchase-attempt GUID) that `TryGetPurchase` parses back, so one reference addresses exactly one intended
+payment — or Customer explicitly detects Payment's replay/terminal state and surfaces it rather than
+presenting a stale client secret as a fresh checkout.
+
+---
+
 ### `TicketPurchasedEvent` not consumed by B2B/Search; `TicketRefundedEvent` not published
 
 `TicketPurchasedEvent : IIntegrationEvent` now exists in `Concertable.Customer.Ticket.Contracts` — `TicketEntity.Purchase` raises `TicketPurchasedDomainEvent` (one per ticket), bridged to the bus via the outbox, registered as `Publishes<TicketPurchasedEvent>()` in `Program.cs`. Customer's own Concert module consumes it (`TicketPurchasedHandler` decrements `AvailableTickets`). Still missing from plan §6:
