@@ -77,7 +77,7 @@ internal sealed class TicketService : ITicketService
                 Currency = "GBP",
                 UserEmail = currentUser.Email
             })
-            .MapError(ToPurchaseError);
+            .MapError<PurchaseError>(static error => error);
     }
 
     public async Task<TicketPayment> CompleteAsync(PurchaseComplete purchaseCompleteDto)
@@ -140,7 +140,7 @@ internal sealed class TicketService : ITicketService
                 concert.Price,
                 concert.Id,
                 quantity))
-            .MapError(ToCheckoutError);
+            .MapError<CheckoutError>(static error => error);
     }
 
     private async Task<Result<TicketPaymentSession, PaymentOperationError>> CreatePaymentSessionAsync(
@@ -207,12 +207,6 @@ internal sealed class TicketService : ITicketService
             concert.VenueId,
             concert.VenueName);
     }
-
-    private static PurchaseError ToPurchaseError(PaymentOperationError error) =>
-        new PurchaseError.PaymentFailure(error);
-
-    private static CheckoutError ToCheckoutError(PaymentOperationError error) =>
-        new CheckoutError.PaymentFailure(error);
 
     private static ValidationErrors CreateValidationErrors(string field, ValidationErrors errors) =>
         new(new Dictionary<string, string[]>(StringComparer.Ordinal)
