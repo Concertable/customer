@@ -3,13 +3,15 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <ConcertablePlatformVersion>0.1.0-alpha.0.1329</ConcertablePlatformVersion>
+    <ConcertablePaymentVersion Condition="'$(UseLocalPlatformPackages)' == 'true'">$(ConcertablePlatformVersion)</ConcertablePaymentVersion>
+    <ConcertablePaymentVersion Condition="'$(ConcertablePaymentVersion)' == ''">0.1.0-alpha.0.1322</ConcertablePaymentVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageVersion Include="Concertable.Testing" Version="$(ConcertablePlatformVersion)" />
     <PackageVersion Include="Concertable.Testing.Architecture" Version="$(ConcertablePlatformVersion)" />
     <PackageVersion Include="Concertable.Testing.Integration" Version="$(ConcertablePlatformVersion)" />
-    <PackageVersion Include="Concertable.Payment.TestKit" Version="$(ConcertablePlatformVersion)" />
+    <PackageVersion Include="Concertable.Payment.TestKit" Version="$(ConcertablePaymentVersion)" />
     <PackageVersion Include="Concertable.Customer.TestKit" Version="$(ConcertablePlatformVersion)" />
     <PackageVersion Include="Aspire.Hosting.Testing" Version="13.3.2" />
     <PackageVersion Include="Concertable.Auth.Hosting" Version="$(ConcertablePlatformVersion)" />
@@ -81,16 +83,15 @@
     <PackageVersion Include="Concertable.AppHost.Shared" Version="$(ConcertablePlatformVersion)" />
     <PackageVersion Include="Concertable.B2B.Hosting" Version="$(ConcertablePlatformVersion)" />
     <PackageVersion Include="Concertable.Frontend.Hosting" Version="$(ConcertablePlatformVersion)" />
-    <PackageVersion Include="Concertable.Payment.Hosting" Version="$(ConcertablePlatformVersion)" />
+    <PackageVersion Include="Concertable.Payment.Hosting" Version="$(ConcertablePaymentVersion)" />
     <PackageVersion Include="Concertable.Search.Hosting" Version="$(ConcertablePlatformVersion)" />
     <PackageVersion Include="Concertable.Auth.Contracts" Version="$(ConcertablePlatformVersion)" />
-    <PackageVersion Include="Concertable.Payment.Client" Version="$(ConcertablePlatformVersion)" />
-    <PackageVersion Include="Concertable.Payment.Contracts" Version="$(ConcertablePlatformVersion)" />
+    <PackageVersion Include="Concertable.Payment.Client" Version="$(ConcertablePaymentVersion)" />
+    <PackageVersion Include="Concertable.Payment.Contracts" Version="$(ConcertablePaymentVersion)" />
     <PackageVersion Include="Concertable.B2B.Artist.Contracts" Version="$(ConcertablePlatformVersion)" />
     <PackageVersion Include="Concertable.B2B.Concert.Contracts" Version="$(ConcertablePlatformVersion)" />
     <PackageVersion Include="Concertable.B2B.Venue.Contracts" Version="$(ConcertablePlatformVersion)" />
     <PackageVersion Include="Concertable.B2B.Seed.Contracts" Version="$(ConcertablePlatformVersion)" />
-    <PackageVersion Include="Concertable.B2B.User.Contracts" Version="$(ConcertablePlatformVersion)" />
   </ItemGroup>
 
   <ItemGroup>

@@ -77,12 +77,13 @@ Transport: Azure Service Bus (`concertable-customer` service name). Wired in `Co
 | `ArtistChangedEvent` | B2B | `ArtistProjectionHandler` |
 | `ArtistRatingUpdatedEvent` | B2B | `ArtistRatingProjectionHandler` |
 | `CredentialRegisteredEvent` | Auth | `UserCreationHandler` — creates `UserEntity` |
-| `PaymentSucceededEvent` | Payment | `TicketPaymentProcessor` |
-| `PaymentFailedEvent` | Payment | `TicketPaymentFailedProcessor` |
+| `PaymentSucceededEvent` | Payment | `TicketPaymentProcessor` — guard and decode the whole Customer-minted `PaymentOperationReference`, then mint tickets |
+| `PaymentFailedEvent` | Payment | `TicketPaymentFailedProcessor` — guard and decode the whole Customer-minted `PaymentOperationReference`, then notify the buyer |
 | `CustomerReviewSubmittedEvent` | Self | Flips `TicketEntity.HasReview = true` |
 | `TicketPurchasedEvent` | Self | `TicketPurchasedHandler` (Concert) — decrements `ConcertEntity.AvailableTickets` |
 
-All consumed events use `InboxMessageEntity` deduplication keyed by `(MessageId, ConsumerName)`.
+Every accepted event is deduplicated through `InboxMessageEntity` keyed by `(MessageId, ConsumerName)`.
+Payment outcomes carrying a foreign or malformed reference are skipped before inbox processing.
 
 ---
 
@@ -90,7 +91,7 @@ All consumed events use `InboxMessageEntity` deduplication keyed by `(MessageId,
 
 | Target | Client | Usage |
 |---|---|---|
-| `Concertable.Payment` | `Concertable.Payment.Client` | Create payment intent on ticket purchase; refund ops |
+| `Concertable.Payment` | `Concertable.Payment.Client` | Create on-session ticket-purchase operations addressed by a whole `PaymentOperationReference`; refund ops |
 | `Concertable.Auth` | JWT Bearer middleware | Token validation; `client_credentials` for service-to-service tokens |
 
 No sync calls to B2B. Browse/detail reads go to `Concertable.Search` from the SPA directly — Customer.Api is not a proxy for Search.
