@@ -6,8 +6,14 @@ import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useStripe } from "@stripe/stripe-react-native";
 import { useConcert } from "@concertable/shared/features/concerts";
-import { useTicketCheckoutQuery } from "@concertable/customer/features/tickets";
-import type { TicketPurchasedPayload } from "@concertable/customer/features/notifications/types";
+import {
+  paymentOperationReferencesMatch,
+  useTicketCheckoutQuery,
+} from "@concertable/customer/features/tickets";
+import type {
+  TicketPurchaseFailedPayload,
+  TicketPurchasedPayload,
+} from "@concertable/customer/features/notifications/types";
 import { Button } from "@concertable/mobile/components/ui/button";
 import { Skeleton } from "@concertable/mobile/components/ui/skeleton";
 import { Text } from "@concertable/mobile/components/ui/text";
@@ -23,11 +29,6 @@ import type { CustomerConcertNavParamList } from "../../../navigation/types";
 
 type CheckoutRoute = RouteProp<CustomerConcertNavParamList, "TicketCheckout">;
 type CheckoutNav = NativeStackNavigationProp<CustomerConcertNavParamList>;
-
-interface TicketPurchaseFailedPayload {
-  transactionId: string;
-  failureMessage?: string;
-}
 
 type TicketFlowState =
   | { phase: "awaiting" | "timeout" }
@@ -50,22 +51,22 @@ export function TicketCheckoutScreen() {
   const failureReceived = useRef(false);
 
   const { data: checkout, isLoading, isError, isFetching } = useTicketCheckoutQuery(concertId, qty);
-  const transactionId = checkout?.session.clientSecret.split("_secret_")[0];
+  const reference = checkout?.reference;
   useEffect(() => {
     failureReceived.current = false;
     setSubmitted(false);
     setFlow({ phase: "awaiting" });
-  }, [transactionId]);
+  }, [reference]);
 
   useEffect(() => {
-    if (!transactionId) return;
+    if (!reference) return;
 
     const successHandler = (payload: TicketPurchasedPayload) => {
-      if (payload.transactionId !== transactionId) return;
+      if (!paymentOperationReferencesMatch(payload.reference, reference)) return;
       setFlow({ phase: "success", result: payload });
     };
     const failureHandler = (failure: TicketPurchaseFailedPayload) => {
-      if (failure.transactionId !== transactionId) return;
+      if (!paymentOperationReferencesMatch(failure.reference, reference)) return;
       failureReceived.current = true;
       notify(failure.failureMessage ?? "Payment failed.", "error");
       setSubmitted(false);
@@ -77,7 +78,7 @@ export function TicketCheckoutScreen() {
       notificationConnection.off("TicketPurchased", successHandler);
       notificationConnection.off("TicketPurchaseFailed", failureHandler);
     };
-  }, [transactionId]);
+  }, [reference]);
 
   useEffect(() => {
     if (!submitted || flow.phase !== "awaiting") return;
