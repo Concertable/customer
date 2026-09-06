@@ -34,6 +34,8 @@ public static class AppHost
         var paymentWeb = builder.AddPaymentWeb(PaymentWebImage, PaymentWebDigest, auth, paymentDb, asb);
         paymentWeb.WithEndpoint("https", endpoint => endpoint.Port = 7098);
         var customerWeb = builder.AddCustomerWeb<Projects.Concertable_Customer_Web>(auth, customerDb, asb, paymentWeb);
+        if (builder.ExecutionContext.IsRunMode)
+            customerWeb.WithEnvironment(PaymentConstants.AllowInsecureHttpClientEnvironmentVariable, bool.TrueString);
         auth.WithEnvironment("ServiceAuth__AuthClientId", "concertable-auth");
         auth.WithEnvironment("Services__CustomerApiUrl", customerWeb.GetEndpoint("https"));
         builder.AddPaymentWorkers(PaymentWorkersImage, PaymentWorkersDigest, paymentDb, asb);
