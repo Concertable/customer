@@ -1,13 +1,22 @@
-import type { CheckoutSession } from "@concertable/shared/features/concerts/types";
-import type { PaymentOutcome } from "@concertable/shared/features/payments/types";
-
 export interface TicketPurchaseRequest {
   concertId: number;
   quantity: number;
-  paymentMethodId: string;
 }
 
-export interface TicketPurchase extends PaymentOutcome {
+export interface PaymentOperationReference {
+  operationType: string;
+  clientReference: string;
+}
+
+export interface CheckoutSession {
+  clientSecret: string;
+  customerSession?: string;
+  customerId?: string;
+}
+
+export interface TicketPurchase {
+  reference: PaymentOperationReference;
+  clientSecret?: string;
   ticketIds: string[];
   concertId: number;
   amount: number;
@@ -35,6 +44,7 @@ export interface Ticket {
 }
 
 export interface TicketCheckout {
+  reference: PaymentOperationReference;
   session: CheckoutSession;
   price: number;
   concertId: number;

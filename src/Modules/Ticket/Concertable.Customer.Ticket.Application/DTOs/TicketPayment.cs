@@ -2,8 +2,10 @@ using Concertable.Payment.Contracts;
 
 namespace Concertable.Customer.Ticket.Application.DTOs;
 
-internal sealed record TicketPayment : PaymentOutcome
+internal sealed record TicketPayment
 {
+    public required PaymentOperationReference Reference { get; init; }
+    public string? ClientSecret { get; init; }
     public IReadOnlyList<Guid> TicketIds { get; init; } = [];
     public int ConcertId { get; init; }
     public decimal Amount { get; init; }
