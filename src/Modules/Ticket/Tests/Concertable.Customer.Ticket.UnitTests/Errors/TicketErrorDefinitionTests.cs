@@ -32,27 +32,27 @@ public sealed class TicketErrorDefinitionTests
     }
 
     [Fact]
-    public void Definition_PaymentRejected_ReturnsPublishedContract()
+    public void Definition_PurchasePaymentFailure_ForwardsOperationContract()
     {
-        PurchaseError error = new PurchaseError.PaymentRejected();
+        PurchaseError error = new PurchaseError.PaymentFailure(new PaymentOperationError.Declined());
 
         var definition = error.Definition;
 
-        Assert.Equal("ticket.payment_rejected", definition.Code);
-        Assert.Equal("The payment was rejected.", definition.Message);
+        Assert.Equal("payment.operation.declined", definition.Code);
+        Assert.Equal("The payment was declined.", definition.Message);
         Assert.Equal(ErrorKind.PaymentRequired, definition.Kind);
     }
 
     [Fact]
-    public void Definition_OtherPaymentFailure_ForwardsPaymentContract()
+    public void Definition_CheckoutPaymentFailure_ForwardsOperationContract()
     {
-        PurchaseError error = new PurchaseError.PaymentFailure(new PaymentError.PayerNotFound());
+        CheckoutError error = new CheckoutError.PaymentFailure(new PaymentOperationError.OperationConflict());
 
         var definition = error.Definition;
 
-        Assert.Equal("payment.payer_not_found", definition.Code);
-        Assert.Equal("The payer account was not found.", definition.Message);
-        Assert.Equal(ErrorKind.NotFound, definition.Kind);
+        Assert.Equal("payment.operation.conflict", definition.Code);
+        Assert.Equal("The operation identity conflicts with an existing payment operation.", definition.Message);
+        Assert.Equal(ErrorKind.Conflict, definition.Kind);
     }
 
     [Fact]
