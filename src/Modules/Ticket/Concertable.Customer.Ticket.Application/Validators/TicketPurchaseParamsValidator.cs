@@ -15,8 +15,5 @@ internal sealed class TicketPurchaseParamsValidator : AbstractValidator<TicketPu
             .GreaterThan(0)
             .WithMessage("Quantity must be at least 1");
 
-        RuleFor(x => x.PaymentMethodId)
-            .NotEmpty()
-            .WithMessage("Payment method is required");
     }
 }

@@ -12,4 +12,4 @@ An `ArtistChangedEvent`/`VenueChangedEvent` (and the `*RatingUpdatedEvent` varia
 
 ## Tickets are webhook-minted, not returned by `/purchase`
 
-`POST /purchase` only creates a Stripe PaymentIntent; the `TicketEntity` is created later by `TicketPaymentProcessor` on `PaymentSucceededEvent` (metadata `Type == Ticket`). No ticket exists synchronously at purchase.
+`POST /purchase` and `POST /checkout` create an on-session Payment operation addressed by a whole `PaymentOperationReference`. A `TicketEntity` is created later by `TicketPaymentProcessor` on `PaymentSucceededEvent`, after the exact Customer operation-type guard succeeds. No ticket exists synchronously at purchase, and Customer uses neither Payment metadata nor provider identifiers for correlation or state.

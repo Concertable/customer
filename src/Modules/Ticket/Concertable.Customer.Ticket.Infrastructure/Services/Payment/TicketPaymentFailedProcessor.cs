@@ -1,3 +1,5 @@
+using Concertable.Customer.Ticket.Application.Payments;
+using Concertable.Customer.Ticket.Application.DTOs;
 using Concertable.Customer.Ticket.Infrastructure;
 using Concertable.Customer.Ticket.Infrastructure.Data;
 using Concertable.DataAccess.Infrastructure.Extensions;
@@ -25,21 +27,14 @@ internal sealed class TicketPaymentFailedProcessor : IIntegrationEventHandler<Pa
 
     public async Task HandleAsync(PaymentFailedEvent @event, MessageEnvelope envelope, CancellationToken ct = default)
     {
-        if (@event.Metadata.GetValueOrDefault(PaymentMetadataKeys.Type) != TransactionTypes.Ticket)
+        if (!@event.Reference.TryGetPurchase(out var purchase))
             return;
 
         if (await context.IsInboxMessageProcessedAsync(envelope.MessageId, nameof(TicketPaymentFailedProcessor), ct))
             return;
 
-        var fromUserId = @event.Metadata.GetValue(PaymentMetadataKeys.FromUserId);
-        logger.TicketPaymentFailed(fromUserId, @event.FailureCode, @event.FailureMessage);
-
-        await notifier.TicketPurchaseFailedAsync(fromUserId, new
-        {
-            @event.TransactionId,
-            @event.FailureCode,
-            @event.FailureMessage
-        });
+        var userId = purchase.BuyerId.ToString();
+        logger.TicketPaymentFailed(userId, @event.FailureCode, @event.FailureMessage);
 
         context.AddInboxMessage(envelope, nameof(TicketPaymentFailedProcessor));
         try
@@ -49,6 +44,11 @@ internal sealed class TicketPaymentFailedProcessor : IIntegrationEventHandler<Pa
         catch (DbUpdateException ex) when (ex.IsDuplicateKey())
         {
             logger.DuplicateInboxMessage(envelope.MessageId);
+            return;
         }
+
+        await notifier.TicketPurchaseFailedAsync(
+            userId,
+            new TicketPaymentFailure(@event.Reference, @event.FailureCode, @event.FailureMessage));
     }
 }
