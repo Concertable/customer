@@ -82,7 +82,8 @@ Transport: Azure Service Bus (`concertable-customer` service name). Wired in `Co
 | `CustomerReviewSubmittedEvent` | Self | Flips `TicketEntity.HasReview = true` |
 | `TicketPurchasedEvent` | Self | `TicketPurchasedHandler` (Concert) — decrements `ConcertEntity.AvailableTickets` |
 
-All consumed events use `InboxMessageEntity` deduplication keyed by `(MessageId, ConsumerName)`.
+Every accepted event is deduplicated through `InboxMessageEntity` keyed by `(MessageId, ConsumerName)`.
+Payment outcomes carrying a foreign or malformed reference are skipped before inbox processing.
 
 ---
 
