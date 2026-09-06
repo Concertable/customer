@@ -4,7 +4,7 @@ using Reunion.Errors;
 
 namespace Concertable.Customer.Ticket.Application.Errors;
 
-[Union(EnableImplicitConversions = false)]
+[Union]
 internal abstract partial record PurchaseError : IError
 {
     public ErrorDefinition Definition => this switch
