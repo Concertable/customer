@@ -4,6 +4,7 @@ using Concertable.Customer.Ticket.Application.Requests;
 using Concertable.Payment.Contracts;
 using Concertable.Payment.Contracts.Errors;
 using Microsoft.AspNetCore.Mvc;
+using Shouldly;
 using Xunit.Abstractions;
 
 namespace Concertable.Customer.Ticket.IntegrationTests;
@@ -66,25 +67,23 @@ public sealed class TicketApiTests : IAsyncLifetime
         });
 
         await response.ShouldBe(HttpStatusCode.OK);
-        var result = await response.Content.ReadAsync<TicketPayment>();
-        Assert.NotNull(result);
-        Assert.Equal("ticket-purchase", result.Reference.OperationType);
-        Assert.Equal("payment-session-secret", result.ClientSecret);
-        Assert.Equal(concert.Id, result.ConcertId);
-        Assert.Equal(concert.Price, result.Amount);
-        Assert.Equal("GBP", result.Currency);
+        var result = (await response.Content.ReadAsync<TicketPayment>()).ShouldNotBeNull();
+        result.Reference.OperationType.ShouldBe("ticket-purchase");
+        result.ClientSecret.ShouldBe("payment-session-secret");
+        result.ConcertId.ShouldBe(concert.Id);
+        result.Amount.ShouldBe(concert.Price);
+        result.Currency.ShouldBe("GBP");
 
-        var request = Assert.Single(fixture.PaymentSessionClient.Sessions);
-        Assert.Equal(result.Reference, request.Reference);
-        Assert.Equal(PaymentSessionKind.Payment, request.Kind);
-        Assert.Equal(PaymentSession.OnSession, request.Session);
-        Assert.Equal(buyer.Id, request.PayerOwnerId);
-        Assert.Equal(concert.PayeeOwnerId, request.PayeeOwnerId);
-        Assert.Equal(
-            Concertable.Kernel.ValueObjects.Money.Gbp(concert.Price).ToMinorUnits(),
-            request.AmountMinor);
-        Assert.Equal(Concertable.Kernel.ValueObjects.Currency.Gbp, request.Currency);
-        Assert.Equal(PaymentSessionFundsRouting.Destination, request.FundsRouting);
+        var request = fixture.PaymentSessionClient.Sessions.ShouldHaveSingleItem();
+        request.Reference.ShouldBe(result.Reference);
+        request.Kind.ShouldBe(PaymentSessionKind.Payment);
+        request.Session.ShouldBe(PaymentSession.OnSession);
+        request.PayerOwnerId.ShouldBe(buyer.Id);
+        request.PayeeOwnerId.ShouldBe(concert.PayeeOwnerId);
+        request.AmountMinor.ShouldBe(
+            Concertable.Kernel.ValueObjects.Money.Gbp(concert.Price).ToMinorUnits());
+        request.Currency.ShouldBe(Concertable.Kernel.ValueObjects.Currency.Gbp);
+        request.FundsRouting.ShouldBe(PaymentSessionFundsRouting.Destination);
     }
 
     [Fact]
@@ -117,7 +116,7 @@ public sealed class TicketApiTests : IAsyncLifetime
             response,
             "ticket.purchase_invalid",
             "purchase");
-        Assert.StartsWith("Not enough tickets available.", Assert.Single(problem.Errors["purchase"]));
+        problem.Errors["purchase"].ShouldHaveSingleItem().ShouldStartWith("Not enough tickets available.");
     }
 
     [Fact]
@@ -171,26 +170,24 @@ public sealed class TicketApiTests : IAsyncLifetime
         var response = await client.PostAsync("/api/ticket/checkout", new TicketCheckoutRequest(concert.Id, 1));
 
         await response.ShouldBe(HttpStatusCode.OK);
-        var result = await response.Content.ReadAsync<TicketCheckout>();
-        Assert.NotNull(result);
-        Assert.Equal(concert.Id, result.ConcertId);
-        Assert.Equal(1, result.Quantity);
-        Assert.Equal("ticket-purchase", result.Reference.OperationType);
-        Assert.Equal("payment-session-secret", result.Session.ClientSecret);
-        Assert.Equal("customer-session-secret", result.Session.CustomerSession);
-        Assert.Equal("customer-token", result.Session.CustomerId);
+        var result = (await response.Content.ReadAsync<TicketCheckout>()).ShouldNotBeNull();
+        result.ConcertId.ShouldBe(concert.Id);
+        result.Quantity.ShouldBe(1);
+        result.Reference.OperationType.ShouldBe("ticket-purchase");
+        result.Session.ClientSecret.ShouldBe("payment-session-secret");
+        result.Session.CustomerSession.ShouldBe("customer-session-secret");
+        result.Session.CustomerId.ShouldBe("customer-token");
 
-        var request = Assert.Single(fixture.PaymentSessionClient.Sessions);
-        Assert.Equal(result.Reference, request.Reference);
-        Assert.Equal(PaymentSessionKind.Payment, request.Kind);
-        Assert.Equal(PaymentSession.OnSession, request.Session);
-        Assert.Equal(buyer.Id, request.PayerOwnerId);
-        Assert.Equal(concert.PayeeOwnerId, request.PayeeOwnerId);
-        Assert.Equal(
-            Concertable.Kernel.ValueObjects.Money.Gbp(concert.Price).ToMinorUnits(),
-            request.AmountMinor);
-        Assert.Equal(Concertable.Kernel.ValueObjects.Currency.Gbp, request.Currency);
-        Assert.Equal(PaymentSessionFundsRouting.Destination, request.FundsRouting);
+        var request = fixture.PaymentSessionClient.Sessions.ShouldHaveSingleItem();
+        request.Reference.ShouldBe(result.Reference);
+        request.Kind.ShouldBe(PaymentSessionKind.Payment);
+        request.Session.ShouldBe(PaymentSession.OnSession);
+        request.PayerOwnerId.ShouldBe(buyer.Id);
+        request.PayeeOwnerId.ShouldBe(concert.PayeeOwnerId);
+        request.AmountMinor.ShouldBe(
+            Concertable.Kernel.ValueObjects.Money.Gbp(concert.Price).ToMinorUnits());
+        request.Currency.ShouldBe(Concertable.Kernel.ValueObjects.Currency.Gbp);
+        request.FundsRouting.ShouldBe(PaymentSessionFundsRouting.Destination);
     }
 
     [Fact]
@@ -219,7 +216,7 @@ public sealed class TicketApiTests : IAsyncLifetime
             response,
             "ticket.checkout_invalid",
             "checkout");
-        Assert.StartsWith("Not enough tickets available.", Assert.Single(problem.Errors["checkout"]));
+        problem.Errors["checkout"].ShouldHaveSingleItem().ShouldStartWith("Not enough tickets available.");
     }
 
     #endregion
@@ -244,10 +241,9 @@ public sealed class TicketApiTests : IAsyncLifetime
         var response = await client.GetAsync("/api/ticket/upcoming/user");
 
         await response.ShouldBe(HttpStatusCode.OK);
-        var tickets = await response.Content.ReadAsync<IEnumerable<TicketDto>>();
-        Assert.NotNull(tickets);
-        var ticket = Assert.Single(tickets);
-        Assert.Equal(fixture.SeedState.UpcomingFlatFeeConcert.Id, ticket.Concert.Id);
+        var tickets = (await response.Content.ReadAsync<IEnumerable<TicketDto>>()).ShouldNotBeNull();
+        var ticket = tickets.ShouldHaveSingleItem();
+        ticket.Concert.Id.ShouldBe(fixture.SeedState.UpcomingFlatFeeConcert.Id);
     }
 
     [Fact]
@@ -258,10 +254,9 @@ public sealed class TicketApiTests : IAsyncLifetime
         var response = await client.GetAsync("/api/ticket/upcoming/user");
 
         await response.ShouldBe(HttpStatusCode.OK);
-        var tickets = (await response.Content.ReadAsync<IEnumerable<TicketDto>>())?.ToList();
-        Assert.NotNull(tickets);
-        Assert.DoesNotContain(tickets, t => t.Concert.Id == fixture.SeedState.PastDoorSplitConcert.Id);
-        Assert.DoesNotContain(tickets, t => t.Concert.Id == fixture.SeedState.PastFlatFeeConcert.Id);
+        var tickets = (await response.Content.ReadAsync<IEnumerable<TicketDto>>()).ShouldNotBeNull();
+        tickets.ShouldNotContain(ticket => ticket.Concert.Id == fixture.SeedState.PastDoorSplitConcert.Id);
+        tickets.ShouldNotContain(ticket => ticket.Concert.Id == fixture.SeedState.PastFlatFeeConcert.Id);
     }
 
     #endregion
@@ -286,10 +281,9 @@ public sealed class TicketApiTests : IAsyncLifetime
         var response = await client.GetAsync("/api/ticket/history/user");
 
         await response.ShouldBe(HttpStatusCode.OK);
-        var tickets = (await response.Content.ReadAsync<IEnumerable<TicketDto>>())?.ToList();
-        Assert.NotNull(tickets);
-        Assert.Contains(tickets, t => t.Concert.Id == fixture.SeedState.PastDoorSplitConcert.Id);
-        Assert.Contains(tickets, t => t.Concert.Id == fixture.SeedState.PastFlatFeeConcert.Id);
+        var tickets = (await response.Content.ReadAsync<IEnumerable<TicketDto>>()).ShouldNotBeNull();
+        tickets.ShouldContain(ticket => ticket.Concert.Id == fixture.SeedState.PastDoorSplitConcert.Id);
+        tickets.ShouldContain(ticket => ticket.Concert.Id == fixture.SeedState.PastFlatFeeConcert.Id);
     }
 
     [Fact]
@@ -300,9 +294,8 @@ public sealed class TicketApiTests : IAsyncLifetime
         var response = await client.GetAsync("/api/ticket/history/user");
 
         await response.ShouldBe(HttpStatusCode.OK);
-        var tickets = await response.Content.ReadAsync<IEnumerable<TicketDto>>();
-        Assert.NotNull(tickets);
-        Assert.DoesNotContain(tickets, t => t.Concert.Id == fixture.SeedState.UpcomingFlatFeeConcert.Id);
+        var tickets = (await response.Content.ReadAsync<IEnumerable<TicketDto>>()).ShouldNotBeNull();
+        tickets.ShouldNotContain(ticket => ticket.Concert.Id == fixture.SeedState.UpcomingFlatFeeConcert.Id);
     }
 
     #endregion
@@ -328,7 +321,7 @@ public sealed class TicketApiTests : IAsyncLifetime
         var response = await client.GetAsync($"/api/ticket/concert/{concert.Id}/eligibility");
 
         await response.ShouldBe(HttpStatusCode.OK);
-        Assert.True(await response.Content.ReadAsync<bool>());
+        (await response.Content.ReadAsync<bool>()).ShouldBeTrue();
     }
 
     [Fact]
@@ -340,7 +333,7 @@ public sealed class TicketApiTests : IAsyncLifetime
         var response = await client.GetAsync($"/api/ticket/concert/{concert.Id}/eligibility");
 
         await response.ShouldBe(HttpStatusCode.OK);
-        Assert.False(await response.Content.ReadAsync<bool>());
+        (await response.Content.ReadAsync<bool>()).ShouldBeFalse();
     }
 
     [Fact]
@@ -361,9 +354,8 @@ public sealed class TicketApiTests : IAsyncLifetime
         string code)
     {
         await response.ShouldBe(statusCode);
-        var problem = await response.Content.ReadAsync<ProblemDetails>();
-        Assert.NotNull(problem);
-        Assert.Equal(code, problem.Extensions["code"]?.ToString());
+        var problem = (await response.Content.ReadAsync<ProblemDetails>()).ShouldNotBeNull();
+        problem.Extensions["code"]?.ToString().ShouldBe(code);
     }
 
     private static async Task<ValidationProblemDetails> AssertValidationProblemAsync(
@@ -372,10 +364,9 @@ public sealed class TicketApiTests : IAsyncLifetime
         string field)
     {
         await response.ShouldBe(HttpStatusCode.BadRequest);
-        var problem = await response.Content.ReadAsync<ValidationProblemDetails>();
-        Assert.NotNull(problem);
-        Assert.Equal(code, problem.Extensions["code"]?.ToString());
-        Assert.Equal([field], problem.Errors.Keys);
+        var problem = (await response.Content.ReadAsync<ValidationProblemDetails>()).ShouldNotBeNull();
+        problem.Extensions["code"]?.ToString().ShouldBe(code);
+        problem.Errors.Keys.ShouldBe([field]);
         return problem;
     }
 }

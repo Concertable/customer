@@ -9,6 +9,7 @@ using Concertable.Payment.Contracts;
 using Concertable.Payment.Contracts.Events;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using Xunit.Abstractions;
 
 namespace Concertable.Customer.Ticket.IntegrationTests;
@@ -33,8 +34,8 @@ public sealed class TicketPaymentOutcomeTests(ApiFixture fixture, ITestOutputHel
 
         var tickets = await scoped.RunAsync(context =>
             context.Tickets.Where(ticket => ticket.UserId == buyer.Id).ToListAsync());
-        Assert.Equal(2, tickets.Count);
-        Assert.All(tickets, ticket => Assert.Equal(concert.Period, ticket.Period));
+        tickets.Count.ShouldBe(2);
+        tickets.ShouldAllBe(ticket => ticket.Period == concert.Period);
     }
 
     [Fact]
@@ -53,8 +54,8 @@ public sealed class TicketPaymentOutcomeTests(ApiFixture fixture, ITestOutputHel
             context.Set<OutboxMessageEntity>()
                 .Where(message => message.MessageType == emailCommand)
                 .ToListAsync());
-        var row = Assert.Single(staged);
-        Assert.Contains(buyer.Email, row.Payload);
+        var row = staged.ShouldHaveSingleItem();
+        row.Payload.ShouldContain(buyer.Email);
     }
 
     [Fact]
@@ -71,8 +72,8 @@ public sealed class TicketPaymentOutcomeTests(ApiFixture fixture, ITestOutputHel
 
         var tickets = await scoped.RunAsync(context =>
             context.Tickets.Where(ticket => ticket.UserId == buyer.Id).ToListAsync());
-        Assert.Equal(2, tickets.Count);
-        Assert.Single(Fixture.NotificationClient.TicketPurchased);
+        tickets.Count.ShouldBe(2);
+        Fixture.NotificationClient.TicketPurchased.ShouldHaveSingleItem();
     }
 
     [Fact]
@@ -91,8 +92,8 @@ public sealed class TicketPaymentOutcomeTests(ApiFixture fixture, ITestOutputHel
             InboxRecorded = await context.Set<InboxMessageEntity>()
                 .AnyAsync(message => message.MessageId == envelope.MessageId)
         });
-        Assert.Equal(0, state.TicketCount);
-        Assert.False(state.InboxRecorded);
+        state.TicketCount.ShouldBe(0);
+        state.InboxRecorded.ShouldBeFalse();
     }
 
     [Fact]
@@ -107,13 +108,13 @@ public sealed class TicketPaymentOutcomeTests(ApiFixture fixture, ITestOutputHel
         await DispatchAsync(@event, envelope);
         await DispatchAsync(@event, envelope);
 
-        var notification = Assert.Single(Fixture.NotificationClient.Other);
-        Assert.Equal(buyer.Id.ToString(), notification.UserId);
-        Assert.Equal("TicketPurchaseFailed", notification.EventName);
-        var payload = Assert.IsType<TicketPaymentFailure>(notification.Payload);
-        Assert.Equal(reference, payload.Reference);
-        Assert.Equal("declined", payload.FailureCode);
-        Assert.Equal("Payment declined", payload.FailureMessage);
+        var notification = Fixture.NotificationClient.Other.ShouldHaveSingleItem();
+        notification.UserId.ShouldBe(buyer.Id.ToString());
+        notification.EventName.ShouldBe("TicketPurchaseFailed");
+        var payload = notification.Payload.ShouldBeOfType<TicketPaymentFailure>();
+        payload.Reference.ShouldBe(reference);
+        payload.FailureCode.ShouldBe("declined");
+        payload.FailureMessage.ShouldBe("Payment declined");
     }
 
     private static PaymentOperationReference CreateReference(Guid buyerId, int concertId, int quantity) =>
