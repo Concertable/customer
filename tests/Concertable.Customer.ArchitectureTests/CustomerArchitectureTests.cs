@@ -2,6 +2,7 @@ using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Concertable.Auth.Hosting;
 using Concertable.Customer.Hosting;
+using Concertable.Customer.Hosting.Frontend;
 using Concertable.Customer.Web;
 using Concertable.Payment.Hosting;
 using Concertable.Testing;
@@ -112,6 +113,40 @@ public sealed class CustomerArchitectureTests
         await AssertTunnelValueAsync(authEnvironment, "Auth__PublicUrl", "customer-dev-auth-https", cancellation.Token);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void FrontendWorkspaces_ExtractedAndMonorepoLayouts_ResolveEveryProductionCandidate(
+        bool includeMonorepoLayout)
+    {
+        var root = Directory.CreateTempSubdirectory("concertable-customer-frontend-");
+        try
+        {
+            CreateDirectories(root, [["app", "web"], ["app", "mobile"]]);
+            if (includeMonorepoLayout)
+                CreateDirectories(root, [["app", "web", "customer"], ["app", "mobile", "customer"]]);
+
+            var builder = CreateFrontendBuilder(root);
+            IResourceBuilder<IResourceWithServiceDiscovery> api =
+                builder.AddResource(new ServiceContainerResource("customer-api"));
+            IResourceBuilder<IResourceWithServiceDiscovery> auth =
+                builder.AddResource(new ServiceContainerResource("auth"));
+            IResourceBuilder<IResourceWithServiceDiscovery> payment =
+                builder.AddResource(new ServiceContainerResource("payment"));
+            builder.AddCustomerSpa(api, api, auth);
+            Assert.NotNull(builder.AddMobileCustomer(api, auth, payment));
+
+            AssertNodeAppDirectory(builder, "customer",
+                includeMonorepoLayout ? ["app", "web", "customer"] : ["app", "web"]);
+            AssertNodeAppDirectory(builder, "mobile-customer",
+                includeMonorepoLayout ? ["app", "mobile", "customer"] : ["app", "mobile"]);
+        }
+        finally
+        {
+            root.Delete(recursive: true);
+        }
+    }
+
     [Fact]
     public async Task AppHost_CustomerSpaOrigin_MatchesAuthRegistration()
     {
@@ -156,6 +191,20 @@ public sealed class CustomerArchitectureTests
                 .GetResult();
 
         Assert.Equal(expected, args);
+    }
+
+    private static IDistributedApplicationBuilder CreateFrontendBuilder(DirectoryInfo root) =>
+        DistributedApplication.CreateBuilder(new DistributedApplicationOptions
+        {
+            Args = ["--environment", "Development", "--RunMobile=true"],
+            DisableDashboard = true,
+            ProjectDirectory = root.FullName
+        });
+
+    private static void CreateDirectories(DirectoryInfo root, IReadOnlyList<string[]> relativePaths)
+    {
+        foreach (var relativePath in relativePaths)
+            Directory.CreateDirectory(Path.Combine([root.FullName, .. relativePath]));
     }
 
     private static void AllocateTunnelEndpoints(IDistributedApplicationBuilder builder, string tunnelName)
