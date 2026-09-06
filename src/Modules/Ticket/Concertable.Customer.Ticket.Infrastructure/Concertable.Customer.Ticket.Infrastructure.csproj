@@ -21,9 +21,10 @@
     <ProjectReference Include="..\..\Review\Concertable.Customer.Review.Contracts\Concertable.Customer.Review.Contracts.csproj" />
     <ProjectReference Include="..\Concertable.Customer.Ticket.Application\Concertable.Customer.Ticket.Application.csproj" />
     <PackageReference Include="Concertable.DataAccess.Infrastructure" />
-    <PackageReference Include="Concertable.B2B.User.Contracts" />
     <PackageReference Include="Concertable.Payment.Contracts" />
+    <PackageReference Include="Concertable.Payment.Client" />
     <ProjectReference Include="..\..\Concert\Concertable.Customer.Concert.Contracts\Concertable.Customer.Concert.Contracts.csproj" />
+    <ProjectReference Include="..\..\User\Concertable.Customer.User.Contracts\Concertable.Customer.User.Contracts.csproj" />
     <PackageReference Include="Concertable.Kernel" />
     <PackageReference Include="Concertable.Shared.Email.Application" />
     <PackageReference Include="Concertable.Shared.Pdf.Application" />

@@ -13,7 +13,6 @@ internal abstract partial record PurchaseError : IError
             ErrorDefinition.NotFound<ConcertNotFound>($"Concert {concertId} was not found."),
         Invalid(var errors) =>
             ErrorDefinition.Validation<Invalid>("The ticket purchase is invalid.", errors),
-        PaymentRejected => ErrorDefinition.PaymentRequired<PaymentRejected>("The payment was rejected."),
         PaymentFailure(var error) => error.Definition
     };
 
@@ -23,8 +22,5 @@ internal abstract partial record PurchaseError : IError
     [ErrorCode("ticket.purchase_invalid")]
     public partial record Invalid(ValidationErrors Errors);
 
-    [ErrorCode("ticket.payment_rejected")]
-    public partial record PaymentRejected;
-
-    public partial record PaymentFailure(PaymentError Error);
+    public partial record PaymentFailure(PaymentOperationError Error);
 }
