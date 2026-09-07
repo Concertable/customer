@@ -6,6 +6,29 @@ When an item is fixed, update both this file and [`ARCHITECTURE.md`](./ARCHITECT
 
 ## HIGH
 
+### A repeat ticket purchase replays the first payment instead of charging again
+
+`TicketPaymentOperationReferences` keys the purchase reference on
+`buyer:{buyerId}:concert:{concertId}:quantity:{n}` — a repeatable user action with no per-attempt
+discriminator. Payment enforces `(OperationType, ClientReference)` as a unique idempotency key and, on the
+duplicate, re-computes the replay fingerprint with the *existing* `OperationId` substituted in, so the fresh
+`OperationId` Customer mints per call does not distinguish the attempts. Every other fingerprint term (kind,
+payer, payee, amount, currency, routing) is identical for the same buyer, concert and quantity.
+
+A buyer who buys one ticket for a concert and then buys one more for the same concert therefore gets the
+first, already-succeeded PaymentIntent replayed: the API returns a valid-looking checkout with a stale client
+secret, the buyer is never charged, no `PaymentSucceededEvent` fires, and no second ticket is minted.
+
+Found by independent review during PR #633 (finding IR35); B2B's own reference scheme is unaffected because
+it keys on entity ids that exist once per intended operation.
+
+**Resolves when:** the client reference carries a per-attempt discriminator (the caller's `OperationId`, or a
+purchase-attempt GUID) that `TryGetPurchase` parses back, so one reference addresses exactly one intended
+payment — or Customer explicitly detects Payment's replay/terminal state and surfaces it rather than
+presenting a stale client secret as a fresh checkout.
+
+---
+
 ### `TicketPurchasedEvent` not consumed by B2B/Search; `TicketRefundedEvent` not published
 
 `TicketPurchasedEvent : IIntegrationEvent` now exists in `Concertable.Customer.Ticket.Contracts` — `TicketEntity.Purchase` raises `TicketPurchasedDomainEvent` (one per ticket), bridged to the bus via the outbox, registered as `Publishes<TicketPurchasedEvent>()` in `Program.cs`. Customer's own Concert module consumes it (`TicketPurchasedHandler` decrements `AvailableTickets`). Still missing from plan §6:
@@ -40,6 +63,21 @@ Mirror of the B2B item in `api/Concertable.B2B/TECH_DEBT.md`. Tracked by [`plans
 ---
 
 ## MED
+
+### Web composes module infrastructure outside each API boundary
+
+`Concertable.Customer.Web/Program.cs` directly registers the Concert, Ticket, Review, User,
+Preference, Venue, and Artist infrastructure modules. It also calls separate API registration only
+for User and Preference, while the other module controllers are discovered implicitly. The host must
+therefore know which internal runtime registration belongs behind each HTTP module, and its project
+directly references all seven `*.Infrastructure` projects.
+
+**Resolves when:** each `AddXApi(IConfiguration)` extension composes its own `AddXModule` registration
+and controller surface, `Concertable.Customer.Web` calls only those API extensions, and the Web project
+removes every direct module-Infrastructure reference. Add an architecture guard that rejects direct
+`Modules/*/*.Infrastructure` references from Web hosts so the boundary cannot regress.
+
+---
 
 ### Preference module lacks `.Contracts` project
 
@@ -92,3 +130,22 @@ rate-limit integration trip tests; only `purchase` is unpinned by a test.
 mirroring B2B's `Tenant.Contracts` — holds `RateLimitPolicies`, and the Customer controller attributes
 reference the constants instead of literals. Needs a project-topology decision (whether Customer should
 gain such a shared assembly, and its name/placement).
+
+---
+
+### `Concertable.Customer.AppHost` builds to `bin/` 16 characters from the native-path limit
+
+`docs/LOCAL_DEV.md` records the measured 250-character cap on native DLL loading, which the four E2E host
+executables now clear by building to `artifacts/e2e/` via `BaseOutputPath`. This AppHost still builds to
+`bin/`, where its `runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll` is 234 characters from a
+101-character worktree root. A branch folder 17 characters longer than
+`Refactor-launch_deal-lifecycle-modules-phase2` therefore makes it die on
+`DllNotFoundException ... (0x800700CE)` at its first SQL connection, taking every Customer local run with it.
+
+Nothing addresses this project's build output by a literal path — the references to it in
+`scripts/setup-local-dev.ps1` and `.github/workflows/test.yml` name the project directory — so unlike
+`Concertable.B2B.E2ETests` it has no consumer blocking the same redirect. It was left out only because the
+change that introduced the redirect was scoped to the hosts that were already failing.
+
+**Resolves when:** `Concertable.Customer.AppHost` builds through a short artifacts root, measured under the cap
+recorded in `docs/LOCAL_DEV.md`.
