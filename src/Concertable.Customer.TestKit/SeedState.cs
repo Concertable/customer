@@ -10,4 +10,4 @@ public sealed record SeedState
 
 public sealed record TestUser(Guid Id, string Email);
 
-public sealed record TestConcert(int Id);
+public sealed record TestConcert(int Id, Guid PayeeOwnerId);

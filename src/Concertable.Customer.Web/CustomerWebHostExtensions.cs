@@ -98,6 +98,7 @@ public static class CustomerWebHostExtensions
                     reg.SubscribeTo<CustomerReviewSubmittedEvent>();
                     reg.Publishes<TicketPurchasedEvent>();
                     reg.SubscribeTo<TicketPurchasedEvent>();
+                    reg.Publishes<PaymentMethodOwnerRegisteredEvent>();
                     reg.HandleCommand<SendTicketEmailCommand>();
                     reg.SubscribeTo<ConcertChangedEvent>();
                     reg.SubscribeTo<ConcertPostedEvent>();
