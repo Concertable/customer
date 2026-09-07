@@ -18,6 +18,7 @@
     <PackageReference Include="Concertable.DataAccess.Infrastructure" />
     <PackageReference Include="Concertable.Kernel" />
     <PackageReference Include="Concertable.Auth.Contracts" />
+    <PackageReference Include="Concertable.Payment.Contracts" />
     <PackageReference Include="Concertable.Shared.Geocoding.Application" />
     <PackageReference Include="Concertable.Messaging.Contracts" />
     <PackageReference Include="Concertable.Messaging.Domain" />
