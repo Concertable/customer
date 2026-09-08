@@ -27,6 +27,19 @@ public sealed class ResourceGraphTests
         AssertUsesDeveloperCertificate(validBuilder, AuthConstants.Resource);
         AssertImageEndpoint(validBuilder, PaymentConstants.WebResource, "https", scheme: "http");
         AssertImageEndpoint(validBuilder, PaymentConstants.WebResource, "http", scheme: "http");
+        AssertImageEndpoint(
+            validBuilder,
+            PaymentConstants.WebResource,
+            "grpc",
+            scheme: "http",
+            targetPort: PaymentConstants.GrpcPort);
+        var payment = validBuilder.Resources.Single(resource => resource.Name == PaymentConstants.WebResource);
+        var paymentEnvironment = await GetRawEnvironmentAsync(payment, CancellationToken.None);
+        Assert.Equal("8080;8081", paymentEnvironment["ASPNETCORE_HTTP_PORTS"]);
+        Assert.Equal("8081", paymentEnvironment["PaymentTransport__GrpcPort"]);
+        var customer = validBuilder.Resources.Single(resource => resource.Name == CustomerConstants.WebResource);
+        var customerEnvironment = await GetRawEnvironmentAsync(customer, CancellationToken.None);
+        Assert.Equal(bool.TrueString, customerEnvironment[PaymentConstants.AllowInsecureHttpClientEnvironmentVariable]);
         Assert.DoesNotContain(validBuilder.Resources.OfType<NodeAppResource>(),
             resource => resource.Name.StartsWith("mobile-", StringComparison.Ordinal));
         Assert.DoesNotContain(validBuilder.Resources, resource => resource.Name == "customer-dev");
@@ -40,13 +53,16 @@ public sealed class ResourceGraphTests
     }
 
     [Fact]
-    public void PublishGraphWithStripeCli_IsValid()
+    public async Task PublishGraphWithStripeCli_IsValid()
     {
         var builder = AppHost.CreateBuilder(
             ["--publisher", "manifest", "--Stripe:SecretKey=sk_test_composition"]);
 
         Assert.True(builder.ExecutionContext.IsPublishMode);
         Assert.Single(builder.Resources, resource => resource.Name == PaymentConstants.StripeCliResource);
+        var customer = builder.Resources.Single(resource => resource.Name == CustomerConstants.WebResource);
+        var customerEnvironment = await GetRawEnvironmentAsync(customer, CancellationToken.None);
+        Assert.DoesNotContain(PaymentConstants.AllowInsecureHttpClientEnvironmentVariable, customerEnvironment.Keys);
         using var app = builder.Build();
     }
 
@@ -268,7 +284,8 @@ public sealed class ResourceGraphTests
         IDistributedApplicationBuilder builder,
         string resourceName,
         string endpointName,
-        string scheme)
+        string scheme,
+        int targetPort = PaymentConstants.HttpPort)
     {
         var resource = Assert.IsType<ServiceContainerResource>(
             builder.Resources.Single(resource => resource.Name == resourceName));
@@ -278,6 +295,6 @@ public sealed class ResourceGraphTests
 
         Assert.Equal(endpointName, endpoint.Name);
         Assert.Equal(scheme, endpoint.UriScheme);
-        Assert.Equal(8080, endpoint.TargetPort);
+        Assert.Equal(targetPort, endpoint.TargetPort);
     }
 }
