@@ -1,15 +1,15 @@
+using Concertable.Customer.Hosting.Frontend;
 using Aspire.Hosting;
 using Concertable.Auth.Hosting;
 using Concertable.B2B.Hosting;
 using Concertable.Customer.Hosting;
-using Concertable.Frontend.Hosting;
 using Concertable.Payment.Hosting;
 using Concertable.Search.Hosting;
 
 public static class AppHost
 {
     private const string AuthImage = "ghcr.io/concertable/auth";
-    private const string AuthDigest = "sha256:8b7ba47efb319e6e1f1b5b86223d4075b9c8e09920933dae24fbf35f72851a63";
+    private const string AuthDigest = "sha256:06a295ad6fa01a223000682b0f6efbfba2d5436a8fb2ffaa2d2399526ff3ae69";
     private const string PaymentWebImage = "ghcr.io/concertable/payment-web";
     private const string PaymentWebDigest = "sha256:11f02cfa129cf82709dbceb438a281c7fa66b8594643a32a3d599142958fd696";
     private const string PaymentWorkersImage = "ghcr.io/concertable/payment-workers";
@@ -30,6 +30,7 @@ public static class AppHost
                           .WithContainerRuntimeArgs("--user", "root")
                           .WithHttpsEndpoint(targetPort: AuthConstants.ContainerPort, name: "https");
         auth.WithEndpoint("https", endpoint => endpoint.Port = 7093);
+        auth.WithSpaClients(CustomerLocalSpaSurfaces.AuthClients);
         var paymentWeb = builder.AddPaymentWeb(PaymentWebImage, PaymentWebDigest, auth, paymentDb, asb)
                                 .WithHttpEndpoint(targetPort: 8080, name: "https")
                                 .WithHttpEndpoint(targetPort: 8080, name: "http");
@@ -40,7 +41,8 @@ public static class AppHost
         builder.AddPaymentWorkers(PaymentWorkersImage, PaymentWorkersDigest, paymentDb, asb);
         builder.AddB2BSeedingSimulator(B2BSeedingSimulatorImage, B2BSeedingSimulatorDigest, asb);
         builder.AddCustomerSpa(customerWeb, customerWeb, auth);
-        builder.AddMobileCustomer(customerWeb, auth, paymentWeb);
+        if (builder.AddMobileCustomer(customerWeb, auth, paymentWeb) is { } mobileTunnel)
+            auth.WithMobilePublicUrl(mobileTunnel.GetEndpoint(auth, "https"));
         builder.AddStripeCli(paymentWeb);
         return builder;
     }
