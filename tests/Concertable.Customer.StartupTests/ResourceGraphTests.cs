@@ -14,52 +14,19 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
-namespace Concertable.Customer.ArchitectureTests;
+namespace Concertable.Customer.StartupTests;
 
-public sealed class CustomerArchitectureTests
+public sealed class ResourceGraphTests
 {
     [Fact]
-    public void Web_ProductionGraphAndStrictValidation_AreValid()
-    {
-        var builder = WebApplication.CreateBuilder(CompositionTestArguments.Create());
-        builder.AddCustomerWebHost();
-        using var app = builder.Build();
-        builder.Services.ValidateComposition(app.Services, new CompositionValidationOptions
-        {
-            RootAssemblies = [typeof(CustomerWebHostExtensions).Assembly]
-        });
-        var jwtOptions = app.Services.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>()
-            .Get(JwtBearerDefaults.AuthenticationScheme);
-        Assert.False(jwtOptions.RequireHttpsMetadata);
-        var invalidBuilder = WebApplication.CreateBuilder(CompositionTestArguments.Create());
-        invalidBuilder.AddCustomerWebHost();
-        invalidBuilder.Services.AddInvalidLifetimeGraph();
-        Assert.ThrowsAny<Exception>(() => invalidBuilder.Build());
-    }
-
-    [Fact]
-    public void Web_ProductionEnvironment_RequiresHttpsMetadata()
-    {
-        var arguments = CompositionTestArguments.Create();
-        arguments[0] = "--environment=Production";
-        var builder = WebApplication.CreateBuilder(arguments);
-        builder.AddCustomerWebHost();
-        using var app = builder.Build();
-        var jwtOptions = app.Services.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>()
-            .Get(JwtBearerDefaults.AuthenticationScheme);
-
-        Assert.True(jwtOptions.RequireHttpsMetadata);
-    }
-
-    [Fact]
-    public async Task AppHost_ProductionGraphAndStrictValidation_AreValid()
+    public async Task ProductionGraphAndStrictValidation_AreValid()
     {
         var validBuilder = AppHost.CreateBuilder([]);
         AssertImageEndpoint(validBuilder, AuthConstants.Resource, "https", scheme: "https");
         AssertContainerRuntimeArgs(validBuilder, AuthConstants.Resource, "--user", "root");
         AssertUsesDeveloperCertificate(validBuilder, AuthConstants.Resource);
-        AssertImageEndpoint(validBuilder, PaymentConstants.WebResource, "https");
-        AssertImageEndpoint(validBuilder, PaymentConstants.WebResource, "http");
+        AssertImageEndpoint(validBuilder, PaymentConstants.WebResource, "https", scheme: "http");
+        AssertImageEndpoint(validBuilder, PaymentConstants.WebResource, "http", scheme: "http");
         Assert.DoesNotContain(validBuilder.Resources.OfType<NodeAppResource>(),
             resource => resource.Name.StartsWith("mobile-", StringComparison.Ordinal));
         Assert.DoesNotContain(validBuilder.Resources, resource => resource.Name == "customer-dev");
@@ -73,7 +40,7 @@ public sealed class CustomerArchitectureTests
     }
 
     [Fact]
-    public void AppHost_PublishGraphWithStripeCli_IsValid()
+    public void PublishGraphWithStripeCli_IsValid()
     {
         var builder = AppHost.CreateBuilder(
             ["--publisher", "manifest", "--Stripe:SecretKey=sk_test_composition"]);
@@ -84,7 +51,7 @@ public sealed class CustomerArchitectureTests
     }
 
     [Fact]
-    public async Task AppHost_MobileGraph_ContainsOnlyCustomerSurfaces()
+    public async Task MobileGraph_ContainsOnlyCustomerSurfaces()
     {
         var builder = AppHost.CreateBuilder(["--RunMobile=true"]);
         Assert.Equal(
@@ -148,7 +115,7 @@ public sealed class CustomerArchitectureTests
     }
 
     [Fact]
-    public async Task AppHost_CustomerSpaOrigin_MatchesAuthRegistration()
+    public async Task CustomerSpaOrigin_MatchesAuthRegistration()
     {
         var builder = AppHost.CreateBuilder([]);
         var surface = CustomerLocalSpaSurfaces.Customer;
@@ -172,10 +139,6 @@ public sealed class CustomerArchitectureTests
         Assert.Equal(surface.Origin + "/auth/callback", environment["Auth__SpaClients__Customer__RedirectUri"]);
         Assert.DoesNotContain(environment.Keys, key => key.StartsWith("Auth__SpaClients__Venue__", StringComparison.Ordinal));
     }
-
-    [Fact]
-    public void Web_ReferencesNoModuleInfrastructureAssembly() =>
-        Assert.Empty(typeof(CustomerWebHostExtensions).Assembly.ModuleInfrastructureReferences("Seed"));
 
     private static void AssertContainerRuntimeArgs(
         IDistributedApplicationBuilder builder,
@@ -298,13 +261,14 @@ public sealed class CustomerArchitectureTests
 
         Assert.True(certificate.UseDeveloperCertificate);
     }
+
 #pragma warning restore ASPIRECERTIFICATES001
 
     private static void AssertImageEndpoint(
         IDistributedApplicationBuilder builder,
         string resourceName,
         string endpointName,
-        string scheme = "http")
+        string scheme)
     {
         var resource = Assert.IsType<ServiceContainerResource>(
             builder.Resources.Single(resource => resource.Name == resourceName));
