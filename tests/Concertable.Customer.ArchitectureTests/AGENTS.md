@@ -1,7 +1,5 @@
 # Concertable.Customer.ArchitectureTests — architecture tests
 
-**Architecture fitness functions for Customer. The dynamic host-graph checks build the real production
-registration graph without starting it or external infrastructure; tests that execute requests, business
-operations or infrastructure belong in integration or E2E projects.**
-
-Host coverage and activation rules: the `composition-testing` skill.
+**Assertions over Customer's code structure only** — which assemblies the composition root may reference.
+Nothing here builds or boots a host: whether a Customer host would refuse to start on the configuration its
+app model supplies is `Concertable.Customer.StartupTests`.
