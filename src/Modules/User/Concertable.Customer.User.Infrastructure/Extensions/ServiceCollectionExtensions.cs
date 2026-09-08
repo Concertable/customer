@@ -1,5 +1,6 @@
 using Concertable.Auth.Contracts.Events;
 using Concertable.Customer.User.Application.Validators;
+using Concertable.Customer.User.Domain.Events;
 using Concertable.Customer.User.Infrastructure.Authorization;
 using Concertable.Customer.User.Infrastructure.Data;
 using Concertable.Customer.User.Infrastructure.Data.Seeders;
@@ -7,6 +8,7 @@ using Concertable.Customer.User.Infrastructure.Events;
 using Concertable.Customer.User.Infrastructure.Repositories;
 using Concertable.Customer.User.Infrastructure.Services;
 using Concertable.DataAccess.Infrastructure.Data;
+using Concertable.Kernel;
 using Concertable.Messaging.Contracts;
 using Concertable.Seed.Shared;
 using FluentValidation;
@@ -34,6 +36,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserModule, UserModule>();
 
         services.AddScoped<IIntegrationEventHandler<CredentialRegisteredEvent>, UserCreationHandler>();
+        services.AddScoped<IDomainEventHandler<UserRegisteredDomainEvent>, UserRegisteredDomainEventHandler>();
 
         services.AddSingleton<UserConfigurationProvider>();
         services.AddSingleton<IEntityTypeConfigurationProvider>(sp => sp.GetRequiredService<UserConfigurationProvider>());

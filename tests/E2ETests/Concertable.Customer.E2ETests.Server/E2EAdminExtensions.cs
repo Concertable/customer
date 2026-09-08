@@ -75,7 +75,11 @@ public static class E2EAdminExtensions
     private static IResult GetSeedState(SeedState seed) => Results.Ok(new
     {
         Customer1 = new { seed.Customer1.Id, seed.Customer1.Email },
-        UpcomingFlatFeeConcert = new { seed.UpcomingFlatFeeConcert.Id },
+        UpcomingFlatFeeConcert = new
+        {
+            seed.UpcomingFlatFeeConcert.Id,
+            seed.UpcomingFlatFeeConcert.PayeeOwnerId,
+        },
     });
 }
 

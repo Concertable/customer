@@ -16,6 +16,7 @@ public static class CustomerTopology
         topology.WithService(CustomerConstants.ServiceName)
                 .Publish<CustomerReviewSubmittedEvent>()
                 .Publish<TicketPurchasedEvent>()
+                .Publish<PaymentMethodOwnerRegisteredEvent>()
                 .Subscribe<ConcertChangedEvent>()
                 .Subscribe<ConcertPostedEvent>()
                 .Subscribe<CustomerReviewSubmittedEvent>()
