@@ -1,9 +1,10 @@
+using Concertable.Customer.User.Domain.Events;
 using Concertable.Kernel;
 using NetTopologySuite.Geometries;
 
 namespace Concertable.Customer.User.Domain.Entities;
 
-public sealed class UserEntity : IGuidEntity
+public sealed class UserEntity : IGuidEntity, IEventRaiser
 {
     protected UserEntity() { }
 
@@ -18,7 +19,16 @@ public sealed class UserEntity : IGuidEntity
     public Point? Location { get; private set; }
     public Address? Address { get; private set; }
 
-    public static UserEntity FromRegistration(Guid id, string email) => new(id, email);
+    private readonly EventRaiser events = new();
+    public IReadOnlyList<IDomainEvent> DomainEvents => events.DomainEvents;
+    public void ClearDomainEvents() => events.Clear();
+
+    public static UserEntity FromRegistration(Guid id, string email)
+    {
+        var user = new UserEntity(id, email);
+        user.events.Raise(new UserRegisteredDomainEvent(id, email));
+        return user;
+    }
 
     public void UpdateLocation(Point location, Address address)
     {
