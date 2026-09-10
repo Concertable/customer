@@ -23,7 +23,7 @@ public sealed class ImageCompositionTests
         var sql = builder.AddSqlServer("sql");
         var asb = builder.AddServiceBus();
         var auth = builder.AddContainerImage(AuthConstants.Resource, "ghcr.io/concertable/auth", Digest)
-                          .WithHttpsEndpoint(targetPort: AuthConstants.ContainerPort, name: "https");
+                          .WithHttpEndpoint(targetPort: AuthConstants.ContainerPort, name: "https");
         var paymentWeb = builder.AddPaymentWeb(
             "ghcr.io/concertable/payment-web",
             Digest,
