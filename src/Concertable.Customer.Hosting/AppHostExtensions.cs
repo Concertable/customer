@@ -19,6 +19,7 @@ public static class AppHostExtensions
     {
         var customerSecret = builder.Configuration["ServiceAuth:CustomerClientSecret"];
         return builder.AddContainerImage(CustomerConstants.WebResource, image, digest)
+                      .WithHttpEndpoint(targetPort: CustomerConstants.ContainerPort, name: "https")
                       .WithReference(auth)
                       .WaitFor(auth)
                       .WithReference(customerDb)
