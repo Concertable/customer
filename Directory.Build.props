@@ -36,14 +36,26 @@
     <MinVerMinimumMajorMinor>0.2</MinVerMinimumMajorMinor>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!-- Fallback only. A package that ships its own README (TestKit does) keeps it; without the
+       condition the repository README displaces it and NU5118 is the only sign. -->
+  <ItemGroup Condition="!Exists('$(MSBuildProjectDirectory)/README.md')">
     <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
-  <!-- Registry lives here, not in publish-images.yml: a carve takes only the service folder. -->
+  <!-- Registry lives here, not in publish-images.yml: a carve takes only the service folder.
+       ContainerRegistry defaults to a real registry, so an invocation of PublishContainer that omits
+       ContainerArchiveOutputPath attempts a live push. Every caller passes the archive path. -->
   <PropertyGroup>
     <ContainerRegistry Condition="'$(ContainerRegistry)' == ''">ghcr.io</ContainerRegistry>
   </PropertyGroup>
+
+  <!-- The SDK's container support emits image.version, image.url and the base-image labels, but not
+       source or revision, so an image built here carries no link back to the commit that produced it.
+       ConcertableSourceRevision is supplied by the release-candidate script and by CI. -->
+  <ItemGroup Condition="'$(ConcertableSourceRevision)' != ''">
+    <ContainerLabel Include="org.opencontainers.image.source" Value="$(RepositoryUrl)" />
+    <ContainerLabel Include="org.opencontainers.image.revision" Value="$(ConcertableSourceRevision)" />
+  </ItemGroup>
 
   <!-- Banned-API list for Microsoft.CodeAnalysis.BannedApiAnalyzers (shared across services). -->
   <ItemGroup>
