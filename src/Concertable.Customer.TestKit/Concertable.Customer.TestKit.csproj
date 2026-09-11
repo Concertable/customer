@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
+    <Description>HTTP test client and seed-state types for tests that drive the Concertable Customer service.</Description>
     <Description>Black-box HTTP client and wire models for testing the public Concertable Customer service.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>

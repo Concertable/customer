@@ -57,6 +57,18 @@ jobs:
       - name: Restore backend
         run: dotnet restore Concertable.Customer.slnx
 
+      # The tier gate arrives through an import in Directory.Build.targets. A wrong path there does
+      # not fail a build, it just stops enforcing, so assert the gate resolved rather than that its
+      # file is on disk.
+      - name: Verify the test-tier gate is enforced
+        shell: pwsh
+        run: |
+          $tier = (dotnet msbuild src/Modules/Ticket/Tests/Concertable.Customer.Ticket.UnitTests/Concertable.Customer.Ticket.UnitTests.csproj -getProperty:ConcertableTestTier -nologo).Trim()
+          if ($tier -ne 'Unit') {
+            throw "Test-tier gate is not enforced: ConcertableTestTier resolved to '$tier' instead of 'Unit'. TestConventions.targets is present but not imported, or its import path is wrong."
+          }
+          Write-Host "Test-tier gate enforced (ConcertableTestTier = $tier)."
+
       - name: Build backend
         run: dotnet build Concertable.Customer.slnx --configuration Release --no-restore
 
