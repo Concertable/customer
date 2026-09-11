@@ -36,7 +36,9 @@
     <MinVerMinimumMajorMinor>0.2</MinVerMinimumMajorMinor>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!-- Fallback only. A package that ships its own README (TestKit does) keeps it; without the
+       condition the repository README displaces it and NU5118 is the only sign. -->
+  <ItemGroup Condition="!Exists('$(MSBuildProjectDirectory)/README.md')">
     <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
