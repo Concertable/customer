@@ -61,7 +61,6 @@ $expectedImageRepositories = @($promotionManifest.oci | ForEach-Object { $_.repo
 $markerPath = Join-Path $releaseRoot '.customer-release-candidate'
 $packageRoot = Join-Path $releaseRoot 'packages'
 $imageRoot = Join-Path $releaseRoot 'images'
-$evidenceRoot = Join-Path $releaseRoot 'evidence'
 $manifestPath = Join-Path $releaseRoot 'release-manifest.json'
 $packageToken = $env:GITHUB_PACKAGES_TOKEN
 $releaseRootCreated = $false
@@ -156,7 +155,7 @@ try {
     New-Item -ItemType Directory -Path $releaseRoot | Out-Null
     $releaseRootCreated = $true
     Write-Utf8NoBom -Path $markerPath -Value 'Concertable.Customer release candidate'
-    New-Item -ItemType Directory -Path $packageRoot, $imageRoot, $evidenceRoot | Out-Null
+    New-Item -ItemType Directory -Path $packageRoot, $imageRoot | Out-Null
 
     foreach ($project in $packageProjects) {
         & dotnet restore $project --force-evaluate
