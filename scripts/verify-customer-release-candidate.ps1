@@ -207,11 +207,23 @@ try {
         throw "Customer release-candidate version '$releaseVersion' is below the independent 0.2.0 baseline that clears the retained 0.1.x train."
     }
 
-    $imageResults = @(& (Join-Path $PSScriptRoot 'verify-customer-images.ps1') `
-        -Configuration $Configuration `
-        -ArchiveDirectory $imageRoot `
-        -BuildVersion $releaseVersion `
-        -KeepImages)
+    $imageResultPath = Join-Path ([System.IO.Path]::GetTempPath()) "customer-images-$([Guid]::NewGuid().ToString('N')).json"
+    try {
+        & (Join-Path $PSScriptRoot 'verify-customer-images.ps1') `
+            -Configuration $Configuration `
+            -ArchiveDirectory $imageRoot `
+            -BuildVersion $releaseVersion `
+            -ResultPath $imageResultPath `
+            -KeepImages
+        if ($LASTEXITCODE -ne 0) {
+            throw "Customer image verification failed with exit code $LASTEXITCODE."
+        }
+
+        $imageResults = @(Get-Content -Raw -LiteralPath $imageResultPath | ConvertFrom-Json)
+    }
+    finally {
+        Remove-Item -LiteralPath $imageResultPath -Force -ErrorAction SilentlyContinue
+    }
     $builtImages = @($imageResults | ForEach-Object { $_.Image })
 
     $actualImageRepositories = @($imageResults | ForEach-Object { $_.Repository } | Sort-Object)

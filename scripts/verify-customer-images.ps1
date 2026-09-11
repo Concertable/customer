@@ -8,6 +8,11 @@ param(
 
     [string] $BuildVersion,
 
+    # Native commands write their stdout into PowerShell's success stream, so a caller that captures
+    # this script's output gets docker's chatter mixed in with the results. The results go to a file.
+    [Parameter(Mandatory)]
+    [string] $ResultPath,
+
     [switch] $KeepImages
 )
 
@@ -193,17 +198,18 @@ try {
         Assert-ImageMetadata -Image $target.Image -ExpectedAssembly $target.Assembly -ExpectedRuntime $target.Runtime
     }
 
-    Write-Host "Verified Customer images for revision ${revision}: $(($targets | ForEach-Object { $_.Name }) -join ', ')."
-
-    foreach ($target in $targets) {
-        [pscustomobject]@{
-            Name = $target.Name
-            Repository = $target.Repository
-            Image = $target.Image
-            Archive = $target.Archive
-            LocalImageId = [string] (Get-ImageInspection -Image $target.Image).Id
+    $results = @($targets | ForEach-Object {
+        [ordered]@{
+            Name = $_.Name
+            Repository = $_.Repository
+            Image = $_.Image
+            Archive = $_.Archive
+            LocalImageId = [string] (Get-ImageInspection -Image $_.Image).Id
         }
-    }
+    })
+    [System.IO.File]::WriteAllText($ResultPath, ($results | ConvertTo-Json -Depth 6 -AsArray), [System.Text.UTF8Encoding]::new($false))
+
+    Write-Host "Verified Customer images for revision ${revision}: $(($targets | ForEach-Object { $_.Name }) -join ', ')."
 }
 finally {
     if (-not $KeepImages -and $builtImages.Count -gt 0) {
