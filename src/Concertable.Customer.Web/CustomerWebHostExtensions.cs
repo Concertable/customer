@@ -35,6 +35,7 @@ using Concertable.Shared.Api.Extensions;
 using Concertable.Shared.Email.Infrastructure.Extensions;
 using Concertable.Shared.Geocoding.Infrastructure.Extensions;
 using Concertable.Shared.Notification.Infrastructure.Extensions;
+using Concertable.Shared.Notification.Infrastructure.Hubs;
 using Concertable.Shared.Pdf.Infrastructure.Extensions;
 using Concertable.Shared.QrCode.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -95,6 +96,7 @@ public static class CustomerWebHostExtensions
                     reg.SubscribeTo<CustomerReviewSubmittedEvent>();
                     reg.Publishes<TicketPurchasedEvent>();
                     reg.SubscribeTo<TicketPurchasedEvent>();
+                    reg.Publishes<PaymentMethodOwnerRegisteredEvent>();
                     reg.HandleCommand<SendTicketEmailCommand>();
                     reg.SubscribeTo<ConcertChangedEvent>();
                     reg.SubscribeTo<ConcertPostedEvent>();
@@ -125,6 +127,7 @@ public static class CustomerWebHostExtensions
                 {
                     opts.MapInboundClaims = false;
                     opts.Authority = builder.Configuration["Auth:Authority"] ?? builder.Configuration["services__auth__https__0"];
+                    opts.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
                     opts.Audience = "concertable.customer.api";
                     opts.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -198,5 +201,39 @@ public static class CustomerWebHostExtensions
         services.AddPreferenceMigrations(configuration);
         services.AddVenueMigrations(configuration);
         services.AddArtistMigrations(configuration);
+    }
+
+    extension(WebApplication app)
+    {
+        public async Task UseCustomerWebHost()
+        {
+            app.UseForwardedHeaders();
+            app.UseExceptionHandler();
+            app.UseCors();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseDefaultRateLimiting();
+
+            app.MapDefaultEndpoints();
+            app.MapControllers();
+            app.MapHub<NotificationHub>("/hub/notifications");
+
+            if (!app.Environment.IsProduction())
+            {
+                await using var scope = app.Services.CreateAsyncScope();
+                var services = scope.ServiceProvider;
+                await services.GetRequiredService<OutboxDbContext>().Database.MigrateAsync();
+                await services.GetRequiredService<InboxDbContext>().Database.MigrateAsync();
+                await services.MigrateArtistModuleAsync();
+                await services.MigrateConcertModuleAsync();
+                await services.MigratePreferenceModuleAsync();
+                await services.MigrateReviewModuleAsync();
+                await services.MigrateTicketModuleAsync();
+                await services.MigrateUserModuleAsync();
+                await services.MigrateVenueModuleAsync();
+                if (app.Environment.IsDevelopment())
+                    await services.GetRequiredService<IDbInitializer>().InitializeAsync();
+            }
+        }
     }
 }

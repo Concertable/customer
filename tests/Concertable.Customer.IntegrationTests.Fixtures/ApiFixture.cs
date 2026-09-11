@@ -42,6 +42,7 @@ public class ApiFixture : IAsyncLifetime
     public void DetachOutput() => outputAccessor.Output = null;
 
     public IMockNotificationClient NotificationClient { get; } = new MockNotificationClient();
+    public MockPaymentSessionClient PaymentSessionClient { get; } = new();
     public SeedState SeedState { get; private set; } = null!;
 
     protected virtual int? RateLimitPermit => null;
@@ -71,7 +72,7 @@ public class ApiFixture : IAsyncLifetime
                 services.AddXunitLogging(outputAccessor);
                 services.RemoveAzureServiceBus();
                 services.Replace(ServiceDescriptor.Scoped<IGeocodingClient, MockGeocodingClient>());
-                services.AddScoped<ICustomerPaymentOperationsClient, MockCustomerPaymentClient>();
+                services.AddSingleton<IPaymentSessionOperationsClient>(PaymentSessionClient);
                 services.AddSingleton<IEmailTransport, MockEmailSender>();
                 services.Replace(ServiceDescriptor.Singleton<INotificationClient>(NotificationClient));
 
@@ -97,6 +98,7 @@ public class ApiFixture : IAsyncLifetime
     {
         await sqlFixture.ResetAsync();
         NotificationClient.Reset();
+        PaymentSessionClient.Reset();
 
         scope?.Dispose();
         scope = factory.Services.CreateScope();
