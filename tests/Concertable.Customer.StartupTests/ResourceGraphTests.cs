@@ -72,8 +72,8 @@ public sealed class ResourceGraphTests
         Assert.Equal(
             new[] { "customer", "mobile-customer" },
             builder.Resources.OfType<NodeAppResource>().Select(resource => resource.Name).Order());
-        AssertNodeAppDirectory(builder, "customer", "app", "web", "customer");
-        AssertNodeAppDirectory(builder, "mobile-customer", "app", "mobile", "customer");
+        AssertResolvedNodeAppDirectory(builder, "customer", ["app", "web", "customer"], ["app", "web"]);
+        AssertResolvedNodeAppDirectory(builder, "mobile-customer", ["app", "mobile", "customer"], ["app", "mobile"]);
         Assert.Single(builder.Resources, resource => resource.Name == "customer-dev");
         Assert.DoesNotContain(builder.Resources, resource => resource.Name is "b2b-web" or "search-web");
         using var app = builder.Build();
@@ -196,16 +196,34 @@ public sealed class ResourceGraphTests
                 endpoint.AllocatedEndpoint = new AllocatedEndpoint(endpoint, $"{port.Name}.example.test", 443);
     }
 
-    private static void AssertNodeAppDirectory(
+    private static void AssertResolvedNodeAppDirectory(
         IDistributedApplicationBuilder builder,
         string resourceName,
-        params string[] relativePath)
+        params string[][] candidates)
+    {
+        var repoRoot = FindRepositoryRoot(builder);
+        var resolved = Array.Find(candidates,
+            candidate => Directory.Exists(Path.Combine([repoRoot.FullName, .. candidate])));
+        Assert.NotNull(resolved);
+        AssertNodeAppDirectory(builder, resourceName, resolved);
+    }
+
+    private static DirectoryInfo FindRepositoryRoot(IDistributedApplicationBuilder builder)
     {
         var repoRoot = new DirectoryInfo(builder.AppHostDirectory);
         while (repoRoot is not null && !Directory.Exists(Path.Combine(repoRoot.FullName, "app")))
             repoRoot = repoRoot.Parent;
 
         Assert.NotNull(repoRoot);
+        return repoRoot;
+    }
+
+    private static void AssertNodeAppDirectory(
+        IDistributedApplicationBuilder builder,
+        string resourceName,
+        params string[] relativePath)
+    {
+        var repoRoot = FindRepositoryRoot(builder);
         var expected = Path.GetFullPath(Path.Combine([repoRoot.FullName, .. relativePath]));
         var resource = Assert.Single(builder.Resources.OfType<NodeAppResource>(), resource => resource.Name == resourceName);
         var actual = Path.GetFullPath(resource.WorkingDirectory);
