@@ -192,9 +192,9 @@ try {
         $builtImages.Add($target.Image)
 
         $target.Archive = $archivePath
-    }
 
-    foreach ($target in $targets) {
+        # Asserted here rather than in a later pass so the check runs against the image this
+        # iteration just loaded, with nothing in between that could retag or reclaim it.
         Assert-ImageMetadata -Image $target.Image -ExpectedAssembly $target.Assembly -ExpectedRuntime $target.Runtime
     }
 
