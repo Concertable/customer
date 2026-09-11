@@ -156,7 +156,7 @@ try {
     }
 
     foreach ($target in $targets) {
-        $archivePath = Join-Path $resolvedArchiveDirectory "$($target.Name).tar"
+        $archivePath = Join-Path $resolvedArchiveDirectory "$($target.Name).tar.gz"
         if (Test-Path -LiteralPath $archivePath) {
             throw "Release-candidate archive '$archivePath' already exists."
         }
