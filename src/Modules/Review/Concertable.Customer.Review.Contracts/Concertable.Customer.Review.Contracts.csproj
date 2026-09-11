@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
+    <Description>Integration-event contracts published by the Concertable Customer review module.</Description>
     <Description>Concertable Customer Review contracts: the cross-service review contract surface — the CustomerReviewSubmittedEvent integration event consumed by B2B (the one reverse data-flow from Customer back to B2B).</Description>
   </PropertyGroup>
   <ItemGroup>

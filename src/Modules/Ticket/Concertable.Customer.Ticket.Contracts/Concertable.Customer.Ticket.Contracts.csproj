@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
+    <Description>Integration-event, command and module contracts published by the Concertable Customer ticket module.</Description>
   </PropertyGroup>
 
   <ItemGroup>
