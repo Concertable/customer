@@ -11,21 +11,26 @@ namespace Concertable.Customer.Hosting;
 
 public static class CustomerTopology
 {
-    public static AsbTopology AddCustomerTopology(this AsbTopology topology) =>
-        topology
-            .Publish<CustomerReviewSubmittedEvent>()
-            .Publish<TicketPurchasedEvent>()
-            .Subscribe<ConcertChangedEvent>(CustomerConstants.ServiceName)
-            .Subscribe<ConcertPostedEvent>(CustomerConstants.ServiceName)
-            .Subscribe<CustomerReviewSubmittedEvent>(CustomerConstants.ServiceName)
-            .Subscribe<TicketPurchasedEvent>(CustomerConstants.ServiceName)
-            .Subscribe<ArtistChangedEvent>(CustomerConstants.ServiceName)
-            .Subscribe<VenueChangedEvent>(CustomerConstants.ServiceName)
-            .Subscribe<ArtistRatingUpdatedEvent>(CustomerConstants.ServiceName)
-            .Subscribe<VenueRatingUpdatedEvent>(CustomerConstants.ServiceName)
-            .Subscribe<ConcertRatingUpdatedEvent>(CustomerConstants.ServiceName)
-            .Subscribe<CredentialRegisteredEvent>(CustomerConstants.ServiceName)
-            .Subscribe<PaymentSucceededEvent>(CustomerConstants.ServiceName)
-            .Subscribe<PaymentFailedEvent>(CustomerConstants.ServiceName)
-            .Queue<SendTicketEmailCommand>(CustomerConstants.ServiceName);
+    public static AsbTopology AddCustomerTopology(this AsbTopology topology)
+    {
+        topology.WithService(CustomerConstants.ServiceName)
+                .Publish<CustomerReviewSubmittedEvent>()
+                .Publish<TicketPurchasedEvent>()
+                .Publish<PaymentMethodOwnerRegisteredEvent>()
+                .Subscribe<ConcertChangedEvent>()
+                .Subscribe<ConcertPostedEvent>()
+                .Subscribe<CustomerReviewSubmittedEvent>()
+                .Subscribe<TicketPurchasedEvent>()
+                .Subscribe<ArtistChangedEvent>()
+                .Subscribe<VenueChangedEvent>()
+                .Subscribe<ArtistRatingUpdatedEvent>()
+                .Subscribe<VenueRatingUpdatedEvent>()
+                .Subscribe<ConcertRatingUpdatedEvent>()
+                .Subscribe<CredentialRegisteredEvent>()
+                .Subscribe<PaymentSucceededEvent>()
+                .Subscribe<PaymentFailedEvent>()
+                .Queue<SendTicketEmailCommand>();
+
+        return topology;
+    }
 }
