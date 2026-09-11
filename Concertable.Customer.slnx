@@ -99,5 +99,5 @@
   <Project Path="src/Seed/Concertable.Customer.Seed.Contracts/Concertable.Customer.Seed.Contracts.csproj" />
   <Project Path="src/Seed/Concertable.Customer.Seed.Simulator/Concertable.Customer.Seed.Simulator.csproj" />
   <Project Path="src/Seed/Tests/Concertable.Customer.Seed.Contracts.UnitTests/Concertable.Customer.Seed.Contracts.UnitTests.csproj" />
-  <Project Path="tests/Concertable.Customer.TestKit.Tests/Concertable.Customer.TestKit.Tests.csproj" />
+  <Project Path="tests/Concertable.Customer.TestKit.UnitTests/Concertable.Customer.TestKit.UnitTests.csproj" />
 </Solution>

@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
-namespace Concertable.Customer.TestKit.Tests;
+namespace Concertable.Customer.TestKit.UnitTests;
 
 public sealed class CustomerTestClientTests
 {

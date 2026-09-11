@@ -28,9 +28,17 @@
     <PackageProjectUrl>https://github.com/Concertable/customer</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <MinVerTagPrefix>v</MinVerTagPrefix>
-    <MinVerMinimumMajorMinor>0.1</MinVerMinimumMajorMinor>
+    <!-- The monorepo published Customer's retained ids to 0.1.0-alpha.0.1393 and MinVer counts height
+         from this repository's own history, which is three figures. Floor 0.2 so the independent train
+         sorts above every retained 0.1.x rather than a thousand versions beneath it. -->
+    <MinVerMinimumMajorMinor>0.2</MinVerMinimumMajorMinor>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <!-- Registry lives here, not in publish-images.yml: a carve takes only the service folder. -->
   <PropertyGroup>
@@ -39,7 +47,7 @@
 
   <!-- Banned-API list for Microsoft.CodeAnalysis.BannedApiAnalyzers (shared across services). -->
   <ItemGroup>
-    <AdditionalFiles Include="$(MSBuildThisFileDirectory)../BannedSymbols.txt" Condition="Exists('$(MSBuildThisFileDirectory)../BannedSymbols.txt')" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)BannedSymbols.txt" />
   </ItemGroup>
 
 </Project>
