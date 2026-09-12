@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Sdk Name="Aspire.AppHost.Sdk" Version="13.3.2" />
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <IsAspireHost>true</IsAspireHost>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Concertable.Payment.TestKit" />
+    <PackageReference Include="Concertable.Customer.TestKit" />
+    <PackageReference Include="Aspire.Hosting.Testing" />
+    <PackageReference Include="Concertable.Auth.Hosting" />
+    <PackageReference Include="Concertable.B2B.Hosting" />
+    <PackageReference Include="Concertable.Frontend.Hosting" />
+    <PackageReference Include="Concertable.Payment.Hosting" />
+    <PackageReference Include="Concertable.Search.Hosting" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Concertable.Testing.E2E" />
+    <PackageReference Include="Concertable.Payment.E2ETests.Helpers" />
+    <ProjectReference Include="..\..\..\src\Concertable.Customer.AppHost\Concertable.Customer.AppHost.csproj" IsAspireProjectResource="false" />
+    <ProjectReference Include="..\Concertable.Customer.E2ETests.Web\Concertable.Customer.E2ETests.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.E2E.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="Concertable.Testing" />
+    <Using Include="Concertable.Testing.E2E" />
+    <Using Include="Concertable.Payment.E2ETests.Helpers" />
+  </ItemGroup>
+
+</Project>

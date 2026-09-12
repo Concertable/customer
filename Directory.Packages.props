@@ -3,11 +3,12 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <ConcertableDotNetPlatformVersion>0.2.0-alpha.0.5</ConcertableDotNetPlatformVersion>
-    <ConcertableAuthVersion>0.1.0-alpha.0.1383</ConcertableAuthVersion>
+    <ConcertableAuthVersion>0.1.0-alpha.0.1384</ConcertableAuthVersion>
     <ConcertableB2BContractsVersion>0.1.0-alpha.0.1381</ConcertableB2BContractsVersion>
     <ConcertableCustomerVersion>0.1.0-alpha.0.1381</ConcertableCustomerVersion>
-    <ConcertablePaymentVersion>0.1.0-alpha.0.1381</ConcertablePaymentVersion>
+    <ConcertablePaymentVersion>0.1.0-alpha.0.1384</ConcertablePaymentVersion>
     <ConcertableSearchVersion>0.1.0-alpha.0.1381</ConcertableSearchVersion>
+    <ConcertableSystemTestingVersion>0.2.0-alpha.0.192</ConcertableSystemTestingVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -95,6 +96,8 @@
     <PackageVersion Include="Concertable.B2B.Venue.Contracts" Version="$(ConcertableB2BContractsVersion)" />
     <PackageVersion Include="Concertable.B2B.Seed.Contracts" Version="$(ConcertableB2BContractsVersion)" />
     <PackageVersion Include="Concertable.B2B.User.Contracts" Version="$(ConcertableB2BContractsVersion)" />
+    <PackageVersion Include="Concertable.Testing.E2E" Version="$(ConcertableSystemTestingVersion)" />
+    <PackageVersion Include="Concertable.Payment.E2ETests.Helpers" Version="$(ConcertableSystemTestingVersion)" />
   </ItemGroup>
 
   <ItemGroup>
