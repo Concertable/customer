@@ -6,7 +6,12 @@
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
     <Description>Integration-event, command and module contracts published by the Concertable Customer ticket module.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Concertable.Messaging.Contracts" />

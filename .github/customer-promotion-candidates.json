@@ -10,10 +10,6 @@
       "project": "src/Modules/Review/Concertable.Customer.Review.Contracts/Concertable.Customer.Review.Contracts.csproj"
     },
     {
-      "id": "Concertable.Customer.Seed.Contracts",
-      "project": "src/Seed/Concertable.Customer.Seed.Contracts/Concertable.Customer.Seed.Contracts.csproj"
-    },
-    {
       "id": "Concertable.Customer.TestKit",
       "project": "src/Concertable.Customer.TestKit/Concertable.Customer.TestKit.csproj"
     },

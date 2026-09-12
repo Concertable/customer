@@ -62,8 +62,11 @@ $markerPath = Join-Path $releaseRoot '.customer-release-candidate'
 $packageRoot = Join-Path $releaseRoot 'packages'
 $imageRoot = Join-Path $releaseRoot 'images'
 $manifestPath = Join-Path $releaseRoot 'release-manifest.json'
+$evidenceRoot = Join-Path $releaseRoot 'evidence'
+$integrityRoot = Join-Path $repositoryRoot 'artifacts/release-candidate'
 $packageToken = $env:GITHUB_PACKAGES_TOKEN
 $releaseRootCreated = $false
+$integrityStaged = $false
 $completed = $false
 $builtImages = @()
 
@@ -176,7 +179,10 @@ try {
 
     # Composes the repository's existing gate rather than restating its checks: it builds a clean
     # consumer that actually constructs types from every published id.
-    & (Join-Path $PSScriptRoot 'verify-package-candidates.ps1') -PackageDirectory $packageRoot
+    & pwsh -NoProfile -File (Join-Path $PSScriptRoot 'verify-package-candidates.ps1') -PackageDirectory $packageRoot
+    if ($LASTEXITCODE -ne 0) {
+        throw "Customer package candidate verification failed with exit code $LASTEXITCODE."
+    }
 
     $packages = @(Get-ChildItem -LiteralPath $packageRoot -Filter '*.nupkg' -File |
         Where-Object Name -NotLike '*.symbols.nupkg')
@@ -208,7 +214,7 @@ try {
 
     $imageResultPath = Join-Path ([System.IO.Path]::GetTempPath()) "customer-images-$([Guid]::NewGuid().ToString('N')).json"
     try {
-        & (Join-Path $PSScriptRoot 'verify-customer-images.ps1') `
+        & pwsh -NoProfile -File (Join-Path $PSScriptRoot 'verify-customer-images.ps1') `
             -Configuration $Configuration `
             -ArchiveDirectory $imageRoot `
             -BuildVersion $releaseVersion `
@@ -241,6 +247,37 @@ try {
         }
     } | Sort-Object { $_.repository })
 
+    # verify-artifact-integrity.ps1 resolves its evidence directory against the repository root and
+    # mounts that root into the scanner containers, so candidates must be staged inside the repository.
+    # Staging after the images are built keeps the image build context clean.
+    $integrityPackages = Join-Path $integrityRoot 'packages'
+    $integrityImages = Join-Path $integrityRoot 'images'
+    if (Test-Path -LiteralPath $integrityRoot) {
+        Remove-Item -LiteralPath $integrityRoot -Recurse -Force
+    }
+    New-Item -ItemType Directory -Path $integrityPackages, $integrityImages | Out-Null
+    $integrityStaged = $true
+    Copy-Item -LiteralPath @($packages.FullName) -Destination $integrityPackages
+    Copy-Item -LiteralPath @($imageResults.Archive) -Destination $integrityImages
+
+    # Absolute for the candidate directories, which resolve against the caller's working directory;
+    # repository-relative for the evidence directory, which is joined onto the repository root.
+    & pwsh -NoProfile -File (Join-Path $PSScriptRoot 'verify-artifact-integrity.ps1') `
+        -PackageDirectory $integrityPackages `
+        -ImageDirectory $integrityImages `
+        -EvidenceDirectory 'artifacts/release-candidate/evidence'
+    if ($LASTEXITCODE -ne 0) {
+        throw "Customer artifact integrity verification failed with exit code $LASTEXITCODE."
+    }
+
+    Copy-Item -LiteralPath (Join-Path $integrityRoot 'evidence') -Destination $evidenceRoot -Recurse
+    $evidenceRecords = @(Get-ChildItem -LiteralPath $evidenceRoot -Recurse -File |
+        Sort-Object FullName |
+        ForEach-Object { Get-ArtifactRecord -Path $_.FullName })
+    if ($evidenceRecords.Count -eq 0) {
+        throw 'Customer release candidate carries no scan evidence.'
+    }
+
     $manifest = [ordered]@{
         schemaVersion = 1
         repository = $repositoryUrl
@@ -248,6 +285,7 @@ try {
         version = $releaseVersion
         packages = $packageRecords
         images = $imageRecords
+        evidence = $evidenceRecords
     }
     Write-Utf8NoBom -Path $manifestPath -Value ($manifest | ConvertTo-Json -Depth 12)
 
@@ -259,7 +297,7 @@ try {
         throw 'Customer release-candidate manifest validation failed.'
     }
 
-    $expectedArtifactPaths = @($packageRecords.artifact.path; $imageRecords.archive.path) | Sort-Object
+    $expectedArtifactPaths = @($packageRecords.artifact.path; $imageRecords.archive.path; $evidenceRecords.path) | Sort-Object
     $releasePrefix = $releaseRoot.TrimEnd([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar) + [System.IO.Path]::DirectorySeparatorChar
     $actualArtifactPaths = @(Get-ChildItem -LiteralPath $releaseRoot -Force -Recurse -File |
         Where-Object FullName -NotIn @($markerPath, $manifestPath) |
@@ -270,7 +308,7 @@ try {
     }
 
     $completed = $true
-    Write-Host "Verified Customer release candidate $releaseVersion for revision ${revision}: $($expectedPackageIds.Count) packages, $($expectedImageRepositories.Count) images, manifest complete."
+    Write-Host "Verified Customer release candidate $releaseVersion for revision ${revision}: $($expectedPackageIds.Count) packages, $($expectedImageRepositories.Count) images, $($evidenceRecords.Count) evidence files, manifest complete."
     if ($KeepArtifacts) {
         Write-Host "Retained release-candidate artifacts at '$releaseRoot'."
     }
@@ -278,6 +316,10 @@ try {
 finally {
     foreach ($image in $builtImages) {
         & docker image rm --force $image 2>$null | Out-Null
+    }
+
+    if ($integrityStaged -and (Test-Path -LiteralPath $integrityRoot)) {
+        Remove-Item -LiteralPath $integrityRoot -Recurse -Force
     }
 
     if ($releaseRootCreated -and (-not $KeepArtifacts -or -not $completed)) {

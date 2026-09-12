@@ -17,6 +17,8 @@ Customer owns the fan/buyer side of Concertable: tickets sold, reviews of past c
 | Project | Kind | Purpose |
 |---|---|---|
 | `Concertable.Customer.Web` | ASP.NET Core HTTP host | All controllers + ASB event consumers (in-process). Single deployable — no separate Workers host. |
+| `Concertable.Customer.AppHost` | Aspire AppHost | Local-dev orchestrator only. |
+| `Concertable.Customer.Migrations` | Console host | Applies every module's migrations; ships as the `customer-migrations` image. |
 
 **Database:** `CustomerDb` (SQL Server). Per-module DbContexts: `ArtistDbContext`, `ConcertDbContext`, `PreferenceDbContext`, `ReviewDbContext`, `TicketDbContext`, `UserDbContext`, `VenueDbContext` + `OutboxDbContext`, `InboxDbContext`. All auto-migrated on non-Production startup.
 
