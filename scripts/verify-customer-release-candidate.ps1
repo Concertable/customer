@@ -318,8 +318,15 @@ finally {
         & docker image rm --force $image 2>$null | Out-Null
     }
 
+    # A failed run's evidence is the only record of why it failed, and the integrity script writes its
+    # failure there, so the staging directory survives anything but success.
     if ($integrityStaged -and (Test-Path -LiteralPath $integrityRoot)) {
-        Remove-Item -LiteralPath $integrityRoot -Recurse -Force
+        if ($completed) {
+            Remove-Item -LiteralPath $integrityRoot -Recurse -Force
+        }
+        else {
+            Write-Host "Retained integrity evidence at '$integrityRoot'."
+        }
     }
 
     if ($releaseRootCreated -and (-not $KeepArtifacts -or -not $completed)) {
