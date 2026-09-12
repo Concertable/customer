@@ -157,8 +157,8 @@ if ($manifest.schemaVersion -ne 1) {
 
 $nuget = @($manifest.nuget)
 $oci = @($manifest.oci)
-if ($nuget.Count -ne 5 -or $oci.Count -ne 3) {
-    throw "The Customer promotion manifest must select exactly five NuGet and three OCI candidates."
+if ($nuget.Count -ne 4 -or $oci.Count -ne 3) {
+    throw "The Customer promotion manifest must select exactly four NuGet and three OCI candidates."
 }
 
 $nugetIds = @($nuget.id)
