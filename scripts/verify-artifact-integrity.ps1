@@ -139,6 +139,7 @@ try {
             --volume "${cacheDirectory}:/root/.cache/trivy" `
             $trivyImage image `
             --input "/workspace/$inputPath" `
+            --timeout 30m `
             --scanners vuln `
             --severity HIGH,CRITICAL `
             --exit-code 1 `
@@ -157,6 +158,7 @@ try {
             --volume "${cacheDirectory}:/root/.cache/trivy" `
             $trivyImage image `
             --input "/workspace/$inputPath" `
+            --timeout 30m `
             --scanners secret `
             --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL `
             --exit-code 1 `
