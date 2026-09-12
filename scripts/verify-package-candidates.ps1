@@ -9,7 +9,6 @@ $ErrorActionPreference = 'Stop'
 $expectedPackageIds = @(
     'Concertable.Customer.Hosting'
     'Concertable.Customer.Review.Contracts'
-    'Concertable.Customer.Seed.Contracts'
     'Concertable.Customer.TestKit'
     'Concertable.Customer.Ticket.Contracts'
 )
@@ -83,7 +82,6 @@ try {
   <ItemGroup>
     <PackageReference Include="Concertable.Customer.Hosting" Version="$escapedVersion" />
     <PackageReference Include="Concertable.Customer.Review.Contracts" Version="$escapedVersion" />
-    <PackageReference Include="Concertable.Customer.Seed.Contracts" Version="$escapedVersion" />
     <PackageReference Include="Concertable.Customer.TestKit" Version="$escapedVersion" />
     <PackageReference Include="Concertable.Customer.Ticket.Contracts" Version="$escapedVersion" />
   </ItemGroup>
@@ -93,7 +91,6 @@ try {
     [System.IO.File]::WriteAllText($sourcePath, @'
 using Concertable.Customer.Hosting;
 using Concertable.Customer.Review.Contracts.Events;
-using Concertable.Customer.Seed.Contracts;
 using Concertable.Customer.TestKit;
 using Concertable.Customer.Ticket.Contracts.Events;
 
@@ -102,8 +99,7 @@ var client = new CustomerTestClient(httpClient);
 var request = new CustomerTicketPurchaseRequest("pm_card_visa", 42);
 var review = new CustomerReviewSubmittedEvent(Guid.NewGuid(), 1, 2, 3, 5, "customer@example.test", null);
 var purchase = new TicketPurchasedEvent(Guid.NewGuid(), Guid.NewGuid(), 3, 19.50m, DateTime.UtcNow);
-var seed = new ReviewSeedSpec(Guid.NewGuid(), DateTimeOffset.UtcNow, Guid.NewGuid(), 1, 2, 3, 5, "customer@example.test", null);
-Console.WriteLine($"{CustomerConstants.ServiceName}:{client.GetType().Name}:{request.ConcertId}:{review.ConcertId}:{purchase.ConcertId}:{seed.ConcertId}");
+Console.WriteLine($"{CustomerConstants.ServiceName}:{client.GetType().Name}:{request.ConcertId}:{review.ConcertId}:{purchase.ConcertId}");
 '@)
 
     [System.IO.File]::WriteAllText($configPath, @"
@@ -119,7 +115,6 @@ Console.WriteLine($"{CustomerConstants.ServiceName}:{client.GetType().Name}:{req
     <packageSource key="customer-candidates">
       <package pattern="Concertable.Customer.Hosting" />
       <package pattern="Concertable.Customer.Review.Contracts" />
-      <package pattern="Concertable.Customer.Seed.Contracts" />
       <package pattern="Concertable.Customer.TestKit" />
       <package pattern="Concertable.Customer.Ticket.Contracts" />
     </packageSource>

@@ -17,7 +17,6 @@ $trivyImage = 'aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c
 $expectedPackageIds = @(
     'Concertable.Customer.Hosting'
     'Concertable.Customer.Review.Contracts'
-    'Concertable.Customer.Seed.Contracts'
     'Concertable.Customer.TestKit'
     'Concertable.Customer.Ticket.Contracts'
 )
@@ -176,8 +175,8 @@ try {
         Get-ChildItem -LiteralPath $sbomDirectory -Filter '*.cdx.json' -File
         Get-ChildItem -LiteralPath $scanDirectory -Filter '*.trivy.json' -File
     )
-    if ($expectedEvidenceFiles.Count -ne 14 -or $expectedEvidenceFiles.Where({ $_.Length -eq 0 }).Count -ne 0) {
-        throw 'Expected eight non-empty SBOMs and six non-empty Trivy reports.'
+    if ($expectedEvidenceFiles.Count -ne 13 -or $expectedEvidenceFiles.Where({ $_.Length -eq 0 }).Count -ne 0) {
+        throw 'Expected seven non-empty SBOMs and six non-empty Trivy reports.'
     }
 
     if ($scanFailed) {
