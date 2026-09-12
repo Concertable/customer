@@ -91,7 +91,10 @@
     <Project Path="tests/Concertable.Customer.IntegrationTests.Fixtures/Concertable.Customer.IntegrationTests.Fixtures.csproj" />
   </Folder>
   <Folder Name="/Tests/E2ETests/">
+    <Project Path="tests/E2ETests/Concertable.Customer.E2ETests/Concertable.Customer.E2ETests.csproj" />
+    <Project Path="tests/E2ETests/Concertable.Customer.E2ETests.Mobile/Concertable.Customer.E2ETests.Mobile.csproj" />
     <Project Path="tests/E2ETests/Concertable.Customer.E2ETests.Server/Concertable.Customer.E2ETests.Server.csproj" />
+    <Project Path="tests/E2ETests/Concertable.Customer.E2ETests.Ui/Concertable.Customer.E2ETests.Ui.csproj" />
     <Project Path="tests/E2ETests/Concertable.Customer.E2ETests.Web/Concertable.Customer.E2ETests.Web.csproj" />
   </Folder>
   <Project Path="src/Concertable.Customer.Migrations/Concertable.Customer.Migrations.csproj" />
