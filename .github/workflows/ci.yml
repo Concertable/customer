@@ -75,7 +75,12 @@ jobs:
       - name: Test backend
         # Integration projects each own a Testcontainers SQL fixture. Serialize project execution so
         # seven assemblies do not race Docker startup on the same runner.
-        run: dotnet test Concertable.Customer.slnx --configuration Release --no-build --no-restore -m:1
+        # The tiers are named rather than the E2E ones excluded: an exclusion list stops protecting
+        # the gate the moment a tier appears that nobody remembered to exclude. E2E runs in e2e.yml,
+        # which owns the Stripe and Appium preconditions this gate cannot satisfy.
+        run: >-
+          dotnet test Concertable.Customer.slnx --configuration Release --no-build --no-restore -m:1
+          --filter "Category=Unit|Category=Integration|Category=Architecture|Category=Startup"
 
       - name: Validate migration snapshots
         shell: pwsh
