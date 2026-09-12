@@ -17,7 +17,11 @@ public static class AppHost
     private const string B2BSeedingSimulatorImage = "ghcr.io/concertable/b2b-seeding-simulator";
     private const string B2BSeedingSimulatorDigest = "sha256:a232e5f6a111e3c81479c53cc79d49c54a0bf18c4dcb75a2cbaa7bf3ec1a0957";
 
-    public static IDistributedApplicationBuilder CreateBuilder(string[] args)
+    public static IDistributedApplicationBuilder CreateBuilder(string[] args) =>
+        CreateBuilder<Projects.Concertable_Customer_Web>(args);
+
+    public static IDistributedApplicationBuilder CreateBuilder<TCustomerWeb>(string[] args)
+        where TCustomerWeb : IProjectMetadata, new()
     {
         var builder = StrictDistributedApplication.CreateBuilder(args);
         var sql = builder.AddSqlServerContainer("concertable-customer-sql-data");
@@ -33,7 +37,7 @@ public static class AppHost
         auth.WithSpaClients(CustomerLocalSpaSurfaces.AuthClients);
         var paymentWeb = builder.AddPaymentWeb(PaymentWebImage, PaymentWebDigest, auth, paymentDb, asb);
         paymentWeb.WithEndpoint("https", endpoint => endpoint.Port = 7098);
-        var customerWeb = builder.AddCustomerWeb<Projects.Concertable_Customer_Web>(auth, customerDb, asb, paymentWeb);
+        var customerWeb = builder.AddCustomerWeb<TCustomerWeb>(auth, customerDb, asb, paymentWeb);
         if (builder.ExecutionContext.IsRunMode)
             customerWeb.WithEnvironment(PaymentConstants.AllowInsecureHttpClientEnvironmentVariable, bool.TrueString);
         auth.WithEnvironment("ServiceAuth__AuthClientId", "concertable-auth");
