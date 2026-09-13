@@ -21,9 +21,10 @@ public static class LoginCaptureHooks
         var page = await context.NewPageAsync();
         var login = new LoginPage(page, spaUrl);
 
+        await fixture.App.WaitForTokenMintingAsync(seed.Customer1.Email, SeedState.TestPassword);
         await login.GotoAsync();
         await login.SignInAsync(seed.Customer1.Email, SeedState.TestPassword);
-        await page.WaitForURLAsync($"{spaUrl}/");
+        await page.WaitForURLAsync($"{spaUrl}/", new() { WaitUntil = WaitUntilState.DOMContentLoaded });
 
         storageState = await context.StorageStateAsync();
         return storageState;

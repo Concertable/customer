@@ -64,5 +64,9 @@ public sealed class SignUpSteps
 
     [Then(@"they are returned to the customer home page authenticated")]
     public Task ReturnedToCustomerHome() =>
-        browser.Page.WaitForURLAsync($"{fixture.App.CustomerSpaUrl}/", new() { Timeout = 30_000 });
+        browser.Page.WaitForURLAsync($"{fixture.App.CustomerSpaUrl}/", new()
+        {
+            Timeout = 30_000,
+            WaitUntil = WaitUntilState.DOMContentLoaded
+        });
 }
