@@ -18,12 +18,19 @@ public static class AppHost
     private const string B2BSeedingSimulatorDigest = "sha256:d6f7ad971e3ee7299e419360238528ee129e219561d2f0eb5eff491570b0db6b";
 
     public static IDistributedApplicationBuilder CreateBuilder(string[] args) =>
-        CreateBuilder<Projects.Concertable_Customer_Web>(args);
+        ConfigureBuilder<Projects.Concertable_Customer_Web>(StrictDistributedApplication.CreateBuilder(args));
 
-    public static IDistributedApplicationBuilder CreateBuilder<TCustomerWeb>(string[] args)
+    public static IDistributedApplicationBuilder CreateE2EBuilder<TCustomerWeb>()
+        where TCustomerWeb : IProjectMetadata, new() =>
+        ConfigureBuilder<TCustomerWeb>(DistributedApplication.CreateBuilder(new DistributedApplicationOptions
+        {
+            Args = ["--environment", "Development"],
+            AssemblyName = typeof(AppHost).Assembly.GetName().Name!,
+        }));
+
+    private static IDistributedApplicationBuilder ConfigureBuilder<TCustomerWeb>(IDistributedApplicationBuilder builder)
         where TCustomerWeb : IProjectMetadata, new()
     {
-        var builder = StrictDistributedApplication.CreateBuilder(args);
         var sql = builder.AddSqlServerContainer("concertable-customer-sql-data");
         var authDb = sql.AddDatabase(AuthConstants.Database);
         var customerDb = sql.AddDatabase(CustomerConstants.Database);
