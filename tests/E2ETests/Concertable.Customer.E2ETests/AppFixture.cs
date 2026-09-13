@@ -18,6 +18,7 @@ namespace Concertable.Customer.E2ETests;
 
 public sealed class AppFixture : IAsyncLifetime
 {
+    private const string AuthE2EDigest = "sha256:b92399c92ddff69b7916935b0b7b31afb52460b3151997f60d32124c9ff70c2c";
     private const string PaymentE2EWebDigest = "sha256:df33de77f2d01558f9ffb3b0d1cc68ddcd26e41f6d54f65045caf3e466b4a775";
     private const string PaymentE2EWorkersDigest = "sha256:4385c505153cca1df16983864b0c99807537b37f8aea801d434092cce47c87c8";
 
@@ -91,6 +92,7 @@ public sealed class AppFixture : IAsyncLifetime
         var auth = builder.Resources.OfType<ServiceContainerResource>()
             .Single(resource => resource.Name == AuthConstants.Resource);
         var authBuilder = builder.CreateResourceBuilder(auth);
+        authBuilder.WithImageSHA256(AuthE2EDigest["sha256:".Length..]);
         authBuilder.WithEnvironment("Auth__VerificationBaseUrl", authBuilder.GetEndpoint("https"));
         var paymentWeb = builder.Resources.OfType<ServiceContainerResource>()
             .Single(resource => resource.Name == PaymentConstants.WebResource);
