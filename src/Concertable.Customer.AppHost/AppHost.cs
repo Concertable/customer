@@ -18,6 +18,8 @@ public static class AppHost
     private const string SearchWebDigest = "sha256:5bfb93f03c875d2adb5bbd18499f2ff11ef9a71902cd7f62811cb0d7876976cb";
     private const string SearchWorkersImage = "ghcr.io/concertable/search-workers";
     private const string SearchWorkersDigest = "sha256:c0c7d64a4b2702a0186963472ab8bf4030c2cba873748eb8fdb6be9905c84d11";
+    private const string SearchMigrationsImage = "ghcr.io/concertable/search-migrations";
+    private const string SearchMigrationsDigest = "sha256:0ac571000b44f5683efa6890b23b9ef5d8b9e1cb5aa3461d314ececdccd453ea";
     private const string B2BSeedingSimulatorImage = "ghcr.io/concertable/b2b-seeding-simulator";
     private const string B2BSeedingSimulatorDigest = "sha256:d6f7ad971e3ee7299e419360238528ee129e219561d2f0eb5eff491570b0db6b";
 
@@ -50,7 +52,14 @@ public static class AppHost
         auth.WithSpaClients(CustomerLocalSpaSurfaces.AuthClients);
         var paymentWeb = builder.AddPaymentWeb(PaymentWebImage, PaymentWebDigest, auth, paymentDb, asb);
         paymentWeb.WithEndpoint("https", endpoint => endpoint.Port = 7098);
-        var searchWeb = builder.AddSearchWeb(SearchWebImage, SearchWebDigest, auth, searchDb);
+        var searchMigrations = builder.AddContainerImage(
+                "search-migrations",
+                SearchMigrationsImage,
+                SearchMigrationsDigest)
+            .WithReference(searchDb)
+            .WaitFor(searchDb);
+        var searchWeb = builder.AddSearchWeb(SearchWebImage, SearchWebDigest, auth, searchDb)
+            .WaitForCompletion(searchMigrations);
         searchWeb.WithEndpoint("https", endpoint => endpoint.Port = 7097);
         var customerWeb = builder.AddCustomerWeb<TCustomerWeb>(auth, customerDb, asb, paymentWeb);
         if (builder.ExecutionContext.IsRunMode)
@@ -58,7 +67,8 @@ public static class AppHost
         auth.WithEnvironment("ServiceAuth__AuthClientId", "concertable-auth");
         auth.WithEnvironment("Services__CustomerApiUrl", customerWeb.GetEndpoint("https"));
         builder.AddPaymentWorkers(PaymentWorkersImage, PaymentWorkersDigest, paymentDb, asb);
-        builder.AddSearchWorkers(SearchWorkersImage, SearchWorkersDigest, searchDb, asb);
+        builder.AddSearchWorkers(SearchWorkersImage, SearchWorkersDigest, searchDb, asb)
+            .WaitForCompletion(searchMigrations);
         builder.AddB2BSeedingSimulator(B2BSeedingSimulatorImage, B2BSeedingSimulatorDigest, asb);
         builder.AddCustomerSpa(customerWeb, searchWeb, auth);
         if (builder.AddMobileCustomer(customerWeb, auth, searchWeb, paymentWeb) is { } mobileTunnel)
