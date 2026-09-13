@@ -27,6 +27,7 @@ jobs:
       GITHUB_PACKAGES_TOKEN: ${{ secrets.CONCERTABLE_PACKAGES_READ || secrets.GITHUB_TOKEN }}
       GoogleApiKey: ${{ secrets.GOOGLE_API_KEY }}
       Stripe__SecretKey: ${{ secrets.STRIPE_SECRET_KEY }}
+      VITE_STRIPE_PUBLISHABLE_KEY: ${{ vars.STRIPE_PUBLISHABLE_KEY }}
       EXPO_PUBLIC_AUTH_AUTHORITY: http://localhost:7093
       EXPO_PUBLIC_CUSTOMER_API_URL: https://localhost:7090
       EXPO_PUBLIC_PAYMENT_API_URL: http://localhost:7098
@@ -55,6 +56,10 @@ jobs:
           fi
           if [ -z "$STRIPE_SECRET_KEY" ]; then
             echo "::error::STRIPE_SECRET_KEY is not configured. The Api and Ui tiers confirm real payment intents and cannot run without it."
+            failed=1
+          fi
+          if { [ "$tier" = 'ui' ] || [ "$tier" = 'all' ]; } && [ -z "$VITE_STRIPE_PUBLISHABLE_KEY" ]; then
+            echo "::error::STRIPE_PUBLISHABLE_KEY is not configured."
             failed=1
           fi
           if { [ "$tier" = 'mobile' ] || [ "$tier" = 'all' ]; } && [ -z "$EXPO_PUBLIC_STRIPE_KEY" ]; then
