@@ -5,6 +5,7 @@ using Concertable.Customer.Hosting;
 using Concertable.Customer.Hosting.Frontend;
 using Concertable.Customer.Web;
 using Concertable.Payment.Hosting;
+using Concertable.Search.Hosting;
 using Concertable.Testing;
 using Concertable.Testing.Architecture;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,10 +23,12 @@ public sealed class ResourceGraphTests
     public async Task ProductionGraphAndStrictValidation_AreValid()
     {
         var validBuilder = AppHost.CreateBuilder([]);
-        AssertImageEndpoint(validBuilder, AuthConstants.Resource, "https", scheme: "https");
+        AssertImageEndpoint(validBuilder, AuthConstants.Resource, "https", scheme: "http");
         AssertContainerRuntimeArgs(validBuilder, AuthConstants.Resource, "--user", "root");
         AssertUsesDeveloperCertificate(validBuilder, AuthConstants.Resource);
         AssertImageEndpoint(validBuilder, PaymentConstants.WebResource, "https", scheme: "http");
+        AssertImageEndpoint(validBuilder, SearchConstants.WebResource, "https", scheme: "http");
+        Assert.Single(validBuilder.Resources, resource => resource.Name == SearchConstants.WorkersResource);
         AssertImageEndpoint(
             validBuilder,
             PaymentConstants.WebResource,
@@ -75,7 +78,8 @@ public sealed class ResourceGraphTests
         AssertResolvedNodeAppDirectory(builder, "customer", ["app", "web", "customer"], ["app", "web"]);
         AssertResolvedNodeAppDirectory(builder, "mobile-customer", ["app", "mobile", "customer"], ["app", "mobile"]);
         Assert.Single(builder.Resources, resource => resource.Name == "customer-dev");
-        Assert.DoesNotContain(builder.Resources, resource => resource.Name is "b2b-web" or "search-web");
+        Assert.DoesNotContain(builder.Resources, resource => resource.Name == "b2b-web");
+        Assert.Single(builder.Resources, resource => resource.Name == SearchConstants.WebResource);
         using var app = builder.Build();
 
         AllocateTunnelEndpoints(builder, "customer-dev");
@@ -87,8 +91,8 @@ public sealed class ResourceGraphTests
         AssertTunnelUrl(mobileEnvironment, "EXPO_PUBLIC_API_URL", "customer-dev-customer-web-http");
         AssertTunnelUrl(mobileEnvironment, "EXPO_PUBLIC_AUTH_AUTHORITY", "customer-dev-auth-https");
         AssertTunnelUrl(mobileEnvironment, "EXPO_PUBLIC_CUSTOMER_API_URL", "customer-dev-customer-web-http");
+        AssertTunnelUrl(mobileEnvironment, "EXPO_PUBLIC_SEARCH_API_URL", "customer-dev-search-web-https");
         AssertTunnelUrl(mobileEnvironment, "EXPO_PUBLIC_PAYMENT_API_URL", "customer-dev-payment-web-https");
-        Assert.DoesNotContain("EXPO_PUBLIC_SEARCH_API_URL", mobileEnvironment.Keys);
 
         var auth = builder.Resources.Single(resource => resource.Name == AuthConstants.Resource);
         var authEnvironment = await GetRawEnvironmentAsync(auth, cancellation.Token);
@@ -115,8 +119,10 @@ public sealed class ResourceGraphTests
                 builder.AddResource(new ServiceContainerResource("auth"));
             IResourceBuilder<IResourceWithServiceDiscovery> payment =
                 builder.AddResource(new ServiceContainerResource("payment"));
-            builder.AddCustomerSpa(api, api, auth);
-            Assert.NotNull(builder.AddMobileCustomer(api, auth, payment));
+            IResourceBuilder<IResourceWithServiceDiscovery> search =
+                builder.AddResource(new ServiceContainerResource("search"));
+            builder.AddCustomerSpa(api, search, auth);
+            Assert.NotNull(builder.AddMobileCustomer(api, auth, search, payment));
 
             AssertNodeAppDirectory(builder, "customer",
                 includeMonorepoLayout ? ["app", "web", "customer"] : ["app", "web"]);

@@ -14,6 +14,10 @@ public static class AppHost
     private const string PaymentWebDigest = "sha256:2c7a9b30291d4adb9d94dcf0d047b86809ad487d1cc7848ffc340b226497d578d";
     private const string PaymentWorkersImage = "ghcr.io/concertable/payment-workers";
     private const string PaymentWorkersDigest = "sha256:09b1d4d0f9bf175f61dcaafde0d06b7eb7f8a710e0e775d4b385957b9e865cfc";
+    private const string SearchWebImage = "ghcr.io/concertable/search-web";
+    private const string SearchWebDigest = "sha256:5bfb93f03c875d2adb5bbd18499f2ff11ef9a71902cd7f62811cb0d7876976cb";
+    private const string SearchWorkersImage = "ghcr.io/concertable/search-workers";
+    private const string SearchWorkersDigest = "sha256:c0c7d64a4b2702a0186963472ab8bf4030c2cba873748eb8fdb6be9905c84d11";
     private const string B2BSeedingSimulatorImage = "ghcr.io/concertable/b2b-seeding-simulator";
     private const string B2BSeedingSimulatorDigest = "sha256:d6f7ad971e3ee7299e419360238528ee129e219561d2f0eb5eff491570b0db6b";
 
@@ -36,24 +40,28 @@ public static class AppHost
         var authDb = sql.AddDatabase(AuthConstants.Database);
         var customerDb = sql.AddDatabase(CustomerConstants.Database);
         var paymentDb = sql.AddDatabase(PaymentConstants.Database);
+        var searchDb = sql.AddDatabase(SearchConstants.Database);
         var asb = builder.AddServiceBus();
         asb.Topology().AddCustomerTopology().AddSearchTopology().AddPaymentTopology().AddAuthTopology().RunAsEmulator();
         var auth = builder.AddAuth(AuthImage, AuthDigest, authDb, asb)
                           .WithContainerRuntimeArgs("--user", "root")
-                          .WithHttpsEndpoint(targetPort: AuthConstants.ContainerPort, name: "https");
+                          .WithHttpEndpoint(targetPort: AuthConstants.ContainerPort, name: "https");
         auth.WithEndpoint("https", endpoint => endpoint.Port = 7093);
         auth.WithSpaClients(CustomerLocalSpaSurfaces.AuthClients);
         var paymentWeb = builder.AddPaymentWeb(PaymentWebImage, PaymentWebDigest, auth, paymentDb, asb);
         paymentWeb.WithEndpoint("https", endpoint => endpoint.Port = 7098);
+        var searchWeb = builder.AddSearchWeb(SearchWebImage, SearchWebDigest, auth, searchDb);
+        searchWeb.WithEndpoint("https", endpoint => endpoint.Port = 7097);
         var customerWeb = builder.AddCustomerWeb<TCustomerWeb>(auth, customerDb, asb, paymentWeb);
         if (builder.ExecutionContext.IsRunMode)
             customerWeb.WithEnvironment(PaymentConstants.AllowInsecureHttpClientEnvironmentVariable, bool.TrueString);
         auth.WithEnvironment("ServiceAuth__AuthClientId", "concertable-auth");
         auth.WithEnvironment("Services__CustomerApiUrl", customerWeb.GetEndpoint("https"));
         builder.AddPaymentWorkers(PaymentWorkersImage, PaymentWorkersDigest, paymentDb, asb);
+        builder.AddSearchWorkers(SearchWorkersImage, SearchWorkersDigest, searchDb, asb);
         builder.AddB2BSeedingSimulator(B2BSeedingSimulatorImage, B2BSeedingSimulatorDigest, asb);
-        builder.AddCustomerSpa(customerWeb, customerWeb, auth);
-        if (builder.AddMobileCustomer(customerWeb, auth, paymentWeb) is { } mobileTunnel)
+        builder.AddCustomerSpa(customerWeb, searchWeb, auth);
+        if (builder.AddMobileCustomer(customerWeb, auth, searchWeb, paymentWeb) is { } mobileTunnel)
             auth.WithMobilePublicUrl(mobileTunnel.GetEndpoint(auth, "https"));
         builder.AddStripeCli(paymentWeb);
         return builder;
