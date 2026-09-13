@@ -98,6 +98,12 @@ public sealed class AppFixture : IAsyncLifetime
             builder, searchWeb, new Uri(searchWebUrl).Port);
         Concertable.Testing.E2E.DistributedApplicationBuilderExtensions.PinHttpsEndpoint(
             builder, customerWeb, new Uri(customerWebUrl).Port);
+        foreach (var wait in customerWeb.Annotations
+                     .OfType<WaitAnnotation>()
+                     .Where(wait => ReferenceEquals(wait.Resource, auth) ||
+                                    ReferenceEquals(wait.Resource, paymentWeb))
+                     .ToArray())
+            customerWeb.Annotations.Remove(wait);
         foreach (var resource in new[] { auth, paymentWeb, searchWeb })
             resource.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
                 context.EnvironmentVariables["ASPNETCORE_ENVIRONMENT"] = "E2E"));
