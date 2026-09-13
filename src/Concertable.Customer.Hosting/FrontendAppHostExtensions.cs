@@ -12,20 +12,21 @@ public static class FrontendAppHostExtensions
     {
         public IResourceBuilder<NodeAppResource> AddCustomerSpa(
             IResourceBuilder<IResourceWithServiceDiscovery> backend,
-            IResourceBuilder<IResourceWithServiceDiscovery> customerWeb,
+            IResourceBuilder<IResourceWithServiceDiscovery> searchWeb,
             IResourceBuilder<IResourceWithServiceDiscovery> auth) =>
             builder.AddSpaSurface(
                        CustomerLocalSpaSurfaces.Customer,
                        [["app", "web", "customer"], ["app", "web"]],
                        backend,
                        auth)
-                   .WithReference(customerWeb)
-                   .WaitFor(customerWeb);
+                   .WithReference(searchWeb)
+                   .WaitFor(searchWeb);
 
         public IResourceBuilder<NodeAppResource> AddCustomerMobileSurface(
             IResourceBuilder<IResourceWithServiceDiscovery> api,
             IResourceBuilder<IResourceWithServiceDiscovery> auth,
             IResourceBuilder<IResourceWithServiceDiscovery> customerWeb,
+            IResourceBuilder<IResourceWithServiceDiscovery> searchWeb,
             IResourceBuilder<IResourceWithServiceDiscovery> paymentWeb,
             IResourceBuilder<DevTunnelResource> tunnel) =>
             builder.AddMobileSurface(
@@ -36,17 +37,19 @@ public static class FrontendAppHostExtensions
                 new(api, "EXPO_PUBLIC_API_URL"),
                 new(auth, "EXPO_PUBLIC_AUTH_AUTHORITY"),
                 new(customerWeb, "EXPO_PUBLIC_CUSTOMER_API_URL"),
+                new(searchWeb, "EXPO_PUBLIC_SEARCH_API_URL"),
                 new(paymentWeb, "EXPO_PUBLIC_PAYMENT_API_URL"));
         public IResourceBuilder<DevTunnelResource>? AddMobileCustomer(
             IResourceBuilder<IResourceWithServiceDiscovery> customerWeb,
             IResourceBuilder<IResourceWithServiceDiscovery> auth,
+            IResourceBuilder<IResourceWithServiceDiscovery> searchWeb,
             IResourceBuilder<IResourceWithServiceDiscovery> paymentWeb)
         {
             if (!builder.Configuration.GetValue<bool>("RunMobile"))
                 return null;
 
-            var tunnel = builder.AddMobileTunnel("customer-dev", auth, customerWeb, paymentWeb);
-            builder.AddCustomerMobileSurface(customerWeb, auth, customerWeb, paymentWeb, tunnel);
+            var tunnel = builder.AddMobileTunnel("customer-dev", auth, customerWeb, searchWeb, paymentWeb);
+            builder.AddCustomerMobileSurface(customerWeb, auth, customerWeb, searchWeb, paymentWeb, tunnel);
             return tunnel;
         }
     }

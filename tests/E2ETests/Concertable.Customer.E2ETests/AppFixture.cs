@@ -1,11 +1,13 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Testing;
+using Concertable.Auth.Hosting;
 using Concertable.Customer.Hosting;
 using Concertable.Customer.TestKit;
 using Concertable.Payment.E2ETests.Helpers;
 using Concertable.Payment.Hosting;
 using Concertable.Payment.TestKit;
+using Concertable.Search.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -30,6 +32,7 @@ public sealed class AppFixture : IAsyncLifetime
     private readonly string adminKey = Guid.NewGuid().ToString("N");
 
     private readonly string customerWebUrl;
+    private readonly string searchWebUrl;
     private readonly string paymentWebUrl;
     private readonly string authUrl;
     private readonly string customerSpaUrl;
@@ -58,6 +61,8 @@ public sealed class AppFixture : IAsyncLifetime
 
         customerWebUrl = configuration["Endpoints:CustomerWeb"]
             ?? throw new InvalidOperationException("Endpoints:CustomerWeb is missing from appsettings.E2E.json.");
+        searchWebUrl = configuration["Endpoints:SearchWeb"]
+            ?? throw new InvalidOperationException("Endpoints:SearchWeb is missing from appsettings.E2E.json.");
         paymentWebUrl = configuration["Endpoints:PaymentWeb"]
             ?? throw new InvalidOperationException("Endpoints:PaymentWeb is missing from appsettings.E2E.json.");
         authUrl = configuration["Endpoints:Auth"]
@@ -80,8 +85,33 @@ public sealed class AppFixture : IAsyncLifetime
         stripePaymentIntents = new PaymentIntentService(stripeClient);
         StripeCustomerResolver = await Concertable.Testing.E2E.StripeCustomerResolver.CreateAsync(stripeClient);
 
+        var auth = builder.Resources.Single(resource => resource.Name == AuthConstants.Resource);
+        var paymentWeb = builder.Resources.Single(resource => resource.Name == PaymentConstants.WebResource);
+        var searchWeb = builder.Resources.Single(resource => resource.Name == SearchConstants.WebResource);
         var customerWeb = builder.Resources.OfType<ProjectResource>()
             .Single(resource => resource.Name == CustomerConstants.WebResource);
+        Concertable.Testing.E2E.DistributedApplicationBuilderExtensions.PinHttpsEndpoint(
+            builder, auth, new Uri(authUrl).Port);
+        Concertable.Testing.E2E.DistributedApplicationBuilderExtensions.PinHttpsEndpoint(
+            builder, paymentWeb, new Uri(paymentWebUrl).Port);
+        Concertable.Testing.E2E.DistributedApplicationBuilderExtensions.PinHttpsEndpoint(
+            builder, searchWeb, new Uri(searchWebUrl).Port);
+        Concertable.Testing.E2E.DistributedApplicationBuilderExtensions.PinHttpsEndpoint(
+            builder, customerWeb, new Uri(customerWebUrl).Port);
+        foreach (var resource in new[] { auth, paymentWeb, searchWeb })
+            resource.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
+                context.EnvironmentVariables["ASPNETCORE_ENVIRONMENT"] = "E2E"));
+        var paymentWorkers = builder.Resources.Single(resource => resource.Name == PaymentConstants.WorkersResource);
+        paymentWeb.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
+        {
+            context.EnvironmentVariables["E2E__AdminKey"] = adminKey;
+            AddStripeCustomers(context, StripeCustomerResolver);
+        }));
+        paymentWorkers.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
+        {
+            context.EnvironmentVariables["DOTNET_ENVIRONMENT"] = "E2E";
+            AddStripeCustomers(context, StripeCustomerResolver);
+        }));
         customerWeb.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
         {
             context.EnvironmentVariables["ASPNETCORE_ENVIRONMENT"] = "E2E";
@@ -98,7 +128,7 @@ public sealed class AppFixture : IAsyncLifetime
         // WORKAROUND (TECH_DEBT.md): 12 not 6 — demo users seed via the async credential-
         // registration chain, slow on CI's ASB emulator. Revert to 6 once seed is faster.
         await healthWaiter.WaitForAllHealthyAsync(
-            [customerWebUrl, paymentWebUrl],
+            [customerWebUrl, searchWebUrl, paymentWebUrl],
             TimeSpan.FromMinutes(12));
 
         customerAdminClient = new HttpClient { BaseAddress = new Uri(customerWebUrl) };
@@ -202,5 +232,13 @@ public sealed class AppFixture : IAsyncLifetime
     }
 
     public ResourceNotificationService ResourceNotifications => app.ResourceNotifications;
+
+    private static void AddStripeCustomers(
+        EnvironmentCallbackContext context,
+        StripeCustomerResolver stripeCustomers)
+    {
+        foreach (var (key, value) in stripeCustomers.GetConfiguration())
+            context.EnvironmentVariables[key.Replace(":", "__", StringComparison.Ordinal)] = value;
+    }
 
 }
