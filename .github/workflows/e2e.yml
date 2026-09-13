@@ -31,9 +31,6 @@ jobs:
       GITHUB_PACKAGES_TOKEN: ${{ secrets.CONCERTABLE_PACKAGES_READ || secrets.GITHUB_TOKEN }}
       GoogleApiKey: ${{ secrets.GOOGLE_API_KEY }}
       Stripe__SecretKey: ${{ secrets.STRIPE_SECRET_KEY }}
-      ServiceAuth__B2BClientSecret: ${{ secrets.SERVICE_AUTH_B2B_CLIENT_SECRET }}
-      ServiceAuth__CustomerClientSecret: ${{ secrets.SERVICE_AUTH_CUSTOMER_CLIENT_SECRET }}
-      ServiceAuth__AuthClientSecret: ${{ secrets.SERVICE_AUTH_AUTH_CLIENT_SECRET }}
       EXPO_PUBLIC_AUTH_AUTHORITY: https://localhost:7093
       EXPO_PUBLIC_CUSTOMER_API_URL: https://localhost:7090
       EXPO_PUBLIC_PAYMENT_API_URL: https://localhost:7098
@@ -65,23 +62,19 @@ jobs:
             echo "::error::STRIPE_SECRET_KEY is not configured. The Api and Ui tiers confirm real payment intents and cannot run without it."
             failed=1
           fi
-          if [ -z "$ServiceAuth__B2BClientSecret" ]; then
-            echo "::error::SERVICE_AUTH_B2B_CLIENT_SECRET is not configured."
-            failed=1
-          fi
-          if [ -z "$ServiceAuth__CustomerClientSecret" ]; then
-            echo "::error::SERVICE_AUTH_CUSTOMER_CLIENT_SECRET is not configured."
-            failed=1
-          fi
-          if [ -z "$ServiceAuth__AuthClientSecret" ]; then
-            echo "::error::SERVICE_AUTH_AUTH_CLIENT_SECRET is not configured."
-            failed=1
-          fi
           if { [ "$tier" = 'mobile' ] || [ "$tier" = 'all' ]; } && [ -z "$EXPO_PUBLIC_STRIPE_KEY" ]; then
             echo "::error::STRIPE_PUBLISHABLE_KEY is not configured."
             failed=1
           fi
           exit $failed
+
+      - name: Generate service credentials
+        run: |
+          for name in ServiceAuth__B2BClientSecret ServiceAuth__CustomerClientSecret ServiceAuth__AuthClientSecret; do
+            value=$(openssl rand -hex 32)
+            echo "::add-mask::$value"
+            echo "$name=$value" >> "$GITHUB_ENV"
+          done
 
       - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
         with:
