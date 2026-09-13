@@ -94,6 +94,7 @@ public sealed class AppFixture : IAsyncLifetime
         var authBuilder = builder.CreateResourceBuilder(auth);
         authBuilder.WithImageSHA256(AuthE2EDigest["sha256:".Length..]);
         authBuilder.WithEnvironment("Auth__VerificationBaseUrl", authBuilder.GetEndpoint("https"));
+        authBuilder.WithEnvironment("RateLimiting__credential__PermitLimit", "1000");
         var paymentWeb = builder.Resources.OfType<ServiceContainerResource>()
             .Single(resource => resource.Name == PaymentConstants.WebResource);
         builder.CreateResourceBuilder(paymentWeb)
