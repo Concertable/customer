@@ -18,6 +18,9 @@ namespace Concertable.Customer.E2ETests;
 
 public sealed class AppFixture : IAsyncLifetime
 {
+    private const string PaymentE2EWebDigest = "sha256:676ec14f68e0f7f477491b3e92617c008a42c57d6d87cc239df761866df76793";
+    private const string PaymentE2EWorkersDigest = "sha256:14ff5132e49b6ddd83a9d3bffe4e2ef3a44a4464ff0529f89af2f91c239a5bb8";
+
     private DistributedApplication app = null!;
     private AspireResourceLogger resourceLogger = null!;
     private HealthWaiter healthWaiter = null!;
@@ -86,7 +89,14 @@ public sealed class AppFixture : IAsyncLifetime
         StripeCustomerResolver = await Concertable.Testing.E2E.StripeCustomerResolver.CreateAsync(stripeClient);
 
         var auth = builder.Resources.Single(resource => resource.Name == AuthConstants.Resource);
-        var paymentWeb = builder.Resources.Single(resource => resource.Name == PaymentConstants.WebResource);
+        var paymentWeb = builder.Resources.OfType<ServiceContainerResource>()
+            .Single(resource => resource.Name == PaymentConstants.WebResource);
+        builder.CreateResourceBuilder(paymentWeb)
+            .WithImageSHA256(PaymentE2EWebDigest["sha256:".Length..]);
+        var paymentWorkers = builder.Resources.OfType<ServiceContainerResource>()
+            .Single(resource => resource.Name == PaymentConstants.WorkersResource);
+        builder.CreateResourceBuilder(paymentWorkers)
+            .WithImageSHA256(PaymentE2EWorkersDigest["sha256:".Length..]);
         var searchWeb = builder.Resources.Single(resource => resource.Name == SearchConstants.WebResource);
         var customerWeb = builder.Resources.OfType<ProjectResource>()
             .Single(resource => resource.Name == CustomerConstants.WebResource);
@@ -107,7 +117,6 @@ public sealed class AppFixture : IAsyncLifetime
         foreach (var resource in new[] { auth, paymentWeb, searchWeb })
             resource.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
                 context.EnvironmentVariables["ASPNETCORE_ENVIRONMENT"] = "E2E"));
-        var paymentWorkers = builder.Resources.Single(resource => resource.Name == PaymentConstants.WorkersResource);
         paymentWeb.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
         {
             context.EnvironmentVariables["E2E__AdminKey"] = adminKey;
