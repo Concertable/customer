@@ -196,6 +196,7 @@ jobs:
             until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; do sleep 2; done
             adb reverse tcp:7090 tcp:7090
             adb reverse tcp:7093 tcp:7093
+            adb reverse tcp:7097 tcp:7097
             adb reverse tcp:7098 tcp:7098
             adb reverse tcp:8081 tcp:8081
             CI=1 npm --workspace @concertable/mobile-customer exec -- expo start --port 8081 --host localhost > artifacts/mobile-metro.log 2>&1 &
