@@ -127,7 +127,8 @@ public static class CustomerWebHostExtensions
                 {
                     opts.MapInboundClaims = false;
                     opts.Authority = builder.Configuration["Auth:Authority"] ?? builder.Configuration["services__auth__https__0"];
-                    opts.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
+                    opts.RequireHttpsMetadata = !builder.Environment.IsDevelopment()
+                        && !builder.Environment.IsEnvironment("E2E");
                     opts.Audience = "concertable.customer.api";
                     opts.TokenValidationParameters = new TokenValidationParameters
                     {
