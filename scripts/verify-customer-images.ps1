@@ -166,7 +166,13 @@ try {
             throw "Release-candidate archive '$archivePath' already exists."
         }
 
-        & dotnet publish (Join-Path $repositoryRoot $target.Project) `
+        $project = Join-Path $repositoryRoot $target.Project
+        & dotnet restore $project
+        if ($LASTEXITCODE -ne 0) {
+            throw "Customer image restore failed for '$($target.Name)' with exit code $LASTEXITCODE."
+        }
+
+        & dotnet publish $project `
             --configuration $Configuration `
             --no-restore `
             -t:PublishContainer `
