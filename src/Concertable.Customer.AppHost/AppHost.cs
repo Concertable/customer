@@ -26,6 +26,7 @@ public static class AppHost
         {
             Args = ["--environment", "Development"],
             AssemblyName = typeof(AppHost).Assembly.GetName().Name!,
+            DisableDashboard = true,
         }));
 
     private static IDistributedApplicationBuilder ConfigureBuilder<TCustomerWeb>(IDistributedApplicationBuilder builder)
