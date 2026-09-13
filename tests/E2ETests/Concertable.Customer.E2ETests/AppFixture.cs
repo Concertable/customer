@@ -88,7 +88,10 @@ public sealed class AppFixture : IAsyncLifetime
         stripePaymentIntents = new PaymentIntentService(stripeClient);
         StripeCustomerResolver = await Concertable.Testing.E2E.StripeCustomerResolver.CreateAsync(stripeClient);
 
-        var auth = builder.Resources.Single(resource => resource.Name == AuthConstants.Resource);
+        var auth = builder.Resources.OfType<ServiceContainerResource>()
+            .Single(resource => resource.Name == AuthConstants.Resource);
+        var authBuilder = builder.CreateResourceBuilder(auth);
+        authBuilder.WithEnvironment("Auth__VerificationBaseUrl", authBuilder.GetEndpoint("https"));
         var paymentWeb = builder.Resources.OfType<ServiceContainerResource>()
             .Single(resource => resource.Name == PaymentConstants.WebResource);
         builder.CreateResourceBuilder(paymentWeb)
