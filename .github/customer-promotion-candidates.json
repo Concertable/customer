@@ -3,35 +3,35 @@
   "nuget": [
     {
       "id": "Concertable.Customer.Hosting",
-      "project": "src/Concertable.Customer.Hosting/Concertable.Customer.Hosting.csproj"
+      "project": "api/src/Concertable.Customer.Hosting/Concertable.Customer.Hosting.csproj"
     },
     {
       "id": "Concertable.Customer.Review.Contracts",
-      "project": "src/Modules/Review/Concertable.Customer.Review.Contracts/Concertable.Customer.Review.Contracts.csproj"
+      "project": "api/src/Modules/Review/Concertable.Customer.Review.Contracts/Concertable.Customer.Review.Contracts.csproj"
     },
     {
       "id": "Concertable.Customer.TestKit",
-      "project": "src/Concertable.Customer.TestKit/Concertable.Customer.TestKit.csproj"
+      "project": "api/src/Concertable.Customer.TestKit/Concertable.Customer.TestKit.csproj"
     },
     {
       "id": "Concertable.Customer.Ticket.Contracts",
-      "project": "src/Modules/Ticket/Concertable.Customer.Ticket.Contracts/Concertable.Customer.Ticket.Contracts.csproj"
+      "project": "api/src/Modules/Ticket/Concertable.Customer.Ticket.Contracts/Concertable.Customer.Ticket.Contracts.csproj"
     }
   ],
   "oci": [
     {
       "repository": "ghcr.io/concertable/customer-migrations",
-      "project": "src/Concertable.Customer.Migrations/Concertable.Customer.Migrations.csproj",
+      "project": "api/src/Concertable.Customer.Migrations/Concertable.Customer.Migrations.csproj",
       "archive": "customer-migrations.tar.gz"
     },
     {
       "repository": "ghcr.io/concertable/customer-seed-simulator",
-      "project": "src/Seed/Concertable.Customer.Seed.Simulator/Concertable.Customer.Seed.Simulator.csproj",
+      "project": "api/src/Seed/Concertable.Customer.Seed.Simulator/Concertable.Customer.Seed.Simulator.csproj",
       "archive": "customer-seed-simulator.tar.gz"
     },
     {
       "repository": "ghcr.io/concertable/customer-web",
-      "project": "src/Concertable.Customer.Web/Concertable.Customer.Web.csproj",
+      "project": "api/src/Concertable.Customer.Web/Concertable.Customer.Web.csproj",
       "archive": "customer-web.tar.gz"
     }
   ]
