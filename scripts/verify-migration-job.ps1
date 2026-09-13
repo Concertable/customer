@@ -54,7 +54,7 @@ try {
 
     for ($run = 1; $run -le 2; $run++) {
         & dotnet run `
-            --project src/Concertable.Customer.Migrations/Concertable.Customer.Migrations.csproj `
+            --project api/src/Concertable.Customer.Migrations/Concertable.Customer.Migrations.csproj `
             --configuration $Configuration `
             --no-build `
             --no-restore

@@ -52,21 +52,21 @@ $builtImages = [System.Collections.Generic.List[string]]::new()
 $targets = @(
     [ordered]@{
         Name = 'customer-web'
-        Project = 'src/Concertable.Customer.Web/Concertable.Customer.Web.csproj'
+        Project = 'api/src/Concertable.Customer.Web/Concertable.Customer.Web.csproj'
         Assembly = 'Concertable.Customer.Web.dll'
         Runtime = 'Microsoft\.AspNetCore\.App 10\.'
         Repository = 'ghcr.io/concertable/customer-web'
     },
     [ordered]@{
         Name = 'customer-migrations'
-        Project = 'src/Concertable.Customer.Migrations/Concertable.Customer.Migrations.csproj'
+        Project = 'api/src/Concertable.Customer.Migrations/Concertable.Customer.Migrations.csproj'
         Assembly = 'Concertable.Customer.Migrations.dll'
         Runtime = 'Microsoft\.NETCore\.App 10\.'
         Repository = 'ghcr.io/concertable/customer-migrations'
     },
     [ordered]@{
         Name = 'customer-seed-simulator'
-        Project = 'src/Seed/Concertable.Customer.Seed.Simulator/Concertable.Customer.Seed.Simulator.csproj'
+        Project = 'api/src/Seed/Concertable.Customer.Seed.Simulator/Concertable.Customer.Seed.Simulator.csproj'
         Assembly = 'Concertable.Customer.Seed.Simulator.dll'
         Runtime = 'Microsoft\.NETCore\.App 10\.'
         Repository = 'ghcr.io/concertable/customer-seed-simulator'
