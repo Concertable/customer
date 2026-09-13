@@ -42,8 +42,6 @@ jobs:
         with:
           persist-credentials: false
 
-      # Preconditions first: a missing credential is a named failure in seconds, not an exception
-      # raised inside every fixture once the fleet is already up.
       - name: Check E2E preconditions
         env:
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
