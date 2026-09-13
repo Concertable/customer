@@ -1,7 +1,5 @@
 name: E2E
 
-# Split out of ci.yml because these tiers need credentials and device artifacts a pull-request gate
-# cannot supply. ci.yml names the tiers it runs, so a tier added here is never silently gated there.
 on:
   workflow_dispatch:
     inputs:
@@ -14,8 +12,6 @@ on:
   schedule:
     - cron: '0 3 * * *'
 
-# A cancelled run leaves a half-torn-down fleet behind, so an in-flight run finishes rather than
-# being replaced.
 concurrency:
   group: customer-e2e
   cancel-in-progress: false
