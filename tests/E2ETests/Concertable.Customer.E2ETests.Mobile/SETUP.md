@@ -40,7 +40,7 @@ cd android
 ```
 
 Then copy `app/mobile/android/app/build/outputs/apk/debug/app-debug.apk` to
-`tests/customer/Concertable.Customer.E2ETests.Mobile/TestAssets/concertable-debug.apk`.
+`tests/E2ETests/Concertable.Customer.E2ETests.Mobile/TestAssets/concertable-debug.apk`.
 
 > The APK is gitignored. Each developer builds locally; CI builds on its own
 > runner.

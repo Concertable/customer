@@ -1,11 +1,13 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Testing;
+using Concertable.Auth.Hosting;
 using Concertable.Customer.Hosting;
 using Concertable.Customer.TestKit;
 using Concertable.Payment.E2ETests.Helpers;
 using Concertable.Payment.Hosting;
 using Concertable.Payment.TestKit;
+using Concertable.Search.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -16,6 +18,10 @@ namespace Concertable.Customer.E2ETests;
 
 public sealed class AppFixture : IAsyncLifetime
 {
+    private const string AuthE2EDigest = "sha256:e228e89af3fa51f1dd7995d33e109bb3a9c2bf2ab3bed98df28e3ef7bac28251";
+    private const string PaymentE2EWebDigest = "sha256:df33de77f2d01558f9ffb3b0d1cc68ddcd26e41f6d54f65045caf3e466b4a775";
+    private const string PaymentE2EWorkersDigest = "sha256:4385c505153cca1df16983864b0c99807537b37f8aea801d434092cce47c87c8";
+
     private DistributedApplication app = null!;
     private AspireResourceLogger resourceLogger = null!;
     private HealthWaiter healthWaiter = null!;
@@ -30,6 +36,7 @@ public sealed class AppFixture : IAsyncLifetime
     private readonly string adminKey = Guid.NewGuid().ToString("N");
 
     private readonly string customerWebUrl;
+    private readonly string searchWebUrl;
     private readonly string paymentWebUrl;
     private readonly string authUrl;
     private readonly string customerSpaUrl;
@@ -58,6 +65,8 @@ public sealed class AppFixture : IAsyncLifetime
 
         customerWebUrl = configuration["Endpoints:CustomerWeb"]
             ?? throw new InvalidOperationException("Endpoints:CustomerWeb is missing from appsettings.E2E.json.");
+        searchWebUrl = configuration["Endpoints:SearchWeb"]
+            ?? throw new InvalidOperationException("Endpoints:SearchWeb is missing from appsettings.E2E.json.");
         paymentWebUrl = configuration["Endpoints:PaymentWeb"]
             ?? throw new InvalidOperationException("Endpoints:PaymentWeb is missing from appsettings.E2E.json.");
         authUrl = configuration["Endpoints:Auth"]
@@ -73,15 +82,57 @@ public sealed class AppFixture : IAsyncLifetime
         logger.InitializingE2ETestFixture();
 
         healthWaiter = new HealthWaiter(loggerFactory.CreateLogger<HealthWaiter>());
-        var builder = AppHost.CreateBuilder<Projects.Concertable_Customer_E2ETests_Web>([]);
+        var builder = AppHost.CreateE2EBuilder<Projects.Concertable_Customer_E2ETests_Web>();
         var stripeSecretKey = builder.Configuration["Stripe:SecretKey"]
             ?? throw new InvalidOperationException("Stripe:SecretKey is not configured for the Customer E2E fixture.");
         var stripeClient = new StripeClient(stripeSecretKey);
         stripePaymentIntents = new PaymentIntentService(stripeClient);
         StripeCustomerResolver = await Concertable.Testing.E2E.StripeCustomerResolver.CreateAsync(stripeClient);
 
+        var auth = builder.Resources.OfType<ServiceContainerResource>()
+            .Single(resource => resource.Name == AuthConstants.Resource);
+        var authBuilder = builder.CreateResourceBuilder(auth);
+        authBuilder.WithImageSHA256(AuthE2EDigest["sha256:".Length..]);
+        authBuilder.WithEnvironment("Auth__VerificationBaseUrl", authBuilder.GetEndpoint("https"));
+        authBuilder.WithEnvironment("RateLimiting__credential__PermitLimit", "1000");
+        var paymentWeb = builder.Resources.OfType<ServiceContainerResource>()
+            .Single(resource => resource.Name == PaymentConstants.WebResource);
+        builder.CreateResourceBuilder(paymentWeb)
+            .WithImageSHA256(PaymentE2EWebDigest["sha256:".Length..]);
+        var paymentWorkers = builder.Resources.OfType<ServiceContainerResource>()
+            .Single(resource => resource.Name == PaymentConstants.WorkersResource);
+        builder.CreateResourceBuilder(paymentWorkers)
+            .WithImageSHA256(PaymentE2EWorkersDigest["sha256:".Length..]);
+        var searchWeb = builder.Resources.Single(resource => resource.Name == SearchConstants.WebResource);
         var customerWeb = builder.Resources.OfType<ProjectResource>()
             .Single(resource => resource.Name == CustomerConstants.WebResource);
+        Concertable.Testing.E2E.DistributedApplicationBuilderExtensions.PinHttpsEndpoint(
+            builder, auth, new Uri(authUrl).Port);
+        Concertable.Testing.E2E.DistributedApplicationBuilderExtensions.PinHttpsEndpoint(
+            builder, paymentWeb, new Uri(paymentWebUrl).Port);
+        Concertable.Testing.E2E.DistributedApplicationBuilderExtensions.PinHttpsEndpoint(
+            builder, searchWeb, new Uri(searchWebUrl).Port);
+        Concertable.Testing.E2E.DistributedApplicationBuilderExtensions.PinHttpsEndpoint(
+            builder, customerWeb, new Uri(customerWebUrl).Port);
+        foreach (var wait in customerWeb.Annotations
+                     .OfType<WaitAnnotation>()
+                     .Where(wait => ReferenceEquals(wait.Resource, auth) ||
+                                    ReferenceEquals(wait.Resource, paymentWeb))
+                     .ToArray())
+            customerWeb.Annotations.Remove(wait);
+        foreach (var resource in new[] { auth, paymentWeb, searchWeb })
+            resource.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
+                context.EnvironmentVariables["ASPNETCORE_ENVIRONMENT"] = "E2E"));
+        paymentWeb.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
+        {
+            context.EnvironmentVariables["E2E__AdminKey"] = adminKey;
+            AddStripeCustomers(context, StripeCustomerResolver);
+        }));
+        paymentWorkers.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
+        {
+            context.EnvironmentVariables["DOTNET_ENVIRONMENT"] = "E2E";
+            AddStripeCustomers(context, StripeCustomerResolver);
+        }));
         customerWeb.Annotations.Add(new EnvironmentCallbackAnnotation(context =>
         {
             context.EnvironmentVariables["ASPNETCORE_ENVIRONMENT"] = "E2E";
@@ -98,7 +149,7 @@ public sealed class AppFixture : IAsyncLifetime
         // WORKAROUND (TECH_DEBT.md): 12 not 6 — demo users seed via the async credential-
         // registration chain, slow on CI's ASB emulator. Revert to 6 once seed is faster.
         await healthWaiter.WaitForAllHealthyAsync(
-            [customerWebUrl, paymentWebUrl],
+            [customerWebUrl, searchWebUrl, paymentWebUrl],
             TimeSpan.FromMinutes(12));
 
         customerAdminClient = new HttpClient { BaseAddress = new Uri(customerWebUrl) };
@@ -202,5 +253,13 @@ public sealed class AppFixture : IAsyncLifetime
     }
 
     public ResourceNotificationService ResourceNotifications => app.ResourceNotifications;
+
+    private static void AddStripeCustomers(
+        EnvironmentCallbackContext context,
+        StripeCustomerResolver stripeCustomers)
+    {
+        foreach (var (key, value) in stripeCustomers.GetConfiguration())
+            context.EnvironmentVariables[key.Replace(":", "__", StringComparison.Ordinal)] = value;
+    }
 
 }

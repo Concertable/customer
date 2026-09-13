@@ -29,7 +29,7 @@ public sealed class MobileFixture : IAsyncLifetime
             .Build();
 
         AppiumServerUri = new Uri(config["Mobile:AppiumServer"] ?? "http://127.0.0.1:4723/");
-        AppPackage = config["Mobile:AppPackage"] ?? "com.concertable.app";
+        AppPackage = config["Mobile:AppPackage"] ?? "com.concertable.customer";
         AppActivity = config["Mobile:AppActivity"] ?? ".MainActivity";
         AvdName = config["Mobile:AvdName"] ?? "ConcertableTest";
 
