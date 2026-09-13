@@ -28,7 +28,11 @@ public sealed class ResourceGraphTests
         AssertUsesDeveloperCertificate(validBuilder, AuthConstants.Resource);
         AssertImageEndpoint(validBuilder, PaymentConstants.WebResource, "https", scheme: "http");
         AssertImageEndpoint(validBuilder, SearchConstants.WebResource, "https", scheme: "http");
+        Assert.IsType<ServiceContainerResource>(validBuilder.Resources.Single(resource =>
+            resource.Name == "search-migrations"));
         Assert.Single(validBuilder.Resources, resource => resource.Name == SearchConstants.WorkersResource);
+        AssertWaitsForCompletion(validBuilder, SearchConstants.WebResource, "search-migrations");
+        AssertWaitsForCompletion(validBuilder, SearchConstants.WorkersResource, "search-migrations");
         AssertImageEndpoint(
             validBuilder,
             PaymentConstants.WebResource,
@@ -52,6 +56,20 @@ public sealed class ResourceGraphTests
         var builder = AppHost.CreateBuilder([]);
         builder.Services.AddInvalidLifetimeGraph();
         Assert.ThrowsAny<Exception>(() => builder.Build());
+    }
+
+    private static void AssertWaitsForCompletion(
+        IDistributedApplicationBuilder builder,
+        string resourceName,
+        string dependencyName)
+    {
+        var resource = builder.Resources.Single(candidate => candidate.Name == resourceName);
+        var wait = Assert.Single(
+            resource.Annotations.OfType<WaitAnnotation>(),
+            annotation => annotation.Resource.Name == dependencyName);
+
+        Assert.Equal(WaitType.WaitForCompletion, wait.WaitType);
+        Assert.Equal(0, wait.ExitCode);
     }
 
     [Fact]
