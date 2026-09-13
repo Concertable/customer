@@ -18,8 +18,8 @@ namespace Concertable.Customer.E2ETests;
 
 public sealed class AppFixture : IAsyncLifetime
 {
-    private const string PaymentE2EWebDigest = "sha256:676ec14f68e0f7f477491b3e92617c008a42c57d6d87cc239df761866df76793";
-    private const string PaymentE2EWorkersDigest = "sha256:14ff5132e49b6ddd83a9d3bffe4e2ef3a44a4464ff0529f89af2f91c239a5bb8";
+    private const string PaymentE2EWebDigest = "sha256:df33de77f2d01558f9ffb3b0d1cc68ddcd26e41f6d54f65045caf3e466b4a775";
+    private const string PaymentE2EWorkersDigest = "sha256:4385c505153cca1df16983864b0c99807537b37f8aea801d434092cce47c87c8";
 
     private DistributedApplication app = null!;
     private AspireResourceLogger resourceLogger = null!;
