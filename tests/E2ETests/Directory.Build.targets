@@ -64,7 +64,5 @@
     <StripReqnrollHooks Files="@(_ReqnrollHooksFile)" />
   </Target>
   <Import Project="$(ConcertableServiceRoot)TestConventions.targets" />
-  <Import Project="$(MSBuildThisFileDirectory)../../../PlatformSourcePackages.targets"
-          Condition="Exists('$(MSBuildThisFileDirectory)../../../PlatformSourcePackages.targets')" />
 
 </Project>
