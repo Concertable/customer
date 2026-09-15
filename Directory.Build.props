@@ -57,9 +57,4 @@
     <ContainerLabel Include="org.opencontainers.image.revision" Value="$(ConcertableSourceRevision)" />
   </ItemGroup>
 
-  <!-- Banned-API list for Microsoft.CodeAnalysis.BannedApiAnalyzers (shared across services). -->
-  <ItemGroup>
-    <AdditionalFiles Include="$(MSBuildThisFileDirectory)BannedSymbols.txt" />
-  </ItemGroup>
-
 </Project>

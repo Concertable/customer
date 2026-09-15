@@ -8,7 +8,7 @@
     <ConcertableCustomerVersion>0.1.0-alpha.0.1381</ConcertableCustomerVersion>
     <ConcertablePaymentVersion>0.1.0-alpha.0.1384</ConcertablePaymentVersion>
     <ConcertableSearchVersion>0.1.0-alpha.0.1381</ConcertableSearchVersion>
-    <ConcertableSystemTestingVersion>0.2.0-alpha.0.192</ConcertableSystemTestingVersion>
+    <ConcertableSystemVersion>0.2.0-alpha.0.192</ConcertableSystemVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -94,13 +94,13 @@
     <PackageVersion Include="Concertable.B2B.Venue.Contracts" Version="$(ConcertableB2BContractsVersion)" />
     <PackageVersion Include="Concertable.B2B.Seed.Contracts" Version="$(ConcertableB2BContractsVersion)" />
     <PackageVersion Include="Concertable.B2B.User.Contracts" Version="$(ConcertableB2BContractsVersion)" />
-    <PackageVersion Include="Concertable.Testing.E2E" Version="$(ConcertableSystemTestingVersion)" />
-    <PackageVersion Include="Concertable.Payment.E2ETests.Helpers" Version="$(ConcertableSystemTestingVersion)" />
+    <PackageVersion Include="Concertable.Testing.E2E" Version="$(ConcertableSystemVersion)" />
+    <PackageVersion Include="Concertable.Payment.E2ETests.Helpers" Version="$(ConcertableSystemVersion)" />
   </ItemGroup>
 
   <ItemGroup>
     <GlobalPackageReference Include="Meziantou.Analyzer" Version="3.0.98" />
-    <GlobalPackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />
+    <GlobalPackageReference Include="Concertable.Build" Version="$(ConcertableDotNetPlatformVersion)" />
     <GlobalPackageReference Include="MinVer" Version="7.0.0" />
   </ItemGroup>
 
