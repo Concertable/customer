@@ -15,6 +15,44 @@ public static class AppHostExtensions
         IResourceBuilder<IResourceWithServiceDiscovery> auth,
         IResourceBuilder<SqlServerDatabaseResource> customerDb,
         IResourceBuilder<AzureServiceBusResource> asb,
+        IResourceBuilder<IResourceWithServiceDiscovery> paymentWeb) =>
+        WebImage(builder, image, digest, auth, customerDb, asb, paymentWeb);
+
+    public static IResourceBuilder<ServiceContainerResource> AddCustomerWeb(
+        this IDistributedApplicationBuilder builder,
+        string image,
+        string digest,
+        IResourceBuilder<IResourceWithServiceDiscovery> auth,
+        IResourceBuilder<PostgresDatabaseResource> customerDb,
+        IResourceBuilder<AzureServiceBusResource> asb,
+        IResourceBuilder<IResourceWithServiceDiscovery> paymentWeb) =>
+        WebImage(builder, image, digest, auth, customerDb, asb, paymentWeb);
+
+    public static IResourceBuilder<ProjectResource> AddCustomerWeb<TProject>(
+        this IDistributedApplicationBuilder builder,
+        IResourceBuilder<IResourceWithServiceDiscovery> auth,
+        IResourceBuilder<SqlServerDatabaseResource> customerDb,
+        IResourceBuilder<AzureServiceBusResource> asb,
+        IResourceBuilder<IResourceWithServiceDiscovery> paymentWeb)
+        where TProject : IProjectMetadata, new() =>
+        WebProject<TProject>(builder, auth, customerDb, asb, paymentWeb);
+
+    public static IResourceBuilder<ProjectResource> AddCustomerWeb<TProject>(
+        this IDistributedApplicationBuilder builder,
+        IResourceBuilder<IResourceWithServiceDiscovery> auth,
+        IResourceBuilder<PostgresDatabaseResource> customerDb,
+        IResourceBuilder<AzureServiceBusResource> asb,
+        IResourceBuilder<IResourceWithServiceDiscovery> paymentWeb)
+        where TProject : IProjectMetadata, new() =>
+        WebProject<TProject>(builder, auth, customerDb, asb, paymentWeb);
+
+    private static IResourceBuilder<ServiceContainerResource> WebImage(
+        IDistributedApplicationBuilder builder,
+        string image,
+        string digest,
+        IResourceBuilder<IResourceWithServiceDiscovery> auth,
+        IResourceBuilder<IResourceWithConnectionString> customerDb,
+        IResourceBuilder<AzureServiceBusResource> asb,
         IResourceBuilder<IResourceWithServiceDiscovery> paymentWeb)
     {
         var customerSecret = builder.Configuration["ServiceAuth:CustomerClientSecret"];
@@ -34,10 +72,10 @@ public static class AppHostExtensions
                       .WithOptionalEnvironment("ServiceAuth__ClientSecret", customerSecret);
     }
 
-    public static IResourceBuilder<ProjectResource> AddCustomerWeb<TProject>(
-        this IDistributedApplicationBuilder builder,
+    private static IResourceBuilder<ProjectResource> WebProject<TProject>(
+        IDistributedApplicationBuilder builder,
         IResourceBuilder<IResourceWithServiceDiscovery> auth,
-        IResourceBuilder<SqlServerDatabaseResource> customerDb,
+        IResourceBuilder<IResourceWithConnectionString> customerDb,
         IResourceBuilder<AzureServiceBusResource> asb,
         IResourceBuilder<IResourceWithServiceDiscovery> paymentWeb)
         where TProject : IProjectMetadata, new()
