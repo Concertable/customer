@@ -198,7 +198,7 @@ internal sealed class TicketService : ITicketService
             userId,
             concert.Id,
             qrCode,
-            timeProvider.GetUtcNow().DateTime,
+            timeProvider.GetUtcNow().UtcDateTime,
             concert.Name,
             concert.Price,
             concert.Period,
