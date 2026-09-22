@@ -24,13 +24,17 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddConcertModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ConcertDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString(Db.Name))
+            opts.UseNpgsql(
+                    configuration.GetConnectionString(Db.Name),
+                    npgsql => npgsql.MigrationsHistoryTable(MigrationsHistory.Table, Schema.Name))
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
                     sp.GetRequiredService<IDomainEventDispatchInterceptor>()));
 
         services.AddDbContext<ConcertReadDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString(Db.Name))
+            opts.UseNpgsql(
+                    configuration.GetConnectionString(Db.Name),
+                    npgsql => npgsql.MigrationsHistoryTable(MigrationsHistory.Table, Schema.Name))
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
         services.AddScoped<IConcertReadDbContext>(sp => sp.GetRequiredService<ConcertReadDbContext>());
 

@@ -23,7 +23,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddReviewModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ReviewDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString(Db.Name))
+            opts.UseNpgsql(
+                    configuration.GetConnectionString(Db.Name),
+                    npgsql => npgsql.MigrationsHistoryTable(MigrationsHistory.Table, Schema.Name))
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
                     sp.GetRequiredService<IDomainEventDispatchInterceptor>()));

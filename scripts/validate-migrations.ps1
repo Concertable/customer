@@ -2,7 +2,7 @@
 param()
 
 $ErrorActionPreference = 'Stop'
-$env:ConnectionStrings__CustomerDb = 'Server=localhost;Database=CustomerCi;User Id=sa;Password=Customer-CI-Only-Password-123!;TrustServerCertificate=True'
+$env:ConnectionStrings__CustomerDb = 'Host=localhost;Port=5432;Database=CustomerCi;Username=postgres;Password=Customer-CI-Only-Password-123!'
 
 $startupProject = 'api/src/Concertable.Customer.Web/Concertable.Customer.Web.csproj'
 $contexts = @(

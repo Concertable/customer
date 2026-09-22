@@ -6,7 +6,7 @@ namespace Concertable.Customer.User.Domain.Entities;
 
 public sealed class UserEntity : IGuidEntity, IEventRaiser
 {
-    protected UserEntity() { }
+    private UserEntity() { }
 
     private UserEntity(Guid id, string email)
     {

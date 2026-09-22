@@ -4,4 +4,16 @@ namespace Concertable.Customer.DataAccess.Infrastructure;
 public static class Db
 {
     public const string Name = "CustomerDb";
+
+    public static IReadOnlyList<string> Schemas { get; } =
+    [
+        "artist",
+        "concert",
+        "preference",
+        "review",
+        "ticket",
+        "user",
+        "venue",
+        MigrationsHistory.MessagingSchema,
+    ];
 }

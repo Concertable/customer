@@ -5,6 +5,8 @@ namespace Concertable.Customer.Venue.Infrastructure.Data;
 
 internal sealed class VenueDbContextFactory : CustomerDesignTimeDbContextFactory<VenueDbContext>
 {
+    protected override string MigrationsSchema => Schema.Name;
+
     protected override VenueDbContext Create(DbContextOptions<VenueDbContext> options) =>
-        new(options, new VenueConfigurationProvider());
+        new(options, DefaultOutboxOptions, new VenueConfigurationProvider());
 }
