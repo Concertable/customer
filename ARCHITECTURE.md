@@ -20,7 +20,7 @@ Customer owns the fan/buyer side of Concertable: tickets sold, reviews of past c
 | `Concertable.Customer.AppHost` | Aspire AppHost | Local-dev orchestrator only. |
 | `Concertable.Customer.Migrations` | Console host | Applies every module's migrations; ships as the `customer-migrations` image. |
 
-**Database:** `CustomerDb` (SQL Server). Per-module DbContexts: `ArtistDbContext`, `ConcertDbContext`, `PreferenceDbContext`, `ReviewDbContext`, `TicketDbContext`, `UserDbContext`, `VenueDbContext` + `OutboxDbContext`, `InboxDbContext`. All auto-migrated on non-Production startup.
+**Database:** `CustomerDb` (PostgreSQL, PostGIS for `user.Users.Location`). Per-module DbContexts: `ArtistDbContext`, `ConcertDbContext`, `PreferenceDbContext`, `ReviewDbContext`, `TicketDbContext`, `UserDbContext`, `VenueDbContext` + `OutboxDbContext`, `InboxDbContext`. Each keeps its migrations history in the schema it owns, so one database carries nine independent histories. `Concertable.Customer.Migrations` applies them all before Web starts; Web never migrates itself.
 
 No `ReadDbContext` aggregate — Customer is small enough that cross-module reads use the existing per-module DbContexts directly.
 
@@ -123,7 +123,7 @@ Customer is a modular monolith inside the service. The `dotnet-standards:module-
 
 ## Tech stack
 
-.NET 10 · EF Core + SQL Server · Azure Service Bus (emulator in dev) · `Concertable.Messaging` (Outbox/Inbox/Transport) · NetTopologySuite (geometry) · Aspire (`Concertable.ServiceDefaults`) · QuestPDF (`Ticket.Infrastructure` — ticket PDF generation) · `Concertable.Shared.{Blob,Email,Geocoding,Imaging,Pdf,QrCode}`
+.NET 10 · EF Core + PostgreSQL (Npgsql) · Azure Service Bus (emulator in dev) · `Concertable.Messaging` (Outbox/Inbox/Transport) · NetTopologySuite (geometry) · Aspire (`Concertable.ServiceDefaults`) · QuestPDF (`Ticket.Infrastructure` — ticket PDF generation) · `Concertable.Shared.{Blob,Email,Geocoding,Imaging,Pdf,QrCode}`
 
 ---
 
