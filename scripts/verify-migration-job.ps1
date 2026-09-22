@@ -36,7 +36,9 @@ try {
 
     $ready = $false
     for ($attempt = 1; $attempt -le 180; $attempt++) {
-        & docker exec $containerName pg_isready --username postgres --dbname CustomerDb 2>$null | Out-Null
+        # The entrypoint's bootstrap server listens on the unix socket only, so a socket probe reports
+        # ready while the published port the job connects through still has nothing behind it.
+        & docker exec $containerName pg_isready --host 127.0.0.1 --port 5432 --username postgres --dbname CustomerDb 2>$null | Out-Null
         if ($LASTEXITCODE -eq 0) {
             $ready = $true
             break
