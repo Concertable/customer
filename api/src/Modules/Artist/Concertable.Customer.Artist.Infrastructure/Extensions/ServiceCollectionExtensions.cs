@@ -17,13 +17,17 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddArtistModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ArtistDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString(Db.Name))
+            opts.UseNpgsql(
+                    configuration.GetConnectionString(Db.Name),
+                    npgsql => npgsql.MigrationsHistoryTable(MigrationsHistory.Table, Schema.Name))
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
                     sp.GetRequiredService<IDomainEventDispatchInterceptor>()));
 
         services.AddDbContext<ArtistReadDbContext>((sp, opts) =>
-            opts.UseSqlServer(configuration.GetConnectionString(Db.Name))
+            opts.UseNpgsql(
+                    configuration.GetConnectionString(Db.Name),
+                    npgsql => npgsql.MigrationsHistoryTable(MigrationsHistory.Table, Schema.Name))
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
         services.AddScoped<IArtistReadDbContext>(sp => sp.GetRequiredService<ArtistReadDbContext>());
 

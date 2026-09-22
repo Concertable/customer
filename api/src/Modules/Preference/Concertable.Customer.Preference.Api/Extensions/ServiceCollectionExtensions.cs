@@ -1,9 +1,6 @@
-using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Preference.Api.Controllers;
-using Concertable.Customer.Preference.Infrastructure.Data;
 using Concertable.Customer.Preference.Infrastructure.Extensions;
 using Concertable.Shared.Api.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,19 +20,5 @@ public static class ServiceCollectionExtensions
 
         public IServiceCollection AddPreferenceDevSeeding()
             => services.AddPreferenceDevSeeder();
-
-        public IServiceCollection AddPreferenceMigrations(IConfiguration configuration)
-        {
-            services.AddSingleton<PreferenceConfigurationProvider>();
-            services.AddDbContext<PreferenceDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString(Db.Name)));
-            return services;
-        }
-    }
-
-    extension(IServiceProvider services)
-    {
-        public Task MigratePreferenceModuleAsync(CancellationToken cancellationToken = default)
-            => services.GetRequiredService<PreferenceDbContext>().Database.MigrateAsync(cancellationToken);
     }
 }

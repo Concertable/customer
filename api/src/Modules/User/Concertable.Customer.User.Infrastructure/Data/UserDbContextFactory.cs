@@ -1,14 +1,16 @@
 using Concertable.Customer.DataAccess.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 
 namespace Concertable.Customer.User.Infrastructure.Data;
 
 internal sealed class UserDbContextFactory : CustomerDesignTimeDbContextFactory<UserDbContext>
 {
-    protected override UserDbContext Create(DbContextOptions<UserDbContext> options) =>
-        new(options, new UserConfigurationProvider());
+    protected override string MigrationsSchema => Schema.Name;
 
-    protected override void ConfigureSqlServer(SqlServerDbContextOptionsBuilder sql) =>
-        sql.UseNetTopologySuite();
+    protected override UserDbContext Create(DbContextOptions<UserDbContext> options) =>
+        new(options, DefaultOutboxOptions, new UserConfigurationProvider());
+
+    protected override void ConfigureNpgsql(NpgsqlDbContextOptionsBuilder npgsql) =>
+        npgsql.UseNetTopologySuite();
 }

@@ -25,9 +25,10 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddUserModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<UserDbContext>((sp, opts) =>
-            opts.UseSqlServer(
+            opts.UseNpgsql(
                     configuration.GetConnectionString(Db.Name),
-                    sqlOpts => sqlOpts.UseNetTopologySuite())
+                    npgsql => npgsql.MigrationsHistoryTable(MigrationsHistory.Table, Schema.Name)
+                        .UseNetTopologySuite())
                 .AddInterceptors(
                     sp.GetRequiredService<AuditInterceptor>(),
                     sp.GetRequiredService<IDomainEventDispatchInterceptor>()));

@@ -10,8 +10,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <ProjectReference Include="..\Concertable.Customer.Web\Concertable.Customer.Web.csproj" />
+    <ProjectReference Include="..\Concertable.Customer.DataAccess\Concertable.Customer.DataAccess.Infrastructure\Concertable.Customer.DataAccess.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Artist\Concertable.Customer.Artist.Infrastructure\Concertable.Customer.Artist.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Concert\Concertable.Customer.Concert.Infrastructure\Concertable.Customer.Concert.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Preference\Concertable.Customer.Preference.Infrastructure\Concertable.Customer.Preference.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Review\Concertable.Customer.Review.Infrastructure\Concertable.Customer.Review.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Ticket\Concertable.Customer.Ticket.Infrastructure\Concertable.Customer.Ticket.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\User\Concertable.Customer.User.Infrastructure\Concertable.Customer.User.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Venue\Concertable.Customer.Venue.Infrastructure\Concertable.Customer.Venue.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Concertable.Messaging.Infrastructure" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
   </ItemGroup>
 
 </Project>
