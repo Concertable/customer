@@ -20,6 +20,7 @@
     <PackageReference Include="Concertable.Payment.Hosting" />
     <PackageReference Include="Concertable.Search.Hosting" />
     <ProjectReference Include="..\..\api\src\Concertable.Customer.Web\Concertable.Customer.Web.csproj" />
+    <ProjectReference Include="..\..\api\src\Concertable.Customer.Migrations\Concertable.Customer.Migrations.csproj" />
   </ItemGroup>
 
 </Project>

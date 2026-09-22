@@ -133,6 +133,26 @@ gain such a shared assembly, and its name/placement).
 
 ---
 
+### `AddStripeCli` makes any inspection of `payment-web`'s environment block for a minute
+
+`Concertable.Payment.Hosting`'s `AddStripeCli` attaches an environment callback to the payment web resource
+that awaits the Stripe CLI's `whsec_` line with a sixty-second timeout. Nothing about that is wrong at run
+time, but an environment callback is also what any resource-graph test enumerates, so
+`ResourceGraphTests.ProductionGraphAndStrictValidation_AreValid` hung for a minute and then failed with
+`TimeoutException` on a machine that exports `Stripe__SecretKey` — green in CI only because CI exports no
+such variable. Present in `0.1.0-alpha.0.1384` as well as `0.2.0-alpha.0.381`, so the PostgreSQL cut-over
+exposed it rather than caused it.
+
+Customer's test now passes `--Stripe:SecretKey=` so the graph it asserts is the same one on every machine,
+and `PublishGraphWithStripeCli_IsValid` still covers the configured case. That makes Customer deterministic;
+it does not fix the contract, and every other consumer of `AddStripeCli` has the same trap.
+
+**Owner:** `Concertable/payment`, not this repository.
+
+**Resolves when:** the webhook secret reaches `payment-web` without an environment callback that blocks —
+for example a resource the CLI updates once it has the secret — so enumerating the graph never waits on a
+running container.
+
 ### `Concertable.Customer.AppHost` builds to `bin/` 16 characters from the native-path limit
 
 `docs/LOCAL_DEV.md` records the measured 250-character cap on native DLL loading, which the four E2E host

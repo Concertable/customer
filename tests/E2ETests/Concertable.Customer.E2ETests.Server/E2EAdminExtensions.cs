@@ -1,11 +1,12 @@
 using System.Security.Cryptography;
 using System.Text;
+using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Seed.Infrastructure;
 using Concertable.DataAccess.Application;
 using Concertable.Kernel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Data.SqlClient;
+using Npgsql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -125,13 +126,22 @@ internal sealed class CustomerDatabaseResetter
 
     public async Task ResetAsync(CancellationToken cancellationToken)
     {
-        await using var connection = new SqlConnection(options.ConnectionString);
+        await using var connection = new NpgsqlConnection(options.ConnectionString);
         await connection.OpenAsync(cancellationToken);
         var respawner = await Respawner.CreateAsync(connection, new RespawnerOptions
         {
+            SchemasToInclude = [.. Db.Schemas],
             TablesToIgnore =
             [
-                "__EFMigrationsHistory",
+                new Table("artist", MigrationsHistory.Table),
+                new Table("concert", MigrationsHistory.Table),
+                new Table("preference", MigrationsHistory.Table),
+                new Table("review", MigrationsHistory.Table),
+                new Table("ticket", MigrationsHistory.Table),
+                new Table("user", MigrationsHistory.Table),
+                new Table("venue", MigrationsHistory.Table),
+                new Table(MigrationsHistory.MessagingSchema, MigrationsHistory.InboxTable),
+                new Table(MigrationsHistory.MessagingSchema, MigrationsHistory.OutboxTable),
                 new Table("concert", "Concerts"),
                 new Table("concert", "ConcertGenres"),
                 new Table("concert", "VenueReadModels"),
@@ -141,9 +151,9 @@ internal sealed class CustomerDatabaseResetter
                 new Table("artist", "ArtistGenres"),
                 new Table("venue", "Venues"),
                 new Table("user", "Users"),
-                new Table("messaging", "Inbox"),
+                new Table(MigrationsHistory.MessagingSchema, "Inbox"),
             ],
-            DbAdapter = DbAdapter.SqlServer,
+            DbAdapter = DbAdapter.Postgres,
             WithReseed = true,
         });
         await respawner.ResetAsync(connection);

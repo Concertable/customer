@@ -73,8 +73,8 @@ jobs:
         run: dotnet build Concertable.Customer.slnx --configuration Release --no-restore
 
       - name: Test backend
-        # Integration projects each own a Testcontainers SQL fixture. Serialize project execution so
-        # seven assemblies do not race Docker startup on the same runner.
+        # Integration projects each own a Testcontainers PostgreSQL fixture. Serialize project execution
+        # so seven assemblies do not race Docker startup on the same runner.
         # The tiers are named rather than the E2E ones excluded: an exclusion list stops protecting
         # the gate the moment a tier appears that nobody remembered to exclude. E2E runs in e2e.yml,
         # which owns the Stripe and Appium preconditions this gate cannot satisfy.

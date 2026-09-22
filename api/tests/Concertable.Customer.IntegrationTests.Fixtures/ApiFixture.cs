@@ -3,6 +3,7 @@ using Concertable.Kernel.Notifications;
 using Concertable.Customer.Artist.Infrastructure.Extensions;
 using Concertable.Customer.Concert.Infrastructure.Extensions;
 using Concertable.Customer.DataAccess.Infrastructure;
+using Concertable.Customer.Migrations;
 using Concertable.Customer.Preference.Infrastructure.Extensions;
 using Concertable.Customer.Review.Infrastructure.Extensions;
 using Concertable.Customer.Ticket.Infrastructure.Extensions;
@@ -33,7 +34,7 @@ namespace Concertable.Customer.IntegrationTests.Fixtures;
 
 public class ApiFixture : IAsyncLifetime
 {
-    private SqlFixture sqlFixture = null!;
+    private PostgresFixture postgresFixture = null!;
     private WebApplicationFactory<Program> factory = null!;
     private IServiceScope? scope;
     private readonly XunitOutputAccessor outputAccessor = new();
@@ -49,8 +50,9 @@ public class ApiFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        sqlFixture = new SqlFixture();
-        await sqlFixture.InitializeAsync();
+        postgresFixture = new PostgresFixture();
+        await postgresFixture.InitializeAsync();
+        await CustomerMigrationJob.RunAsync(postgresFixture.ConnectionString);
 
         factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
@@ -59,7 +61,7 @@ public class ApiFixture : IAsyncLifetime
             {
                 config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
-                    [$"ConnectionStrings:{Db.Name}"] = sqlFixture.ConnectionString,
+                    [$"ConnectionStrings:{Db.Name}"] = postgresFixture.ConnectionString,
                 });
                 if (RateLimitPermit is int permit)
                     config.ConstrainRateLimiting(RateLimitPolicies.All, permit);
@@ -91,12 +93,12 @@ public class ApiFixture : IAsyncLifetime
         });
 
         _ = factory.Services;
-        await sqlFixture.InitializeRespawnerAsync();
+        await postgresFixture.InitializeRespawnerAsync(Db.Schemas);
     }
 
     public async Task ResetAsync()
     {
-        await sqlFixture.ResetAsync();
+        await postgresFixture.ResetAsync();
         NotificationClient.Reset();
         PaymentSessionClient.Reset();
 
@@ -111,7 +113,7 @@ public class ApiFixture : IAsyncLifetime
     {
         scope?.Dispose();
         await factory.DisposeAsync();
-        await sqlFixture.DisposeAsync();
+        await postgresFixture.DisposeAsync();
     }
 
     public HttpClient CreateClient() => factory.CreateClient();

@@ -19,13 +19,13 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                 schema: "concert",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AverageRating = table.Column<double>(type: "float", nullable: false),
-                    ReviewCount = table.Column<int>(type: "int", nullable: false),
-                    County = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Town = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Avatar = table.Column<string>(type: "text", nullable: false),
+                    AverageRating = table.Column<double>(type: "double precision", nullable: false),
+                    ReviewCount = table.Column<int>(type: "integer", nullable: false),
+                    County = table.Column<string>(type: "text", nullable: false),
+                    Town = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -37,25 +37,25 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                 schema: "concert",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    About = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BannerUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TotalTickets = table.Column<int>(type: "int", nullable: false),
-                    AvailableTickets = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    DatePosted = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ArtistId = table.Column<int>(type: "int", nullable: false),
-                    ArtistName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    VenueId = table.Column<int>(type: "int", nullable: false),
-                    VenueName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PayeeUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PayeeOwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AverageRating = table.Column<double>(type: "float", nullable: false),
-                    ReviewCount = table.Column<int>(type: "int", nullable: false),
-                    Period_End = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Period_Start = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    About = table.Column<string>(type: "text", nullable: false),
+                    BannerUrl = table.Column<string>(type: "text", nullable: true),
+                    Avatar = table.Column<string>(type: "text", nullable: true),
+                    TotalTickets = table.Column<int>(type: "integer", nullable: false),
+                    AvailableTickets = table.Column<int>(type: "integer", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    DatePosted = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ArtistId = table.Column<int>(type: "integer", nullable: false),
+                    ArtistName = table.Column<string>(type: "text", nullable: false),
+                    VenueId = table.Column<int>(type: "integer", nullable: false),
+                    VenueName = table.Column<string>(type: "text", nullable: false),
+                    PayeeUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PayeeOwnerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AverageRating = table.Column<double>(type: "double precision", nullable: false),
+                    ReviewCount = table.Column<int>(type: "integer", nullable: false),
+                    Period_End = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Period_Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,12 +67,12 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                 schema: "concert",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    County = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Town = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Latitude = table.Column<double>(type: "float", nullable: false),
-                    Longitude = table.Column<double>(type: "float", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    County = table.Column<string>(type: "text", nullable: false),
+                    Town = table.Column<string>(type: "text", nullable: false),
+                    Latitude = table.Column<double>(type: "double precision", nullable: false),
+                    Longitude = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -84,8 +84,8 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                 schema: "concert",
                 columns: table => new
                 {
-                    ArtistReadModelId = table.Column<int>(type: "int", nullable: false),
-                    Genre = table.Column<int>(type: "int", nullable: false)
+                    ArtistReadModelId = table.Column<int>(type: "integer", nullable: false),
+                    Genre = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -104,8 +104,8 @@ namespace Concertable.Customer.Concert.Infrastructure.Data.Migrations
                 schema: "concert",
                 columns: table => new
                 {
-                    ConcertId = table.Column<int>(type: "int", nullable: false),
-                    Genre = table.Column<int>(type: "int", nullable: false)
+                    ConcertId = table.Column<int>(type: "integer", nullable: false),
+                    Genre = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

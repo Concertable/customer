@@ -1,9 +1,6 @@
 using Concertable.Customer.Concert.Api.Controllers;
-using Concertable.Customer.Concert.Infrastructure.Data;
 using Concertable.Customer.Concert.Infrastructure.Extensions;
-using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Shared.Api.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,19 +17,5 @@ public static class ServiceCollectionExtensions
                 .AddInternalControllers(typeof(ConcertController).Assembly);
             return services;
         }
-
-        public IServiceCollection AddConcertMigrations(IConfiguration configuration)
-        {
-            services.AddSingleton<ConcertConfigurationProvider>();
-            services.AddDbContext<ConcertDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString(Db.Name)));
-            return services;
-        }
-    }
-
-    extension(IServiceProvider services)
-    {
-        public Task MigrateConcertModuleAsync(CancellationToken cancellationToken = default)
-            => services.GetRequiredService<ConcertDbContext>().Database.MigrateAsync(cancellationToken);
     }
 }

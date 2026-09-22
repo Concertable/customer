@@ -22,7 +22,12 @@ public sealed class ResourceGraphTests
     [Fact]
     public async Task ProductionGraphAndStrictValidation_AreValid()
     {
-        var validBuilder = AppHost.CreateBuilder([]);
+        // Stripe is pinned off rather than inherited: AddStripeCli attaches an environment callback that
+        // blocks on the CLI's webhook secret for sixty seconds, so reading payment-web's environment
+        // below throws on any machine that exports Stripe__SecretKey. PublishGraphWithStripeCli_IsValid
+        // covers the configured case.
+        var validBuilder = AppHost.CreateBuilder(["--Stripe:SecretKey="]);
+        Assert.DoesNotContain(validBuilder.Resources, resource => resource.Name == PaymentConstants.StripeCliResource);
         AssertImageEndpoint(validBuilder, AuthConstants.Resource, "https", scheme: "http");
         AssertContainerRuntimeArgs(validBuilder, AuthConstants.Resource, "--user", "root");
         AssertUsesDeveloperCertificate(validBuilder, AuthConstants.Resource);
@@ -33,6 +38,25 @@ public sealed class ResourceGraphTests
         Assert.Single(validBuilder.Resources, resource => resource.Name == SearchConstants.WorkersResource);
         AssertWaitsForCompletion(validBuilder, SearchConstants.WebResource, "search-migrations");
         AssertWaitsForCompletion(validBuilder, SearchConstants.WorkersResource, "search-migrations");
+        AssertWaitsForCompletion(validBuilder, PaymentConstants.WebResource, PaymentConstants.MigrationsResource);
+        AssertWaitsForCompletion(validBuilder, PaymentConstants.WorkersResource, PaymentConstants.MigrationsResource);
+        AssertWaitsForCompletion(validBuilder, AuthConstants.Resource, AuthConstants.MigrationsResource);
+        Assert.IsType<ProjectResource>(validBuilder.Resources.Single(resource =>
+            resource.Name == CustomerConstants.MigrationsResource));
+        AssertWaitsForCompletion(validBuilder, CustomerConstants.WebResource, CustomerConstants.MigrationsResource);
+        foreach (var database in new[]
+                 {
+                     CustomerConstants.Database,
+                     AuthConstants.Database,
+                     PaymentConstants.Database,
+                     SearchConstants.Database,
+                 })
+        {
+            Assert.IsType<PostgresDatabaseResource>(
+                validBuilder.Resources.Single(resource => resource.Name == database));
+        }
+
+        Assert.DoesNotContain(validBuilder.Resources, resource => resource is SqlServerServerResource);
         AssertImageEndpoint(
             validBuilder,
             PaymentConstants.WebResource,
@@ -53,7 +77,7 @@ public sealed class ResourceGraphTests
         var authEnvironment = await GetRawEnvironmentAsync(auth, CancellationToken.None);
         Assert.DoesNotContain("Auth__PublicUrl", authEnvironment.Keys);
         using var app = validBuilder.Build();
-        var builder = AppHost.CreateBuilder([]);
+        var builder = AppHost.CreateBuilder(["--Stripe:SecretKey="]);
         builder.Services.AddInvalidLifetimeGraph();
         Assert.ThrowsAny<Exception>(() => builder.Build());
     }

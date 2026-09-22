@@ -1,21 +1,34 @@
+using Concertable.Messaging.Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Options;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 
 namespace Concertable.Customer.DataAccess.Infrastructure;
 
 public abstract class CustomerDesignTimeDbContextFactory<TContext> : IDesignTimeDbContextFactory<TContext>
     where TContext : DbContext
 {
-    public TContext CreateDbContext(string[] args)
+    protected static IOptions<OutboxOptions> DefaultOutboxOptions { get; } = Options.Create(new OutboxOptions());
+
+    public TContext CreateDbContext(string[] args) =>
+        CreateDbContext(DesignTimeConfiguration.ConnectionString());
+
+    public TContext CreateDbContext(string connectionString)
     {
         var options = new DbContextOptionsBuilder<TContext>()
-            .UseSqlServer(DesignTimeConfiguration.ConnectionString(), ConfigureSqlServer)
+            .UseNpgsql(connectionString, npgsql =>
+            {
+                npgsql.MigrationsHistoryTable(MigrationsHistory.Table, MigrationsSchema);
+                ConfigureNpgsql(npgsql);
+            })
             .Options;
         return Create(options);
     }
 
     protected abstract TContext Create(DbContextOptions<TContext> options);
 
-    protected virtual void ConfigureSqlServer(SqlServerDbContextOptionsBuilder sql) { }
+    protected abstract string MigrationsSchema { get; }
+
+    protected virtual void ConfigureNpgsql(NpgsqlDbContextOptionsBuilder npgsql) { }
 }

@@ -157,13 +157,6 @@ public static class CustomerWebHostExtensions
             builder.AddRateLimitPolicy(RateLimitPolicies.Review, new RateLimitWindow { PermitLimit = 10, WindowSeconds = 60 }, perUser: true);
             return builder;
         }
-
-        public WebApplicationBuilder AddCustomerMigrationHost()
-        {
-            builder.Configuration.AddEnvironmentVariables();
-            AddCustomerMigrationPersistence(builder.Services, builder.Configuration);
-            return builder;
-        }
     }
 
     private static void AddCustomerRuntimePersistence(IServiceCollection services, IConfiguration configuration)
@@ -174,8 +167,14 @@ public static class CustomerWebHostExtensions
         services.AddSingleton<DevFixture>();
         services.AddSharedInfrastructure(configuration);
         services.AddGeometry();
-        services.AddOutbox(opt => opt.UseSqlServer(configuration.GetConnectionString(Db.Name)));
-        services.AddInbox(opt => opt.UseSqlServer(configuration.GetConnectionString(Db.Name)));
+        services.AddOutbox(opt => opt.UseNpgsql(
+            configuration.GetConnectionString(Db.Name),
+            npgsql => npgsql.MigrationsHistoryTable(
+                MigrationsHistory.OutboxTable, MigrationsHistory.MessagingSchema)));
+        services.AddInbox(opt => opt.UseNpgsql(
+            configuration.GetConnectionString(Db.Name),
+            npgsql => npgsql.MigrationsHistoryTable(
+                MigrationsHistory.InboxTable, MigrationsHistory.MessagingSchema)));
         services.AddScoped<AuditInterceptor>();
         services.AddScoped<IDomainEventDispatchInterceptor, DomainEventDispatchInterceptor>();
         services.AddSeedingInfrastructure();
@@ -186,22 +185,6 @@ public static class CustomerWebHostExtensions
         services.AddPreferenceApi(configuration);
         services.AddVenueApi(configuration);
         services.AddArtistApi(configuration);
-    }
-
-    private static void AddCustomerMigrationPersistence(IServiceCollection services, IConfiguration configuration)
-    {
-        var connectionString = configuration.GetConnectionString(Db.Name)
-            ?? throw new InvalidOperationException($"Connection string '{Db.Name}' is required.");
-
-        services.AddDbContext<OutboxDbContext>(options => options.UseSqlServer(connectionString));
-        services.AddDbContext<InboxDbContext>(options => options.UseSqlServer(connectionString));
-        services.AddConcertMigrations(configuration);
-        services.AddTicketMigrations(configuration);
-        services.AddReviewMigrations(configuration);
-        services.AddUserMigrations(configuration);
-        services.AddPreferenceMigrations(configuration);
-        services.AddVenueMigrations(configuration);
-        services.AddArtistMigrations(configuration);
     }
 
     extension(WebApplication app)
@@ -219,21 +202,10 @@ public static class CustomerWebHostExtensions
             app.MapControllers();
             app.MapHub<NotificationHub>("/hub/notifications");
 
-            if (!app.Environment.IsProduction())
+            if (app.Environment.IsDevelopment())
             {
                 await using var scope = app.Services.CreateAsyncScope();
-                var services = scope.ServiceProvider;
-                await services.GetRequiredService<OutboxDbContext>().Database.MigrateAsync();
-                await services.GetRequiredService<InboxDbContext>().Database.MigrateAsync();
-                await services.MigrateArtistModuleAsync();
-                await services.MigrateConcertModuleAsync();
-                await services.MigratePreferenceModuleAsync();
-                await services.MigrateReviewModuleAsync();
-                await services.MigrateTicketModuleAsync();
-                await services.MigrateUserModuleAsync();
-                await services.MigrateVenueModuleAsync();
-                if (app.Environment.IsDevelopment())
-                    await services.GetRequiredService<IDbInitializer>().InitializeAsync();
+                await scope.ServiceProvider.GetRequiredService<IDbInitializer>().InitializeAsync();
             }
         }
     }

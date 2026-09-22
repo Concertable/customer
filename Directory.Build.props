@@ -36,6 +36,12 @@
     <MinVerMinimumMajorMinor>0.2</MinVerMinimumMajorMinor>
   </PropertyGroup>
 
+  <!-- The migration job constructs each module's design-time factory directly, so the job and the
+       integration fixture create schemas through the same code the image runs. -->
+  <ItemGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(MSBuildProjectName)', '^Concertable\.Customer\..+\.Infrastructure$'))">
+    <InternalsVisibleTo Include="Concertable.Customer.Migrations" />
+  </ItemGroup>
+
   <!-- Fallback only. A package that ships its own README (TestKit does) keeps it; without the
        condition the repository README displaces it and NU5118 is the only sign. -->
   <ItemGroup Condition="!Exists('$(MSBuildProjectDirectory)/README.md')">

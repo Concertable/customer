@@ -1,10 +1,6 @@
-using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.User.Api.Controllers;
-using Concertable.Customer.User.Infrastructure.Data;
 using Concertable.Customer.User.Infrastructure.Extensions;
 using Concertable.Shared.Api.Extensions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,21 +22,5 @@ public static class ServiceCollectionExtensions
                 .AddInternalControllers(typeof(UserController).Assembly);
             return services;
         }
-
-        public IServiceCollection AddUserMigrations(IConfiguration configuration)
-        {
-            services.AddSingleton<UserConfigurationProvider>();
-            services.AddDbContext<UserDbContext>(options =>
-                options.UseSqlServer(
-                    configuration.GetConnectionString(Db.Name),
-                    sql => sql.UseNetTopologySuite()));
-            return services;
-        }
-    }
-
-    extension(IServiceProvider services)
-    {
-        public Task MigrateUserModuleAsync(CancellationToken cancellationToken = default)
-            => services.GetRequiredService<UserDbContext>().Database.MigrateAsync(cancellationToken);
     }
 }
