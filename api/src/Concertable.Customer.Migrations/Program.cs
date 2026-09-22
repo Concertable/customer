@@ -1,13 +1,12 @@
-using Concertable.Customer.Web;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+using Concertable.Customer.DataAccess.Infrastructure;
 
-var builder = WebApplication.CreateBuilder(args);
-builder.AddCustomerMigrationHost();
+namespace Concertable.Customer.Migrations;
 
-var app = builder.Build();
-await using (app.ConfigureAwait(false))
+internal static class Program
 {
-    using var scope = app.Services.CreateScope();
-    await scope.ServiceProvider.MigrateCustomerDatabaseAsync().ConfigureAwait(false);
+    private static Task Main() =>
+        CustomerMigrationJob.RunAsync(
+            Environment.GetEnvironmentVariable($"ConnectionStrings__{Db.Name}")
+            ?? throw new InvalidOperationException(
+                $"Connection string 'ConnectionStrings__{Db.Name}' is required for the Customer migration job."));
 }

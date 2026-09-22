@@ -1,9 +1,6 @@
-using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Review.Api.Controllers;
-using Concertable.Customer.Review.Infrastructure.Data;
 using Concertable.Customer.Review.Infrastructure.Extensions;
 using Concertable.Shared.Api.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,19 +17,5 @@ public static class ServiceCollectionExtensions
                 .AddInternalControllers(typeof(ConcertReviewsController).Assembly);
             return services;
         }
-
-        public IServiceCollection AddReviewMigrations(IConfiguration configuration)
-        {
-            services.AddSingleton<ReviewConfigurationProvider>();
-            services.AddDbContext<ReviewDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString(Db.Name)));
-            return services;
-        }
-    }
-
-    extension(IServiceProvider services)
-    {
-        public Task MigrateReviewModuleAsync(CancellationToken cancellationToken = default)
-            => services.GetRequiredService<ReviewDbContext>().Database.MigrateAsync(cancellationToken);
     }
 }

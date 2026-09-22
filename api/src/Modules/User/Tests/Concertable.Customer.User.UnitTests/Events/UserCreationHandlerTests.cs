@@ -4,7 +4,9 @@ using Concertable.Customer.User.Domain.Entities;
 using Concertable.Customer.User.Infrastructure.Data;
 using Concertable.Customer.User.Infrastructure.Events;
 using Concertable.Messaging.Contracts;
+using Concertable.Messaging.Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Concertable.Customer.User.UnitTests.Events;
 
@@ -15,6 +17,7 @@ public sealed class UserCreationHandlerTests
 
     private static UserDbContext NewContext(string dbName) =>
         new(new DbContextOptionsBuilder<UserDbContext>().UseInMemoryDatabase(dbName).Options,
+            Options.Create(new OutboxOptions()),
             new UserConfigurationProvider());
 
     private static CredentialRegisteredEvent NewEvent(InteractiveClient client) =>

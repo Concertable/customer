@@ -1,9 +1,6 @@
-using Concertable.Customer.DataAccess.Infrastructure;
 using Concertable.Customer.Venue.Api.Controllers;
-using Concertable.Customer.Venue.Infrastructure.Data;
 using Concertable.Customer.Venue.Infrastructure.Extensions;
 using Concertable.Shared.Api.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,19 +17,5 @@ public static class ServiceCollectionExtensions
                 .AddInternalControllers(typeof(VenueController).Assembly);
             return services;
         }
-
-        public IServiceCollection AddVenueMigrations(IConfiguration configuration)
-        {
-            services.AddSingleton<VenueConfigurationProvider>();
-            services.AddDbContext<VenueDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString(Db.Name)));
-            return services;
-        }
-    }
-
-    extension(IServiceProvider services)
-    {
-        public Task MigrateVenueModuleAsync(CancellationToken cancellationToken = default)
-            => services.GetRequiredService<VenueDbContext>().Database.MigrateAsync(cancellationToken);
     }
 }

@@ -3,7 +3,9 @@ using Concertable.Contracts.Enums;
 using Concertable.Customer.Concert.Infrastructure.Data;
 using Concertable.Customer.Concert.Infrastructure.Handlers;
 using Concertable.Messaging.Contracts;
+using Concertable.Messaging.Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Concertable.Customer.Concert.UnitTests.Handlers;
 
@@ -15,6 +17,7 @@ public sealed class ArtistReadModelProjectionHandlerTests
 
     private static ConcertDbContext NewContext(string dbName) =>
         new(new DbContextOptionsBuilder<ConcertDbContext>().UseInMemoryDatabase(dbName).Options,
+            Options.Create(new OutboxOptions()),
             new ConcertConfigurationProvider());
 
     private static ArtistChangedEvent NewEvent(
