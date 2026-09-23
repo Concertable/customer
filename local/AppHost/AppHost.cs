@@ -16,6 +16,8 @@ public static class AppHost
     private const string PaymentWebDigest = "sha256:13bc1a58a647e01618822935985097e3c667b3ddb365def899ba83cf5d5b574f";
     private const string PaymentWorkersImage = "ghcr.io/concertable/payment-workers";
     private const string PaymentWorkersDigest = "sha256:586f87d0866bcf325622793379f15f4b94abdd34091907ca94b4e15fa5b2ab64";
+    public const string PaymentWebE2EDigest = "sha256:67688d0d65f35cf15671ffbf5c65e68546e3189e59354b6b5ed34751fc1aa27c";
+    public const string PaymentWorkersE2EDigest = "sha256:5d46a8507f52538bb3454d2b646e8dc8ead0b8b0561c78d83bab32128e4d7d47";
     private const string PaymentMigrationsImage = "ghcr.io/concertable/payment-migrations";
     private const string PaymentMigrationsDigest = "sha256:b22e1a0d498e01d12b49e0bc911f3e4c7e44a0d5e3c4d5c8917e854e1fccdc96";
     private const string SearchWebImage = "ghcr.io/concertable/search-web";

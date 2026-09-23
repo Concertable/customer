@@ -91,8 +91,8 @@ jobs:
         run: |
           docker pull ghcr.io/concertable/auth@sha256:cbd7c429da9d9dd2cc674177760690c53d1414e8057e368eefc3631dfcb62be6
           docker pull ghcr.io/concertable/auth-migrations@sha256:090b1bb80dc7b708508a03883cdfb8e8805b36918589e6d14f2f350cc61c5dcb
-          docker pull ghcr.io/concertable/payment-web@sha256:13bc1a58a647e01618822935985097e3c667b3ddb365def899ba83cf5d5b574f
-          docker pull ghcr.io/concertable/payment-workers@sha256:586f87d0866bcf325622793379f15f4b94abdd34091907ca94b4e15fa5b2ab64
+          docker pull ghcr.io/concertable/payment-web@sha256:67688d0d65f35cf15671ffbf5c65e68546e3189e59354b6b5ed34751fc1aa27c
+          docker pull ghcr.io/concertable/payment-workers@sha256:5d46a8507f52538bb3454d2b646e8dc8ead0b8b0561c78d83bab32128e4d7d47
           docker pull ghcr.io/concertable/payment-migrations@sha256:b22e1a0d498e01d12b49e0bc911f3e4c7e44a0d5e3c4d5c8917e854e1fccdc96
           docker pull ghcr.io/concertable/search-web@sha256:f345c7e05209d4a72f7aee23f311867327fbc9b8b5daec7323506c3ef517d50a
           docker pull ghcr.io/concertable/search-workers@sha256:179918a414cb6aa398dc3ffd5035728a47d2780649b88c0b27468cdf71223515
