@@ -18,10 +18,6 @@ namespace Concertable.Customer.E2ETests;
 
 public sealed class AppFixture : IAsyncLifetime
 {
-    private const string AuthE2EDigest = "sha256:e228e89af3fa51f1dd7995d33e109bb3a9c2bf2ab3bed98df28e3ef7bac28251";
-    private const string PaymentE2EWebDigest = "sha256:df33de77f2d01558f9ffb3b0d1cc68ddcd26e41f6d54f65045caf3e466b4a775";
-    private const string PaymentE2EWorkersDigest = "sha256:4385c505153cca1df16983864b0c99807537b37f8aea801d434092cce47c87c8";
-
     private DistributedApplication app = null!;
     private AspireResourceLogger resourceLogger = null!;
     private HealthWaiter healthWaiter = null!;
@@ -92,17 +88,16 @@ public sealed class AppFixture : IAsyncLifetime
         var auth = builder.Resources.OfType<ServiceContainerResource>()
             .Single(resource => resource.Name == AuthConstants.Resource);
         var authBuilder = builder.CreateResourceBuilder(auth);
-        authBuilder.WithImageSHA256(AuthE2EDigest["sha256:".Length..]);
         authBuilder.WithEnvironment("Auth__VerificationBaseUrl", authBuilder.GetEndpoint("https"));
         authBuilder.WithEnvironment("RateLimiting__credential__PermitLimit", "1000");
         var paymentWeb = builder.Resources.OfType<ServiceContainerResource>()
             .Single(resource => resource.Name == PaymentConstants.WebResource);
         builder.CreateResourceBuilder(paymentWeb)
-            .WithImageSHA256(PaymentE2EWebDigest["sha256:".Length..]);
+            .WithImageSHA256(AppHost.PaymentWebE2EDigest["sha256:".Length..]);
         var paymentWorkers = builder.Resources.OfType<ServiceContainerResource>()
             .Single(resource => resource.Name == PaymentConstants.WorkersResource);
         builder.CreateResourceBuilder(paymentWorkers)
-            .WithImageSHA256(PaymentE2EWorkersDigest["sha256:".Length..]);
+            .WithImageSHA256(AppHost.PaymentWorkersE2EDigest["sha256:".Length..]);
         var searchWeb = builder.Resources.Single(resource => resource.Name == SearchConstants.WebResource);
         var customerWeb = builder.Resources.OfType<ProjectResource>()
             .Single(resource => resource.Name == CustomerConstants.WebResource);
