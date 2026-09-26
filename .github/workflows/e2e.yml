@@ -36,7 +36,7 @@ jobs:
       EXPO_PUBLIC_URL_SCHEME: concertable-customer
       EXPO_PUBLIC_STRIPE_KEY: ${{ vars.STRIPE_PUBLISHABLE_KEY }}
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           persist-credentials: false
 
@@ -81,7 +81,7 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Log in to GHCR
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -177,7 +177,7 @@ jobs:
 
       - name: Run mobile E2E
         if: inputs.tier == 'mobile' || inputs.tier == 'all'
-        uses: reactivecircus/android-emulator-runner@4c44018e59b437e86cdfc41da381398f93ed8808 # v2
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2
         with:
           api-level: 34
           target: google_apis
