@@ -13,8 +13,8 @@
     "build:mobile": "npm run typecheck:mobile && npm -w @concertable/mobile-customer exec -- expo export --platform android"
   },
   "overrides": {
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
     "react-native-css-interop": {
       "tailwindcss": "^3"
     }
