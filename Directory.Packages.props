@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
     <ConcertableDotNetPlatformVersion>0.2.0-alpha.0.14</ConcertableDotNetPlatformVersion>
     <ConcertableAuthVersion>0.2.0-alpha.0.305</ConcertableAuthVersion>
     <ConcertableB2BContractsVersion>0.2.0-alpha.0.302</ConcertableB2BContractsVersion>
@@ -10,6 +11,11 @@
     <ConcertableSearchVersion>0.2.0-alpha.0.330</ConcertableSearchVersion>
     <ConcertableSystemVersion>0.2.0-alpha.0.212</ConcertableSystemVersion>
   </PropertyGroup>
+
+  <!-- Patch the shared imaging package's transitive dependency without changing its public API. -->
+  <ItemGroup>
+    <PackageVersion Include="SixLabors.ImageSharp" Version="3.2.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageVersion Include="Concertable.Testing" Version="$(ConcertableDotNetPlatformVersion)" />
