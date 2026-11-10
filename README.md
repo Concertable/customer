@@ -1,6 +1,6 @@
 # Concertable.Customer
 
-The **Customer** service of [Concertable](https://github.com/Concertable/concertable) — the
+The **Customer** service of Concertable — the
 consumer-facing side of the marketplace, where customers browse concerts, buy tickets, and leave
 reviews. It is a *data service*: it owns its data and talks to other data services (B2B, Search)
 only through `*.Contracts` integration events, never their runtime. It depends on the **Auth** and
