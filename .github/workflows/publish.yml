@@ -4,8 +4,7 @@ name: Publish
 # publishing; this workflow publishes one, and nothing triggers it on its own — a v* tag is the
 # release act, and MinVer reads that same tag for the version.
 #
-# Customer's 10C is ordered after the monorepo stops publishing the Customer ids. Landing this
-# workflow does not publish anything: no v* tag exists, and a manual run needs an explicit
+# Landing this workflow does not publish anything: no v* tag exists, and a manual run needs an explicit
 # confirmation.
 on:
   push:
