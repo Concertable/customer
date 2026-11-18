@@ -1,0 +1,69 @@
+{
+  "authorization_resolution": {
+    "standing": "auto",
+    "stopped_by": null
+  },
+  "auto_merge": true,
+  "bound_at": "2026-10-21T22:55:13.147851+00:00",
+  "branch": "Docs/MigratePlanTrackers",
+  "changed_path_count": 2,
+  "completion_condition": "Reviewed provider declarations and plan links merged, remote main read back and supported provider route verified",
+  "head": "0e6aba1407b545bc145b25b05881665fd5f59e58",
+  "merge_authorization": {
+    "instruction": "right shall we do that now then?",
+    "mode": "merge"
+  },
+  "pending_evidence": [
+    {
+      "check_id": "119533190256",
+      "head_sha": "0e6aba1407b545bc145b25b05881665fd5f59e58",
+      "run_id": "39689894226"
+    },
+    {
+      "check_id": "119533191736",
+      "head_sha": "0e6aba1407b545bc145b25b05881665fd5f59e58",
+      "run_id": "39689894700"
+    },
+    {
+      "check_id": "119533140974",
+      "head_sha": "0e6aba1407b545bc145b25b05881665fd5f59e58",
+      "run_id": "39689878429"
+    },
+    {
+      "check_id": "119533192175",
+      "head_sha": "0e6aba1407b545bc145b25b05881665fd5f59e58",
+      "run_id": "39689894700"
+    },
+    {
+      "check_id": "119533141119",
+      "head_sha": "0e6aba1407b545bc145b25b05881665fd5f59e58",
+      "run_id": "39689878429"
+    },
+    {
+      "check_id": "119533190079",
+      "head_sha": "0e6aba1407b545bc145b25b05881665fd5f59e58",
+      "run_id": "39689894226"
+    }
+  ],
+  "pr": 43,
+  "pr_url": "https://github.com/Concertable/customer/pull/43",
+  "repo": "Concertable/customer",
+  "review": {
+    "reviewed_sha": "0e6aba1407b545bc145b25b05881665fd5f59e58",
+    "work_order": "C:\\Users\\TommySeery\\source\\repos\\Concertable\\customer\\.git\\agent-workflow\\reviews\\079d1b7cce877a1d0d3d0795343f67750e4d7043874574dc79a818e8e30a63bc\\work-order.md",
+    "work_order_order": [
+      "full"
+    ]
+  },
+  "schema_version": 1,
+  "scoped_approval": {
+    "branch": "Docs/MigratePlanTrackers",
+    "instruction": "right shall we do that now then?",
+    "mode": "merge",
+    "pr_number": 43,
+    "repository": "Concertable/customer",
+    "source": "User authorization for the unfinished-plan migration and its normal source/config delivery, recorded in tj-agents/docs plans/plan-work-item-migration/PLAN.md on 2026-10-21. Scope is this reviewed provider/backlink source slice only.",
+    "worktree": "C:\\Users\\TommySeery\\source\\repos\\Concertable\\customer\\.worktrees\\Docs-MigratePlanTrackers"
+  },
+  "worktree": "C:\\Users\\TommySeery\\source\\repos\\Concertable\\customer\\.worktrees\\Docs-MigratePlanTrackers"
+}
