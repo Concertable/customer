@@ -1,1 +1,0 @@
-export { customerClient } from "./customerClient";
