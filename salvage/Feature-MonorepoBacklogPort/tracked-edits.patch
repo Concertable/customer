@@ -1,0 +1,45 @@
+diff --git a/tests/E2ETests/Concertable.Customer.E2ETests.Mobile/Features/TicketPurchase.feature.cs b/tests/E2ETests/Concertable.Customer.E2ETests.Mobile/Features/TicketPurchase.feature.cs
+index 33d61ee5..8d203a2b 100644
+--- a/tests/E2ETests/Concertable.Customer.E2ETests.Mobile/Features/TicketPurchase.feature.cs
++++ b/tests/E2ETests/Concertable.Customer.E2ETests.Mobile/Features/TicketPurchase.feature.cs
+@@ -220,3 +220,4 @@ namespace Concertable.Customer.E2ETests.Mobile.Features
+ 
+ 
+ 
++
+diff --git a/tests/E2ETests/Concertable.Customer.E2ETests.Ui/Features/CustomerSignUp.feature.cs b/tests/E2ETests/Concertable.Customer.E2ETests.Ui/Features/CustomerSignUp.feature.cs
+index 216606de..3a34f087 100644
+--- a/tests/E2ETests/Concertable.Customer.E2ETests.Ui/Features/CustomerSignUp.feature.cs
++++ b/tests/E2ETests/Concertable.Customer.E2ETests.Ui/Features/CustomerSignUp.feature.cs
+@@ -205,3 +205,4 @@ namespace Concertable.Customer.E2ETests.Ui.Features
+ 
+ 
+ 
++
+diff --git a/tests/E2ETests/Concertable.Customer.E2ETests.Ui/Features/Login.feature.cs b/tests/E2ETests/Concertable.Customer.E2ETests.Ui/Features/Login.feature.cs
+index 55fc2047..d1231e53 100644
+--- a/tests/E2ETests/Concertable.Customer.E2ETests.Ui/Features/Login.feature.cs
++++ b/tests/E2ETests/Concertable.Customer.E2ETests.Ui/Features/Login.feature.cs
+@@ -194,3 +194,4 @@ namespace Concertable.Customer.E2ETests.Ui.Features
+ 
+ 
+ 
++
+diff --git a/tests/E2ETests/Concertable.Customer.E2ETests.Ui/Features/ThirdPartyOnUse.feature.cs b/tests/E2ETests/Concertable.Customer.E2ETests.Ui/Features/ThirdPartyOnUse.feature.cs
+index ee6aecab..b6cd3422 100644
+--- a/tests/E2ETests/Concertable.Customer.E2ETests.Ui/Features/ThirdPartyOnUse.feature.cs
++++ b/tests/E2ETests/Concertable.Customer.E2ETests.Ui/Features/ThirdPartyOnUse.feature.cs
+@@ -228,3 +228,4 @@ namespace Concertable.Customer.E2ETests.Ui.Features
+ #pragma warning restore
+ #endregion
+ 
++
+diff --git a/tests/E2ETests/Concertable.Customer.E2ETests.Ui/Features/TicketPurchase.feature.cs b/tests/E2ETests/Concertable.Customer.E2ETests.Ui/Features/TicketPurchase.feature.cs
+index 93629109..9440680d 100644
+--- a/tests/E2ETests/Concertable.Customer.E2ETests.Ui/Features/TicketPurchase.feature.cs
++++ b/tests/E2ETests/Concertable.Customer.E2ETests.Ui/Features/TicketPurchase.feature.cs
+@@ -443,3 +443,4 @@ namespace Concertable.Customer.E2ETests.Ui.Features
+ 
+ 
+ 
++
