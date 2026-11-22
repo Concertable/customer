@@ -1,0 +1,41 @@
+{
+  "authorization_resolution": {
+    "standing": "auto",
+    "stopped_by": {
+      "class": "ci-workflow",
+      "path": ".github/workflows/publish.yml"
+    }
+  },
+  "auto_merge": true,
+  "bound_at": "2026-11-10T21:30:58.562689+00:00",
+  "branch": "Chore/RetireArchivedMonorepo",
+  "changed_path_count": 3,
+  "completion_condition": "the bound PR reaches MERGED, or a recorded terminal ends this delivery",
+  "head": "60cca84dcacfbd5d52fa64251837e44e83d9120c",
+  "merge_authorization": {
+    "instruction": null,
+    "mode": "absent"
+  },
+  "pending_evidence": [],
+  "pr": 57,
+  "pr_url": "https://github.com/Concertable/customer/pull/57",
+  "repo": "Concertable/customer",
+  "review": {
+    "reviewed_sha": "60cca84dcacfbd5d52fa64251837e44e83d9120c",
+    "work_order": "C:\\Users\\TommySeery\\source\\repos\\Concertable\\customer\\.git\\agent-workflow\\reviews\\ad9004405dd159b2c86b8a77318f3bc2e3857ef5575a044ea88ea25c97eb6175\\work-order.md",
+    "work_order_order": [
+      "full"
+    ]
+  },
+  "schema_version": 1,
+  "scoped_approval": {
+    "branch": "Chore/RetireArchivedMonorepo",
+    "instruction": "Tommy authorized merging the approved archived-monorepo cleanup PRs in this Codex session on 2026-11-10.",
+    "mode": "auto",
+    "pr_number": 57,
+    "repository": "Concertable/customer",
+    "source": "Current conversation and parent delivery instruction",
+    "worktree": "C:\\Users\\TommySeery\\source\\repos\\Concertable\\customer\\customer.worktrees\\Chore-RetireArchivedMonorepo"
+  },
+  "worktree": "C:\\Users\\TommySeery\\source\\repos\\Concertable\\customer\\customer.worktrees\\Chore-RetireArchivedMonorepo"
+}
