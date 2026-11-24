@@ -44,7 +44,7 @@
     <PackageVersion Include="Moq" Version="4.21.0" />
     <PackageVersion Include="Npgsql" Version="10.0.4" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.4" />
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="10.0.3" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="10.0.4" />
     <PackageVersion Include="QuestPDF" Version="2025.12.4" />
     <PackageVersion Include="Reqnroll.Microsoft.Extensions.DependencyInjection" Version="3.3.4" />
     <PackageVersion Include="Reqnroll.xUnit" Version="3.3.4" />
